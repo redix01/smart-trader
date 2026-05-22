@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Deposit;
 use App\Models\DepositMethod;
+use App\Models\MarketPair;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Services\CoinMarketCapService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -89,6 +91,54 @@ class DepositFlowTest extends TestCase
 
         $this->assertEquals('approved', $deposit->fresh()->status);
         $this->assertEquals('3500.00000000', $wallet->fresh()->balance);
+    }
+
+    public function test_approved_deposit_is_reflected_on_user_dashboard_balance(): void
+    {
+        $this->mock(CoinMarketCapService::class, function ($mock) {
+            $mock->shouldReceive('syncMarketPairs')->andReturnNull();
+        });
+
+        MarketPair::create([
+            'base_currency' => 'BTC',
+            'quote_currency' => 'USDT',
+            'current_price' => 65000,
+            'price_change_24h' => 2.4,
+            'high_24h' => 66000,
+            'low_24h' => 64000,
+            'volume_24h' => 1250000000,
+            'market_cap' => 1300000000000,
+            'is_active' => true,
+            'sort_order' => 1,
+            'icon' => 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png',
+        ]);
+
+        $admin = User::factory()->create(['account_tier' => 'admin']);
+        $deposit = Deposit::factory()->create([
+            'user_id' => $this->user->id,
+            'status' => 'pending',
+            'currency' => 'USD',
+            'amount' => 1500,
+            'fee' => 0,
+            'net_amount' => 1500,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.deposits.approve', $deposit->id))
+            ->assertSessionHas('success');
+
+        $this->actingAs($this->user)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Dashboard')
+                ->where('kpi.total_balance', '1,500.00')
+                ->has('wallets', 1, fn ($wallet) => $wallet
+                    ->where('symbol', 'USD')
+                    ->where('balance', '1500.00000000')
+                    ->etc()
+                )
+            );
     }
 
     public function test_admin_can_reject_deposit(): void

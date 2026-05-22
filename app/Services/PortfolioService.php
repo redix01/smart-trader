@@ -12,7 +12,7 @@ class PortfolioService
 {
     public function summary(User $user): array
     {
-        $wallets = $user->wallets;
+        $wallets = $user->wallets()->get();
 
         return [
             'total_balance' => $this->formatBalance($wallets->sum('balance')),
@@ -29,7 +29,7 @@ class PortfolioService
 
     public function dashboardKpi(User $user): array
     {
-        $wallets = $user->wallets;
+        $wallets = $user->wallets()->get();
         $totalBalance = (float) $wallets->sum('balance');
         $openOrders = Order::where('user_id', $user->id)
             ->where('status', 'open')
@@ -73,7 +73,7 @@ class PortfolioService
 
     public function balancesByCurrency(User $user): Collection
     {
-        return $user->wallets->map(fn (Wallet $w) => [
+        return $user->wallets()->get()->map(fn (Wallet $w) => [
             'symbol' => $w->currency,
             'balance' => $w->balance,
             'locked' => $w->locked_balance,
