@@ -28,11 +28,21 @@ interface DashboardProps {
     available: string | number;
   }>;
   kyc_status: string;
+  chart?: {
+    title: string;
+    subtitle: string;
+    symbol: string;
+    progress: number;
+  };
 }
 
-export default function Dashboard({ kpi, wallets, kyc_status }: DashboardProps) {
+export default function Dashboard({ kpi, wallets, kyc_status, chart }: DashboardProps) {
   const [showBalance, setShowBalance] = useState(true);
   const [quickTradeTab, setQuickTradeTab] = useState<'Buy' | 'Sell' | 'Swap'>('Buy');
+  const chartSymbol = chart?.symbol ?? 'BINANCE:BTCUSDT';
+  const chartTitle = chart?.title ?? 'BTC / USDT';
+  const chartSubtitle = chart?.subtitle ?? 'Market Overview';
+  const chartProgress = chart?.progress ?? 0;
 
   const tickerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
@@ -67,7 +77,7 @@ export default function Dashboard({ kpi, wallets, kyc_status }: DashboardProps) 
     return () => { if (tickerRef.current) tickerRef.current.innerHTML = ''; };
   }, []);
 
-  // BTC/USDT area chart — inject once
+  // Real market chart — inject once and refresh when the asset changes
   useEffect(() => {
     if (!chartRef.current) return;
     chartRef.current.innerHTML = '';
@@ -76,7 +86,7 @@ export default function Dashboard({ kpi, wallets, kyc_status }: DashboardProps) 
     script.async = true;
     script.innerHTML = JSON.stringify({
       autosize: true,
-      symbol: 'BINANCE:BTCUSDT',
+      symbol: chartSymbol,
       interval: 'D',
       timezone: 'Etc/UTC',
       theme: 'dark',
@@ -92,7 +102,7 @@ export default function Dashboard({ kpi, wallets, kyc_status }: DashboardProps) 
     });
     chartRef.current.appendChild(script);
     return () => { if (chartRef.current) chartRef.current.innerHTML = ''; };
-  }, []);
+  }, [chartSymbol]);
 
   const [swapFrom, setSwapFrom] = useState('BTC');
   const [swapTo, setSwapTo] = useState('ETH');
@@ -154,10 +164,10 @@ export default function Dashboard({ kpi, wallets, kyc_status }: DashboardProps) 
                   <div className="space-y-2 mt-4">
                     <div className="flex justify-between text-xs font-medium">
                       <span className="text-zinc-500 font-medium uppercase tracking-wider">Trading Progress</span>
-                      <span className="text-white">68%</span>
+                      <span className="text-white">{chartProgress}%</span>
                     </div>
                     <div className="h-1.5 w-full bg-[#1A1A1A] rounded-full overflow-hidden">
-                      <motion.div initial={{ width: 0 }} animate={{ width: '68%' }} transition={{ duration: 1, delay: 0.5 }} className="h-full bg-blue-600 rounded-full" />
+                      <motion.div initial={{ width: 0 }} animate={{ width: `${chartProgress}%` }} transition={{ duration: 1, delay: 0.5 }} className="h-full bg-blue-600 rounded-full" />
                     </div>
                   </div>
                 </div>
@@ -186,13 +196,13 @@ export default function Dashboard({ kpi, wallets, kyc_status }: DashboardProps) 
 
             <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden h-[400px] flex flex-col">
               <div className="flex items-center justify-between px-6 py-4 border-b border-[#1A1A1A] flex-shrink-0">
-                <div className="flex items-center gap-3">
-                  <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" className="w-6 h-6 rounded-full" alt="btc" />
-                  <div>
-                    <p className="text-sm font-bold text-white">BTC / USDT</p>
-                    <p className="text-[10px] text-zinc-500 font-medium">Market Overview</p>
+                  <div className="flex items-center gap-3">
+                    <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" className="w-6 h-6 rounded-full" alt="btc" />
+                    <div>
+                      <p className="text-sm font-bold text-white">{chartTitle}</p>
+                      <p className="text-[10px] text-zinc-500 font-medium">{chartSubtitle}</p>
+                    </div>
                   </div>
-                </div>
                 <Link href={route('trades')} className="text-[10px] font-bold text-blue-500 hover:text-blue-400 transition-colors flex items-center gap-1 uppercase tracking-widest">
                   Full Chart <ArrowUpRight size={12} />
                 </Link>
