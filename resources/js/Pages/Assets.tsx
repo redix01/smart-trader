@@ -18,9 +18,19 @@ interface AssetsProps {
     locked: string | number;
     available: string | number;
   }>;
+  deposits: Array<{
+    id: number;
+    method: string;
+    currency: string;
+    amount: string;
+    fee: string;
+    net: string;
+    status: string;
+    date: string;
+  }>;
 }
 
-export default function Assets({ assets }: AssetsProps) {
+export default function Assets({ assets, deposits }: AssetsProps) {
   const [activeCategory, setActiveCategory] = useState<'crypto' | 'fiat' | 'all'>('crypto');
   const [search, setSearch] = useState('');
 
@@ -119,6 +129,39 @@ export default function Assets({ assets }: AssetsProps) {
                         <button className="p-2 text-zinc-500 hover:text-white"><MoreHorizontal size={16} /></button>
                       </div>
                     </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden shadow-2xl">
+          <div className="px-6 py-5 border-b border-[#1A1A1A]">
+            <h2 className="text-sm font-bold text-white uppercase tracking-widest">Approved Deposits</h2>
+            <p className="text-xs text-zinc-500 mt-1">Deposits that have been approved and credited to your wallet.</p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-[#1A1A1A]">
+                  <th className="px-6 py-5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Method</th>
+                  <th className="px-6 py-5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Currency</th>
+                  <th className="px-6 py-5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-right">Net</th>
+                  <th className="px-6 py-5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-right">Date</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#0A0A0A]">
+                {deposits.length === 0 ? (
+                  <tr>
+                    <td className="px-6 py-8 text-sm text-zinc-500" colSpan={4}>No approved deposits yet.</td>
+                  </tr>
+                ) : deposits.map((deposit) => (
+                  <tr key={deposit.id} className="hover:bg-[#151515] transition-colors">
+                    <td className="px-6 py-5 text-sm text-white font-medium">{deposit.method}</td>
+                    <td className="px-6 py-5 text-sm text-zinc-300 font-mono">{deposit.currency}</td>
+                    <td className="px-6 py-5 text-right text-sm font-mono text-emerald-400">{Number(deposit.net).toLocaleString()}</td>
+                    <td className="px-6 py-5 text-right text-sm text-zinc-400 font-mono">{deposit.date}</td>
                   </tr>
                 ))}
               </tbody>
