@@ -73,7 +73,7 @@ export default function Sidebar({ isOpen, setIsOpen, isMobile }: SidebarProps) {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.3)]">
               <BarChart3 className="text-white w-5 h-5" />
             </div>
-            <span className="font-bold text-lg tracking-tight text-white">Cognizant-Pro</span>
+            <span className="font-bold text-lg tracking-tight text-white">CognizantPro</span>
           </div>
           {isMobile && (
             <button onClick={() => setIsOpen(false)} className="lg:hidden p-2 text-zinc-500 hover:text-white transition-colors">

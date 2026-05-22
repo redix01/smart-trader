@@ -26,7 +26,7 @@ export default function SettingsIndex({ settings }: { settings: Record<string, {
     ? settings
     : {
         'General': [
-          { key: 'site_name', value: 'Cognizant-Pro', group: 'General' },
+          { key: 'site_name', value: 'CognizantPro', group: 'General' },
           { key: 'site_description', value: 'Trading Platform', group: 'General' },
           { key: 'support_email', value: 'support@acuity.com', group: 'General' },
         ],

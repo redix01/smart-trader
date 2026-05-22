@@ -65,7 +65,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                             <BarChart3 className="text-white w-5 h-5" />
                         </div>
                         <div>
-                            <span className="font-bold text-sm tracking-tight text-white block leading-tight">Cognizant-Pro</span>
+                            <span className="font-bold text-sm tracking-tight text-white block leading-tight">CognizantPro</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-amber-600">Admin Panel</span>
                         </div>
                     </div>
@@ -143,7 +143,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                 </main>
                 <footer className="p-6 border-t border-[#1A1A1A] bg-[#0A0A0A] text-center">
                     <p className="text-zinc-600 text-xs font-medium">
-                        &copy; 2026 Cognizant-Pro Market. Admin Panel.
+                        &copy; 2026 CognizantPro Market. Admin Panel.
                         <span className="mx-2 text-[#222]">|</span>
                         Secure Administration Interface
                     </p>

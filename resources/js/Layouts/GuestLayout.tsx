@@ -9,7 +9,7 @@ export default function Guest({ children }: PropsWithChildren) {
                     <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(37,99,235,0.3)]">
                         <BarChart3 className="text-white w-8 h-8" />
                     </div>
-                    <h1 className="text-2xl font-bold text-white tracking-tight">Cognizant-Pro Market</h1>
+                    <h1 className="text-2xl font-bold text-white tracking-tight">CognizantPro Market</h1>
                 </div>
                 <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-8 shadow-2xl">
                     {children}

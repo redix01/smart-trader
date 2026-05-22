@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cognizant-Pro Template Implementation Plan</title>
+  <title>CognizantPro Template Implementation Plan</title>
   <style>
     :root {
       --bg: #0b1020;
@@ -205,7 +205,7 @@
 <body>
   <div class="wrap">
     <section class="hero">
-      <h1>Cognizant-Pro Template Implementation Plan</h1>
+      <h1>CognizantPro Template Implementation Plan</h1>
       <p>
         This plan converts the current standalone React/Vite dummy dashboard into a Laravel + Inertia + React application.
         It captures what the template already contains, what is still placeholder-only, and the page-by-page implementation sequence
@@ -466,7 +466,7 @@
                 <h4>Implementation steps</h4>
                 <ul>
                   <li>Install Breeze with React/Inertia and confirm SSR-free Vite client workflow.</li>
-                  <li>Replace generated guest layout with Cognizant-Pro brand styling.</li>
+                  <li>Replace generated guest layout with CognizantPro brand styling.</li>
                   <li>Add middleware/shared props for user tier, KYC, and notification count.</li>
                   <li>Convert logout nav item to Inertia <code>post</code> action.</li>
                 </ul>
@@ -812,13 +812,13 @@
                 <ul>
                   <li>Avatar, locale/currency, 2FA, KYC submission, linked payout methods.</li>
                   <li>Security log or last login metadata.</li>
-                  <li>Consistent Cognizant-Pro-specific styling across all profile partials.</li>
+                  <li>Consistent CognizantPro-specific styling across all profile partials.</li>
                 </ul>
               </div>
               <div class="sub">
                 <h4>Detailed steps</h4>
                 <ul>
-                  <li>Extend the existing Breeze profile area or replace it with a custom Cognizant-Pro-styled settings page.</li>
+                  <li>Extend the existing Breeze profile area or replace it with a custom CognizantPro-styled settings page.</li>
                   <li>Make KYC status visible here and on dashboard.</li>
                   <li>Keep all sensitive actions under auth middleware and re-auth when needed.</li>
                 </ul>
@@ -951,7 +951,7 @@
                 <li>Background: <code>bg-[#0A0A0A]</code> matching the user app exactly.</li>
                 <li>Left sidebar: <code>bg-[#0C0C0C] border-r border-[#1F1F1F]</code>, <code>w-[260px]</code> fixed — identical dimensions to the user sidebar.</li>
                 <li>Each nav item has a lucide icon + label; active state uses <strong>amber-600</strong> with box shadow glow to distinguish admin from user context.</li>
-                <li>Logo area shows "Cognizant-Pro" + "Admin Panel" badge in amber.</li>
+                <li>Logo area shows "CognizantPro" + "Admin Panel" badge in amber.</li>
                 <li>Reuses the existing <code>Header</code> component unchanged (hamburger menu wired to the admin sidebar).</li>
                 <li>User card at bottom uses amber gradient avatar + "Administrator" label.</li>
                 <li>Mobile overlay, translate-x animation, and responsive breakpoint identical to <code>AppLayout</code>.</li>
@@ -1235,8 +1235,8 @@
           <div class="checklist">
             <label class="task"><input type="checkbox" data-task checked><div><strong>Confirm final Laravel host repo/folder</strong><span>Completed. This workspace is already the active Laravel application.</span></div></label>
             <label class="task"><input type="checkbox" data-task checked><div><strong>Install Laravel + Breeze/Inertia React baseline</strong><span>Completed. Auth, Vite, Inertia middleware, and protected routes are present.</span></div></label>
-            <label class="task"><input type="checkbox" data-task checked><div><strong>Port theme, layout, sidebar, and header into Laravel resources</strong><span>Completed. Main navigation is route-driven and the Cognizant-Pro shell is in place.</span></div></label>
-            <label class="task"><input type="checkbox" data-task checked><div><strong>Implement auth pages with Cognizant-Pro styling</strong><span>Completed for core auth flow and logout action.</span></div></label>
+            <label class="task"><input type="checkbox" data-task checked><div><strong>Port theme, layout, sidebar, and header into Laravel resources</strong><span>Completed. Main navigation is route-driven and the CognizantPro shell is in place.</span></div></label>
+            <label class="task"><input type="checkbox" data-task checked><div><strong>Implement auth pages with CognizantPro styling</strong><span>Completed for core auth flow and logout action.</span></div></label>
             <label class="task"><input type="checkbox" data-task checked><div><strong>Create profile/settings baseline</strong><span>Completed for profile edit, password update, and account deletion. KYC/payout/admin settings are still pending.</span></div></label>
             <label class="task"><input type="checkbox" data-task checked><div><strong>Backend-enable dashboard widgets</strong><span>Completed. DashboardController delivers KPI, balances, and KYC status from PortfolioService.</span></div></label>
             <label class="task"><input type="checkbox" data-task checked><div><strong>Backend-enable assets page</strong><span>Completed. Assets page wired to wallet balances with category/search filtering.</span></div></label>
