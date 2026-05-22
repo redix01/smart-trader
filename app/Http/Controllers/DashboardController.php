@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MarketPair;
 use App\Services\PortfolioService;
 use App\Services\MarketService;
 use Illuminate\Http\Request;
@@ -21,12 +22,20 @@ class DashboardController extends Controller
         $totalLocked = (float) $wallets->sum('locked');
         $progress = $totalBalance > 0 ? (int) round(min(100, max(0, ($totalLocked / $totalBalance) * 100))) : 0;
 
-        $primaryWallet = $wallets->sortByDesc('balance')->first();
-        $chartCurrency = strtoupper($primaryWallet['currency'] ?? 'BTC');
-        $cryptoCurrencies = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOT', 'MATIC', 'AVAX', 'LTC'];
+        $cryptoCurrencies = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOT', 'MATIC', 'AVAX', 'LTC', 'USDT'];
+        $primaryWallet = $wallets
+            ->first(fn (array $wallet) => in_array(strtoupper((string) $wallet['currency']), $cryptoCurrencies, true))
+            ?? $wallets->sortByDesc('balance')->first();
 
-        if (in_array($chartCurrency, ['USD', 'USDT'], true)) {
-            $chartCurrency = 'BTC';
+        $pair = MarketPair::where('is_active', true)
+            ->where('quote_currency', 'USDT')
+            ->orderBy('sort_order')
+            ->first();
+
+        $chartCurrency = strtoupper($primaryWallet['currency'] ?? $pair?->base_currency ?? 'BTC');
+
+        if (in_array($chartCurrency, ['USD', 'USDT'], true) && $pair) {
+            $chartCurrency = $pair->base_currency;
         }
 
         $isCrypto = in_array($chartCurrency, $cryptoCurrencies, true);
