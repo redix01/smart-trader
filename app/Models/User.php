@@ -54,6 +54,11 @@ class User extends Authenticatable
         return $this->hasMany(Withdrawal::class);
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
     public function swapQuotes(): HasMany
     {
         return $this->hasMany(SwapQuote::class);

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Deposit;
 use App\Models\KycSubmission;
 use App\Models\Withdrawal;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 
 class AdminService
@@ -66,12 +67,34 @@ class AdminService
 
     public function approveDeposit(int $depositId, int $reviewerId): void
     {
-        $deposit = Deposit::findOrFail($depositId);
-        $deposit->update([
-            'status' => 'approved',
-            'approved_at' => now(),
-            'approved_by' => $reviewerId,
-        ]);
+        DB::transaction(function () use ($depositId, $reviewerId) {
+            $deposit = Deposit::whereKey($depositId)
+                ->lockForUpdate()
+                ->with('user')
+                ->firstOrFail();
+
+            if ($deposit->status === 'approved') {
+                return;
+            }
+
+            $deposit->update([
+                'status' => 'approved',
+                'approved_at' => now(),
+                'approved_by' => $reviewerId,
+            ]);
+
+            $wallet = $deposit->user->wallets()->firstOrCreate(
+                ['currency' => $deposit->currency],
+                [
+                    'label' => $deposit->currency,
+                    'balance' => 0,
+                    'locked_balance' => 0,
+                    'is_active' => true,
+                ]
+            );
+
+            $wallet->increment('balance', (float) $deposit->net_amount);
+        });
     }
 
     public function rejectDeposit(int $depositId, int $reviewerId, string $reason): void

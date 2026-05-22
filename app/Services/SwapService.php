@@ -2,34 +2,73 @@
 
 namespace App\Services;
 
+use App\Models\MarketPair;
 use App\Models\User;
 use App\Models\SwapQuote;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 
 class SwapService
 {
     private const FEES_PERCENT = 0.05;
 
+    public function __construct(private WalletService $wallets) {}
+
     public function getSupportedPairs(): array
     {
-        return [
-            ['from' => 'USD', 'to' => 'BTC', 'rate' => 0.000010],
-            ['from' => 'USD', 'to' => 'ETH', 'rate' => 0.000320],
-            ['from' => 'USD', 'to' => 'USDT', 'rate' => 1.00],
-            ['from' => 'BTC', 'to' => 'USD', 'rate' => 94560.20],
-            ['from' => 'BTC', 'to' => 'ETH', 'rate' => 30.25],
-            ['from' => 'ETH', 'to' => 'USD', 'rate' => 3120.45],
-            ['from' => 'ETH', 'to' => 'BTC', 'rate' => 0.033],
-            ['from' => 'USDT', 'to' => 'USD', 'rate' => 1.00],
-        ];
+        $prices = $this->getReferencePrices();
+        $currencies = array_keys($prices);
+        $pairs = [];
+
+        foreach ($currencies as $from) {
+            foreach ($currencies as $to) {
+                if ($from === $to) {
+                    continue;
+                }
+
+                $pairs[] = [
+                    'from' => $from,
+                    'to' => $to,
+                    'rate' => $prices[$from] / $prices[$to],
+                ];
+            }
+        }
+
+        return $pairs;
+    }
+
+    public function getAvailableCurrencies(User $user): array
+    {
+        return $user->wallets()
+            ->orderByDesc('balance')
+            ->get()
+            ->filter(fn ($wallet) => (float) $wallet->balance > 0 || in_array($wallet->currency, ['USD', 'USDT'], true))
+            ->pluck('currency')
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    public function getUserWalletBalances(User $user): array
+    {
+        return $user->wallets()
+            ->orderBy('currency')
+            ->get()
+            ->map(fn ($wallet) => [
+                'symbol' => $wallet->currency,
+                'balance' => (float) $wallet->balance,
+                'available' => (float) $wallet->available_balance,
+            ])
+            ->values()
+            ->all();
     }
 
     public function getQuote(string $from, string $to, float $amount): ?array
     {
         $pairs = $this->getSupportedPairs();
-        $pair = collect($pairs)->firstWhere(fn ($p) => $p['from'] === $from && $p['to'] === $to);
+        $pair = collect($pairs)->first(fn ($candidate) => $candidate['from'] === strtoupper($from) && $candidate['to'] === strtoupper($to));
 
-        if (!$pair) {
+        if (! $pair) {
             return null;
         }
 
@@ -37,8 +76,8 @@ class SwapService
         $fee = $toAmount * (self::FEES_PERCENT / 100);
 
         return [
-            'from_currency' => $from,
-            'to_currency' => $to,
+            'from_currency' => strtoupper($from),
+            'to_currency' => strtoupper($to),
             'from_amount' => $amount,
             'to_amount' => $toAmount - $fee,
             'rate' => $pair['rate'],
@@ -51,20 +90,25 @@ class SwapService
     {
         $quote = $this->getQuote($from, $to, $amount);
 
-        if (!$quote) {
+        if (! $quote) {
             return null;
         }
 
-        return SwapQuote::create([
-            'user_id' => $user->id,
-            'from_currency' => $from,
-            'to_currency' => $to,
-            'from_amount' => $amount,
-            'to_amount' => $quote['to_amount'],
-            'rate' => $quote['rate'],
-            'fee' => $quote['fee'],
-            'status' => 'completed',
-        ]);
+        return DB::transaction(function () use ($user, $quote) {
+            $this->wallets->debit($user, $quote['from_currency'], (float) $quote['from_amount']);
+            $this->wallets->credit($user, $quote['to_currency'], (float) $quote['to_amount']);
+
+            return SwapQuote::create([
+                'user_id' => $user->id,
+                'from_currency' => $quote['from_currency'],
+                'to_currency' => $quote['to_currency'],
+                'from_amount' => $quote['from_amount'],
+                'to_amount' => $quote['to_amount'],
+                'rate' => $quote['rate'],
+                'fee' => $quote['fee'],
+                'status' => 'completed',
+            ]);
+        });
     }
 
     public function getUserSwaps(User $user): Collection
@@ -83,5 +127,19 @@ class SwapService
                 'status' => $q->status,
                 'date' => $q->created_at->format('Y-m-d H:i'),
             ]);
+    }
+
+    private function getReferencePrices(): array
+    {
+        $pairs = MarketPair::where('is_active', true)
+            ->where('quote_currency', 'USDT')
+            ->get()
+            ->keyBy('base_currency');
+
+        return collect($pairs)
+            ->mapWithKeys(fn (MarketPair $pair) => [$pair->base_currency => (float) $pair->current_price])
+            ->prepend(1.0, 'USDT')
+            ->prepend(1.0, 'USD')
+            ->all();
     }
 }

@@ -1,4 +1,4 @@
-import { Bell, Globe, ChevronDown, Menu, BarChart3 } from 'lucide-react';
+import { Menu, BarChart3 } from 'lucide-react';
 import { usePage } from '@inertiajs/react';
 
 interface HeaderProps {
@@ -33,16 +33,6 @@ export default function Header({ onMenuClick }: HeaderProps) {
               <span className="hidden sm:inline">Admin Panel</span>
             </a>
           )}
-          <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#1A1A1A] hover:bg-[#1A1A1A] transition-colors text-zinc-300">
-            <Globe size={18} />
-            <span className="text-sm font-medium hidden sm:block">EN</span>
-            <ChevronDown size={14} className="text-zinc-500" />
-          </button>
-          <button className="relative p-2.5 text-zinc-400 hover:text-white hover:bg-[#1A1A1A] rounded-full transition-all">
-            <Bell size={20} />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 border-2 border-[#0A0A0A] rounded-full"></span>
-          </button>
-          <div className="h-8 w-[1px] bg-[#1A1A1A] mx-1"></div>
           <div className="flex items-center gap-3 pl-2">
             <img
               src="https://api.dicebear.com/7.x/avataaars/svg?seed=John"

@@ -5,25 +5,43 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\Withdrawal;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class WithdrawalService
 {
+    public function __construct(private WalletService $wallets) {}
+
     public function createWithdrawal(User $user, array $data): Withdrawal
     {
-        $amount = (float) $data['amount'];
-        $fee = $amount * 0.01;
-        $netAmount = $amount - $fee;
+        return DB::transaction(function () use ($user, $data) {
+            $currency = strtoupper((string) ($data['currency'] ?? 'USD'));
+            $amount = (float) $data['amount'];
+            $fee = $amount * 0.01;
+            $wallet = $user->wallets()
+                ->where('currency', $currency)
+                ->lockForUpdate()
+                ->first();
 
-        return Withdrawal::create([
-            'user_id' => $user->id,
-            'method' => $data['method'],
-            'amount' => $amount,
-            'fee' => $fee,
-            'net_amount' => $netAmount,
-            'currency' => $data['currency'] ?? 'USD',
-            'destination_details' => $data['destination'] ?? [],
-            'status' => 'pending',
-        ]);
+            if (! $wallet || $wallet->available_balance < $amount) {
+                throw ValidationException::withMessages([
+                    'amount' => 'Insufficient ' . $currency . ' balance.',
+                ]);
+            }
+
+            $wallet->decrement('balance', $amount);
+
+            return Withdrawal::create([
+                'user_id' => $user->id,
+                'method' => $data['method'],
+                'amount' => $amount,
+                'fee' => $fee,
+                'net_amount' => $amount - $fee,
+                'currency' => $currency,
+                'destination_details' => $data['destination'] ?? [],
+                'status' => 'pending',
+            ]);
+        });
     }
 
     public function getUserWithdrawals(User $user): Collection
@@ -43,10 +61,24 @@ class WithdrawalService
             ]);
     }
 
-    public function getUserBalance(User $user): float
+    public function getUserBalance(User $user, string $currency = 'USD'): float
     {
         return (float) $user->wallets()
-            ->where('currency', 'USD')
+            ->where('currency', strtoupper($currency))
             ->value('balance') ?? 0;
+    }
+
+    public function getUserWallets(User $user): array
+    {
+        return $user->wallets()
+            ->orderBy('currency')
+            ->get()
+            ->map(fn ($wallet) => [
+                'symbol' => $wallet->currency,
+                'balance' => (float) $wallet->balance,
+                'available' => (float) $wallet->available_balance,
+            ])
+            ->values()
+            ->all();
     }
 }

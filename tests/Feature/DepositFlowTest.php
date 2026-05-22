@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Deposit;
 use App\Models\DepositMethod;
 use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -70,6 +71,16 @@ class DepositFlowTest extends TestCase
         $deposit = Deposit::factory()->create([
             'user_id' => $this->user->id,
             'status' => 'pending',
+            'currency' => 'USD',
+            'amount' => 1000,
+            'fee' => 0,
+            'net_amount' => 1000,
+        ]);
+
+        $wallet = Wallet::factory()->create([
+            'user_id' => $this->user->id,
+            'currency' => 'USD',
+            'balance' => 2500,
         ]);
 
         $this->actingAs($admin)
@@ -77,6 +88,7 @@ class DepositFlowTest extends TestCase
             ->assertSessionHas('success');
 
         $this->assertEquals('approved', $deposit->fresh()->status);
+        $this->assertEquals('3500.00000000', $wallet->fresh()->balance);
     }
 
     public function test_admin_can_reject_deposit(): void
