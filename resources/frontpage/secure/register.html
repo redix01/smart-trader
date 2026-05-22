@@ -1,0 +1,191 @@
+
+
+<!doctype html>
+<html class="no-js" lang="en-US">
+
+<!-- Mirrored from acuitypromarket.com/secure/register by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 18 May 2026 22:30:02 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<head>
+    <base />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="http://../favicon.png" rel="icon" type="image/x-icon" />
+<!-- Add icon library -->
+<link rel="stylesheet" href="http://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+ <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  
+  
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="http://../css/bootstrap.min.css">
+<!-- jQuery library -->
+<script src="http://../js/jquery.min.js"></script>
+<!-- Popper JS -->
+<script src="http://../js/popper.min.js"></script>
+<!-- Latest compiled JavaScript -->
+<script src="http://../js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link href="http://../css/main.css" rel="stylesheet"/>
+<link href="http://../404.html" rel="stylesheet" />
+
+<title>Register&#8212;Acuity ProMarket</title>
+<link rel="manifest" href="http://../js/manifest.json">
+<meta name="theme-color" content="#0C0F19">
+<meta name="msapplication-navbutton-color" content="#0C0F19">
+<!-- iOS Safari -->
+<meta name="apple-mobile-web-app-status-bar-style" content="#0C0F19">
+
+
+<meta name="theme-color" content="#0C0F19">
+<meta name="msapplication-navbutton-color" content="#0C0F19">
+<!-- iOS Safari -->
+<meta name="apple-mobile-web-app-status-bar-style" content="#0C0F19">
+
+<link href="http://../favicon.png" rel="icon" type="image/x-icon" />
+<link rel="icon" sizes="192x192" href="http://../404.html">
+
+<meta name="keywords" content="Acuity ProMarket, Options, Crypto" />
+<meta property="og:image" content="images/logo.png" />
+
+<link rel="apple-touch-icon-precomposed" sizes="57x57" href="http://../404.html" />
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://../404.html" />
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://../images/icon/apple-touch-icon-114x114.png" />
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://../images/icon/apple-touch-icon-144x144.png" />
+
+
+<meta property="og:site_name" content="Acuity ProMarket">
+<meta property="og:title" content="Crypto Trading With Acuity ProMarket" />
+<meta name="description" content="Crypto Trading With Acuity ProMarket, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:description" content="Crypto Trading With Acuity ProMarket, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:type" content="website" />
+
+
+<link href="http://../404.html" rel="stylesheet" />
+
+</head>
+<body class="auth-body">
+<script src="http://../js/regvalidation.js"></script>
+<link rel="stylesheet" href="http://../css/intlTelInput.css">
+<script src="http://../js/app.js?v=805">
+</script>
+<div class="container text-center">
+    <div class="auth-container">
+		<h4>Sign up to get started with trading.</h4>
+				
+	<form  method="POST" class="validate mt-4 regForm" id="register">
+        <div class='step1'>
+		<div class="form-group">
+			<input type="text" placeholder="First Name" required name="fname" value="" class="form-control">
+			<div id="fnameErr" class="form_hint">First name must not be empty!</div>
+		</div>
+		<div class="form-group">
+			<input type="text" placeholder="Last Name" required name="lname" value="" class="form-control">
+			<div id="lnameErr" class="form_hint">Last name must not be empty!</div>
+		</div>
+        <div class="form-group">
+        </div>
+                <div class="form-group">
+			<input type="email" placeholder="Email" required name="email" value=""  class="form-control">
+            <div id="emailErr" class="form_hint"> Email must not be empty!</div>
+            <div id="emailErra" class="form_hint"> Email format not supportted!</div>
+            <div id="emailErrb" class="form_hint"> Email already exist!</div>
+            <div id="emailErrc" class="form_hint"><i class="fa fa-spinner fa-spin center"></i></div>
+        </div>
+        <div class="form-group">
+        	<select name="gender" id="gender" class="custom-select">
+                <option id="male">Male</option>
+                <option id="female">Female</option>
+            </select>
+        </div>
+		<div class="form-group text-black-50">
+			<input type="tel" id="mobile-number" required name="phone" value="" class="form-control">
+			<select id="address-country" name="country" style="display:none" required></select>
+		</div>
+        <div class="form-group text-black-50">
+        <select name="cur" placeholder="Currency" class="form-control"><option value="$">USD</option><option value="€">EUR</option><option value="£">GBP</option></select>
+</div>
+		<div class="form-group">
+			<input type="password" placeholder="Password" name="pwd" id="password" required class="form-control">
+			<div id="passwordErr" class="form_hint">Make your password stronger with more letters and at least a numbers</div>
+		</div>
+		<div class="form-group">
+			<input type="password" placeholder="Confirm Password" required name="cpwd" class="form-control" >
+		</div>
+        <div class="form-group">
+			<div class="custom-control custom-checkbox text-primary">
+				<input type="checkbox" name="agree" class="custom-control-input" id="agree" required>
+				<label class="custom-control-label" for="agree">I agree to Acuity ProMarket 
+				<a href="http://../rules" target="_blank" class="text-primary font-weight-bold">Terms and conditions</a></label>
+			</div>
+        </div>
+
+		<button type="submit" class="btn btn-primary btn-block" >Register</button>
+
+    </div>
+		<p class="text-muted text-center mt-5">Already have an account ? <a href="http://../secure/login" class="text-muted font-weight-bold">Login</a></p>
+	</form>
+		</div>
+    <a href="http://../secure/login">Already have an account</a></div>
+    <script src="http://../js/intlTelInput.js"></script> 
+
+<script>
+var countryData = $.fn.intlTelInput.getCountryData(),
+  telInput = $("#mobile-number"),
+  addressDropdown = $("#address-country");
+
+telInput.intlTelInput({
+  initialCountry: "auto",
+  customPlaceholder: function(selectedCountryPlaceholder, selectedCountryData) {
+	  return "e.g. " + selectedCountryPlaceholder;
+	},
+  preferredCountries: [ "us", "gb" ],
+  geoIpLookup: function(callback) {
+    $.get("https://ipinfo.io/", function() {}, "jsonp").always(function(resp) {
+      var countryCode = (resp && resp.country) ? resp.country : "";
+      callback(countryCode);
+    });
+  },
+  utilsScript: "acuitypromarket.com/js/utils.js" // just for formatting/placeholders etc
+});
+
+// populate the country dropdown
+$.each(countryData, function(i, country) {
+  addressDropdown.append($("<option></option>").attr("value", country.name).text(country.name));
+});
+// set it\'s initial value
+var initialCountry = telInput.intlTelInput("getSelectedCountryData").name;
+addressDropdown.val(initialCountry);
+
+// listen to the telephone input for changes
+telInput.on("countrychange", function(e, countryData) {
+  addressDropdown.val(countryData.name);
+});
+
+// listen to the address dropdown for changes
+addressDropdown.change(function() {
+	telInput.intlTelInput("setCountry", $(this).val());
+});
+$("#register").submit(function(e) {
+	telInput.val(telInput.intlTelInput("getNumber"));
+});
+
+</script>
+
+<style>
+  .skiptranslate {
+    display: none !important;?>
+  }
+  body {
+    top: 0 !important;
+  }
+</style>
+<div class="gtranslate_wrapper mx-auto d-flex justify-content-center"></div>
+<script>window.gtranslateSettings = {"default_language":"en","detect_browser_language":true,"wrapper_selector":".gtranslate_wrapper","flag_size":24,"switcher_horizontal_position":"inline","alt_flags":{"en":"usa"}}</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/dwf.js" defer></script>
+
+</body>
+
+<!-- Mirrored from acuitypromarket.com/secure/register by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 18 May 2026 22:30:02 GMT -->
+</html>

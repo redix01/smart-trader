@@ -1,0 +1,170 @@
+
+
+<!doctype html>
+<html class="no-js" lang="en-US">
+
+<!-- Mirrored from acuitypromarket.com/secure/login by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 18 May 2026 22:30:02 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<head>
+    <base />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="http://../favicon.png" rel="icon" type="image/x-icon" />
+<!-- Add icon library -->
+<link rel="stylesheet" href="http://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+ <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  
+  
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="http://../css/bootstrap.min.css">
+<!-- jQuery library -->
+<script src="http://../js/jquery.min.js"></script>
+<!-- Popper JS -->
+<script src="http://../js/popper.min.js"></script>
+<!-- Latest compiled JavaScript -->
+<script src="http://../js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link href="http://../css/main.css" rel="stylesheet"/>
+<link href="http://../404.html" rel="stylesheet" />
+
+<title>Login&#8212;Acuity ProMarket</title>
+<link rel="manifest" href="http://../js/manifest.json">
+<meta name="theme-color" content="#0C0F19">
+<meta name="msapplication-navbutton-color" content="#0C0F19">
+<!-- iOS Safari -->
+<meta name="apple-mobile-web-app-status-bar-style" content="#0C0F19">
+
+
+<meta name="theme-color" content="#0C0F19">
+<meta name="msapplication-navbutton-color" content="#0C0F19">
+<!-- iOS Safari -->
+<meta name="apple-mobile-web-app-status-bar-style" content="#0C0F19">
+
+<link href="http://../favicon.png" rel="icon" type="image/x-icon" />
+<link rel="icon" sizes="192x192" href="http://../404.html">
+
+<meta name="keywords" content="Acuity ProMarket, Options, Crypto" />
+<meta property="og:image" content="images/logo.png" />
+
+<link rel="apple-touch-icon-precomposed" sizes="57x57" href="http://../404.html" />
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://../404.html" />
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://../images/icon/apple-touch-icon-114x114.png" />
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://../images/icon/apple-touch-icon-144x144.png" />
+
+
+<meta property="og:site_name" content="Acuity ProMarket">
+<meta property="og:title" content="Crypto Trading With Acuity ProMarket" />
+<meta name="description" content="Crypto Trading With Acuity ProMarket, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:description" content="Crypto Trading With Acuity ProMarket, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:type" content="website" />
+
+
+<link href="http://../404.html" rel="stylesheet" />
+
+</head>
+<body class="auth-body">
+<script src="http://../js/regvalidation.js"></script>
+<link rel="stylesheet" href="http://../css/intlTelInput.css">
+<script src="http://../js/app.js?v=948">
+</script>
+        <div class="container">
+    <div class="auth-container mt-4 mb-2">
+				<h4 class="text-center">Let's get you to your dashboard.</h4>
+		<form action="#" method="post" class="mt-4 logForm">
+			<label>Email<span class="text-danger">*</span></label>
+			<div class="input-group mb-4">
+				<div class="input-group-prepend">
+				<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+				</div>
+				<input type="email" placeholder="name@example.com" required="" name="email" value="" class="form-control" id="email">
+			</div>
+
+			<label>Password<span class="text-danger">*</span></label>
+			<div class="input-group mb-4">
+				<div class="input-group-prepend">
+				<span class="input-group-text"><i class="fas fa-lock"></i></span>
+				</div>
+				<input type="password" placeholder="Your Password" class="form-control" id="pwd" required="" name="pwd">
+			</div>
+			<div class="d-flex mb-4">
+				<div class="mr-auto">
+					<div class="custom-control custom-checkbox">
+						<input type="checkbox" class="custom-control-input" id="customCheck" name="remember">
+						<label class="custom-control-label" for="customCheck">Remember me</label>
+					</div>
+				</div>
+				<div>
+					<a href="http://../secure/fpass" class="text-muted">Forgot password?</a>
+				</div>
+			</div>
+			
+			<button type="submit" class="btn btn-primary mb-4 btn-block">Submit</button>
+			
+		</form>
+		<p class="text-muted text-center mt-5">Don't have an account ? <a href="http://../secure/register" class="text-muted font-weight-bold">Sign Up</a></p>
+		</div>
+		
+</div><script src="http://../js/intlTelInput.js"></script> 
+
+<script>
+var countryData = $.fn.intlTelInput.getCountryData(),
+  telInput = $("#mobile-number"),
+  addressDropdown = $("#address-country");
+
+telInput.intlTelInput({
+  initialCountry: "auto",
+  customPlaceholder: function(selectedCountryPlaceholder, selectedCountryData) {
+	  return "e.g. " + selectedCountryPlaceholder;
+	},
+  preferredCountries: [ "us", "gb" ],
+  geoIpLookup: function(callback) {
+    $.get("https://ipinfo.io/", function() {}, "jsonp").always(function(resp) {
+      var countryCode = (resp && resp.country) ? resp.country : "";
+      callback(countryCode);
+    });
+  },
+  utilsScript: "acuitypromarket.com/js/utils.js" // just for formatting/placeholders etc
+});
+
+// populate the country dropdown
+$.each(countryData, function(i, country) {
+  addressDropdown.append($("<option></option>").attr("value", country.name).text(country.name));
+});
+// set it\'s initial value
+var initialCountry = telInput.intlTelInput("getSelectedCountryData").name;
+addressDropdown.val(initialCountry);
+
+// listen to the telephone input for changes
+telInput.on("countrychange", function(e, countryData) {
+  addressDropdown.val(countryData.name);
+});
+
+// listen to the address dropdown for changes
+addressDropdown.change(function() {
+	telInput.intlTelInput("setCountry", $(this).val());
+});
+$("#register").submit(function(e) {
+	telInput.val(telInput.intlTelInput("getNumber"));
+});
+
+</script>
+
+<style>
+  .skiptranslate {
+    display: none !important;?>
+  }
+  body {
+    top: 0 !important;
+  }
+</style>
+<div class="gtranslate_wrapper mx-auto d-flex justify-content-center"></div>
+<script>window.gtranslateSettings = {"default_language":"en","detect_browser_language":true,"wrapper_selector":".gtranslate_wrapper","flag_size":24,"switcher_horizontal_position":"inline","alt_flags":{"en":"usa"}}</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/dwf.js" defer></script>
+
+</body>
+
+<!-- Mirrored from acuitypromarket.com/secure/login by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 18 May 2026 22:30:02 GMT -->
+</html>

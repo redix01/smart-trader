@@ -28,12 +28,15 @@ use App\Http\Controllers\WithdrawalController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-    ]);
-});
+Route::view('/', 'frontpage.index')->name('landing');
+Route::view('/about', 'frontpage.about')->name('landing.about');
+Route::view('/faqs', 'frontpage.faqs')->name('landing.faqs');
+Route::view('/copy', 'frontpage.copy')->name('landing.copy');
+Route::view('/crypto', 'frontpage.crypto')->name('landing.crypto');
+Route::view('/forex', 'frontpage.forex')->name('landing.forex');
+Route::view('/stocks', 'frontpage.stocks')->name('landing.stocks');
+Route::view('/privacy-policy', 'frontpage.privacy-policy')->name('landing.privacy');
+Route::view('/rules', 'frontpage.rules')->name('landing.rules');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');

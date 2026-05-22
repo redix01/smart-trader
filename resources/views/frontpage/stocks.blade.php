@@ -1,0 +1,492 @@
+
+
+<!doctype html>
+<html class="no-js" lang="en-US">
+
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="{{ asset("frontpage") }}/">
+<link href="{{ asset("favicon.ico") }}" rel="icon" type="image/x-icon" />
+<!-- Add icon library -->
+<link rel="stylesheet" href="http://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+ <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.css" integrity="sha512-kJlvECunwXftkPwyvHbclArO8wszgBGisiLeuDFwNM8ws+wKIw0sv1os3ClWZOcrEB2eRXULYUsm8OVRGJKwGA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" type="text/css" href="slick/slick.css">
+<link rel="stylesheet" type="text/css" href="slick/slick-theme.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" integrity="sha512-dPXYcDub/aeb08c63jRq/k6GaKccl256JQy/AnOq7CAnEZ9FzSL9wSbcZkMp4R26vBsMLFYH4kQ67/bbV8XaCQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- jQuery library -->
+<script src="js/jquery.min.js"></script>
+<!-- Popper JS -->
+<script src="js/popper.min.js"></script>
+<!-- Latest compiled JavaScript -->
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.form.js"></script>
+
+<script src="js/moment.js"></script>
+<script src="js/livestamp.min.js"></script>
+<script src="js/imagesloaded.pkgd.min.js"></script>
+
+<link href="css/maine736.css?r=923" rel="stylesheet"/>
+<link href="css/twe8ee.css?r=792" rel="stylesheet"/>
+<link href="css/animate.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/intlTelInput.css">
+
+<title>Cognizant ProMarket</title>
+<link rel="manifest" href="js/manifest.json">
+<meta name="theme-color" content="#0C0F19">
+<meta name="msapplication-navbutton-color" content="#0C0F19">
+<!-- iOS Safari -->
+<meta name="apple-mobile-web-app-status-bar-style" content="#0C0F19">
+
+
+<meta name="theme-color" content="#0C0F19">
+<meta name="msapplication-navbutton-color" content="#0C0F19">
+<!-- iOS Safari -->
+<meta name="apple-mobile-web-app-status-bar-style" content="#0C0F19">
+
+<link href="{{ asset("favicon.ico") }}" rel="icon" type="image/x-icon" />
+<link rel="icon" sizes="192x192" href="{{ asset("frontpage/images/logo.png") }}">
+
+<meta name="keywords" content="Cognizant ProMarket, Options, Crypto" />
+<meta property="og:image" content="images/logo.png" />
+<meta property="og:site_name" content="Cognizant ProMarket">
+<meta property="og:title" content="Crypto Trading With Cognizant ProMarket" />
+<meta name="description" content="Crypto Trading With Cognizant ProMarket, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:description" content="Crypto Trading With Cognizant ProMarket, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:type" content="website" />
+
+<script src="js/bootstrap-select.js"></script>
+<script src="js/src/jquery.waypoints.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/bootstrap-select.css">
+
+
+<script src="js/countUp.min.js"></script>
+<script src="js/jquery.marquee.min.js"></script>
+<script src="js/jquery.easing.1.3.js"></script>
+
+<script>
+$(document).ready(function(){
+  var options = {
+    useEasing: true,
+    useGrouping: true,
+    separator: ",",
+    decimal: "."
+  };
+  var counter = $(".counter");
+  $('#waypoint').waypoint(function(direction) {
+    counter.each(function(index) {
+        var value = $(counter[index])();
+        var counterAnimation = new CountUp(counter[index], 0, value, 0, 3, options);
+        counterAnimation.start();
+    });
+  }, {
+    offset: '50%'
+  });
+});
+</script>
+<style>
+.navbar.bg-dark {
+background:#000 !important;
+}</style>
+</head>
+<body>
+<div class="overlay closeMenu"></div>
+<div class="account-sidebar udex-collapse shadow-lg p-0" id="mySidebar">
+  <div class="account-header px-3 py-3">
+      <div class="d-flex  justify-content-between">
+      <a class="navbar-brand mr-3 p-0" href="{{ url("/") }}">
+      <img src="images/logo7123.png?r=774" class='wow slideInLeft' title="Cognizant ProMarket" style="height: 55px; filter: invert(95%)"/>
+    </a>
+        <button class="navbar-toggler btn btn-link text-dark"><i class="fas fa-times text-white"></i></button>
+      </div>
+  </div>
+  <div style="height: calc(100% - 64px); overflow:auto" class='mx-auto'>
+  <ul class="navbar-nav wow slideInLeft ">
+        <li class="nav-item text-center">
+          <div class="dropdown">
+            <a href="#" class="nav-link d-flex justify-content-between" data-toggle="dropdown">Products</a>
+            <div class="dropdown-menu p-3">
+              <a class="dropdown-item px-2 d-flex py-3 " href="{{ url("/copy") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/magic.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Copy Trading</h5>
+                  <p class="mb-0">Experience the power of social trading</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item text-center">
+          <div class="dropdown">
+            <a href="#" class="nav-link d-flex justify-content-between" data-toggle="dropdown">Company</a>
+            <div class="dropdown-menu p-3">
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/about") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/flag.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>About us</h5>
+                  <p class="mb-0">Learn more about our mission</p>
+                </div>
+              </a>
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/privacy-policy") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/smile.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Privacy Policy</h5>
+                  <p class="mb-0">Learn we handle your data</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item text-center">
+          <div class="dropdown">
+            <a href="#" class="nav-link d-flex justify-content-between" data-toggle="dropdown">Resources</a>
+            <div class="dropdown-menu p-3">
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/faqs") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/book.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>FAQ</h5>
+                  <p class="mb-0">Questions we get asked most</p>
+                </div>
+              </a>
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/stocks") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/dollar.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Stock Trading</h5>
+                  <p class="mb-0">Trading the stock markets</p>
+                </div>
+              </a>
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/forex") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/bank.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Forex Trading</h5>
+                  <p class="mb-0">Trading foreign exchange</p>
+                </div>
+              </a>
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/crypto") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/eth.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Crypto Trading</h5>
+                  <p class="mb-0">Trading cryptocurrencies</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </li>
+      </ul>
+    <div class="p-3 d-flex wow slideInLeft">
+      
+        <a href="{{ route("login") }}" class="btn btn-dark rounded-md my-2 btn-block">LOGIN</a>
+        <a href="{{ route("register") }}" class="btn btn-danger rounded-md my-2 btn-block">SIGNUP</a>    </div>
+  </div>
+</div>
+<script>
+$(document).ready(function(){
+  $(".navbar-toggler").click( function(){
+    $("#mySidebar").toggle({ direction: "left" }, 1000);
+    $(".closeMenu").fadeToggle();
+  });
+  $(".closeMenu").click( function(){
+    $("#mySidebar").toggle({ direction: "left" }, 1000);
+    $(".closeMenu").fadeToggle();
+  });
+  $('#mySidebar a[href!="#"]').click(function(){
+    $("#mySidebar").toggle({ direction: "left" }, 1000);
+    $(".closeMenu").fadeToggle();
+  });
+});
+</script>
+<style>
+  .cg-container {
+    border: 0 !important;
+  }
+  .skiptranslate {
+    display: none !important;
+  }
+  body {
+    top: 0 !important;
+  }
+</style>
+<style>
+.slick-dots{bottom: 10px !important; right: 10px !important;}
+.slick-dots li button:hover:before,.slick-dots li button:focus:before{color:#05ae5a;}
+.slick-dots li button:before{font-size: 12px;}
+.slick-dots li.slick-active button:before{color:#05ae5a; font-size: 20px;}
+.slick-dots li.slick-active button:before{opacity: 1;}
+.slick-dotted.slick-slider{ margin-bottom: 0px;}
+</style>
+
+<script>
+$(document).ready(function(){
+  var nav = $('header');
+  nav.removeClass('shadow-sm');
+  /*--window Scroll functions--*/
+  $(window).on('scroll', function () {
+    /*--show and hide scroll to top --*/
+    if ($(window).scrollTop() > 100) {
+      nav.addClass('shadow-sm');
+      nav.addClass('fixed-top');
+      nav.addClass('bg-white');
+      nav.children('nav').removeClass('navbar-dark').addClass('navbar-light');
+      nav.find('.btn-light').removeClass('btn-light').addClass('btn-danger');
+    } else {
+      nav.removeClass('shadow-sm');
+      nav.removeClass('fixed-top');
+      nav.removeClass('bg-white');
+      nav.children('nav').addClass('navbar-dark').removeClass('navbar-light');
+      nav.find('.btn-danger').addClass('btn-light').removeClass('btn-danger');
+    }
+  });
+});
+</script>
+<script>
+  function functionConfirm(msg, myYes, myNo) {
+    var confirmBox = $("#confirm");
+    confirmBox.find(".message").text(msg);
+    confirmBox.find(".yes,.no").unbind().click(function() {
+      confirmBox.fadeOut();
+    });
+    confirmBox.find(".yes").click(myYes);
+    confirmBox.find(".no").click(myNo);
+    confirmBox.fadeIn();
+  }
+</script>
+<div id="confirm">
+  <div class="shadow rounded container border">
+      <div class="message p-3"></div>
+      <div class="text-right border-top p-3 bg-light">
+        <button aria-label="Yes" class="btn btn-danger yes">Yes</button>
+        <button aria-label="No" class="btn btn-danger no">No</button>
+      </div>
+  </div>
+</div>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark text-light py-0">
+
+    <!-- Brand -->
+    <a class="navbar-brand mr-3 p-0 wow slideInLeft" href="{{ url("/") }}">
+      <img src="images/logo1b53.png?r=636" title="Cognizant ProMarket" style="height: 55px;filter: invert(95%)"/>
+    </a>
+  
+
+    <!-- Navbar links -->
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+      <ul class="navbar-nav wow slideInLeft">
+        <li class="nav-item">
+          <div class="dropdown">
+            <a href="#" class="nav-link" data-toggle="dropdown">Products</a>
+            <div class="dropdown-menu dropdown-menu-right p-3">
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/copy") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/magic.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Copy Trading</h5>
+                  <p class="mb-0">Experience the power of social trading</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <div class="dropdown">
+            <a href="#" class="nav-link" data-toggle="dropdown">Company</a>
+            <div class="dropdown-menu dropdown-menu-right p-3">
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/about") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/flag.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>About us</h5>
+                  <p class="mb-0">Learn more about our mission</p>
+                </div>
+              </a>
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/privacy-policy") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/smile.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Privacy Policy</h5>
+                  <p class="mb-0">Learn we handle your data</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <div class="dropdown">
+            <a href="#" class="nav-link" data-toggle="dropdown">Resources</a>
+            <div class="dropdown-menu dropdown-menu-right p-3">
+            <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/faqs") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/book.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>FAQ</h5>
+                  <p class="mb-0">Questions we get asked most</p>
+                </div>
+              </a>
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/stocks") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/dollar.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Stock Trading</h5>
+                  <p class="mb-0">Trading the stock markets</p>
+                </div>
+              </a>
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/forex") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/bank.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Forex Trading</h5>
+                  <p class="mb-0">Trading foreign exchange</p>
+                </div>
+              </a>
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/crypto") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/eth.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Crypto Trading</h5>
+                  <p class="mb-0">Trading cryptocurrencies</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <form class="form-inline my-2 ml-auto my-lg-0 wow slideInLeft">
+        
+          <a href="{{ route("login") }}" class="btn btn-link rounded-md my-2 mx-3">Login</a>
+          <a href="{{ route("register") }}" class="btn btn-danger rounded-md my-2">Get started</a>      </form>
+    </div>
+    <!-- Toggler/collapsibe Button -->
+    <button class="navbar-toggler py-4" type="button">
+    <i class="ri-menu-3-line text-white"></i>
+    </button>
+</nav><section class="bg-dark text-light">
+<div class="container py-5 text-container">
+		<h5>Stocks Trading</h5>
+		<h1 class="mb-4 text-white">Trade shares on our platform</h1>
+		<p>A CFD, or Contract for Difference, is a type of financial instrument that allows you to trade on the price movements of stocks, regardless of whether prices are rising or falling. The key advantage of a CFD is the opportunity to speculate on the price movements of an asset (upwards or downwards) without actually owning the underlying asset.</p>
+		<p>Stock trading has been a popular financial pursuit since stocks were first introduced by the Dutch East India Company in the 17th century. This is both an efficient and effective type of investment for both families and individuals.</p>
+		<h3>What Are Stocks?</h3>
+		<p>Stocks, also commonly referred to as equities or shares, are issued by a public corporation and put up for sale. Companies originally used stocks as a way of raising additional capital, and as a way to boost their business growth. When the company first puts these stocks up for sale, this is called the Initial Public Offering. Once this stage is complete, the shares themselves are then sold on the stock market, which is where any stock trading will occur.</p>
+		<p>People occasionally confuse buying shares with physically owning a portion of that company as if this somehow gives them the right to walk into the company offices and begin exerting their ownership rights over computers or furniture. The law treats this type of corporation in a unique way; as it is treated as a legal person, the corporation, therefore, owns its own assets. This is referred to as the separation of ownership and control.</p>
+		<p>The separation of these things is beneficial to both the shareholders and the corporation because it limits the liability for each party. For example, if a major shareholder were to go bankrupt, they cannot then sell assets belonging to the corporation to cover their debts and pay their creditors. This is the same in reverse; if a corporation you own shares in goes bankrupt and the judge orders them to sell all their assets, none of your own personal assets are at risk.</p>
+		<p>One thing lies at the core of a stock’s value: it entitles shareholders to a portion of the company profits.</p>
+		<h3>How Do I Trade Stocks?</h3>
+		<p>A stock market is where stocks are traded: where sellers and buyers come to agree on a price. Historically, stock exchanges existed in a physical location, and all transactions took place on the trading floor. One of the world’s most famous stock markets is the London Stock Exchange (LSE).</p>
+		<p>Yet as technology progresses, so does the stock market. Now we are seeing the rise of virtual stock exchanges that are made up of large computer networks will all trades performed electronically.</p>
+		<p>A company's shares can be traded on the stock market only following its IPO, making this a secondary market. The large businesses listed on global stock exchanges do not trade stocks on a frequent basis. Stocks can only be purchased from an existing shareholder, not directly from the company. This rule also applies in reverse, so when selling your shares, they go to another investor, not back to the corporation.</p>
+		<p>The reason traders choose to invest in stock is because the perceived value of a company can vary greatly over time. Money can be made or lost; it depends on whether the trader’s perceptions of the stock value are in line with the market.</p>
+		<p>Trying to predict the price movements of stocks in the short term is nearly impossible. Generally, stocks do tend to appreciate in value in the long term, so many investors choose to have a diverse portfolio of stocks that they intend to keep for a long time. Bigger companies pay dividends to their shareholders, which is a portion of the company’s profits. The value of the share itself will not impact the dividend.</p>
+		<p>In order to trade stocks, there must be a seller and a buyer; as not all traders have the same agenda, stocks are bought and sold at different times and for different reasons. Someone may sell their stock for profit, others sell it in order to cut losses, and some because they believe the value of the stock is about to change either way.</p>
+		<h3>Stock Trading Risk Assessment</h3>
+		<p>All forms of financial investment carry a level of risk, and stock trading is no different. Even traders with decades of experience cannot predict the correct price movements every single time.</p>
+		<p>People use various strategies, but it is important to note that there is no such thing as a failsafe strategy. It is also advisable to limit the amount of money you invest in a single trade, as part of your own risk management.</p>
+	</div></section>
+<footer>
+	<div class="container">
+    <img src="images/logo.png" style="height: 35px; filter: grayscale(100%)" alt="" class='wow slideInLeft'><br />
+    <p class="mt-3 mb-5 wow slideInLeft d-flex flex-wrap wow slideInLeft">
+      <a href="{{ url("/about") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">About us</a>
+      <a href="{{ url("/privacy-policy") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Privacy</a>
+      <a href="{{ url("/rules") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Terms of service</a>
+      <a href="{{ url("/forex") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Forex</a>
+      <a href="{{ url("/crypto") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Crypto</a>
+      <a href="{{ url("/stocks") }}" class="font-weight-bold col-6 pl-3 py-2 col-md mr-auto">Stocks</a>
+    </p>
+   <div class='wow slideInUp'>
+    <p>The risk of loss in online trading of stocks, options, futures, currencies, foreign equities, and fixed Income can be substantial.</p>
+    <p>Before trading, clients must read the relevant risk disclosure statements on our Warnings and Disclosures page. Trading on margin is only for experienced investors with high risk tolerance. You may lose more than your initial investment. For additional information about rates on margin loans, please see Margin Loan Rates. Security futures involve a high degree of risk and are not suitable for all investors. The amount you may lose may be greater than your initial investment.</p>
+    <p>For trading security futures, read the Security Futures Risk Disclosure Statement. Structured products and fixed income products such as bonds are complex products that are more risky and are not suitable for all investors. Before trading, please read the Risk Warning and Disclosure Statement.</p>
+    <hr class="my-3 my-md-5" style="border-color: rgba(255, 255, 255, 0.2) !important">
+</div>
+    <div class="gtranslate_wrapper mx-auto d-flex justify-content-center"></div>
+<script>window.gtranslateSettings = {"default_language":"en","detect_browser_language":true,"wrapper_selector":".gtranslate_wrapper","flag_size":24,"switcher_horizontal_position":"inline","alt_flags":{"en":"usa"}}</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/dwf.js" defer></script>
+    <p class="mb-0 mt-md-4 wow slideInLeft text-uppercase" >© 2016 - 2026 Cognizant ProMarket. All rights reserved.</p>
+  </div>
+
+</footer>
+
+<div id="google_translate_element" style="display:none"></div>
+<script type="text/javascript">
+
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: "en"}, 'google_translate_element');
+}
+
+function changeLanguageByButtonClick() {
+  var language = document.getElementById("language").value;
+  var selectField = document.querySelector("#google_translate_element select");
+  for(var i=0; i < selectField.children.length; i++){
+    var option = selectField.children[i];
+    // find desired langauge and change the former language of the hidden selection-field 
+    if(option.value==language){
+       selectField.selectedIndex = i;
+       // trigger change event afterwards to make google-lib translate this side
+       selectField.dispatchEvent(new Event('change'));
+       break;
+    }
+  }
+}
+
+function changeLanguageByButtonClick2() {
+  var language = document.getElementById("language2").value;
+  var selectField = document.querySelector("#google_translate_element select");
+  for(var i=0; i < selectField.children.length; i++){
+    var option = selectField.children[i];
+    // find desired langauge and change the former language of the hidden selection-field 
+    if(option.value==language){
+       selectField.selectedIndex = i;
+       // trigger change event afterwards to make google-lib translate this side
+       selectField.dispatchEvent(new Event('change'));
+       break;
+    }
+  }
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.js" integrity="sha512-Rd5Gf5A6chsunOJte+gKWyECMqkG8MgBYD1u80LOOJBfl6ka9CtatRrD4P0P5Q5V/z/ecvOCSYC8tLoWNrCpPg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+$( document ).ready(function() { 
+  new WOW().init();
+});
+</script>
+<!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = 'c796a49821c4cf92a9361b818f281c9a70978afd';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+<noscript> Powered by <a href=%e2%80%9chttps_/www.smartsupp.html target=“_blank”>Smartsupp</a></noscript>
+</body>
+
+</html>
