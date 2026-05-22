@@ -57,13 +57,13 @@ export default function SettingsIndex({ settings }: { settings: Record<string, {
             <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-widest mb-4">{group}</h3>
             <div className="space-y-3">
               {items.map(setting => (
-                <div key={setting.key} className="flex items-center justify-between">
+                <div key={setting.key} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <label htmlFor={setting.key} className="text-sm text-white capitalize">{setting.key.replace(/_/g, ' ')}</label>
                   <input
                     id={setting.key}
                     value={data.settings.find(s => s.key === setting.key)?.value ?? setting.value}
                     onChange={e => updateSetting(setting.key, e.target.value)}
-                    className="w-64 bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white text-right font-mono focus:outline-none focus:border-zinc-600"
+                    className="w-full sm:w-64 bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white sm:text-right font-mono focus:outline-none focus:border-zinc-600"
                   />
                 </div>
               ))}

@@ -16,7 +16,7 @@ export default function OrderShow({ order }: { order: any }) {
         <Link href={route('admin.orders.index')} className="text-sm text-zinc-400 hover:text-white flex items-center gap-1"><ArrowLeft size={14} /> Back</Link>
       </div>
       <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-6 max-w-2xl">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div><p className="text-xs text-zinc-500">User</p><p className="text-white font-medium">{order.user.name} ({order.user.email})</p></div>
           <div><p className="text-xs text-zinc-500">Type</p><p className="text-white font-medium capitalize">{order.type}</p></div>
           <div><p className="text-xs text-zinc-500">Side</p><p className={`font-medium capitalize ${order.side === 'buy' ? 'text-emerald-500' : 'text-rose-500'}`}>{order.side}</p></div>

@@ -28,8 +28,8 @@ export default function UsersIndex({ users, filters }: Props) {
       </header>
 
       <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden">
-        <div className="p-4 border-b border-[#1A1A1A] flex items-center gap-4">
-          <div className="flex-1 relative">
+        <div className="p-4 border-b border-[#1A1A1A] flex flex-wrap items-center gap-3">
+          <div className="flex-1 min-w-[180px] relative">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
             <input
               value={data.search ?? ''}

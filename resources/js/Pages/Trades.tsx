@@ -161,8 +161,8 @@ export default function Trades({ pairs, defaultPair, balances }: TradesProps) {
       </header>
 
       {/* TradingView Ticker Tape */}
-      <div className="mb-6 rounded-3xl border border-[#1A1A1A] bg-[#111] overflow-hidden" style={{ minHeight: '56px' }}>
-        <div ref={tickerRef} />
+      <div className="mb-6 rounded-3xl border border-[#1A1A1A] bg-[#111] overflow-hidden">
+        <div ref={tickerRef} style={{ minHeight: '56px' }} />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">

@@ -23,6 +23,7 @@ export default function MiningPlansIndex({ plans }: { plans: { data: Plan[] } })
         <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-500 rounded-xl text-sm hover:bg-emerald-500 hover:text-black transition-all flex-shrink-0"><Plus size={16} /> Create Plan</button>
       </header>
       <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead><tr className="border-b border-[#1A1A1A]">
             <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase">Name</th>
@@ -52,6 +53,7 @@ export default function MiningPlansIndex({ plans }: { plans: { data: Plan[] } })
             ))}
           </tbody>
         </table>
+        </div>
       </div>
       {(showCreate || editing) && <MiningPlanForm plan={editing} onClose={() => { setShowCreate(false); setEditing(null); }} />}
     </AdminLayout>
@@ -73,18 +75,18 @@ function MiningPlanForm({ plan, onClose }: { plan: Plan | null; onClose: () => v
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-6 w-full max-w-md overflow-y-auto max-h-[90vh]" onClick={e => e.stopPropagation()}>
         <h3 className="text-lg font-bold text-white mb-4">{plan ? 'Edit Mining Plan' : 'Create Mining Plan'}</h3>
         <form onSubmit={submit} className="space-y-4">
           <input value={data.name} onChange={e => setData('name', e.target.value)} placeholder="Plan name" className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none" />
           {errors.name && <p className="text-xs text-rose-500">{errors.name}</p>}
           <input value={data.icon ?? ''} onChange={e => setData('icon', e.target.value)} placeholder="Icon class (e.g., starter, pro)" className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none" />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div><label className="text-xs text-zinc-500">ROI (%)</label><input value={data.roi_percent} onChange={e => setData('roi_percent', Number(e.target.value))} type="number" step="0.1" className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none" /></div>
             <div><label className="text-xs text-zinc-500">Duration (days)</label><input value={data.duration_days} onChange={e => setData('duration_days', Number(e.target.value))} type="number" className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none" /></div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div><label className="text-xs text-zinc-500">Min Amount ($)</label><input value={data.min_amount} onChange={e => setData('min_amount', Number(e.target.value))} type="number" step="0.01" className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none" /></div>
             <div><label className="text-xs text-zinc-500">Max Amount ($)</label><input value={data.max_amount ?? ''} onChange={e => setData('max_amount', e.target.value)} type="number" step="0.01" className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none" /></div>
           </div>

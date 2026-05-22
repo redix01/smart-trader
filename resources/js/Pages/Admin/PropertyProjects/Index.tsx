@@ -24,6 +24,7 @@ export default function PropertyProjectsIndex({ projects }: { projects: { data: 
         <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-500 rounded-xl text-sm hover:bg-emerald-500 hover:text-black transition-all flex-shrink-0"><Plus size={16} /> Add Project</button>
       </header>
       <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead><tr className="border-b border-[#1A1A1A]">
             <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase">Title</th>
@@ -51,6 +52,7 @@ export default function PropertyProjectsIndex({ projects }: { projects: { data: 
             ))}
           </tbody>
         </table>
+        </div>
       </div>
       {(showCreate || editing) && <ProjectForm project={editing} onClose={() => { setShowCreate(false); setEditing(null); }} />}
     </AdminLayout>
@@ -69,20 +71,20 @@ function ProjectForm({ project, onClose }: { project: Project | null; onClose: (
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-6 w-full max-w-lg" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-6 w-full max-w-lg overflow-y-auto max-h-[90vh]" onClick={e => e.stopPropagation()}>
         <h3 className="text-lg font-bold text-white mb-4">{project ? 'Edit Project' : 'Add Project'}</h3>
         <form onSubmit={submit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div><label className="text-xs text-zinc-500">Title</label><input value={data.title} onChange={e => setData('title', e.target.value)} className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none" /></div>
             <div><label className="text-xs text-zinc-500">Region</label><input value={data.region ?? ''} onChange={e => setData('region', e.target.value)} className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none" /></div>
           </div>
           {errors.title && <p className="text-xs text-rose-500">{errors.title}</p>}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div><label className="text-xs text-zinc-500">Strategy</label><input value={data.strategy ?? ''} onChange={e => setData('strategy', e.target.value)} className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none" /></div>
             <div><label className="text-xs text-zinc-500">Min Investment ($)</label><input value={data.min_investment} onChange={e => setData('min_investment', Number(e.target.value))} type="number" step="0.01" className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none" /></div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div><label className="text-xs text-zinc-500">Target ROI (%)</label><input value={data.target_roi ?? ''} onChange={e => setData('target_roi', Number(e.target.value))} type="number" step="0.1" className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none" /></div>
             <div><label className="text-xs text-zinc-500">Status</label><select value={data.status} onChange={e => setData('status', e.target.value)} className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
               <option value="draft">Draft</option><option value="open">Open</option><option value="active">Active</option><option value="completed">Completed</option><option value="archived">Archived</option>

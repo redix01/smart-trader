@@ -58,16 +58,16 @@ export default function Markets({ markets, topGainers, overview, favorites }: Ma
               ))}
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex gap-2 p-1 bg-[#111] border border-[#1A1A1A] rounded-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex gap-2 p-1 bg-[#111] border border-[#1A1A1A] rounded-xl self-start">
                 {['All', 'Favorites', 'Crypto'].map((cat) => (
                   <button key={cat} onClick={() => setActiveCat(cat)}
                     className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeCat === cat ? 'bg-blue-600/10 text-blue-500' : 'text-zinc-500 hover:text-white'}`}>{cat}</button>
                 ))}
               </div>
-              <div className="hidden sm:flex items-center gap-2 bg-[#111] border border-[#1A1A1A] rounded-xl px-4 py-2 focus-within:border-blue-600 transition-colors">
-                <Search size={16} className="text-zinc-500" />
-                <input type="text" placeholder="Search..." className="bg-transparent border-none outline-none text-xs text-white w-48" />
+              <div className="flex items-center gap-2 bg-[#111] border border-[#1A1A1A] rounded-xl px-4 py-2 focus-within:border-blue-600 transition-colors sm:ml-auto">
+                <Search size={16} className="text-zinc-500 flex-shrink-0" />
+                <input type="text" placeholder="Search..." className="bg-transparent border-none outline-none text-xs text-white w-full sm:w-48" />
               </div>
             </div>
 

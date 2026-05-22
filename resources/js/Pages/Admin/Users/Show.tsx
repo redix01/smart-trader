@@ -88,6 +88,7 @@ export default function UsersShow({ user }: { user: UserDetail }) {
       {user.kyc_submissions.length > 0 && (
         <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-6">
           <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-widest mb-4">KYC Submissions</h3>
+          <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead><tr className="border-b border-[#1A1A1A]">
               <th className="px-4 py-3 text-[10px] font-bold text-zinc-500 uppercase">Document</th>
@@ -102,6 +103,7 @@ export default function UsersShow({ user }: { user: UserDetail }) {
               </tr>
             ))}</tbody>
           </table>
+          </div>
         </div>
       )}
     </AdminLayout>

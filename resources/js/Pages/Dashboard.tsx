@@ -109,8 +109,8 @@ export default function Dashboard({ kpi, wallets, kyc_status }: DashboardProps) 
       </header>
       <div className="space-y-6">
         {/* TradingView Ticker Tape */}
-        <div className="rounded-3xl border border-[#1A1A1A] bg-[#111] overflow-hidden" style={{ minHeight: '56px' }}>
-          <div ref={tickerRef} />
+        <div className="rounded-3xl border border-[#1A1A1A] bg-[#111] overflow-hidden">
+          <div ref={tickerRef} style={{ minHeight: '56px' }} />
         </div>
 
         {kyc_status === 'unverified' && (

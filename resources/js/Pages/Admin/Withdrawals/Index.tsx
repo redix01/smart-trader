@@ -15,12 +15,13 @@ export default function WithdrawalsIndex({ withdrawals, filters }: { withdrawals
         <p className="text-zinc-500 text-sm font-medium">Review and process pending withdrawal requests.</p>
       </header>
       <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden">
-        <div className="p-4 border-b border-[#1A1A1A] flex gap-2">
+        <div className="p-4 border-b border-[#1A1A1A] flex flex-wrap gap-2">
           {['', 'pending', 'approved', 'rejected'].map(s => (
             <Link key={s} href={route('admin.withdrawals.index', s ? { status: s } : {})}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${(filters.status ?? '') === s ? 'bg-white text-black' : 'bg-[#0A0A0A] text-zinc-400 hover:text-white'}`}>{s || 'All'}</Link>
           ))}
         </div>
+        <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead><tr className="border-b border-[#1A1A1A]">
             <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">User</th>
@@ -41,6 +42,7 @@ export default function WithdrawalsIndex({ withdrawals, filters }: { withdrawals
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </AdminLayout>
   );

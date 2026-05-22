@@ -14,7 +14,7 @@ export default function SwapShow({ swap }: { swap: any }) {
         <Link href={route('admin.swaps.index')} className="text-sm text-zinc-400 hover:text-white flex items-center gap-1"><ArrowLeft size={14} /> Back</Link>
       </div>
       <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-6 max-w-2xl">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div><p className="text-xs text-zinc-500">User</p><p className="text-white font-medium">{swap.user.name} ({swap.user.email})</p></div>
           <div><p className="text-xs text-zinc-500">Status</p><p className="text-white font-medium capitalize">{swap.status}</p></div>
           <div><p className="text-xs text-zinc-500">From</p><p className="text-white font-medium">{swap.from_currency}</p></div>

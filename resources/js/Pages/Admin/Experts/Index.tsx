@@ -24,6 +24,7 @@ export default function ExpertsIndex({ experts }: { experts: { data: Expert[] } 
         <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-500 rounded-xl text-sm hover:bg-emerald-500 hover:text-black transition-all flex-shrink-0"><Plus size={16} /> Add Expert</button>
       </header>
       <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead><tr className="border-b border-[#1A1A1A]">
             <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase">Name</th>
@@ -55,6 +56,7 @@ export default function ExpertsIndex({ experts }: { experts: { data: Expert[] } 
             ))}
           </tbody>
         </table>
+        </div>
       </div>
       {(showCreate || editing) && <ExpertForm expert={editing} onClose={() => { setShowCreate(false); setEditing(null); }} />}
     </AdminLayout>
@@ -72,18 +74,18 @@ function ExpertForm({ expert, onClose }: { expert: Expert | null; onClose: () =>
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-6 w-full max-w-md overflow-y-auto max-h-[90vh]" onClick={e => e.stopPropagation()}>
         <h3 className="text-lg font-bold text-white mb-4">{expert ? 'Edit Expert' : 'Add Expert'}</h3>
         <form onSubmit={submit} className="space-y-4">
           <input value={data.name} onChange={e => setData('name', e.target.value)} placeholder="Expert name" className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none" />
           {errors.name && <p className="text-xs text-rose-500">{errors.name}</p>}
           <textarea value={data.bio ?? ''} onChange={e => setData('bio', e.target.value)} placeholder="Bio" rows={3} className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none" />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div><label className="text-xs text-zinc-500">Win Rate (%)</label><input value={data.win_rate ?? ''} onChange={e => setData('win_rate', Number(e.target.value))} type="number" step="0.1" className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none" /></div>
             <div><label className="text-xs text-zinc-500">Profit Share (%)</label><input value={data.profit_share ?? ''} onChange={e => setData('profit_share', Number(e.target.value))} type="number" step="0.1" className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none" /></div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div><label className="text-xs text-zinc-500">Total Volume ($)</label><input value={data.total_volume ?? ''} onChange={e => setData('total_volume', Number(e.target.value))} type="number" step="0.01" className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none" /></div>
             <div><label className="text-xs text-zinc-500">Avatar URL</label><input value={data.avatar ?? ''} onChange={e => setData('avatar', e.target.value)} className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white focus:outline-none" /></div>
           </div>
