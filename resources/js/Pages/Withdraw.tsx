@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import { ArrowUpRight, ShieldCheck, Info, ChevronDown, Building2, User, CreditCard, Landmark } from 'lucide-react';
@@ -16,7 +15,9 @@ export default function Withdraw({ balance }: WithdrawProps) {
       bank_name: '',
       account_name: '',
       account_number: '',
+      routing_number: '',
       wallet_address: '',
+      paypal_email: '',
     },
   });
 
@@ -27,6 +28,9 @@ export default function Withdraw({ balance }: WithdrawProps) {
 
   const netAmount = data.amount ? (parseFloat(data.amount) * 0.99).toFixed(2) : '0.00';
   const fee = data.amount ? (parseFloat(data.amount) * 0.01).toFixed(2) : '0.00';
+  const isBankTransfer = data.method === 'Bank Transfer';
+  const isCryptoWallet = data.method === 'Bitcoin Wallet' || data.method === 'Ethereum Wallet';
+  const isPayPal = data.method === 'PayPal';
 
   return (
     <AppLayout>
@@ -89,40 +93,63 @@ export default function Withdraw({ balance }: WithdrawProps) {
               </div>
               <div className="space-y-8">
                 <div className="space-y-6">
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Bank Name</label>
-                    <div className="relative group">
-                      <input type="text" value={data.destination.bank_name} onChange={(e) => setData('destination', { ...data.destination, bank_name: e.target.value })}
-                        placeholder="e.g. Chase Bank"
-                        className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl pl-12 pr-6 py-4 text-sm text-white focus:border-rose-600/50 outline-none transition-all shadow-inner placeholder:text-zinc-700" />
-                      <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-rose-500 transition-colors" size={20} />
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Account Name</label>
-                    <div className="relative group">
-                      <input type="text" value={data.destination.account_name} onChange={(e) => setData('destination', { ...data.destination, account_name: e.target.value })}
-                        placeholder="Card holder name"
-                        className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl pl-12 pr-6 py-4 text-sm text-white focus:border-rose-600/50 outline-none transition-all shadow-inner placeholder:text-zinc-700" />
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-rose-500 transition-colors" size={20} />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Account Number</label>
-                      <div className="relative group">
-                        <input type="text" value={data.destination.account_number} onChange={(e) => setData('destination', { ...data.destination, account_number: e.target.value })}
-                          placeholder="99201928"
-                          className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl pl-12 pr-6 py-4 text-sm text-white focus:border-rose-600/50 outline-none transition-all shadow-inner font-mono placeholder:text-zinc-700" />
-                        <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-rose-500 transition-colors" size={20} />
+                  {isBankTransfer && (
+                    <>
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Bank Name</label>
+                        <div className="relative group">
+                          <input type="text" value={data.destination.bank_name} onChange={(e) => setData('destination', { ...data.destination, bank_name: e.target.value })}
+                            placeholder="e.g. Chase Bank"
+                            className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl pl-12 pr-6 py-4 text-sm text-white focus:border-rose-600/50 outline-none transition-all shadow-inner placeholder:text-zinc-700" />
+                          <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-rose-500 transition-colors" size={20} />
+                        </div>
                       </div>
-                    </div>
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Account Name</label>
+                        <div className="relative group">
+                          <input type="text" value={data.destination.account_name} onChange={(e) => setData('destination', { ...data.destination, account_name: e.target.value })}
+                            placeholder="Card holder name"
+                            className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl pl-12 pr-6 py-4 text-sm text-white focus:border-rose-600/50 outline-none transition-all shadow-inner placeholder:text-zinc-700" />
+                          <User className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-rose-500 transition-colors" size={20} />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-3">
+                          <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Account Number</label>
+                          <div className="relative group">
+                            <input type="text" value={data.destination.account_number} onChange={(e) => setData('destination', { ...data.destination, account_number: e.target.value })}
+                              placeholder="99201928"
+                              className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl pl-12 pr-6 py-4 text-sm text-white focus:border-rose-600/50 outline-none transition-all shadow-inner font-mono placeholder:text-zinc-700" />
+                            <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-rose-500 transition-colors" size={20} />
+                          </div>
+                        </div>
+                        <div className="space-y-3">
+                          <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Routing Number</label>
+                          <input type="text" value={data.destination.routing_number} onChange={(e) => setData('destination', { ...data.destination, routing_number: e.target.value })}
+                            placeholder="29930192"
+                            className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl px-6 py-4 text-sm text-white focus:border-rose-600/50 outline-none transition-all shadow-inner font-mono placeholder:text-zinc-700" />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {isCryptoWallet && (
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Routing Number</label>
-                      <input type="text" placeholder="29930192"
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Wallet Address</label>
+                      <input type="text" value={data.destination.wallet_address} onChange={(e) => setData('destination', { ...data.destination, wallet_address: e.target.value })}
+                        placeholder={data.method === 'Bitcoin Wallet' ? 'bc1...' : '0x...'}
                         className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl px-6 py-4 text-sm text-white focus:border-rose-600/50 outline-none transition-all shadow-inner font-mono placeholder:text-zinc-700" />
                     </div>
-                  </div>
+                  )}
+
+                  {isPayPal && (
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">PayPal Email</label>
+                      <input type="email" value={data.destination.paypal_email} onChange={(e) => setData('destination', { ...data.destination, paypal_email: e.target.value })}
+                        placeholder="name@example.com"
+                        className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl px-6 py-4 text-sm text-white focus:border-rose-600/50 outline-none transition-all shadow-inner placeholder:text-zinc-700" />
+                    </div>
+                  )}
                 </div>
                 <div className="pt-4">
                   <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-[32px] p-6 mb-6">

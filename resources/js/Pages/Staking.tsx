@@ -1,5 +1,7 @@
-import { Head } from '@inertiajs/react';
+import { useState } from 'react';
+import { Head, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
+import Modal from '@/Components/Modal';
 import { motion } from 'motion/react';
 import { ShieldCheck, ChevronRight, Database, TrendingUp, Lock } from 'lucide-react';
 
@@ -21,6 +23,29 @@ interface StakingProps {
 }
 
 export default function Staking({ plans }: StakingProps) {
+  const [selectedPlan, setSelectedPlan] = useState<StakingPlan | null>(null);
+  const { data, setData, post, processing, errors, reset } = useForm({
+    plan_id: 0,
+    amount: '',
+  });
+
+  const openPlan = (plan: StakingPlan) => {
+    setSelectedPlan(plan);
+    setData({ plan_id: plan.id, amount: '' });
+  };
+
+  const closePlan = () => {
+    setSelectedPlan(null);
+    reset();
+  };
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    post(route('stakes.store'), {
+      onSuccess: closePlan,
+    });
+  };
+
   return (
     <AppLayout>
       <Head title="Staking" />
@@ -58,9 +83,8 @@ export default function Staking({ plans }: StakingProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {plans.map((plan) => (
-            <motion.div key={plan.id} whileHover={{ y: -5 }}
-              className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden group hover:border-blue-600/30 transition-all flex flex-col">
-              <div className={`p-6 bg-gradient-to-br from-white/5 to-white/0 border-b border-[#1A1A1A] flex items-center justify-between`}>
+            <motion.div key={plan.id} whileHover={{ y: -5 }} className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden group hover:border-blue-600/30 transition-all flex flex-col">
+              <div className="p-6 bg-gradient-to-br from-white/5 to-white/0 border-b border-[#1A1A1A] flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className={`w-12 h-12 ${plan.icon_bg} rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform`}>
                     <img src={plan.icon} className="w-8 h-8 rounded-full p-1 bg-white" alt="" />
@@ -98,7 +122,7 @@ export default function Staking({ plans }: StakingProps) {
                     <ShieldCheck size={14} className="text-emerald-500" />
                     Smart Contract Audited
                   </div>
-                  <button className="w-full py-4 bg-white/5 border border-white/10 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-600 hover:border-blue-600 transition-all group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] flex items-center justify-center gap-2">
+                  <button onClick={() => openPlan(plan)} className="w-full py-4 bg-white/5 border border-white/10 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-600 hover:border-blue-600 transition-all group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] flex items-center justify-center gap-2">
                     Stake Now <ChevronRight size={14} />
                   </button>
                 </div>
@@ -106,6 +130,36 @@ export default function Staking({ plans }: StakingProps) {
             </motion.div>
           ))}
         </div>
+
+        <Modal show={!!selectedPlan} onClose={closePlan} maxWidth="lg">
+          <form onSubmit={submit} className="p-6 lg:p-8 space-y-6">
+            <div>
+              <h3 className="text-2xl font-bold text-white">{selectedPlan?.name}</h3>
+              <p className="text-zinc-500 text-sm mt-1">Enter the amount you want to stake.</p>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Amount (USD)</label>
+              <input
+                type="number"
+                min={selectedPlan ? Number(selectedPlan.min.replace(/,/g, '')) : 0}
+                value={data.amount}
+                onChange={e => setData('amount', e.target.value)}
+                className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl px-4 py-3 text-sm text-white outline-none focus:border-blue-600"
+                placeholder={selectedPlan?.min}
+              />
+              {errors.amount && <p className="text-xs text-rose-500">{errors.amount}</p>}
+              {errors.plan_id && <p className="text-xs text-rose-500">{errors.plan_id}</p>}
+            </div>
+
+            <div className="flex items-center justify-end gap-3">
+              <button type="button" onClick={closePlan} className="px-4 py-2 text-sm text-zinc-400 hover:text-white">Cancel</button>
+              <button type="submit" disabled={processing} className="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-500 transition-all disabled:opacity-50">
+                {processing ? 'Submitting...' : 'Confirm Subscription'}
+              </button>
+            </div>
+          </form>
+        </Modal>
 
         <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-8 text-center space-y-4 relative overflow-hidden">
           <div className="w-16 h-16 bg-[#1A1A1A] rounded-3xl flex items-center justify-center mx-auto text-zinc-600 relative z-10">

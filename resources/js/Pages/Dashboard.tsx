@@ -114,7 +114,7 @@ export default function Dashboard({ kpi, wallets, kyc_status }: DashboardProps) 
         </div>
 
         {kyc_status === 'unverified' && (
-          <div className="bg-blue-600/10 border border-blue-600/20 px-6 py-4 rounded-2xl flex items-center justify-between group cursor-pointer hover:bg-blue-600/15 transition-all">
+          <Link href={route('kyc')} className="bg-blue-600/10 border border-blue-600/20 px-6 py-4 rounded-2xl flex items-center justify-between group hover:bg-blue-600/15 transition-all">
             <div className="flex items-center gap-4">
               <div className="p-2 bg-blue-600 rounded-lg">
                 <ShieldCheck className="text-white" size={20} />
@@ -125,7 +125,7 @@ export default function Dashboard({ kpi, wallets, kyc_status }: DashboardProps) 
               </div>
             </div>
             <span className="text-xs font-bold uppercase tracking-wider text-blue-400">Verify Now</span>
-          </div>
+          </Link>
         )}
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">

@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\WithdrawalController as AdminWithdrawalController;
 use App\Http\Controllers\AssetsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KycController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\ExpertsController;
 use App\Http\Controllers\MarketsController;
@@ -40,6 +41,8 @@ Route::view('/rules', 'frontpage.rules')->name('landing.rules');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/kyc', [KycController::class, 'index'])->name('kyc');
+    Route::post('/kyc', [KycController::class, 'store'])->name('kyc.store');
     Route::get('/assets', AssetsController::class)->name('assets');
     Route::get('/markets', MarketsController::class)->name('markets');
     Route::get('/trades', [TradesController::class, 'index'])->name('trades');

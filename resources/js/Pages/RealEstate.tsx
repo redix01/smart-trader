@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
+import Modal from '@/Components/Modal';
 import { motion } from 'motion/react';
-import { Building2, Home, Landmark, TrendingUp, Target, MapPin, ChevronRight, ArrowUpRight } from 'lucide-react';
+import { Building2, Home, Landmark, TrendingUp, Target, MapPin, ArrowUpRight } from 'lucide-react';
 
 interface Project {
   id: number;
@@ -25,10 +26,26 @@ export default function RealEstate({ projects }: RealEstateProps) {
     project_id: 0,
     amount: '',
   });
-  const [selectedProject, setSelectedProject] = useState<number | null>(null);
+  const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [mode, setMode] = useState<'view' | 'invest' | null>(null);
 
-  const handleInvest = (projectId: number) => {
-    setSelectedProject(projectId === selectedProject ? null : projectId);
+  const openProject = (project: Project, nextMode: 'view' | 'invest') => {
+    setActiveProject(project);
+    setMode(nextMode);
+    setData('project_id', project.id);
+  };
+
+  const closeModal = () => {
+    setActiveProject(null);
+    setMode(null);
+    reset();
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    post(route('realestate.store'), {
+      onSuccess: closeModal,
+    });
   };
 
   return (
@@ -77,8 +94,7 @@ export default function RealEstate({ projects }: RealEstateProps) {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           {projects.map((p) => (
-            <motion.div key={p.id} whileHover={{ y: -8 }}
-              className="bg-[#111] border border-[#1A1A1A] rounded-[40px] overflow-hidden group shadow-2xl flex flex-col">
+            <motion.div key={p.id} whileHover={{ y: -8 }} className="bg-[#111] border border-[#1A1A1A] rounded-[40px] overflow-hidden group shadow-2xl flex flex-col">
               <div className="h-64 relative overflow-hidden">
                 <img src={p.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#111] to-transparent" />
@@ -106,9 +122,8 @@ export default function RealEstate({ projects }: RealEstateProps) {
                   </div>
                 </div>
                 <div className="flex gap-4 pt-4 border-t border-[#1A1A1A]">
-                  <button className="flex-1 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-all text-xs uppercase tracking-widest">View Project</button>
-                  <button onClick={() => handleInvest(p.id)}
-                    className="flex-1 py-4 bg-amber-600 text-white font-bold rounded-2xl hover:bg-amber-500 transition-all text-xs uppercase tracking-widest shadow-[0_4px_25px_rgba(217,119,6,0.25)] flex items-center justify-center gap-2">
+                  <button onClick={() => openProject(p, 'view')} className="flex-1 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-all text-xs uppercase tracking-widest">View Project</button>
+                  <button onClick={() => openProject(p, 'invest')} className="flex-1 py-4 bg-amber-600 text-white font-bold rounded-2xl hover:bg-amber-500 transition-all text-xs uppercase tracking-widest shadow-[0_4px_25px_rgba(217,119,6,0.25)] flex items-center justify-center gap-2">
                     Invest Now <ArrowUpRight size={16} />
                   </button>
                 </div>
@@ -116,6 +131,63 @@ export default function RealEstate({ projects }: RealEstateProps) {
             </motion.div>
           ))}
         </div>
+
+        <Modal show={!!activeProject} onClose={closeModal} maxWidth="xl">
+          <div className="p-6 lg:p-8 space-y-6">
+            {activeProject && (
+              <>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-bold text-white">{activeProject.title}</h3>
+                  <p className="text-zinc-500 text-sm">{activeProject.region} · {activeProject.strategy}</p>
+                </div>
+                <p className="text-zinc-400 text-sm leading-relaxed">{activeProject.description}</p>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-4">
+                    <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold">Minimum</p>
+                    <p className="text-white font-bold font-mono mt-1">{activeProject.min}</p>
+                  </div>
+                  <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-4">
+                    <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold">ROI</p>
+                    <p className="text-emerald-500 font-bold font-mono mt-1">{activeProject.roi}</p>
+                  </div>
+                  <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-4">
+                    <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold">Status</p>
+                    <p className="text-white font-bold capitalize mt-1">{activeProject.status}</p>
+                  </div>
+                </div>
+
+                {mode === 'invest' && (
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Investment Amount</label>
+                      <input
+                        type="number"
+                        value={data.amount}
+                        onChange={e => setData('amount', e.target.value)}
+                        placeholder={activeProject.min}
+                        className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl px-4 py-3 text-sm text-white outline-none focus:border-amber-600"
+                      />
+                    </div>
+                    <div className="flex items-center justify-end gap-3">
+                      <button type="button" onClick={closeModal} className="px-4 py-2 text-sm text-zinc-400 hover:text-white">Cancel</button>
+                      <button type="submit" disabled={processing} className="px-5 py-2.5 bg-amber-600 text-white rounded-xl text-sm font-bold hover:bg-amber-500 transition-all disabled:opacity-50">
+                        {processing ? 'Submitting...' : 'Submit Investment'}
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {mode === 'view' && (
+                  <div className="flex justify-end">
+                    <button onClick={() => setMode('invest')} className="px-5 py-2.5 bg-amber-600 text-white rounded-xl text-sm font-bold hover:bg-amber-500 transition-all">
+                      Invest Now
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </Modal>
       </div>
     </AppLayout>
   );

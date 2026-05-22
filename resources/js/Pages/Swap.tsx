@@ -33,6 +33,9 @@ export default function Swap({ pairs }: SwapProps) {
     return pair?.rate ?? null;
   };
 
+  const currencies = Array.from(new Set(pairs.flatMap((pair) => [pair.from, pair.to])));
+  const availableTo = currencies.filter((currency) => currency !== data.from && pairs.some((pair) => pair.from === data.from && pair.to === currency));
+
   useEffect(() => {
     const rate = findRate(data.from, data.to);
     if (rate && data.amount) {
@@ -44,6 +47,12 @@ export default function Swap({ pairs }: SwapProps) {
 
   const handleSwapSelection = () => {
     setData({ ...data, from: data.to, to: data.from });
+  };
+
+  const handleFromChange = (value: string) => {
+    const nextTo = pairs.find((pair) => pair.from === value && pair.to !== value)?.to ?? availableTo[0] ?? data.to;
+    setData('from', value);
+    setData('to', nextTo);
   };
 
   const getIcon = (currency: string) => icons[currency] || '';
@@ -66,8 +75,12 @@ export default function Swap({ pairs }: SwapProps) {
               <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-4 flex items-center gap-4 group focus-within:border-blue-600/50 transition-all">
                 <div className="flex items-center gap-3 bg-[#111] px-3 py-2 rounded-xl border border-[#222] min-w-[120px]">
                   <img src={getIcon(data.from)} className="w-6 h-6 rounded-full" alt="" />
-                  <span className="text-sm font-bold text-white">{data.from}</span>
-                  <ChevronDown size={14} className="ml-auto text-zinc-500" />
+                  <select value={data.from} onChange={(e) => handleFromChange(e.target.value)} className="bg-transparent text-sm font-bold text-white outline-none w-full cursor-pointer">
+                    {currencies.map((currency) => (
+                      <option key={currency} value={currency}>{currency}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="ml-auto text-zinc-500 pointer-events-none" />
                 </div>
                 <input type="number" value={data.amount} onChange={(e) => setData('amount', e.target.value)} placeholder="0.00"
                   className="flex-1 bg-transparent border-none outline-none text-xl font-bold text-white placeholder-zinc-700 font-mono text-right" />
@@ -89,8 +102,12 @@ export default function Swap({ pairs }: SwapProps) {
               <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-4 flex items-center gap-4 group focus-within:border-blue-600/50 transition-all">
                 <div className="flex items-center gap-3 bg-[#111] px-3 py-2 rounded-xl border border-[#222] min-w-[120px]">
                   <img src={getIcon(data.to)} className="w-6 h-6 rounded-full" alt="" />
-                  <span className="text-sm font-bold text-white">{data.to}</span>
-                  <ChevronDown size={14} className="ml-auto text-zinc-500" />
+                  <select value={data.to} onChange={(e) => setData('to', e.target.value)} className="bg-transparent text-sm font-bold text-white outline-none w-full cursor-pointer">
+                    {availableTo.map((currency) => (
+                      <option key={currency} value={currency}>{currency}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="ml-auto text-zinc-500 pointer-events-none" />
                 </div>
                 <div className="flex-1 text-xl font-bold text-zinc-600 font-mono text-right">
                   {quote ? quote.to_amount.toFixed(6) : '0.000000'}
@@ -114,7 +131,7 @@ export default function Swap({ pairs }: SwapProps) {
             </div>
           </div>
 
-          <form onSubmit={() => post(route('swap.store'))} className="space-y-4">
+          <form onSubmit={(e) => { e.preventDefault(); post(route('swap.store')); }} className="space-y-4">
             <div className="flex items-center gap-2 text-[11px] font-medium text-zinc-500 px-1">
               <Wallet size={14} className="text-blue-500" />
               <span>Rate: {quote?.rate?.toFixed(6) || '0.000000'}</span>
