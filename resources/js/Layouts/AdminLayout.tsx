@@ -1,10 +1,11 @@
 import { useState, useEffect, PropsWithChildren } from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import BrandLogo from '@/Components/BrandLogo';
 import Header from '@/Components/Header';
 import {
     LayoutDashboard, Users, ShieldCheck, ArrowUpCircle, ArrowDownCircle,
     Database, Pickaxe, UserCheck, CreditCard, Zap, ArrowLeftRight,
-    Settings, BarChart3, ArrowLeft, LogOut,
+    Settings, ArrowLeft, LogOut,
 } from 'lucide-react';
 
 const adminNav = [
@@ -61,12 +62,9 @@ export default function AdminLayout({ children }: PropsWithChildren) {
             <aside className={`fixed top-0 left-0 bottom-0 bg-[#0C0C0C] border-r border-[#1F1F1F] z-50 flex flex-col w-[260px] transition-transform duration-300 ${(!isMobile || isSidebarOpen) ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="p-6 border-b border-[#1A1A1A] flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-amber-600 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(217,119,6,0.3)]">
-                            <BarChart3 className="text-white w-5 h-5" />
-                        </div>
-                        <div>
-                            <span className="font-bold text-sm tracking-tight text-white block leading-tight">CognizantPro</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-amber-600">Admin Panel</span>
+                        <div className="flex flex-col gap-1">
+                            <BrandLogo className="h-10 w-auto object-contain" alt="CognizantPro Market Admin" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-amber-600 pl-1">Admin Panel</span>
                         </div>
                     </div>
                     {isMobile && (

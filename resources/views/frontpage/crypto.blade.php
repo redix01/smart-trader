@@ -114,7 +114,7 @@ border-color:#1d4ed8 !important;
   <div class="account-header px-3 py-3">
       <div class="d-flex  justify-content-between">
       <a class="navbar-brand mr-3 p-0" href="{{ url("/") }}">
-      <span class="wow slideInLeft text-white font-weight-bold d-inline-flex align-items-center" style="height: 55px; font-size: 1.15rem; letter-spacing: 0.04em;"><span style="display:inline-block;width:12px;height:12px;border-radius:999px;background:#2563eb;box-shadow:0 0 20px rgba(37,99,235,.45);margin-right:12px;"></span>Cognizant ProMarket</span>
+      @include('frontpage.partials.logo', ['class' => 'wow slideInLeft d-inline-block', 'height' => '55px'])
     </a>
         <button class="navbar-toggler btn btn-link text-dark"><i class="fas fa-times text-white"></i></button>
       </div>
@@ -296,7 +296,7 @@ $(document).ready(function(){
 
     <!-- Brand -->
     <a class="navbar-brand mr-3 p-0 wow slideInLeft" href="{{ url("/") }}">
-      <span class="wow slideInLeft text-white font-weight-bold d-inline-flex align-items-center" style="height: 55px; font-size: 1.15rem; letter-spacing: 0.04em;"><span style="display:inline-block;width:12px;height:12px;border-radius:999px;background:#2563eb;box-shadow:0 0 20px rgba(37,99,235,.45);margin-right:12px;"></span>Cognizant ProMarket</span>
+      @include('frontpage.partials.logo', ['class' => 'wow slideInLeft d-inline-block', 'height' => '55px'])
     </a>
   
 
@@ -411,7 +411,7 @@ $(document).ready(function(){
 	</div></section>
 <footer>
 	<div class="container">
-    <span class="wow slideInLeft text-white font-weight-bold d-inline-flex align-items-center" style="font-size: 1rem; letter-spacing: 0.04em;"><span style="display:inline-block;width:10px;height:10px;border-radius:999px;background:#2563eb;box-shadow:0 0 18px rgba(37,99,235,.45);margin-right:10px;"></span>Cognizant ProMarket</span><br />
+    @include('frontpage.partials.logo', ['class' => 'wow slideInLeft d-inline-block', 'height' => '44px'])<br />
     <p class="mt-3 mb-5 wow slideInLeft d-flex flex-wrap wow slideInLeft">
       <a href="{{ url("/about") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">About us</a>
       <a href="{{ url("/privacy-policy") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Privacy</a>

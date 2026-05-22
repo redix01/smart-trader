@@ -1,4 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
+import BrandLogo from '@/Components/BrandLogo';
 import { 
   LayoutDashboard, 
   Wallet, 
@@ -70,10 +71,7 @@ export default function Sidebar({ isOpen, setIsOpen, isMobile }: SidebarProps) {
       >
         <div className="p-6 border-b border-[#1A1A1A] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.3)]">
-              <BarChart3 className="text-white w-5 h-5" />
-            </div>
-            <span className="font-bold text-lg tracking-tight text-white">CognizantPro</span>
+            <BrandLogo className="h-10 w-auto object-contain" />
           </div>
           {isMobile && (
             <button onClick={() => setIsOpen(false)} className="lg:hidden p-2 text-zinc-500 hover:text-white transition-colors">
