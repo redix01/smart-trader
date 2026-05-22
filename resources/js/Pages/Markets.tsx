@@ -24,6 +24,7 @@ interface MarketsProps {
     total_market_cap: string;
     total_volume_24h: string;
     active_pairs: number;
+    btc_dominance: string;
   };
   favorites: number[];
 }
@@ -44,7 +45,7 @@ export default function Markets({ markets, topGainers, overview, favorites }: Ma
           <div className="flex-1 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
-                { label: 'BTC Dominance', value: '54.2%', change: '+0.4%', up: true },
+                { label: 'BTC Dominance', value: overview.btc_dominance, change: '+0.4%', up: true },
                 { label: 'Market Cap', value: overview.total_market_cap, change: '+1.2%', up: true },
                 { label: 'Volume (24h)', value: overview.total_volume_24h, change: '-12.5%', up: false },
               ].map((idx, i) => (

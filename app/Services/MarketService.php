@@ -9,8 +9,17 @@ use Illuminate\Support\Collection;
 
 class MarketService
 {
+    public function __construct(private CoinMarketCapService $coinMarketCap) {}
+
+    public function syncCryptoPrices(): void
+    {
+        $this->coinMarketCap->syncMarketPairs();
+    }
+
     public function getAllPairs(): Collection
     {
+        $this->syncCryptoPrices();
+
         return MarketPair::where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('base_currency')
@@ -20,6 +29,8 @@ class MarketService
 
     public function getTopGainers(int $limit = 4): Collection
     {
+        $this->syncCryptoPrices();
+
         return MarketPair::where('is_active', true)
             ->where('price_change_24h', '>', 0)
             ->orderByDesc('price_change_24h')
@@ -30,12 +41,22 @@ class MarketService
 
     public function getOverview(): array
     {
+        $this->syncCryptoPrices();
+
         $pairs = MarketPair::where('is_active', true);
+        $totalMarketCap = (float) $pairs->sum('market_cap');
+        $btcMarketCap = (float) MarketPair::where('is_active', true)
+            ->where('base_currency', 'BTC')
+            ->where('quote_currency', 'USDT')
+            ->value('market_cap') ?: 0;
 
         return [
-            'total_market_cap' => '$' . number_format($pairs->sum('market_cap') / 3, 2),
-            'total_volume_24h' => '$' . number_format($pairs->sum('volume_24h'), 2),
+            'total_market_cap' => '$' . number_format($totalMarketCap, 2),
+            'total_volume_24h' => '$' . number_format((float) $pairs->sum('volume_24h'), 2),
             'active_pairs' => $pairs->count(),
+            'btc_dominance' => $totalMarketCap > 0
+                ? number_format(($btcMarketCap / $totalMarketCap) * 100, 1) . '%'
+                : '0.0%',
         ];
     }
 
