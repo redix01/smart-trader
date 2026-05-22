@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Withdrawal;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 class WithdrawalService
 {
@@ -31,6 +31,7 @@ class WithdrawalService
         return $user->withdrawals()
             ->orderByDesc('created_at')
             ->get()
+            ->toBase()
             ->map(fn (Withdrawal $w) => [
                 'id' => $w->id,
                 'method' => $w->method,

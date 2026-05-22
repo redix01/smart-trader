@@ -14,6 +14,7 @@ class StakingService
         return StakingPlan::where('is_active', true)
             ->orderBy('sort_order')
             ->get()
+            ->toBase()
             ->map(fn (StakingPlan $p) => [
                 'id' => $p->id,
                 'name' => $p->name,
@@ -34,6 +35,7 @@ class StakingService
             ->with('stakingPlan')
             ->orderByDesc('created_at')
             ->get()
+            ->toBase()
             ->map(fn (Stake $s) => [
                 'id' => $s->id,
                 'plan_name' => $s->stakingPlan?->name,

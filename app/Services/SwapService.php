@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\SwapQuote;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 class SwapService
 {
@@ -72,6 +72,7 @@ class SwapService
         return $user->swapQuotes()
             ->orderByDesc('created_at')
             ->get()
+            ->toBase()
             ->map(fn (SwapQuote $q) => [
                 'id' => $q->id,
                 'from' => $q->from_currency,

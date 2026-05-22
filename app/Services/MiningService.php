@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\MiningPlan;
 use App\Models\MiningSubscription;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 
 class MiningService
@@ -15,6 +15,7 @@ class MiningService
         return MiningPlan::where('is_active', true)
             ->orderBy('sort_order')
             ->get()
+            ->toBase()
             ->map(fn (MiningPlan $p) => [
                 'id' => $p->id,
                 'name' => $p->name,
@@ -35,6 +36,7 @@ class MiningService
             ->with('miningPlan')
             ->orderByDesc('created_at')
             ->get()
+            ->toBase()
             ->map(fn (MiningSubscription $s) => [
                 'id' => $s->id,
                 'plan_name' => $s->miningPlan?->name,
