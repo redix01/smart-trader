@@ -1,0 +1,354 @@
+import { useState, useEffect, useRef } from 'react';
+import { Head } from '@inertiajs/react';
+import AppLayout from '@/Layouts/AppLayout';
+import { TrendingUp, TrendingDown, Star, ArrowUpRight, Clock } from 'lucide-react';
+
+interface Pair {
+  id: number;
+  name: string;
+  price: string;
+  change: string;
+  up: boolean;
+  icon: string;
+}
+
+interface Balance {
+  label: string;
+  value: string | number;
+  color: string;
+}
+
+interface TradesProps {
+  pairs: Pair[];
+  defaultPair: Pair | null;
+  balances: Balance[];
+}
+
+type OrderType = 'Market' | 'Limit';
+type OrderMode = 'buy' | 'sell';
+type MarketType = 'crypto' | 'stocks' | 'forex';
+
+const PCT_BTNS = ['25%', '50%', '75%', '100%'];
+
+const STOCK_PAIRS: Pair[] = [
+  { id: 101, name: 'AAPL/USD', price: '182.50', change: '+1.20%', up: true, icon: '' },
+  { id: 102, name: 'TSLA/USD', price: '245.30', change: '-0.80%', up: false, icon: '' },
+  { id: 103, name: 'NVDA/USD', price: '875.20', change: '+2.10%', up: true, icon: '' },
+  { id: 104, name: 'MSFT/USD', price: '415.80', change: '+0.50%', up: true, icon: '' },
+  { id: 105, name: 'AMZN/USD', price: '185.40', change: '-0.30%', up: false, icon: '' },
+  { id: 106, name: 'GOOGL/USD', price: '175.60', change: '+1.00%', up: true, icon: '' },
+];
+
+const FOREX_PAIRS: Pair[] = [
+  { id: 201, name: 'EUR/USD', price: '1.0845', change: '+0.10%', up: true, icon: '' },
+  { id: 202, name: 'GBP/USD', price: '1.2720', change: '-0.20%', up: false, icon: '' },
+  { id: 203, name: 'USD/JPY', price: '149.85', change: '+0.30%', up: true, icon: '' },
+  { id: 204, name: 'AUD/USD', price: '0.6542', change: '-0.10%', up: false, icon: '' },
+  { id: 205, name: 'USD/CAD', price: '1.3580', change: '+0.05%', up: true, icon: '' },
+  { id: 206, name: 'USD/CHF', price: '0.9012', change: '-0.15%', up: false, icon: '' },
+];
+
+export default function Trades({ pairs, defaultPair, balances }: TradesProps) {
+  const [marketType, setMarketType] = useState<MarketType>('crypto');
+  const [activePair, setActivePair] = useState<Pair | undefined>(defaultPair ?? pairs[0]);
+  const [orderType, setOrderType] = useState<OrderType>('Market');
+  const [orderMode, setOrderMode] = useState<OrderMode>('buy');
+  const [price, setPrice] = useState('');
+  const [amount, setAmount] = useState('');
+  const [activeTab, setActiveTab] = useState<'orders' | 'history'>('orders');
+
+  const tickerRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  const currentPairs = marketType === 'crypto' ? pairs : marketType === 'stocks' ? STOCK_PAIRS : FOREX_PAIRS;
+
+  const nameParts = (activePair?.name ?? 'BTC/USDT').split('/');
+  const baseAsset = nameParts[0] ?? 'BTC';
+  const quoteAsset = nameParts[1] ?? 'USDT';
+
+  const tvSymbol = (() => {
+    if (marketType === 'stocks') return `NASDAQ:${baseAsset}`;
+    if (marketType === 'forex') return `FX_IDC:${baseAsset}${quoteAsset}`;
+    return `BINANCE:${baseAsset}${quoteAsset}`;
+  })();
+
+  const quoteBalance = balances.find(b => b.label === quoteAsset)?.value ?? 0;
+  const baseBalance = balances.find(b => b.label === baseAsset)?.value ?? 0;
+  const availableBalance = orderMode === 'buy' ? quoteBalance : baseBalance;
+  const availableLabel = orderMode === 'buy' ? quoteAsset : baseAsset;
+
+  const applyPct = (p: string) => {
+    const max = parseFloat(String(availableBalance)) || 0;
+    const factor = parseInt(p) / 100;
+    const cp = parseFloat((activePair?.price ?? '1').replace(/,/g, ''));
+    setAmount(orderMode === 'buy' ? (max * factor / cp).toFixed(6) : (max * factor).toFixed(6));
+  };
+
+  const limitPrice = price ? parseFloat(price.replace(/,/g, '')) : parseFloat((activePair?.price ?? '0').replace(/,/g, ''));
+  const total = amount ? (limitPrice * parseFloat(amount)).toFixed(2) : '0.00';
+
+
+  // Switch to first pair of new market type
+  useEffect(() => {
+    const pairList = marketType === 'crypto' ? pairs : marketType === 'stocks' ? STOCK_PAIRS : FOREX_PAIRS;
+    const first = pairList[0];
+    if (first) setActivePair(first);
+  }, [marketType]);
+
+  // Ticker tape — inject once
+  useEffect(() => {
+    if (!tickerRef.current) return;
+    tickerRef.current.innerHTML = '';
+    const script = document.createElement('script');
+    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      symbols: [
+        { proName: 'BITSTAMP:BTCUSD', title: 'Bitcoin' },
+        { proName: 'BITSTAMP:ETHUSD', title: 'Ethereum' },
+        { proName: 'BINANCE:SOLUSDT', title: 'Solana' },
+        { proName: 'BINANCE:BNBUSDT', title: 'BNB' },
+        { proName: 'BINANCE:XRPUSDT', title: 'XRP' },
+        { proName: 'FX:EURUSD', title: 'EUR/USD' },
+        { proName: 'FX:GBPUSD', title: 'GBP/USD' },
+        { proName: 'NASDAQ:AAPL', title: 'Apple' },
+        { proName: 'NASDAQ:TSLA', title: 'Tesla' },
+        { proName: 'NASDAQ:NVDA', title: 'NVIDIA' },
+      ],
+      showSymbolLogo: true,
+      isTransparent: true,
+      displayMode: 'adaptive',
+      colorTheme: 'dark',
+      locale: 'en',
+    });
+    tickerRef.current.appendChild(script);
+    return () => { if (tickerRef.current) tickerRef.current.innerHTML = ''; };
+  }, []);
+
+  // Advanced Chart — reload when symbol changes
+  useEffect(() => {
+    if (!chartRef.current) return;
+    chartRef.current.innerHTML = '';
+    const script = document.createElement('script');
+    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      autosize: true,
+      symbol: tvSymbol,
+      interval: '60',
+      timezone: 'Etc/UTC',
+      theme: 'dark',
+      style: '1',
+      locale: 'en',
+      backgroundColor: 'rgba(10,10,10,0)',
+      gridColor: 'rgba(27,27,27,0.8)',
+      hide_top_toolbar: false,
+      hide_legend: false,
+      allow_symbol_change: true,
+      save_image: false,
+      calendar: false,
+    });
+    chartRef.current.appendChild(script);
+    return () => { if (chartRef.current) chartRef.current.innerHTML = ''; };
+  }, [tvSymbol]);
+
+  return (
+    <AppLayout>
+      <Head title="Trades" />
+      <header className="mb-6 flex flex-col gap-1">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-zinc-500 bg-clip-text text-transparent capitalize tracking-tight">Trades</h1>
+        <p className="text-zinc-500 text-sm font-medium">Place and manage your market orders.</p>
+      </header>
+
+      {/* TradingView Ticker Tape */}
+      <div className="mb-6 rounded-3xl border border-[#1A1A1A] bg-[#111] overflow-hidden" style={{ minHeight: '56px' }}>
+        <div ref={tickerRef} />
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+        {/* Left — chart + history */}
+        <div className="xl:col-span-3 space-y-6">
+          <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[#1A1A1A]">
+              <div className="flex items-center gap-3">
+                {activePair?.icon ? (
+                  <img src={activePair.icon} className="w-8 h-8 rounded-full" alt="" />
+                ) : null}
+                <div>
+                  <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">{marketType}</p>
+                  <h2 className="text-lg font-bold text-white leading-none">{activePair?.name}</h2>
+                </div>
+                <div className="flex items-baseline gap-2 ml-2">
+                  <span className="text-2xl font-mono font-bold text-white">{activePair?.price}</span>
+                  <span className={`text-sm font-bold ${activePair?.up ? 'text-emerald-500' : 'text-rose-500'}`}>{activePair?.change}</span>
+                </div>
+              </div>
+              <button className="text-zinc-500 hover:text-yellow-500 transition-colors p-2">
+                <Star size={20} />
+              </button>
+            </div>
+            {/* TradingView Advanced Chart */}
+            <div ref={chartRef} className="h-[480px] w-full" />
+          </div>
+
+          {/* Orders / Trade History */}
+          <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden">
+            <div className="flex items-center gap-1 p-1 bg-[#0A0A0A] border-b border-[#1A1A1A] m-4 rounded-2xl">
+              {(['orders', 'history'] as const).map((tab) => (
+                <button key={tab} onClick={() => setActiveTab(tab)}
+                  className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${
+                    activeTab === tab ? 'bg-blue-600 text-white' : 'text-zinc-500 hover:text-white'
+                  }`}>
+                  {tab === 'orders' ? 'Open Orders' : 'Trade History'}
+                </button>
+              ))}
+            </div>
+            <div className="px-4 pb-6">
+              <div className="py-10 text-center text-zinc-500">
+                <p className="text-sm font-medium">{activeTab === 'orders' ? 'No open orders' : 'No trade history yet'}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right — order panel */}
+        <div className="xl:col-span-2 space-y-6">
+          <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-5 space-y-4">
+
+            {/* Market type selector */}
+            <div>
+              <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest mb-2">Market</p>
+              <div className="flex bg-[#0A0A0A] p-1 rounded-2xl border border-[#1A1A1A]">
+                {(['crypto', 'stocks', 'forex'] as MarketType[]).map((m) => (
+                  <button key={m} onClick={() => setMarketType(m)}
+                    className={`flex-1 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                      marketType === m ? 'bg-[#1A1A1A] text-white shadow' : 'text-zinc-500 hover:text-zinc-300'
+                    }`}>
+                    {m}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Pair selector + order type */}
+            <div className="flex items-center justify-between pb-3 border-b border-[#1A1A1A]">
+              <select
+                value={activePair?.id}
+                onChange={(e) => {
+                  const p = currentPairs.find(cp => cp.id === Number(e.target.value));
+                  if (p) setActivePair(p);
+                }}
+                className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-3 py-2 text-sm font-bold text-white outline-none cursor-pointer"
+              >
+                {currentPairs.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+              </select>
+              <div className="flex items-center gap-1 bg-[#0A0A0A] p-0.5 rounded-lg border border-[#1A1A1A]">
+                {(['Market', 'Limit'] as OrderType[]).map(t => (
+                  <button key={t} onClick={() => setOrderType(t)}
+                    className={`px-2.5 py-1 rounded-md text-[10px] font-bold transition-all ${orderType === t ? 'bg-[#1A1A1A] text-white' : 'text-zinc-500 hover:text-zinc-300'}`}>
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Buy / Sell tabs */}
+            <div className="flex bg-[#0A0A0A] p-1 rounded-2xl border border-[#1A1A1A]">
+              {(['buy', 'sell'] as OrderMode[]).map((mode) => (
+                <button key={mode} onClick={() => setOrderMode(mode)}
+                  className={`flex-1 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                    orderMode === mode
+                      ? mode === 'buy' ? 'bg-emerald-500 text-black shadow-lg'
+                      :                  'bg-rose-500 text-white shadow-lg'
+                      : 'text-zinc-500 hover:text-white'
+                  }`}>
+                  {mode}
+                </button>
+              ))}
+            </div>
+
+            {/* BUY / SELL form */}
+            {(
+              <div className="space-y-4">
+                <div className="flex items-center justify-between bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-3 py-2.5">
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Available</span>
+                  <span className="text-xs font-bold text-white font-mono">
+                    {Number(availableBalance).toLocaleString(undefined, { maximumFractionDigits: 6 })}{' '}
+                    <span className="text-zinc-500">{availableLabel}</span>
+                  </span>
+                </div>
+
+                {orderType === 'Limit' && (
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Price ({quoteAsset})</label>
+                    <div className="relative">
+                      <input type="text" value={price} onChange={(e) => setPrice(e.target.value)}
+                        placeholder={activePair?.price}
+                        className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-3 pr-14 text-sm text-white focus:border-blue-600 outline-none transition-colors font-mono" />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-zinc-600">{quoteAsset}</span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Amount ({baseAsset})</label>
+                  <div className="relative">
+                    <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
+                      placeholder="0.00"
+                      className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-3 pr-14 text-sm text-white focus:border-blue-600 outline-none transition-colors font-mono" />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-zinc-600">{baseAsset}</span>
+                  </div>
+                  <div className="grid grid-cols-4 gap-1 mt-1">
+                    {PCT_BTNS.map((p) => (
+                      <button key={p} onClick={() => applyPct(p)}
+                        className="py-1 text-[9px] font-bold text-zinc-500 bg-[#0A0A0A] border border-[#1A1A1A] rounded-lg hover:bg-[#1A1A1A] hover:text-white transition-all">
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Total ({quoteAsset})</label>
+                  <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-3 text-sm text-zinc-400 font-mono">${total}</div>
+                </div>
+
+                <div className="flex justify-between text-[10px] text-zinc-500 px-0.5">
+                  <span>Fee <span className="text-zinc-400 font-mono">0.1%</span></span>
+                  <span>Leverage <span className="text-white font-bold font-mono">1x</span></span>
+                </div>
+
+                <button className={`w-full py-4 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 text-sm ${
+                  orderMode === 'buy'
+                    ? 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.2)]'
+                    : 'bg-rose-600 text-white hover:bg-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.2)]'
+                }`}>
+                  {orderMode === 'buy' ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                  {orderMode === 'buy' ? 'Buy' : 'Sell'} {baseAsset}
+                  <ArrowUpRight size={16} />
+                </button>
+              </div>
+            )}
+
+          </div>
+
+          {/* Quick Balances */}
+          <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-5 space-y-4">
+            <div className="flex items-center gap-2">
+              <Clock size={16} className="text-blue-500" />
+              <h3 className="text-sm font-bold text-white">Quick Balances</h3>
+            </div>
+            <div className="space-y-2">
+              {balances.map((b) => (
+                <div key={b.label} className="flex items-center justify-between p-3 bg-[#0A0A0A] rounded-xl border border-[#1A1A1A]">
+                  <span className={`text-xs font-bold ${b.color}`}>{b.label}</span>
+                  <span className="text-sm font-bold text-white font-mono">{Number(b.value).toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </AppLayout>
+  );
+}
