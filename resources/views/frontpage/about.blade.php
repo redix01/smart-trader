@@ -94,7 +94,19 @@ $(document).ready(function(){
 <style>
 .navbar.bg-dark {
 background:#000 !important;
-}</style>
+}
+.btn-primary,
+.bg-primary {
+background:#2563eb !important;
+border-color:#2563eb !important;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+background:#1d4ed8 !important;
+border-color:#1d4ed8 !important;
+}
+</style>
 </head>
 <body>
 <div class="overlay closeMenu"></div>
@@ -102,7 +114,7 @@ background:#000 !important;
   <div class="account-header px-3 py-3">
       <div class="d-flex  justify-content-between">
       <a class="navbar-brand mr-3 p-0" href="{{ url("/") }}">
-      <img src="images/logofb77.png?r=181" class='wow slideInLeft' title="Cognizant ProMarket" style="height: 55px; filter: invert(95%)"/>
+      <span class="wow slideInLeft text-white font-weight-bold d-inline-flex align-items-center" style="height: 55px; font-size: 1.15rem; letter-spacing: 0.04em;"><span style="display:inline-block;width:12px;height:12px;border-radius:999px;background:#2563eb;box-shadow:0 0 20px rgba(37,99,235,.45);margin-right:12px;"></span>Cognizant ProMarket</span>
     </a>
         <button class="navbar-toggler btn btn-link text-dark"><i class="fas fa-times text-white"></i></button>
       </div>
@@ -197,7 +209,7 @@ background:#000 !important;
     <div class="p-3 d-flex wow slideInLeft">
       
         <a href="{{ route("login") }}" class="btn btn-dark rounded-md my-2 btn-block">LOGIN</a>
-        <a href="{{ route("register") }}" class="btn btn-danger rounded-md my-2 btn-block">SIGNUP</a>    </div>
+        <a href="{{ route("register") }}" class="btn btn-primary rounded-md my-2 btn-block">SIGNUP</a>    </div>
   </div>
 </div>
 <script>
@@ -248,13 +260,13 @@ $(document).ready(function(){
       nav.addClass('fixed-top');
       nav.addClass('bg-white');
       nav.children('nav').removeClass('navbar-dark').addClass('navbar-light');
-      nav.find('.btn-light').removeClass('btn-light').addClass('btn-danger');
+      nav.find('.btn-light').removeClass('btn-light').addClass('btn-primary');
     } else {
       nav.removeClass('shadow-sm');
       nav.removeClass('fixed-top');
       nav.removeClass('bg-white');
       nav.children('nav').addClass('navbar-dark').removeClass('navbar-light');
-      nav.find('.btn-danger').addClass('btn-light').removeClass('btn-danger');
+      nav.find('.btn-primary').addClass('btn-light').removeClass('btn-primary');
     }
   });
 });
@@ -275,8 +287,8 @@ $(document).ready(function(){
   <div class="shadow rounded container border">
       <div class="message p-3"></div>
       <div class="text-right border-top p-3 bg-light">
-        <button aria-label="Yes" class="btn btn-danger yes">Yes</button>
-        <button aria-label="No" class="btn btn-danger no">No</button>
+        <button aria-label="Yes" class="btn btn-primary yes">Yes</button>
+        <button aria-label="No" class="btn btn-primary no">No</button>
       </div>
   </div>
 </div>
@@ -284,7 +296,7 @@ $(document).ready(function(){
 
     <!-- Brand -->
     <a class="navbar-brand mr-3 p-0 wow slideInLeft" href="{{ url("/") }}">
-      <img src="images/logo9652.png?r=357" title="Cognizant ProMarket" style="height: 55px;filter: invert(95%)"/>
+      <span class="wow slideInLeft text-white font-weight-bold d-inline-flex align-items-center" style="height: 55px; font-size: 1.15rem; letter-spacing: 0.04em;"><span style="display:inline-block;width:12px;height:12px;border-radius:999px;background:#2563eb;box-shadow:0 0 20px rgba(37,99,235,.45);margin-right:12px;"></span>Cognizant ProMarket</span>
     </a>
   
 
@@ -379,7 +391,7 @@ $(document).ready(function(){
       <form class="form-inline my-2 ml-auto my-lg-0 wow slideInLeft">
         
           <a href="{{ route("login") }}" class="btn btn-link rounded-md my-2 mx-3">Login</a>
-          <a href="{{ route("register") }}" class="btn btn-danger rounded-md my-2">Get started</a>      </form>
+          <a href="{{ route("register") }}" class="btn btn-primary rounded-md my-2">Get started</a>      </form>
     </div>
     <!-- Toggler/collapsibe Button -->
     <button class="navbar-toggler py-4" type="button">
@@ -409,7 +421,7 @@ $(document).ready(function(){
 	</div></section>
 <footer>
 	<div class="container">
-    <img src="images/logo.png" style="height: 35px; filter: grayscale(100%)" alt="" class='wow slideInLeft'><br />
+    <span class="wow slideInLeft text-white font-weight-bold d-inline-flex align-items-center" style="font-size: 1rem; letter-spacing: 0.04em;"><span style="display:inline-block;width:10px;height:10px;border-radius:999px;background:#2563eb;box-shadow:0 0 18px rgba(37,99,235,.45);margin-right:10px;"></span>Cognizant ProMarket</span><br />
     <p class="mt-3 mb-5 wow slideInLeft d-flex flex-wrap wow slideInLeft">
       <a href="{{ url("/about") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">About us</a>
       <a href="{{ url("/privacy-policy") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Privacy</a>
@@ -475,18 +487,7 @@ $( document ).ready(function() {
   new WOW().init();
 });
 </script>
-<!-- Smartsupp Live Chat script -->
-<script type="text/javascript">
-var _smartsupp = _smartsupp || {};
-_smartsupp.key = 'c796a49821c4cf92a9361b818f281c9a70978afd';
-window.smartsupp||(function(d) {
-  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-  c.type='text/javascript';c.charset='utf-8';c.async=true;
-  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-})(document);
-</script>
-<noscript> Powered by <a href=%e2%80%9chttps_/www.smartsupp.html target=“_blank”>Smartsupp</a></noscript>
+
 </body>
 
 </html>

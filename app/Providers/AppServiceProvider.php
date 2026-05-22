@@ -11,7 +11,9 @@ use App\Policies\DepositPolicy;
 use App\Policies\StakingPolicy;
 use App\Policies\WalletPolicy;
 use App\Policies\WithdrawalPolicy;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if (in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)) {
+            Schema::defaultStringLength(191);
+        }
+
         Vite::prefetch(concurrency: 3);
 
         Gate::policy(Wallet::class, WalletPolicy::class);
