@@ -3,19 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\MarketPair;
+use App\Services\CoinMarketCapService;
 use App\Services\PortfolioService;
-use App\Services\MarketService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function __construct(private PortfolioService $portfolio, private MarketService $market) {}
+    public function __construct(
+        private PortfolioService $portfolio,
+        private CoinMarketCapService $coinMarketCap,
+    ) {}
 
     public function __invoke(Request $request)
     {
         $user = $request->user();
-        $this->market->syncCryptoPrices();
+        $this->coinMarketCap->syncMarketPairs();
         $summary = $this->portfolio->summary($user);
         $wallets = collect($summary['wallets']);
         $totalBalance = (float) $wallets->sum('balance');

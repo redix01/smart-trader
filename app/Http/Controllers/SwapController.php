@@ -2,16 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CoinMarketCapService;
 use App\Services\SwapService;
+use App\Services\MarketService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SwapController extends Controller
 {
-    public function __construct(private SwapService $swap) {}
+    public function __construct(
+        private SwapService $swap,
+        private MarketService $market,
+        private CoinMarketCapService $coinMarketCap,
+    ) {}
 
     public function index(Request $request)
     {
+        $this->coinMarketCap->syncMarketPairs();
+
         return Inertia::render('Swap', [
             'pairs' => $this->swap->getSupportedPairs(),
             'history' => $this->swap->getUserSwaps($request->user()),
@@ -20,6 +28,8 @@ class SwapController extends Controller
 
     public function quote(Request $request)
     {
+        $this->coinMarketCap->syncMarketPairs();
+
         $data = $request->validate([
             'from' => 'required|string|size:3',
             'to' => 'required|string|size:3',
@@ -37,6 +47,8 @@ class SwapController extends Controller
 
     public function store(Request $request)
     {
+        $this->coinMarketCap->syncMarketPairs();
+
         $data = $request->validate([
             'from' => 'required|string|size:3',
             'to' => 'required|string|size:3',

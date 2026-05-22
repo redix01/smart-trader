@@ -3,13 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\MarketPair;
+use App\Services\CoinMarketCapService;
+use App\Services\MarketService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class TradesController extends Controller
 {
+    public function __construct(
+        private MarketService $market,
+        private CoinMarketCapService $coinMarketCap,
+    ) {}
+
     public function index(Request $request)
     {
+        $this->coinMarketCap->syncMarketPairs();
+
         $pairs = MarketPair::where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('base_currency')
