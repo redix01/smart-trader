@@ -40,8 +40,9 @@ export default function Dashboard({ kpi, wallets, kyc_status, chart }: Dashboard
   const [showBalance, setShowBalance] = useState(true);
   const [quickTradeTab, setQuickTradeTab] = useState<'Buy' | 'Sell' | 'Swap'>('Buy');
   const chartSymbol = chart?.symbol ?? 'BINANCE:BTCUSDT';
-  const chartTitle = chart?.title ?? 'BTC / USDT';
-  const chartSubtitle = chart?.subtitle ?? 'Market Overview';
+  const chartPair = chartSymbol.includes(':') ? chartSymbol.split(':')[1] : chartSymbol;
+  const chartTitle = chart?.title ?? chartPair.replace(/([A-Z]{3,5})(USD|USDT)$/u, '$1 / $2');
+  const chartSubtitle = chart?.subtitle ?? (chartSymbol.startsWith('FX:') ? 'Forex Chart' : 'Live Market');
   const chartProgress = chart?.progress ?? 0;
 
   const tickerRef = useRef<HTMLDivElement>(null);
