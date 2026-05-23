@@ -550,7 +550,7 @@ margin: 0 auto;" src="medias/play_725p.mp4"></video></div>
 									<h6 class="mb-0">Laurent Correia</h6>
 								</div>
 								<div>
-									<img src="uploads/small/7331718407651.jpg" style="width: 60px; height: 60px" class="rounded-circle" alt="">
+									<img src="{{ asset('frontpage/uploads/small/7331718407651.jpg') }}" style="width: 60px; height: 60px" class="rounded-circle" alt="Laurent Correia">
 								</div>
 							</div>
 						</div>
@@ -565,7 +565,7 @@ margin: 0 auto;" src="medias/play_725p.mp4"></video></div>
 									<h6 class="mb-0"></h6>
 								</div>
 								<div>
-									<img src="images/avatar.png" style="width: 60px; height: 60px" class="rounded-circle" alt="">
+									<img src="{{ asset('frontpage/images/avatar.png') }}" style="width: 60px; height: 60px" class="rounded-circle" alt="Profile avatar">
 								</div>
 							</div>
 						</div>
@@ -580,7 +580,7 @@ margin: 0 auto;" src="medias/play_725p.mp4"></video></div>
 									<h6 class="mb-0">Yanira Cordero</h6>
 								</div>
 								<div>
-									<img src="uploads/small/9771718406954.jpg" style="width: 60px; height: 60px" class="rounded-circle" alt="">
+									<img src="{{ asset('frontpage/uploads/small/9771718406954.jpg') }}" style="width: 60px; height: 60px" class="rounded-circle" alt="Yanira Cordero">
 								</div>
 							</div>
 						</div>
@@ -595,7 +595,7 @@ margin: 0 auto;" src="medias/play_725p.mp4"></video></div>
 									<h6 class="mb-0">Aman Natt</h6>
 								</div>
 								<div>
-									<img src="uploads/small/6441718405442.jpg" style="width: 60px; height: 60px" class="rounded-circle" alt="">
+									<img src="{{ asset('frontpage/uploads/small/6441718405442.jpg') }}" style="width: 60px; height: 60px" class="rounded-circle" alt="Aman Natt">
 								</div>
 							</div>
 						</div>
@@ -613,7 +613,7 @@ margin: 0 auto;" src="medias/play_725p.mp4"></video></div>
 									<h6 class="mb-0">Kamila</h6>
 								</div>
 								<div>
-									<img src="uploads/small/8861718405256.jpg" style="width: 60px; height: 60px" class="rounded-circle" alt="">
+									<img src="{{ asset('frontpage/uploads/small/8861718405256.jpg') }}" style="width: 60px; height: 60px" class="rounded-circle" alt="Kamila">
 								</div>
 							</div>
 						</div>
@@ -628,7 +628,7 @@ margin: 0 auto;" src="medias/play_725p.mp4"></video></div>
 									<h6 class="mb-0">CryptoPUNK</h6>
 								</div>
 								<div>
-									<img src="uploads/small/6251718405154.jpg" style="width: 60px; height: 60px" class="rounded-circle" alt="">
+									<img src="{{ asset('frontpage/uploads/small/6251718405154.jpg') }}" style="width: 60px; height: 60px" class="rounded-circle" alt="CryptoPUNK">
 								</div>
 							</div>
 						</div>
@@ -643,7 +643,7 @@ margin: 0 auto;" src="medias/play_725p.mp4"></video></div>
 									<h6 class="mb-0">Jeff Lobeck</h6>
 								</div>
 								<div>
-									<img src="uploads/small/4871718271112.jpg" style="width: 60px; height: 60px" class="rounded-circle" alt="">
+									<img src="{{ asset('frontpage/uploads/small/4871718271112.jpg') }}" style="width: 60px; height: 60px" class="rounded-circle" alt="Jeff Lobeck">
 								</div>
 							</div>
 						</div>
@@ -658,7 +658,7 @@ margin: 0 auto;" src="medias/play_725p.mp4"></video></div>
 									<h6 class="mb-0">Mitch Ross</h6>
 								</div>
 								<div>
-									<img src="uploads/small/3341718223475.jpg" style="width: 60px; height: 60px" class="rounded-circle" alt="">
+									<img src="{{ asset('frontpage/uploads/small/3341718223475.jpg') }}" style="width: 60px; height: 60px" class="rounded-circle" alt="Mitch Ross">
 								</div>
 							</div>
 						</div>
