@@ -50,6 +50,8 @@ class TradesController extends Controller
 
         return Inertia::render('Trades', [
             'pairs' => $pairs,
+            'stockPairs' => $this->trades->getStaticPairs('stocks'),
+            'forexPairs' => $this->trades->getStaticPairs('forex'),
             'defaultPair' => $defaultPair,
             'balances' => $user->wallets()->get()->map(fn ($w) => [
                 'label' => $w->currency,
@@ -70,7 +72,9 @@ class TradesController extends Controller
         $this->coinMarketCap->syncMarketPairs();
 
         $data = $request->validate([
-            'pair_id' => 'required|exists:market_pairs,id',
+            'market_type' => 'required|in:crypto,stocks,forex',
+            'pair_id' => 'nullable|exists:market_pairs,id',
+            'pair' => 'required|string|max:32',
             'side' => 'required|in:buy,sell',
             'type' => 'required|in:Market,Limit',
             'amount' => 'required|numeric|min:0.00000001',
@@ -79,14 +83,16 @@ class TradesController extends Controller
 
         $this->trades->placeOrder(
             $request->user(),
-            (int) $data['pair_id'],
+            $data['market_type'],
+            isset($data['pair_id']) ? (int) $data['pair_id'] : null,
+            $data['pair'],
             $data['side'],
             $data['type'],
             (float) $data['amount'],
             isset($data['price']) ? (float) $data['price'] : null,
         );
 
-        return redirect()->route('trades', ['asset' => explode('/', (string) MarketPair::findOrFail($data['pair_id'])->name)[0]])
+        return redirect()->route('trades', ['asset' => explode('/', $data['pair'])[0]])
             ->with('success', 'Trade executed successfully.');
     }
 }

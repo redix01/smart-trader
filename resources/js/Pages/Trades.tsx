@@ -20,6 +20,8 @@ interface Balance {
 
 interface TradesProps {
   pairs: Pair[];
+  stockPairs: Pair[];
+  forexPairs: Pair[];
   defaultPair: Pair | null;
   balances: Balance[];
   history: Array<{
@@ -42,25 +44,7 @@ type MarketType = 'crypto' | 'stocks' | 'forex';
 
 const PCT_BTNS = ['25%', '50%', '75%', '100%'];
 
-const STOCK_PAIRS: Pair[] = [
-  { id: 101, name: 'AAPL/USD', price: '182.50', change: '+1.20%', up: true, icon: '' },
-  { id: 102, name: 'TSLA/USD', price: '245.30', change: '-0.80%', up: false, icon: '' },
-  { id: 103, name: 'NVDA/USD', price: '875.20', change: '+2.10%', up: true, icon: '' },
-  { id: 104, name: 'MSFT/USD', price: '415.80', change: '+0.50%', up: true, icon: '' },
-  { id: 105, name: 'AMZN/USD', price: '185.40', change: '-0.30%', up: false, icon: '' },
-  { id: 106, name: 'GOOGL/USD', price: '175.60', change: '+1.00%', up: true, icon: '' },
-];
-
-const FOREX_PAIRS: Pair[] = [
-  { id: 201, name: 'EUR/USD', price: '1.0845', change: '+0.10%', up: true, icon: '' },
-  { id: 202, name: 'GBP/USD', price: '1.2720', change: '-0.20%', up: false, icon: '' },
-  { id: 203, name: 'USD/JPY', price: '149.85', change: '+0.30%', up: true, icon: '' },
-  { id: 204, name: 'AUD/USD', price: '0.6542', change: '-0.10%', up: false, icon: '' },
-  { id: 205, name: 'USD/CAD', price: '1.3580', change: '+0.05%', up: true, icon: '' },
-  { id: 206, name: 'USD/CHF', price: '0.9012', change: '-0.15%', up: false, icon: '' },
-];
-
-export default function Trades({ pairs, defaultPair, balances, history }: TradesProps) {
+export default function Trades({ pairs, stockPairs, forexPairs, defaultPair, balances, history }: TradesProps) {
   const [marketType, setMarketType] = useState<MarketType>('crypto');
   const [activePair, setActivePair] = useState<Pair | undefined>(defaultPair ?? pairs[0]);
   const [orderType, setOrderType] = useState<OrderType>('Market');
@@ -69,7 +53,9 @@ export default function Trades({ pairs, defaultPair, balances, history }: Trades
   const [amount, setAmount] = useState('');
   const [activeTab, setActiveTab] = useState<'orders' | 'history'>('orders');
   const { data, setData, post, processing, errors, reset } = useForm({
+    market_type: 'crypto',
     pair_id: defaultPair?.id ?? pairs[0]?.id ?? 0,
+    pair: defaultPair?.name ?? pairs[0]?.name ?? '',
     side: 'buy',
     type: 'Market',
     amount: '',
@@ -79,7 +65,7 @@ export default function Trades({ pairs, defaultPair, balances, history }: Trades
   const tickerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
 
-  const currentPairs = marketType === 'crypto' ? pairs : marketType === 'stocks' ? STOCK_PAIRS : FOREX_PAIRS;
+  const currentPairs = marketType === 'crypto' ? pairs : marketType === 'stocks' ? stockPairs : forexPairs;
 
   const nameParts = (activePair?.name ?? 'BTC/USDT').split('/');
   const baseAsset = nameParts[0] ?? 'BTC';
@@ -91,11 +77,10 @@ export default function Trades({ pairs, defaultPair, balances, history }: Trades
     return `BINANCE:${baseAsset}${quoteAsset}`;
   })();
 
-  const quoteBalance = balances.find(b => b.label === quoteAsset)?.value ?? 0;
+  const usdBalance = balances.find(b => b.label === 'USD')?.value ?? 0;
   const baseBalance = balances.find(b => b.label === baseAsset)?.value ?? 0;
-  const availableBalance = orderMode === 'buy' ? quoteBalance : baseBalance;
-  const availableLabel = orderMode === 'buy' ? quoteAsset : baseAsset;
-  const isCryptoMarket = marketType === 'crypto';
+  const availableBalance = orderMode === 'buy' ? usdBalance : baseBalance;
+  const availableLabel = orderMode === 'buy' ? 'USD' : baseAsset;
 
   const applyPct = (p: string) => {
     const max = parseFloat(String(availableBalance)) || 0;
@@ -112,16 +97,21 @@ export default function Trades({ pairs, defaultPair, balances, history }: Trades
 
   // Switch to first pair of new market type
   useEffect(() => {
-    const pairList = marketType === 'crypto' ? pairs : marketType === 'stocks' ? STOCK_PAIRS : FOREX_PAIRS;
+    const pairList = marketType === 'crypto' ? pairs : marketType === 'stocks' ? stockPairs : forexPairs;
     const first = pairList[0];
     if (first) setActivePair(first);
-  }, [marketType]);
+  }, [marketType, pairs, stockPairs, forexPairs]);
 
   useEffect(() => {
     if (activePair) {
       setData('pair_id', activePair.id);
+      setData('pair', activePair.name);
     }
   }, [activePair, setData]);
+
+  useEffect(() => {
+    setData('market_type', marketType);
+  }, [marketType, setData]);
 
   useEffect(() => {
     setData('side', orderMode);
@@ -395,10 +385,7 @@ export default function Trades({ pairs, defaultPair, balances, history }: Trades
                 {errors.amount && <p className="text-xs text-rose-500">{errors.amount}</p>}
                 {errors.price && <p className="text-xs text-rose-500">{errors.price}</p>}
 
-                {!isCryptoMarket && (
-                  <p className="text-xs text-zinc-500">Wallet-backed execution is currently enabled for crypto pairs.</p>
-                )}
-                <button type="button" onClick={submitTrade} disabled={!isCryptoMarket || processing || !amount || (orderType === 'Limit' && !price)} className={`w-full py-4 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed ${
+                <button type="button" onClick={submitTrade} disabled={processing || !amount || (orderType === 'Limit' && !price)} className={`w-full py-4 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed ${
                   orderMode === 'buy'
                     ? 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.2)]'
                     : 'bg-rose-600 text-white hover:bg-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.2)]'

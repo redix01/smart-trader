@@ -46,4 +46,21 @@ class WalletService
 
         return $wallet->fresh();
     }
+
+    public function availableCashBalance(User $user): float
+    {
+        return (float) optional(
+            $user->wallets()->where('currency', 'USD')->first()
+        )?->available_balance ?: 0;
+    }
+
+    public function debitCash(User $user, float $amount, string $errorKey = 'amount'): void
+    {
+        $this->debit($user, 'USD', $amount, $errorKey);
+    }
+
+    public function creditCash(User $user, float $amount): Wallet
+    {
+        return $this->credit($user, 'USD', $amount);
+    }
 }
