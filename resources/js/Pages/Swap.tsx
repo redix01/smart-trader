@@ -11,6 +11,12 @@ interface Pair {
 
 interface SwapProps {
   pairs: Pair[];
+  balances: Array<{
+    symbol: string;
+    balance: number;
+    available: number;
+  }>;
+  availableCurrencies: string[];
 }
 
 const icons: Record<string, string> = {
@@ -20,10 +26,19 @@ const icons: Record<string, string> = {
   USDT: 'https://assets.coingecko.com/coins/images/325/small/tether.png',
 };
 
-export default function Swap({ pairs }: SwapProps) {
+export default function Swap({ pairs, balances, availableCurrencies }: SwapProps) {
+  const currencies = availableCurrencies.length > 0
+    ? availableCurrencies
+    : Array.from(new Set(pairs.flatMap((pair) => [pair.from, pair.to])));
+
+  const initialFrom = currencies[0] ?? 'USD';
+  const initialTo = pairs.find((pair) => pair.from === initialFrom)?.to
+    ?? currencies.find((currency) => currency !== initialFrom)
+    ?? 'USDT';
+
   const { data, setData, post, processing, errors } = useForm({
-    from: 'USD',
-    to: 'BTC',
+    from: initialFrom,
+    to: initialTo,
     amount: '',
   });
   const [quote, setQuote] = useState<{ rate: number; to_amount: number } | null>(null);
@@ -33,8 +48,13 @@ export default function Swap({ pairs }: SwapProps) {
     return pair?.rate ?? null;
   };
 
-  const currencies = Array.from(new Set(pairs.flatMap((pair) => [pair.from, pair.to])));
   const availableTo = currencies.filter((currency) => currency !== data.from && pairs.some((pair) => pair.from === data.from && pair.to === currency));
+  const balancesBySymbol = Object.fromEntries(
+    balances.map((balance) => [balance.symbol, balance]),
+  ) as Record<string, { symbol: string; balance: number; available: number }>;
+  const fromBalance = balancesBySymbol[data.from];
+  const toBalance = balancesBySymbol[data.to];
+  const marketPriceInTarget = findRate(data.from, data.to);
 
   useEffect(() => {
     const rate = findRate(data.from, data.to);
@@ -71,6 +91,9 @@ export default function Swap({ pairs }: SwapProps) {
             <div className="space-y-2">
               <div className="flex justify-between items-center px-1">
                 <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">From:</label>
+                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                  Available: {Number(fromBalance?.available ?? 0).toLocaleString(undefined, { maximumFractionDigits: 6 })} {data.from}
+                </span>
               </div>
               <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-4 flex items-center gap-4 group focus-within:border-blue-600/50 transition-all">
                 <div className="flex items-center gap-3 bg-[#111] px-3 py-2 rounded-xl border border-[#222] min-w-[120px]">
@@ -84,6 +107,13 @@ export default function Swap({ pairs }: SwapProps) {
                 </div>
                 <input type="number" value={data.amount} onChange={(e) => setData('amount', e.target.value)} placeholder="0.00"
                   className="flex-1 bg-transparent border-none outline-none text-xl font-bold text-white placeholder-zinc-700 font-mono text-right" />
+                <button
+                  type="button"
+                  onClick={() => setData('amount', String(fromBalance?.available ?? 0))}
+                  className="text-[10px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-3 py-1.5 rounded-lg hover:bg-blue-500 hover:text-white transition-all"
+                >
+                  Max
+                </button>
               </div>
             </div>
 
@@ -98,6 +128,9 @@ export default function Swap({ pairs }: SwapProps) {
             <div className="space-y-2">
               <div className="flex justify-between items-center px-1">
                 <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Swap to:</label>
+                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                  Balance: {Number(toBalance?.available ?? 0).toLocaleString(undefined, { maximumFractionDigits: 6 })} {data.to}
+                </span>
               </div>
               <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-4 flex items-center gap-4 group focus-within:border-blue-600/50 transition-all">
                 <div className="flex items-center gap-3 bg-[#111] px-3 py-2 rounded-xl border border-[#222] min-w-[120px]">
@@ -122,6 +155,12 @@ export default function Swap({ pairs }: SwapProps) {
               <span className="text-emerald-500 font-mono">1 {data.from} ≈ {quote?.rate?.toFixed(6) || '0.000000'} {data.to}</span>
             </div>
             <div className="flex justify-between text-xs">
+              <span className="text-zinc-500">Live Market Price</span>
+              <span className="text-white font-mono">
+                {marketPriceInTarget ? `1 ${data.from} = ${marketPriceInTarget.toFixed(6)} ${data.to}` : 'Unavailable'}
+              </span>
+            </div>
+            <div className="flex justify-between text-xs">
               <span className="text-zinc-500">Network Fee</span>
               <span className="text-zinc-400 font-mono">0.05%</span>
             </div>
@@ -134,7 +173,7 @@ export default function Swap({ pairs }: SwapProps) {
           <form onSubmit={(e) => { e.preventDefault(); post(route('swap.store')); }} className="space-y-4">
             <div className="flex items-center gap-2 text-[11px] font-medium text-zinc-500 px-1">
               <Wallet size={14} className="text-blue-500" />
-              <span>Rate: {quote?.rate?.toFixed(6) || '0.000000'}</span>
+              <span>{data.from} wallet: {Number(fromBalance?.available ?? 0).toLocaleString(undefined, { maximumFractionDigits: 6 })}</span>
             </div>
             {errors.amount && <p className="text-xs text-rose-500">{errors.amount}</p>}
             <button type="submit" disabled={processing || !data.amount}

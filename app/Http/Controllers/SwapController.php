@@ -19,10 +19,13 @@ class SwapController extends Controller
     public function index(Request $request)
     {
         $this->coinMarketCap->syncMarketPairs();
+        $user = $request->user();
 
         return Inertia::render('Swap', [
             'pairs' => $this->swap->getSupportedPairs(),
-            'history' => $this->swap->getUserSwaps($request->user()),
+            'balances' => $this->swap->getUserWalletBalances($user),
+            'availableCurrencies' => $this->swap->getAvailableCurrencies($user),
+            'history' => $this->swap->getUserSwaps($user),
         ]);
     }
 
