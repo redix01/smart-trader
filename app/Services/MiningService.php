@@ -10,6 +10,8 @@ use Illuminate\Validation\ValidationException;
 
 class MiningService
 {
+    public function __construct(private WalletService $wallets) {}
+
     public function getActivePlans(): Collection
     {
         return MiningPlan::where('is_active', true)
@@ -69,6 +71,8 @@ class MiningService
                 'plan_id' => 'This mining plan is no longer available.',
             ]);
         }
+
+        $this->wallets->debit($user, 'USD', $amount);
 
         return MiningSubscription::create([
             'user_id' => $user->id,

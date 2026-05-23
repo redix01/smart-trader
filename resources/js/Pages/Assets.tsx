@@ -17,6 +17,9 @@ interface AssetsProps {
     balance: string | number;
     locked: string | number;
     available: string | number;
+    price_usd: number | null;
+    value_usd: number | null;
+    available_value_usd: number | null;
   }>;
   deposits: Array<{
     id: number;
@@ -98,8 +101,10 @@ export default function Assets({ assets, deposits }: AssetsProps) {
               <thead>
                 <tr className="border-b border-[#1A1A1A]">
                   <th className="px-6 py-5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Asset</th>
+                  <th className="px-6 py-5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-right hidden md:table-cell">Price</th>
                   <th className="px-6 py-5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-right">Balance</th>
                   <th className="px-6 py-5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-right">Available</th>
+                  <th className="px-6 py-5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-right hidden xl:table-cell">Value</th>
                   <th className="px-6 py-5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center">Status</th>
                   <th className="px-6 py-5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-right">Action</th>
                 </tr>
@@ -118,14 +123,22 @@ export default function Assets({ assets, deposits }: AssetsProps) {
                         </div>
                       </div>
                     </td>
+                    <td className="px-6 py-5 text-right font-mono text-sm text-zinc-400 hidden md:table-cell">
+                      {asset.price_usd !== null ? `$${asset.price_usd.toLocaleString(undefined, { maximumFractionDigits: 6 })}` : 'N/A'}
+                    </td>
                     <td className="px-6 py-5 text-right font-mono text-sm text-zinc-300">{Number(asset.balance).toLocaleString()}</td>
                     <td className="px-6 py-5 text-right font-mono text-sm font-bold text-white">{Number(asset.available).toLocaleString()}</td>
+                    <td className="px-6 py-5 text-right font-mono text-sm text-zinc-400 hidden xl:table-cell">
+                      {asset.value_usd !== null ? `$${asset.value_usd.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : 'N/A'}
+                    </td>
                     <td className="px-6 py-5 text-center">
                       <span className="text-[11px] font-bold px-2 py-1 rounded-md text-emerald-500 bg-emerald-500/10">Active</span>
                     </td>
                     <td className="px-6 py-5 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button className="px-4 py-1.5 bg-[#1A1A1A] text-[10px] font-bold text-white rounded-lg hover:bg-blue-600 transition-colors border border-[#222]">TRADE</button>
+                        <Link href={route('trades', { asset: asset.symbol })} className="px-4 py-1.5 bg-[#1A1A1A] text-[10px] font-bold text-white rounded-lg hover:bg-blue-600 transition-colors border border-[#222]">
+                          TRADE
+                        </Link>
                         <button className="p-2 text-zinc-500 hover:text-white"><MoreHorizontal size={16} /></button>
                       </div>
                     </td>

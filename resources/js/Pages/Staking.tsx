@@ -139,7 +139,7 @@ export default function Staking({ plans }: StakingProps) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Amount (USD)</label>
+              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Amount ({selectedPlan?.symbol ?? 'Asset'})</label>
               <input
                 type="number"
                 min={selectedPlan ? Number(selectedPlan.min.replace(/,/g, '')) : 0}

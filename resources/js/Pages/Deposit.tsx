@@ -12,6 +12,7 @@ interface DepositMethod {
   icon: string;
   min_amount: number;
   max_amount: number;
+  usd_price: number | null;
 }
 
 interface DepositProps {
@@ -42,6 +43,11 @@ export default function Deposit({ methods }: DepositProps) {
     setSelectedMethod(method);
     setData('deposit_method_id', method.id);
   };
+
+  const usdAmount = parseFloat(data.amount || '0');
+  const cryptoEstimate = selectedMethod.usd_price && usdAmount > 0
+    ? usdAmount / selectedMethod.usd_price
+    : 0;
 
   return (
     <AppLayout>
@@ -124,6 +130,14 @@ export default function Deposit({ methods }: DepositProps) {
                   <input type="number" required value={data.amount} onChange={(e) => setData('amount', e.target.value)}
                     placeholder="Enter amount in USD"
                     className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-4 text-sm text-white focus:border-blue-600 outline-none transition-colors placeholder:text-zinc-700 font-mono" />
+                  <div className="flex justify-between text-[11px] text-zinc-500 px-1">
+                    <span>
+                      Live price: {selectedMethod.usd_price ? `$${selectedMethod.usd_price.toLocaleString(undefined, { maximumFractionDigits: 6 })}` : 'Unavailable'}
+                    </span>
+                    <span>
+                      Estimated {selectedMethod.currency}: {cryptoEstimate.toLocaleString(undefined, { maximumFractionDigits: 8 })}
+                    </span>
+                  </div>
                   {errors.amount && <p className="text-xs text-rose-500 mt-1">{errors.amount}</p>}
                 </div>
                 <div className="space-y-2">

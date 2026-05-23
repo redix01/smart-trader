@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Deposit;
 use App\Models\DepositMethod;
+use App\Models\MarketPair;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -12,6 +13,13 @@ class DepositService
 {
     public function getActiveMethods(): Collection
     {
+        $prices = MarketPair::where('is_active', true)
+            ->where('quote_currency', 'USDT')
+            ->get()
+            ->mapWithKeys(fn (MarketPair $pair) => [strtoupper($pair->base_currency) => (float) $pair->current_price])
+            ->prepend(1.0, 'USDT')
+            ->prepend(1.0, 'USD');
+
         return DepositMethod::where('is_active', true)
             ->orderBy('sort_order')
             ->get()
@@ -24,6 +32,7 @@ class DepositService
                 'icon' => $m->icon,
                 'min_amount' => $m->min_amount,
                 'max_amount' => $m->max_amount,
+                'usd_price' => $prices->get(strtoupper($m->currency)),
             ]);
     }
 

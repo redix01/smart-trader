@@ -35,6 +35,12 @@ class UserSubscriptionTest extends TestCase
             'currency' => 'USD',
             'balance' => 50000,
         ]);
+
+        Wallet::factory()->create([
+            'user_id' => $this->user->id,
+            'currency' => 'USDT',
+            'balance' => 50000,
+        ]);
     }
 
     public function test_user_can_subscribe_to_staking_plan(): void

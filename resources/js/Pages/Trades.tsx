@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import { TrendingUp, TrendingDown, Star, ArrowUpRight, Clock } from 'lucide-react';
 
@@ -22,6 +22,18 @@ interface TradesProps {
   pairs: Pair[];
   defaultPair: Pair | null;
   balances: Balance[];
+  history: Array<{
+    id: number;
+    pair: string;
+    side: string;
+    type: string;
+    amount: string;
+    price: string;
+    total: string;
+    fee: string;
+    status: string;
+    date: string;
+  }>;
 }
 
 type OrderType = 'Market' | 'Limit';
@@ -48,7 +60,7 @@ const FOREX_PAIRS: Pair[] = [
   { id: 206, name: 'USD/CHF', price: '0.9012', change: '-0.15%', up: false, icon: '' },
 ];
 
-export default function Trades({ pairs, defaultPair, balances }: TradesProps) {
+export default function Trades({ pairs, defaultPair, balances, history }: TradesProps) {
   const [marketType, setMarketType] = useState<MarketType>('crypto');
   const [activePair, setActivePair] = useState<Pair | undefined>(defaultPair ?? pairs[0]);
   const [orderType, setOrderType] = useState<OrderType>('Market');
@@ -56,6 +68,13 @@ export default function Trades({ pairs, defaultPair, balances }: TradesProps) {
   const [price, setPrice] = useState('');
   const [amount, setAmount] = useState('');
   const [activeTab, setActiveTab] = useState<'orders' | 'history'>('orders');
+  const { data, setData, post, processing, errors, reset } = useForm({
+    pair_id: defaultPair?.id ?? pairs[0]?.id ?? 0,
+    side: 'buy',
+    type: 'Market',
+    amount: '',
+    price: '',
+  });
 
   const tickerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
@@ -76,12 +95,15 @@ export default function Trades({ pairs, defaultPair, balances }: TradesProps) {
   const baseBalance = balances.find(b => b.label === baseAsset)?.value ?? 0;
   const availableBalance = orderMode === 'buy' ? quoteBalance : baseBalance;
   const availableLabel = orderMode === 'buy' ? quoteAsset : baseAsset;
+  const isCryptoMarket = marketType === 'crypto';
 
   const applyPct = (p: string) => {
     const max = parseFloat(String(availableBalance)) || 0;
     const factor = parseInt(p) / 100;
     const cp = parseFloat((activePair?.price ?? '1').replace(/,/g, ''));
-    setAmount(orderMode === 'buy' ? (max * factor / cp).toFixed(6) : (max * factor).toFixed(6));
+    const nextAmount = orderMode === 'buy' ? (max * factor / cp).toFixed(6) : (max * factor).toFixed(6);
+    setAmount(nextAmount);
+    setData('amount', nextAmount);
   };
 
   const limitPrice = price ? parseFloat(price.replace(/,/g, '')) : parseFloat((activePair?.price ?? '0').replace(/,/g, ''));
@@ -94,6 +116,38 @@ export default function Trades({ pairs, defaultPair, balances }: TradesProps) {
     const first = pairList[0];
     if (first) setActivePair(first);
   }, [marketType]);
+
+  useEffect(() => {
+    if (activePair) {
+      setData('pair_id', activePair.id);
+    }
+  }, [activePair, setData]);
+
+  useEffect(() => {
+    setData('side', orderMode);
+  }, [orderMode, setData]);
+
+  useEffect(() => {
+    setData('type', orderType);
+  }, [orderType, setData]);
+
+  useEffect(() => {
+    setData('amount', amount);
+  }, [amount, setData]);
+
+  useEffect(() => {
+    setData('price', price);
+  }, [price, setData]);
+
+  const submitTrade = () => {
+    post(route('trades.store'), {
+      onSuccess: () => {
+        reset('amount', 'price');
+        setAmount('');
+        setPrice('');
+      },
+    });
+  };
 
   // Ticker tape — inject once
   useEffect(() => {
@@ -204,9 +258,30 @@ export default function Trades({ pairs, defaultPair, balances }: TradesProps) {
               ))}
             </div>
             <div className="px-4 pb-6">
-              <div className="py-10 text-center text-zinc-500">
-                <p className="text-sm font-medium">{activeTab === 'orders' ? 'No open orders' : 'No trade history yet'}</p>
-              </div>
+              {activeTab === 'orders' ? (
+                <div className="py-10 text-center text-zinc-500">
+                  <p className="text-sm font-medium">Orders execute immediately and settle into your wallet balance.</p>
+                </div>
+              ) : history.length === 0 ? (
+                <div className="py-10 text-center text-zinc-500">
+                  <p className="text-sm font-medium">No trade history yet</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {history.map((entry) => (
+                    <div key={entry.id} className="flex items-center justify-between rounded-2xl border border-[#1A1A1A] bg-[#0A0A0A] px-4 py-3 text-sm">
+                      <div>
+                        <p className="font-bold text-white">{entry.side.toUpperCase()} {entry.pair}</p>
+                        <p className="text-[11px] text-zinc-500">{entry.date}</p>
+                      </div>
+                      <div className="text-right font-mono">
+                        <p className="text-white">{entry.amount}</p>
+                        <p className="text-zinc-500">${entry.total}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -300,7 +375,7 @@ export default function Trades({ pairs, defaultPair, balances }: TradesProps) {
                   </div>
                   <div className="grid grid-cols-4 gap-1 mt-1">
                     {PCT_BTNS.map((p) => (
-                      <button key={p} onClick={() => applyPct(p)}
+                      <button type="button" key={p} onClick={() => applyPct(p)}
                         className="py-1 text-[9px] font-bold text-zinc-500 bg-[#0A0A0A] border border-[#1A1A1A] rounded-lg hover:bg-[#1A1A1A] hover:text-white transition-all">
                         {p}
                       </button>
@@ -317,14 +392,19 @@ export default function Trades({ pairs, defaultPair, balances }: TradesProps) {
                   <span>Fee <span className="text-zinc-400 font-mono">0.1%</span></span>
                   <span>Leverage <span className="text-white font-bold font-mono">1x</span></span>
                 </div>
+                {errors.amount && <p className="text-xs text-rose-500">{errors.amount}</p>}
+                {errors.price && <p className="text-xs text-rose-500">{errors.price}</p>}
 
-                <button className={`w-full py-4 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 text-sm ${
+                {!isCryptoMarket && (
+                  <p className="text-xs text-zinc-500">Wallet-backed execution is currently enabled for crypto pairs.</p>
+                )}
+                <button type="button" onClick={submitTrade} disabled={!isCryptoMarket || processing || !amount || (orderType === 'Limit' && !price)} className={`w-full py-4 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed ${
                   orderMode === 'buy'
                     ? 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.2)]'
                     : 'bg-rose-600 text-white hover:bg-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.2)]'
                 }`}>
                   {orderMode === 'buy' ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                  {orderMode === 'buy' ? 'Buy' : 'Sell'} {baseAsset}
+                  {processing ? 'Processing...' : `${orderMode === 'buy' ? 'Buy' : 'Sell'} ${baseAsset}`}
                   <ArrowUpRight size={16} />
                 </button>
               </div>

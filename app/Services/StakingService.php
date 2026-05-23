@@ -6,9 +6,13 @@ use App\Models\Stake;
 use App\Models\StakingPlan;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class StakingService
 {
+    public function __construct(private WalletService $wallets) {}
+
     public function getActivePlans(): Collection
     {
         return StakingPlan::where('is_active', true)
@@ -49,16 +53,32 @@ class StakingService
 
     public function createStake(User $user, int $planId, float $amount): Stake
     {
-        $plan = StakingPlan::findOrFail($planId);
+        return DB::transaction(function () use ($user, $planId, $amount) {
+            $plan = StakingPlan::findOrFail($planId);
 
-        return Stake::create([
-            'user_id' => $user->id,
-            'staking_plan_id' => $plan->id,
-            'amount' => $amount,
-            'status' => 'active',
-            'start_date' => now(),
-            'end_date' => now()->addDays($plan->duration_days),
-        ]);
+            if ($amount < (float) $plan->min_amount) {
+                throw ValidationException::withMessages([
+                    'amount' => 'Minimum staking amount is ' . $this->formatAmount((float) $plan->min_amount, $plan->currency) . ' ' . strtoupper($plan->currency),
+                ]);
+            }
+
+            if ($plan->max_amount && $amount > (float) $plan->max_amount) {
+                throw ValidationException::withMessages([
+                    'amount' => 'Maximum staking amount is ' . $this->formatAmount((float) $plan->max_amount, $plan->currency) . ' ' . strtoupper($plan->currency),
+                ]);
+            }
+
+            $this->wallets->debit($user, $plan->currency, $amount);
+
+            return Stake::create([
+                'user_id' => $user->id,
+                'staking_plan_id' => $plan->id,
+                'amount' => $amount,
+                'status' => 'active',
+                'start_date' => now(),
+                'end_date' => now()->addDays($plan->duration_days),
+            ]);
+        });
     }
 
     private function getColor(string $currency): string

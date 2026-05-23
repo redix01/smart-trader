@@ -10,6 +10,27 @@ use Illuminate\Support\Collection;
 
 class PortfolioService
 {
+    public function balancesWithMarketData(User $user): Collection
+    {
+        $prices = $this->usdPricesByCurrency();
+
+        return $user->wallets()->get()->map(function (Wallet $wallet) use ($prices) {
+            $price = $prices[strtoupper($wallet->currency)] ?? null;
+            $available = (float) $wallet->available_balance;
+            $balance = (float) $wallet->balance;
+
+            return [
+                'symbol' => $wallet->currency,
+                'balance' => $wallet->balance,
+                'locked' => $wallet->locked_balance,
+                'available' => $wallet->available_balance,
+                'price_usd' => $price,
+                'value_usd' => $price !== null ? $balance * $price : null,
+                'available_value_usd' => $price !== null ? $available * $price : null,
+            ];
+        });
+    }
+
     public function summary(User $user): array
     {
         $wallets = $user->wallets()->get();
@@ -84,5 +105,16 @@ class PortfolioService
     private function formatBalance(float $value): string
     {
         return number_format($value, 2);
+    }
+
+    private function usdPricesByCurrency(): array
+    {
+        return MarketPair::where('is_active', true)
+            ->where('quote_currency', 'USDT')
+            ->get()
+            ->mapWithKeys(fn (MarketPair $pair) => [strtoupper($pair->base_currency) => (float) $pair->current_price])
+            ->prepend(1.0, 'USDT')
+            ->prepend(1.0, 'USD')
+            ->all();
     }
 }

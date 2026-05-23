@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MarketPair;
 use App\Services\CoinMarketCapService;
 use App\Services\MarketService;
+use App\Services\TradeService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,6 +14,7 @@ class TradesController extends Controller
     public function __construct(
         private MarketService $market,
         private CoinMarketCapService $coinMarketCap,
+        private TradeService $trades,
     ) {}
 
     public function index(Request $request)
@@ -35,11 +37,21 @@ class TradesController extends Controller
             ]);
 
         $user = $request->user();
+        $asset = strtoupper((string) $request->string('asset'));
+        $defaultPair = $pairs->first();
+
+        if ($asset !== '') {
+            $defaultPair = $pairs->firstWhere('name', $asset . '/USDT')
+                ?? $pairs->firstWhere('name', $asset . '/USD')
+                ?? $pairs->first(fn (array $pair) => str_starts_with($pair['name'], $asset . '/'))
+                ?? $pairs->first(fn (array $pair) => str_ends_with($pair['name'], '/' . $asset))
+                ?? $defaultPair;
+        }
 
         return Inertia::render('Trades', [
             'pairs' => $pairs,
-            'defaultPair' => $pairs->first(),
-            'balances' => $user->wallets->map(fn ($w) => [
+            'defaultPair' => $defaultPair,
+            'balances' => $user->wallets()->get()->map(fn ($w) => [
                 'label' => $w->currency,
                 'value' => $w->balance,
                 'color' => match ($w->currency) {
@@ -49,6 +61,32 @@ class TradesController extends Controller
                     default => 'text-zinc-400',
                 },
             ]),
+            'history' => $this->trades->getUserTradeHistory($user),
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        $this->coinMarketCap->syncMarketPairs();
+
+        $data = $request->validate([
+            'pair_id' => 'required|exists:market_pairs,id',
+            'side' => 'required|in:buy,sell',
+            'type' => 'required|in:Market,Limit',
+            'amount' => 'required|numeric|min:0.00000001',
+            'price' => 'nullable|numeric|min:0.00000001',
+        ]);
+
+        $this->trades->placeOrder(
+            $request->user(),
+            (int) $data['pair_id'],
+            $data['side'],
+            $data['type'],
+            (float) $data['amount'],
+            isset($data['price']) ? (float) $data['price'] : null,
+        );
+
+        return redirect()->route('trades', ['asset' => explode('/', (string) MarketPair::findOrFail($data['pair_id'])->name)[0]])
+            ->with('success', 'Trade executed successfully.');
     }
 }
