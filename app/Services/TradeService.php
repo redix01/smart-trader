@@ -31,6 +31,7 @@ class TradeService
         private WalletService $wallets,
         private UserNotificationService $notifications,
         private PlatformSettingsService $settings,
+        private FinnhubService $finnhub,
     ) {}
 
     public function getUserTradeHistory(User $user, int $limit = 20): Collection
@@ -56,7 +57,17 @@ class TradeService
     public function getStaticPairs(string $marketType): array
     {
         return match ($marketType) {
-            'stocks' => self::STOCK_PAIRS,
+            'stocks' => collect($this->finnhub->getTrackedStocks())
+                ->map(fn (array $stock, int $index) => [
+                    'id' => 101 + $index,
+                    'name' => $stock['symbol'],
+                    'price' => $stock['price'],
+                    'change' => $stock['change'],
+                    'up' => $stock['up'],
+                    'icon' => $stock['icon'],
+                ])
+                ->values()
+                ->all(),
             'forex' => self::FOREX_PAIRS,
             default => [],
         };

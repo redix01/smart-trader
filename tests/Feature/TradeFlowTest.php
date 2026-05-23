@@ -6,6 +6,7 @@ use App\Models\MarketPair;
 use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Services\FinnhubService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -77,6 +78,28 @@ class TradeFlowTest extends TestCase
 
     public function test_user_can_execute_stock_trade_using_usd_balance(): void
     {
+        $this->mock(FinnhubService::class, function ($mock) {
+            $mock->shouldReceive('getTrackedStocks')->andReturn([
+                [
+                    'id' => 'stock:AAPL',
+                    'name' => 'AAPL',
+                    'symbol' => 'AAPL/USD',
+                    'price' => '182.50',
+                    'change' => '+1.2%',
+                    'high' => '184.00',
+                    'low' => '180.00',
+                    'volume' => 'N/A',
+                    'cap' => 'N/A',
+                    'icon' => 'data:image/svg+xml;base64,abc',
+                    'up' => true,
+                    'market_type' => 'stocks',
+                    'favoriteable' => false,
+                    'trade_asset' => 'AAPL',
+                    'sort_order' => 1,
+                ],
+            ]);
+        });
+
         PlatformSetting::create([
             'key' => 'trading_fee',
             'value' => '2.0',

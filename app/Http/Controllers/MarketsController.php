@@ -20,7 +20,8 @@ class MarketsController extends Controller
         $this->coinMarketCap->syncMarketPairs();
 
         return Inertia::render('Markets', [
-            'markets' => $this->market->getAllPairs(),
+            'cryptoMarkets' => $this->market->getAllPairs(),
+            'stockMarkets' => $this->market->getStocks(),
             'topGainers' => $this->market->getTopGainers(),
             'overview' => $this->market->getOverview(),
             'favorites' => $this->market->getUserFavorites($user),

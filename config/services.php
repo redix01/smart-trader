@@ -39,4 +39,8 @@ return [
         'key' => env('COINMARKETCAP_KEY'),
     ],
 
+    'finnhub' => [
+        'key' => env('FINNHUB_KEY'),
+    ],
+
 ];

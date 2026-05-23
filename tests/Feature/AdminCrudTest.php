@@ -189,6 +189,7 @@ class AdminCrudTest extends TestCase
                     ['key' => 'mail_admin_address', 'value' => 'ops@cognizantpromarket.com'],
                     ['key' => 'support_email', 'value' => 'help@cognizantpromarket.com'],
                     ['key' => 'site_name', 'value' => 'CognizantPro Market'],
+                    ['key' => 'livechat_widget_code', 'value' => '<script>console.log("chat")</script>'],
                 ],
             ])
             ->assertSessionHas('success');
@@ -205,6 +206,13 @@ class AdminCrudTest extends TestCase
             'value' => 'help@cognizantpromarket.com',
             'group' => 'General',
             'type' => 'email',
+        ]);
+
+        $this->assertDatabaseHas('platform_settings', [
+            'key' => 'livechat_widget_code',
+            'value' => '<script>console.log("chat")</script>',
+            'group' => 'Integrations',
+            'type' => 'textarea',
         ]);
     }
 }

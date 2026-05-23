@@ -22,6 +22,7 @@ use App\Http\Controllers\MarketsController;
 use App\Http\Controllers\MiningController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RealEstateController;
+use App\Http\Controllers\SupportController;
 use App\Http\Controllers\StakingController;
 use App\Http\Controllers\SwapController;
 use App\Http\Controllers\TradesController;
@@ -63,6 +64,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/experts', [ExpertsController::class, 'store'])->name('experts.store');
     Route::get('/realestate', [RealEstateController::class, 'index'])->name('realestate');
     Route::post('/realestate', [RealEstateController::class, 'store'])->name('realestate.store');
+    Route::get('/support', SupportController::class)->name('support');
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {

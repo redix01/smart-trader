@@ -20,5 +20,10 @@ export type PageProps<
         success?: string;
         error?: string;
     };
+    platform: {
+        livechat_widget_code?: string;
+        support_email?: string;
+        support_phone?: string;
+    };
     ziggy: any;
 };

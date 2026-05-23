@@ -144,6 +144,14 @@ class PlatformSettingsService
                 'default' => 'CognizantPro Market',
                 'placeholder' => 'CognizantPro Market',
             ],
+            'livechat_widget_code' => [
+                'group' => 'Integrations',
+                'label' => 'Live Chat Widget Code',
+                'description' => 'Paste the full live chat embed code here. It will load on the landing page and user support page.',
+                'type' => 'textarea',
+                'default' => '',
+                'placeholder' => '<script>...</script>',
+            ],
             'trading_fee' => [
                 'group' => 'Fees',
                 'label' => 'Trading Fee (%)',
@@ -208,6 +216,7 @@ class PlatformSettingsService
         return [
             'General' => 'Core platform identity and support contact details.',
             'Mail' => 'Addresses and sender metadata used for operational notifications.',
+            'Integrations' => 'External embeds and third-party integrations exposed to users.',
             'Fees' => 'Admin-managed fee references used across the business.',
             'Limits' => 'Admin-managed deposit and withdrawal thresholds.',
             'Compliance' => 'Messages and controls related to verification workflows.',

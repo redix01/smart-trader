@@ -741,6 +741,9 @@ $('.marquee').marquee({
     <div class="gtranslate_wrapper mx-auto d-flex justify-content-center"></div>
 <script>window.gtranslateSettings = {"default_language":"en","detect_browser_language":true,"wrapper_selector":".gtranslate_wrapper","flag_size":24,"switcher_horizontal_position":"inline","alt_flags":{"en":"usa"}}</script>
 <script src="https://cdn.gtranslate.net/widgets/latest/dwf.js" defer></script>
+@if(!empty($livechatWidgetCode))
+{!! $livechatWidgetCode !!}
+@endif
     <p class="mb-0 mt-md-4 wow slideInLeft text-uppercase" >© 2016 - 2026 Cognizant ProMarket. All rights reserved.</p>
   </div>
 

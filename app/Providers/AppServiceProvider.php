@@ -11,10 +11,12 @@ use App\Policies\DepositPolicy;
 use App\Policies\StakingPolicy;
 use App\Policies\WalletPolicy;
 use App\Policies\WithdrawalPolicy;
+use App\Services\PlatformSettingsService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -40,5 +42,15 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('manage-users', [AdminPolicy::class, 'manageUsers']);
         Gate::define('manage-kyc', [AdminPolicy::class, 'manageKyc']);
         Gate::define('manage-settings', [AdminPolicy::class, 'manageSettings']);
+
+        View::composer('frontpage.*', function ($view) {
+            $liveChatWidgetCode = '';
+
+            if (Schema::hasTable('platform_settings')) {
+                $liveChatWidgetCode = app(PlatformSettingsService::class)->get('livechat_widget_code', '') ?? '';
+            }
+
+            $view->with('livechatWidgetCode', $liveChatWidgetCode);
+        });
     }
 }

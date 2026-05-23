@@ -4,7 +4,7 @@ import AppLayout from '@/Layouts/AppLayout';
 import { Search, TrendingUp, TrendingDown, Star, ChevronRight } from 'lucide-react';
 
 interface Market {
-  id: number;
+  id: number | string;
   name: string;
   symbol: string;
   price: string;
@@ -15,22 +15,26 @@ interface Market {
   cap: string;
   icon: string;
   up: boolean;
+  market_type: 'crypto' | 'stocks';
+  favoriteable: boolean;
+  trade_asset: string;
 }
 
 interface MarketsProps {
-  markets: Market[];
+  cryptoMarkets: Market[];
+  stockMarkets: Market[];
   favorites: number[];
 }
 
-export default function Markets({ markets, favorites }: MarketsProps) {
-  const [activeCat, setActiveCat] = useState('All');
+export default function Markets({ cryptoMarkets, stockMarkets, favorites }: MarketsProps) {
+  const [activeCat, setActiveCat] = useState<'Crypto' | 'Stocks' | 'Favorites'>('Crypto');
   const [search, setSearch] = useState('');
   const [pendingFavoriteId, setPendingFavoriteId] = useState<number | null>(null);
-  const categoryFiltered = activeCat === 'All'
-    ? markets
+  const categoryFiltered = activeCat === 'Stocks'
+    ? stockMarkets
     : activeCat === 'Favorites'
-      ? markets.filter((market) => favorites.includes(market.id))
-      : markets;
+      ? cryptoMarkets.filter((market) => favorites.includes(Number(market.id)))
+      : cryptoMarkets;
 
   const filtered = categoryFiltered.filter((market) => {
     if (!search) {
@@ -56,13 +60,13 @@ export default function Markets({ markets, favorites }: MarketsProps) {
       <Head title="Markets" />
       <header className="mb-8 flex flex-col gap-1">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-zinc-500 bg-clip-text text-transparent capitalize tracking-tight">Markets</h1>
-        <p className="text-zinc-500 text-sm font-medium">Discover and track up to 100 live crypto markets.</p>
+        <p className="text-zinc-500 text-sm font-medium">Track live crypto markets and major US stocks from one screen.</p>
       </header>
       <div className="space-y-6">
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <div className="flex gap-2 p-1 bg-[#111] border border-[#1A1A1A] rounded-xl self-start">
-              {['All', 'Favorites', 'Crypto'].map((cat) => (
+                  {(['Crypto', 'Stocks', 'Favorites'] as const).map((cat) => (
                 <button key={cat} onClick={() => setActiveCat(cat)}
                   className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeCat === cat ? 'bg-blue-600/10 text-blue-500' : 'text-zinc-500 hover:text-white'}`}>{cat}</button>
               ))}
@@ -96,17 +100,21 @@ export default function Markets({ markets, favorites }: MarketsProps) {
                     <tr key={m.id} className="group hover:bg-[#151515] transition-colors cursor-pointer">
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-4">
-                          <button
-                            type="button"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              toggleFavorite(m.id);
-                            }}
-                            disabled={pendingFavoriteId === m.id}
-                            className={`transition-colors disabled:opacity-50 ${favorites.includes(m.id) ? 'text-yellow-500' : 'text-zinc-600 hover:text-yellow-500'}`}
-                          >
-                            <Star size={16} fill={favorites.includes(m.id) ? 'currentColor' : 'none'} />
-                          </button>
+                          {m.favoriteable ? (
+                            <button
+                              type="button"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                toggleFavorite(Number(m.id));
+                              }}
+                              disabled={pendingFavoriteId === Number(m.id)}
+                              className={`transition-colors disabled:opacity-50 ${favorites.includes(Number(m.id)) ? 'text-yellow-500' : 'text-zinc-600 hover:text-yellow-500'}`}
+                            >
+                              <Star size={16} fill={favorites.includes(Number(m.id)) ? 'currentColor' : 'none'} />
+                            </button>
+                          ) : (
+                            <div className="w-4" />
+                          )}
                           <div className="w-8 h-8 rounded-full overflow-hidden p-1 bg-[#1A1A1A]">
                             <img src={m.icon} className="w-full h-full object-contain" alt={m.name} />
                           </div>
@@ -125,7 +133,7 @@ export default function Markets({ markets, favorites }: MarketsProps) {
                       <td className="px-6 py-5 text-right font-mono text-xs text-zinc-500 hidden md:table-cell">${m.volume}</td>
                       <td className="px-6 py-5 text-right font-mono text-xs text-zinc-500 hidden lg:table-cell">${m.cap}</td>
                       <td className="px-6 py-5 text-right">
-                        <Link href={route('trades', { asset: m.name })} className="p-2 bg-blue-600/10 text-blue-600 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-blue-600 hover:text-white">
+                        <Link href={route('trades', { asset: m.trade_asset })} className="p-2 bg-blue-600/10 text-blue-600 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-blue-600 hover:text-white">
                           <ChevronRight size={18} />
                         </Link>
                       </td>

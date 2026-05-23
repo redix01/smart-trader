@@ -9,7 +9,10 @@ use Illuminate\Support\Collection;
 
 class MarketService
 {
-    public function __construct(private CoinMarketCapService $coinMarketCap) {}
+    public function __construct(
+        private CoinMarketCapService $coinMarketCap,
+        private FinnhubService $finnhub,
+    ) {}
 
     public function syncCryptoPrices(): void
     {
@@ -25,6 +28,11 @@ class MarketService
             ->orderBy('base_currency')
             ->get()
             ->map(fn (MarketPair $p) => $this->formatPair($p));
+    }
+
+    public function getStocks(): Collection
+    {
+        return collect($this->finnhub->getTrackedStocks());
     }
 
     public function getTopGainers(int $limit = 4): Collection
@@ -104,6 +112,9 @@ class MarketService
             'cap' => $this->formatVolume((float) $p->market_cap),
             'icon' => $p->icon,
             'up' => (float) $p->price_change_24h >= 0,
+            'market_type' => 'crypto',
+            'favoriteable' => true,
+            'trade_asset' => $p->base_currency,
         ];
     }
 

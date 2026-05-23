@@ -14,7 +14,8 @@ import {
   UserCircle, 
   LogOut,
   Pickaxe,
-  Shield
+  Shield,
+  LifeBuoy,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -35,6 +36,7 @@ const menuItems = [
   { label: 'Mining', icon: Pickaxe, route: 'mining' },
   { label: 'Copy Experts', icon: Users, route: 'experts' },
   { label: 'Real Estate', icon: Building2, route: 'realestate' },
+  { label: 'Support', icon: LifeBuoy, route: 'support' },
 ];
 
 export default function Sidebar({ isOpen, setIsOpen, isMobile }: SidebarProps) {

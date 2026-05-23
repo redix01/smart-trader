@@ -23,6 +23,7 @@ interface TradesProps {
   stockPairs: Pair[];
   forexPairs: Pair[];
   defaultPair: Pair | null;
+  defaultMarketType: MarketType;
   balances: Balance[];
   history: Array<{
     id: number;
@@ -44,8 +45,8 @@ type MarketType = 'crypto' | 'stocks' | 'forex';
 
 const PCT_BTNS = ['25%', '50%', '75%', '100%'];
 
-export default function Trades({ pairs, stockPairs, forexPairs, defaultPair, balances, history }: TradesProps) {
-  const [marketType, setMarketType] = useState<MarketType>('crypto');
+export default function Trades({ pairs, stockPairs, forexPairs, defaultPair, defaultMarketType, balances, history }: TradesProps) {
+  const [marketType, setMarketType] = useState<MarketType>(defaultMarketType);
   const [activePair, setActivePair] = useState<Pair | undefined>(defaultPair ?? pairs[0]);
   const [orderType, setOrderType] = useState<OrderType>('Market');
   const [orderMode, setOrderMode] = useState<OrderMode>('buy');
@@ -53,9 +54,9 @@ export default function Trades({ pairs, stockPairs, forexPairs, defaultPair, bal
   const [amount, setAmount] = useState('');
   const [activeTab, setActiveTab] = useState<'orders' | 'history'>('orders');
   const { data, setData, post, processing, errors, reset } = useForm({
-    market_type: 'crypto',
-    pair_id: defaultPair?.id ?? pairs[0]?.id ?? 0,
-    pair: defaultPair?.name ?? pairs[0]?.name ?? '',
+    market_type: defaultMarketType,
+    pair_id: defaultPair?.id ?? 0,
+    pair: defaultPair?.name ?? '',
     side: 'buy',
     type: 'Market',
     amount: '',
@@ -93,13 +94,20 @@ export default function Trades({ pairs, stockPairs, forexPairs, defaultPair, bal
 
   const limitPrice = price ? parseFloat(price.replace(/,/g, '')) : parseFloat((activePair?.price ?? '0').replace(/,/g, ''));
   const total = amount ? (limitPrice * parseFloat(amount)).toFixed(2) : '0.00';
+  const previousMarketTypeRef = useRef<MarketType>(defaultMarketType);
 
-
-  // Switch to first pair of new market type
   useEffect(() => {
+    if (previousMarketTypeRef.current === marketType) {
+      return;
+    }
+
+    previousMarketTypeRef.current = marketType;
     const pairList = marketType === 'crypto' ? pairs : marketType === 'stocks' ? stockPairs : forexPairs;
     const first = pairList[0];
-    if (first) setActivePair(first);
+
+    if (first) {
+      setActivePair(first);
+    }
   }, [marketType, pairs, stockPairs, forexPairs]);
 
   useEffect(() => {
@@ -316,7 +324,10 @@ export default function Trades({ pairs, stockPairs, forexPairs, defaultPair, bal
 
             {/* BUY / SELL form */}
             {(
-              <div className="space-y-4">
+                <div className="space-y-4">
+                {errors.pair && <p className="text-xs text-rose-500">{errors.pair}</p>}
+                {errors.amount && <p className="text-xs text-rose-500">{errors.amount}</p>}
+                {errors.price && <p className="text-xs text-rose-500">{errors.price}</p>}
                 <div className="flex items-center justify-between bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-3 py-2.5">
                   <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Available</span>
                   <span className="text-xs font-bold text-white font-mono">

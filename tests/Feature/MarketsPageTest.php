@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Models\MarketPair;
 use App\Services\CoinMarketCapService;
+use App\Services\FinnhubService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,6 +17,27 @@ class MarketsPageTest extends TestCase
     {
         $this->mock(CoinMarketCapService::class, function ($mock) {
             $mock->shouldReceive('syncMarketPairs')->andReturnNull();
+        });
+        $this->mock(FinnhubService::class, function ($mock) {
+            $mock->shouldReceive('getTrackedStocks')->andReturn([
+                [
+                    'id' => 'stock:AAPL',
+                    'name' => 'AAPL',
+                    'symbol' => 'AAPL/USD',
+                    'price' => '190.12',
+                    'change' => '+1.0%',
+                    'high' => '191.00',
+                    'low' => '188.50',
+                    'volume' => 'N/A',
+                    'cap' => 'N/A',
+                    'icon' => 'data:image/svg+xml;base64,abc',
+                    'up' => true,
+                    'market_type' => 'stocks',
+                    'favoriteable' => false,
+                    'trade_asset' => 'AAPL',
+                    'sort_order' => 1,
+                ],
+            ]);
         });
 
         MarketPair::create([
@@ -37,7 +59,8 @@ class MarketsPageTest extends TestCase
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Markets')
-                ->has('markets', 1)
+                ->has('cryptoMarkets', 1)
+                ->has('stockMarkets', 1)
                 ->where('overview.active_pairs', 1)
                 ->where('overview.btc_dominance', '100.0%')
                 ->etc()
