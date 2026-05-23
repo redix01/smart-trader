@@ -4,7 +4,7 @@ import {
     Transition,
     TransitionChild,
 } from '@headlessui/react';
-import { PropsWithChildren } from 'react';
+import { Fragment, PropsWithChildren } from 'react';
 
 export default function Modal({
     children,
@@ -33,14 +33,15 @@ export default function Modal({
     }[maxWidth];
 
     return (
-        <Transition show={show} leave="duration-200">
+        <Transition as={Fragment} show={show} leave="duration-200">
             <Dialog
                 as="div"
                 id="modal"
-                className="fixed inset-0 z-50 flex transform items-center overflow-y-auto px-4 py-6 transition-all sm:px-0"
+                className="relative z-50"
                 onClose={close}
             >
                 <TransitionChild
+                    as={Fragment}
                     enter="ease-out duration-300"
                     enterFrom="opacity-0"
                     enterTo="opacity-100"
@@ -48,10 +49,13 @@ export default function Modal({
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="fixed inset-0 z-0 bg-black/70 backdrop-blur-sm" />
+                    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" />
                 </TransitionChild>
 
-                <TransitionChild
+                <div className="fixed inset-0 overflow-y-auto">
+                    <div className="flex min-h-full items-center justify-center p-4 sm:p-6">
+                        <TransitionChild
+                            as={Fragment}
                     enter="ease-out duration-300"
                     enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -59,12 +63,14 @@ export default function Modal({
                     leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
-                    <DialogPanel
-                        className={`relative z-10 mb-6 transform overflow-hidden rounded-3xl bg-[#111] border border-[#1A1A1A] shadow-2xl transition-all sm:mx-auto sm:w-full ${maxWidthClass}`}
-                    >
-                        {children}
-                    </DialogPanel>
-                </TransitionChild>
+                            <DialogPanel
+                                className={`relative w-full transform overflow-hidden rounded-3xl bg-[#111] border border-[#2A2A2A] shadow-[0_24px_80px_rgba(0,0,0,0.55)] transition-all ${maxWidthClass}`}
+                            >
+                                {children}
+                            </DialogPanel>
+                        </TransitionChild>
+                    </div>
+                </div>
             </Dialog>
         </Transition>
     );

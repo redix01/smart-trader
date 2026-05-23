@@ -197,12 +197,9 @@ export default function Dashboard({ kpi, wallets, kyc_status, chart }: Dashboard
 
             <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden h-[400px] flex flex-col">
               <div className="flex items-center justify-between px-6 py-4 border-b border-[#1A1A1A] flex-shrink-0">
-                  <div className="flex items-center gap-3">
-                    <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" className="w-6 h-6 rounded-full" alt="btc" />
-                    <div>
-                      <p className="text-sm font-bold text-white">{chartTitle}</p>
-                      <p className="text-[10px] text-zinc-500 font-medium">{chartSubtitle}</p>
-                    </div>
+                  <div>
+                    <p className="text-sm font-bold text-white">{chartTitle}</p>
+                    <p className="text-[10px] text-zinc-500 font-medium">{chartSubtitle}</p>
                   </div>
                 <Link href={route('trades')} className="text-[10px] font-bold text-blue-500 hover:text-blue-400 transition-colors flex items-center gap-1 uppercase tracking-widest">
                   Full Chart <ArrowUpRight size={12} />

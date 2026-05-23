@@ -26,4 +26,11 @@ class MarketsController extends Controller
             'favorites' => $this->market->getUserFavorites($user),
         ]);
     }
+
+    public function toggleFavorite(Request $request, int $marketPairId)
+    {
+        $this->market->toggleFavorite($request->user(), $marketPairId);
+
+        return redirect()->route('markets');
+    }
 }

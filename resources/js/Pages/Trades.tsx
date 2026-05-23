@@ -213,24 +213,6 @@ export default function Trades({ pairs, stockPairs, forexPairs, defaultPair, bal
         {/* Left — chart + history */}
         <div className="xl:col-span-3 space-y-6">
           <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden">
-            <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[#1A1A1A]">
-              <div className="flex items-center gap-3">
-                {activePair?.icon ? (
-                  <img src={activePair.icon} className="w-8 h-8 rounded-full" alt="" />
-                ) : null}
-                <div>
-                  <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">{marketType}</p>
-                  <h2 className="text-lg font-bold text-white leading-none">{activePair?.name}</h2>
-                </div>
-                <div className="flex items-baseline gap-2 ml-2">
-                  <span className="text-2xl font-mono font-bold text-white">{activePair?.price}</span>
-                  <span className={`text-sm font-bold ${activePair?.up ? 'text-emerald-500' : 'text-rose-500'}`}>{activePair?.change}</span>
-                </div>
-              </div>
-              <button className="text-zinc-500 hover:text-yellow-500 transition-colors p-2">
-                <Star size={20} />
-              </button>
-            </div>
             {/* TradingView Advanced Chart */}
             <div ref={chartRef} className="h-[480px] w-full" />
           </div>

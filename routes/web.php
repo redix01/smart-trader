@@ -45,6 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/kyc', [KycController::class, 'store'])->name('kyc.store');
     Route::get('/assets', AssetsController::class)->name('assets');
     Route::get('/markets', MarketsController::class)->name('markets');
+    Route::post('/markets/{marketPairId}/favorite', [MarketsController::class, 'toggleFavorite'])->name('markets.favorite');
     Route::get('/trades', [TradesController::class, 'index'])->name('trades');
     Route::post('/trades', [TradesController::class, 'store'])->name('trades.store');
     Route::get('/swap', [SwapController::class, 'index'])->name('swap');

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import { Search, TrendingUp, TrendingDown, Star, ChevronRight } from 'lucide-react';
 
@@ -25,6 +25,7 @@ interface MarketsProps {
 export default function Markets({ markets, favorites }: MarketsProps) {
   const [activeCat, setActiveCat] = useState('All');
   const [search, setSearch] = useState('');
+  const [pendingFavoriteId, setPendingFavoriteId] = useState<number | null>(null);
   const categoryFiltered = activeCat === 'All'
     ? markets
     : activeCat === 'Favorites'
@@ -40,6 +41,15 @@ export default function Markets({ markets, favorites }: MarketsProps) {
 
     return market.name.toLowerCase().includes(needle) || market.symbol.toLowerCase().includes(needle);
   });
+
+  const toggleFavorite = (marketId: number) => {
+    setPendingFavoriteId(marketId);
+    router.post(route('markets.favorite', marketId), {}, {
+      preserveScroll: true,
+      preserveState: true,
+      onFinish: () => setPendingFavoriteId(null),
+    });
+  };
 
   return (
     <AppLayout>
@@ -86,7 +96,17 @@ export default function Markets({ markets, favorites }: MarketsProps) {
                     <tr key={m.id} className="group hover:bg-[#151515] transition-colors cursor-pointer">
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-4">
-                          <button className={`transition-colors ${favorites.includes(m.id) ? 'text-yellow-500' : 'text-zinc-600 hover:text-yellow-500'}`}><Star size={16} fill={favorites.includes(m.id) ? 'currentColor' : 'none'} /></button>
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              toggleFavorite(m.id);
+                            }}
+                            disabled={pendingFavoriteId === m.id}
+                            className={`transition-colors disabled:opacity-50 ${favorites.includes(m.id) ? 'text-yellow-500' : 'text-zinc-600 hover:text-yellow-500'}`}
+                          >
+                            <Star size={16} fill={favorites.includes(m.id) ? 'currentColor' : 'none'} />
+                          </button>
                           <div className="w-8 h-8 rounded-full overflow-hidden p-1 bg-[#1A1A1A]">
                             <img src={m.icon} className="w-full h-full object-contain" alt={m.name} />
                           </div>
@@ -105,7 +125,9 @@ export default function Markets({ markets, favorites }: MarketsProps) {
                       <td className="px-6 py-5 text-right font-mono text-xs text-zinc-500 hidden md:table-cell">${m.volume}</td>
                       <td className="px-6 py-5 text-right font-mono text-xs text-zinc-500 hidden lg:table-cell">${m.cap}</td>
                       <td className="px-6 py-5 text-right">
-                        <button className="p-2 bg-blue-600/10 text-blue-600 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-blue-600 hover:text-white"><ChevronRight size={18} /></button>
+                        <Link href={route('trades', { asset: m.name })} className="p-2 bg-blue-600/10 text-blue-600 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-blue-600 hover:text-white">
+                          <ChevronRight size={18} />
+                        </Link>
                       </td>
                     </tr>
                   ))}
