@@ -29,6 +29,22 @@ class PlatformSettingsService
         return (string) ($this->get('mail_admin_name') ?: config('mail.admin_name', 'Admin'));
     }
 
+    public function getFloat(string $key, float $default = 0): float
+    {
+        $value = $this->get($key);
+
+        if ($value === null || $value === '') {
+            return $default;
+        }
+
+        return is_numeric($value) ? (float) $value : $default;
+    }
+
+    public function getPercent(string $key, float $default = 0): float
+    {
+        return max(0, $this->getFloat($key, $default));
+    }
+
     public function getAdminFormGroups(): array
     {
         $stored = PlatformSetting::query()
@@ -131,7 +147,7 @@ class PlatformSettingsService
             'trading_fee' => [
                 'group' => 'Fees',
                 'label' => 'Trading Fee (%)',
-                'description' => 'Reference trading fee percentage for admin control.',
+                'description' => 'Applied to executed user trades as a percentage of order subtotal.',
                 'type' => 'number',
                 'default' => '0.1',
                 'placeholder' => '0.1',
@@ -139,7 +155,7 @@ class PlatformSettingsService
             'swap_fee' => [
                 'group' => 'Fees',
                 'label' => 'Swap Fee (%)',
-                'description' => 'Reference swap fee percentage for admin control.',
+                'description' => 'Applied to user swaps as a percentage of the converted asset amount.',
                 'type' => 'number',
                 'default' => '0.05',
                 'placeholder' => '0.05',
@@ -147,7 +163,7 @@ class PlatformSettingsService
             'withdrawal_fee' => [
                 'group' => 'Fees',
                 'label' => 'Withdrawal Fee (%)',
-                'description' => 'Reference withdrawal fee percentage for admin control.',
+                'description' => 'Applied to user withdrawal requests as a percentage of the requested amount.',
                 'type' => 'number',
                 'default' => '1.0',
                 'placeholder' => '1.0',
@@ -163,7 +179,7 @@ class PlatformSettingsService
             'min_withdrawal' => [
                 'group' => 'Limits',
                 'label' => 'Minimum Withdrawal',
-                'description' => 'Reference minimum withdrawal amount.',
+                'description' => 'Applied to user withdrawals as the minimum allowed request amount.',
                 'type' => 'number',
                 'default' => '5',
                 'placeholder' => '5',
@@ -171,7 +187,7 @@ class PlatformSettingsService
             'max_withdrawal' => [
                 'group' => 'Limits',
                 'label' => 'Maximum Withdrawal',
-                'description' => 'Reference maximum withdrawal amount.',
+                'description' => 'Applied to user withdrawals as the maximum allowed request amount.',
                 'type' => 'number',
                 'default' => '50000',
                 'placeholder' => '50000',

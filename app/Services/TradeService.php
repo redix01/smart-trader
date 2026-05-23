@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class TradeService
 {
-    private const FEE_PERCENT = 0.1;
     private const STOCK_PAIRS = [
         ['id' => 101, 'name' => 'AAPL/USD', 'price' => '182.50', 'change' => '+1.20%', 'up' => true, 'icon' => ''],
         ['id' => 102, 'name' => 'TSLA/USD', 'price' => '245.30', 'change' => '-0.80%', 'up' => false, 'icon' => ''],
@@ -31,6 +30,7 @@ class TradeService
     public function __construct(
         private WalletService $wallets,
         private UserNotificationService $notifications,
+        private PlatformSettingsService $settings,
     ) {}
 
     public function getUserTradeHistory(User $user, int $limit = 20): Collection
@@ -77,7 +77,8 @@ class TradeService
             $pair = $this->resolvePair($marketType, $pairId, $pairName);
             $executionPrice = $price ?: $pair['price'];
             $subtotal = $amount * $executionPrice;
-            $fee = $subtotal * (self::FEE_PERCENT / 100);
+            $feePercent = $this->settings->getPercent('trading_fee', 0.1);
+            $fee = $subtotal * ($feePercent / 100);
             $isCashSettled = in_array($pair['quote_currency'], ['USD', 'USDT'], true);
 
             if ($side === 'buy') {

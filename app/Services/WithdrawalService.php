@@ -13,6 +13,7 @@ class WithdrawalService
     public function __construct(
         private WalletService $wallets,
         private UserNotificationService $notifications,
+        private PlatformSettingsService $settings,
     ) {}
 
     public function createWithdrawal(User $user, array $data): Withdrawal
@@ -20,7 +21,8 @@ class WithdrawalService
         return DB::transaction(function () use ($user, $data) {
             $currency = strtoupper((string) ($data['currency'] ?? 'USD'));
             $amount = (float) $data['amount'];
-            $fee = $amount * 0.01;
+            $feePercent = $this->settings->getPercent('withdrawal_fee', 1.0);
+            $fee = $amount * ($feePercent / 100);
             $wallet = $user->wallets()
                 ->where('currency', $currency)
                 ->lockForUpdate()

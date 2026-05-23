@@ -10,11 +10,10 @@ use Illuminate\Support\Collection;
 
 class SwapService
 {
-    private const FEES_PERCENT = 0.05;
-
     public function __construct(
         private WalletService $wallets,
         private UserNotificationService $notifications,
+        private PlatformSettingsService $settings,
     ) {}
 
     public function getSupportedPairs(): array
@@ -76,7 +75,8 @@ class SwapService
         }
 
         $toAmount = $amount * $pair['rate'];
-        $fee = $toAmount * (self::FEES_PERCENT / 100);
+        $feePercent = $this->settings->getPercent('swap_fee', 0.05);
+        $fee = $toAmount * ($feePercent / 100);
 
         return [
             'from_currency' => strtoupper($from),
@@ -85,7 +85,7 @@ class SwapService
             'to_amount' => $toAmount - $fee,
             'rate' => $pair['rate'],
             'fee' => $fee,
-            'fee_percent' => self::FEES_PERCENT,
+            'fee_percent' => $feePercent,
         ];
     }
 

@@ -1,7 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Check, Copy, QrCode, Upload, ShieldCheck, ChevronRight, Info } from 'lucide-react';
+import { Check, Copy, Upload, ShieldCheck, ChevronRight, Info } from 'lucide-react';
 
 interface DepositMethod {
   id: number;
@@ -166,16 +166,6 @@ export default function Deposit({ methods }: DepositProps) {
               </div>
             </form>
 
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 flex items-center gap-8 relative overflow-hidden group">
-              <div className="relative z-10 flex-1 space-y-2">
-                <h3 className="text-lg font-bold text-white">Instant Verification</h3>
-                <p className="text-xs text-white/70 leading-relaxed">Scan QR to fetch address directly into your wallet.</p>
-              </div>
-              <div className="relative z-10 bg-white p-3 rounded-2xl shadow-2xl group-hover:rotate-3 transition-transform">
-                <QrCode size={80} className="text-indigo-900" />
-              </div>
-              <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-            </div>
           </div>
         </div>
       </div>

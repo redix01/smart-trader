@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\MarketPair;
+use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,6 +15,13 @@ class TradeFlowTest extends TestCase
 
     public function test_user_can_execute_crypto_trade_using_usd_balance(): void
     {
+        PlatformSetting::create([
+            'key' => 'trading_fee',
+            'value' => '1.5',
+            'group' => 'Fees',
+            'type' => 'number',
+        ]);
+
         $user = User::factory()->create([
             'kyc_level' => 'verified',
         ]);
@@ -60,14 +68,22 @@ class TradeFlowTest extends TestCase
             'pair' => 'BTC/USDT',
             'side' => 'buy',
             'status' => 'completed',
+            'fee' => 7.5,
         ]);
 
-        $this->assertEquals('499.50000000', $user->wallets()->where('currency', 'USD')->firstOrFail()->balance);
+        $this->assertEquals('492.50000000', $user->wallets()->where('currency', 'USD')->firstOrFail()->balance);
         $this->assertEquals('0.01000000', $user->wallets()->where('currency', 'BTC')->firstOrFail()->balance);
     }
 
     public function test_user_can_execute_stock_trade_using_usd_balance(): void
     {
+        PlatformSetting::create([
+            'key' => 'trading_fee',
+            'value' => '2.0',
+            'group' => 'Fees',
+            'type' => 'number',
+        ]);
+
         $user = User::factory()->create([
             'kyc_level' => 'verified',
         ]);
@@ -99,9 +115,10 @@ class TradeFlowTest extends TestCase
             'pair' => 'AAPL/USD',
             'side' => 'buy',
             'status' => 'completed',
+            'fee' => 3.65,
         ]);
 
-        $this->assertEquals('817.31750000', $user->wallets()->where('currency', 'USD')->firstOrFail()->balance);
+        $this->assertEquals('813.85000000', $user->wallets()->where('currency', 'USD')->firstOrFail()->balance);
         $this->assertEquals('1.00000000', $user->wallets()->where('currency', 'AAPL')->firstOrFail()->balance);
     }
 }

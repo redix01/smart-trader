@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Mail\UserActionMail;
+use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\Withdrawal;
@@ -42,6 +43,12 @@ class WithdrawalFlowTest extends TestCase
     public function test_user_can_submit_withdrawal(): void
     {
         Mail::fake();
+        PlatformSetting::create([
+            'key' => 'withdrawal_fee',
+            'value' => '3.5',
+            'group' => 'Fees',
+            'type' => 'number',
+        ]);
 
         $this->actingAs($this->user)
             ->post(route('withdraw.store'), [
@@ -54,6 +61,8 @@ class WithdrawalFlowTest extends TestCase
         $this->assertDatabaseHas('withdrawals', [
             'user_id' => $this->user->id,
             'amount' => 500,
+            'fee' => 17.5,
+            'net_amount' => 482.5,
             'status' => 'pending',
         ]);
 
@@ -61,6 +70,44 @@ class WithdrawalFlowTest extends TestCase
             return $mail->hasTo('admin@cognizantpromarket.com')
                 && $mail->subjectLine === 'New withdrawal request';
         });
+    }
+
+    public function test_withdrawal_respects_admin_minimum_limit(): void
+    {
+        PlatformSetting::create([
+            'key' => 'min_withdrawal',
+            'value' => '250',
+            'group' => 'Limits',
+            'type' => 'number',
+        ]);
+
+        $this->actingAs($this->user)
+            ->post(route('withdraw.store'), [
+                'method' => 'wallet',
+                'amount' => 100,
+                'currency' => 'USD',
+                'destination' => ['wallet_address' => '0x1234567890abcdef'],
+            ])
+            ->assertSessionHasErrors(['amount']);
+    }
+
+    public function test_withdrawal_respects_admin_maximum_limit(): void
+    {
+        PlatformSetting::create([
+            'key' => 'max_withdrawal',
+            'value' => '300',
+            'group' => 'Limits',
+            'type' => 'number',
+        ]);
+
+        $this->actingAs($this->user)
+            ->post(route('withdraw.store'), [
+                'method' => 'wallet',
+                'amount' => 350,
+                'currency' => 'USD',
+                'destination' => ['wallet_address' => '0x1234567890abcdef'],
+            ])
+            ->assertSessionHasErrors(['amount']);
     }
 
     public function test_admin_can_approve_withdrawal(): void
