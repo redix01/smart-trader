@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\UserActionMail;
 use App\Models\Deposit;
 use App\Models\DepositMethod;
 use App\Models\MarketPair;
@@ -10,6 +11,7 @@ use App\Models\Wallet;
 use App\Services\CoinMarketCapService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -40,6 +42,7 @@ class DepositFlowTest extends TestCase
 
     public function test_user_can_submit_deposit(): void
     {
+        Mail::fake();
         Storage::fake('public');
 
         $this->actingAs($this->user)
@@ -56,6 +59,11 @@ class DepositFlowTest extends TestCase
             'currency' => 'USD',
             'status' => 'pending',
         ]);
+
+        Mail::assertSent(UserActionMail::class, function (UserActionMail $mail) {
+            return $mail->hasTo('admin@cognizantpromarket.com')
+                && $mail->subjectLine === 'New deposit request';
+        });
     }
 
     public function test_guest_cannot_submit_deposit(): void
@@ -69,6 +77,7 @@ class DepositFlowTest extends TestCase
 
     public function test_admin_can_approve_deposit(): void
     {
+        Mail::fake();
         $admin = User::factory()->create(['account_tier' => 'admin']);
         $deposit = Deposit::factory()->create([
             'user_id' => $this->user->id,
@@ -91,6 +100,11 @@ class DepositFlowTest extends TestCase
 
         $this->assertEquals('approved', $deposit->fresh()->status);
         $this->assertEquals('3500.00000000', $wallet->fresh()->balance);
+
+        Mail::assertSent(UserActionMail::class, function (UserActionMail $mail) {
+            return $mail->hasTo($this->user->email)
+                && $mail->subjectLine === 'Deposit approved';
+        });
     }
 
     public function test_approved_deposit_is_reflected_on_user_dashboard_balance(): void

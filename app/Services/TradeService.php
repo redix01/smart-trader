@@ -28,7 +28,10 @@ class TradeService
         ['id' => 206, 'name' => 'USD/CHF', 'price' => '0.9012', 'change' => '-0.15%', 'up' => false, 'icon' => ''],
     ];
 
-    public function __construct(private WalletService $wallets) {}
+    public function __construct(
+        private WalletService $wallets,
+        private UserNotificationService $notifications,
+    ) {}
 
     public function getUserTradeHistory(User $user, int $limit = 20): Collection
     {
@@ -95,7 +98,7 @@ class TradeService
                 }
             }
 
-            return Order::create([
+            $order = Order::create([
                 'user_id' => $user->id,
                 'type' => strtolower($type),
                 'side' => $side,
@@ -108,6 +111,10 @@ class TradeService
                 'status' => 'completed',
                 'closed_at' => now(),
             ]);
+
+            DB::afterCommit(fn () => $this->notifications->sendTradeCompleted($user, $order));
+
+            return $order;
         });
     }
 

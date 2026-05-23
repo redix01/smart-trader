@@ -10,7 +10,10 @@ use Illuminate\Validation\ValidationException;
 
 class WithdrawalService
 {
-    public function __construct(private WalletService $wallets) {}
+    public function __construct(
+        private WalletService $wallets,
+        private UserNotificationService $notifications,
+    ) {}
 
     public function createWithdrawal(User $user, array $data): Withdrawal
     {
@@ -31,7 +34,7 @@ class WithdrawalService
 
             $wallet->decrement('balance', $amount);
 
-            return Withdrawal::create([
+            $withdrawal = Withdrawal::create([
                 'user_id' => $user->id,
                 'method' => $data['method'],
                 'amount' => $amount,
@@ -41,6 +44,10 @@ class WithdrawalService
                 'destination_details' => $data['destination'] ?? [],
                 'status' => 'pending',
             ]);
+
+            DB::afterCommit(fn () => $this->notifications->sendWithdrawalSubmitted($user, $withdrawal));
+
+            return $withdrawal;
         });
     }
 

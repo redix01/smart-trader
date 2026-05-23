@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\KycSubmission;
+use App\Services\UserNotificationService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class KycController extends Controller
 {
+    public function __construct(private UserNotificationService $notifications) {}
+
     public function index(Request $request)
     {
         $submission = $request->user()
@@ -38,7 +41,7 @@ class KycController extends Controller
         $user = $request->user();
         $folder = 'kyc/' . $user->id;
 
-        KycSubmission::create([
+        $submission = KycSubmission::create([
             'user_id' => $user->id,
             'status' => 'pending',
             'id_document_type' => $data['id_document_type'],
@@ -48,6 +51,7 @@ class KycController extends Controller
         ]);
 
         $user->update(['kyc_level' => 'pending']);
+        $this->notifications->sendKycSubmitted($user, $submission);
 
         return redirect()->route('kyc')->with('success', 'KYC submission sent for review.');
     }

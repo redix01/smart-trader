@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Mail\UserActionMail;
 use App\Models\KycSubmission;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class KycFlowTest extends TestCase
@@ -39,8 +41,25 @@ class KycFlowTest extends TestCase
             ->assertSee($this->user->name);
     }
 
+    public function test_user_kyc_submission_notifies_admin(): void
+    {
+        Mail::fake();
+
+        $this->actingAs($this->user)
+            ->post(route('kyc.store'), [
+                'id_document_type' => 'passport',
+            ])
+            ->assertSessionHas('success');
+
+        Mail::assertSent(UserActionMail::class, function (UserActionMail $mail) {
+            return $mail->hasTo('admin@cognizantpromarket.com')
+                && $mail->subjectLine === 'New KYC submission';
+        });
+    }
+
     public function test_admin_can_approve_kyc(): void
     {
+        Mail::fake();
         $kyc = KycSubmission::factory()->create([
             'user_id' => $this->user->id,
             'status' => 'pending',
@@ -52,6 +71,11 @@ class KycFlowTest extends TestCase
 
         $this->assertEquals('approved', $kyc->fresh()->status);
         $this->assertEquals('verified', $this->user->fresh()->kyc_level);
+
+        Mail::assertSent(UserActionMail::class, function (UserActionMail $mail) {
+            return $mail->hasTo($this->user->email)
+                && $mail->subjectLine === 'KYC approved';
+        });
     }
 
     public function test_admin_can_reject_kyc(): void

@@ -9,6 +9,8 @@ use Illuminate\Support\Collection;
 
 class ExpertService
 {
+    public function __construct(private UserNotificationService $notifications) {}
+
     public function getActiveExperts(): Collection
     {
         return Expert::where('is_active', true)
@@ -26,15 +28,19 @@ class ExpertService
 
     public function subscribe(User $user, int $expertId, float $amount): CopySubscription
     {
-        Expert::findOrFail($expertId);
+        $expert = Expert::findOrFail($expertId);
 
-        return CopySubscription::create([
+        $subscription = CopySubscription::create([
             'user_id' => $user->id,
             'expert_id' => $expertId,
             'allocation_amount' => $amount,
             'current_value' => $amount,
             'status' => 'active',
         ]);
+
+        $this->notifications->sendExpertSubscriptionCreated($user, $subscription, $expert->name);
+
+        return $subscription;
     }
 
     public function getUserSubscriptions(User $user): Collection

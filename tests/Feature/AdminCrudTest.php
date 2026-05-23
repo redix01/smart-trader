@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Expert;
 use App\Models\MiningPlan;
+use App\Models\PlatformSetting;
 use App\Models\PropertyProject;
 use App\Models\StakingPlan;
 use App\Models\User;
@@ -178,5 +179,32 @@ class AdminCrudTest extends TestCase
         foreach ($routes as $route) {
             $this->get(route($route))->assertOk();
         }
+    }
+
+    public function test_admin_can_update_platform_settings(): void
+    {
+        $this->actingAs($this->admin)
+            ->post(route('admin.settings.update'), [
+                'settings' => [
+                    ['key' => 'mail_admin_address', 'value' => 'ops@cognizantpromarket.com'],
+                    ['key' => 'support_email', 'value' => 'help@cognizantpromarket.com'],
+                    ['key' => 'site_name', 'value' => 'CognizantPro Market'],
+                ],
+            ])
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('platform_settings', [
+            'key' => 'mail_admin_address',
+            'value' => 'ops@cognizantpromarket.com',
+            'group' => 'Mail',
+            'type' => 'email',
+        ]);
+
+        $this->assertDatabaseHas('platform_settings', [
+            'key' => 'support_email',
+            'value' => 'help@cognizantpromarket.com',
+            'group' => 'General',
+            'type' => 'email',
+        ]);
     }
 }

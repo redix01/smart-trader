@@ -6,11 +6,15 @@ use App\Models\MiningPlan;
 use App\Models\MiningSubscription;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class MiningService
 {
-    public function __construct(private WalletService $wallets) {}
+    public function __construct(
+        private WalletService $wallets,
+        private UserNotificationService $notifications,
+    ) {}
 
     public function getActivePlans(): Collection
     {
@@ -52,36 +56,42 @@ class MiningService
 
     public function createSubscription(User $user, int $planId, float $amount): MiningSubscription
     {
-        $plan = MiningPlan::findOrFail($planId);
+        return DB::transaction(function () use ($user, $planId, $amount) {
+            $plan = MiningPlan::findOrFail($planId);
 
-        if ($amount < (float) $plan->min_amount) {
-            throw ValidationException::withMessages([
-                'amount' => 'Minimum subscription amount is $' . number_format((float) $plan->min_amount, 2),
+            if ($amount < (float) $plan->min_amount) {
+                throw ValidationException::withMessages([
+                    'amount' => 'Minimum subscription amount is $' . number_format((float) $plan->min_amount, 2),
+                ]);
+            }
+
+            if ($plan->max_amount && $amount > (float) $plan->max_amount) {
+                throw ValidationException::withMessages([
+                    'amount' => 'Maximum subscription amount is $' . number_format((float) $plan->max_amount, 2),
+                ]);
+            }
+
+            if (! $plan->is_active) {
+                throw ValidationException::withMessages([
+                    'plan_id' => 'This mining plan is no longer available.',
+                ]);
+            }
+
+            $this->wallets->debit($user, 'USD', $amount);
+
+            $subscription = MiningSubscription::create([
+                'user_id' => $user->id,
+                'mining_plan_id' => $plan->id,
+                'amount' => $amount,
+                'status' => 'active',
+                'start_date' => now(),
+                'end_date' => now()->addDays($plan->duration_days),
             ]);
-        }
 
-        if ($plan->max_amount && $amount > (float) $plan->max_amount) {
-            throw ValidationException::withMessages([
-                'amount' => 'Maximum subscription amount is $' . number_format((float) $plan->max_amount, 2),
-            ]);
-        }
+            DB::afterCommit(fn () => $this->notifications->sendMiningSubscriptionCreated($user, $subscription, $plan->name));
 
-        if (!$plan->is_active) {
-            throw ValidationException::withMessages([
-                'plan_id' => 'This mining plan is no longer available.',
-            ]);
-        }
-
-        $this->wallets->debit($user, 'USD', $amount);
-
-        return MiningSubscription::create([
-            'user_id' => $user->id,
-            'mining_plan_id' => $plan->id,
-            'amount' => $amount,
-            'status' => 'active',
-            'start_date' => now(),
-            'end_date' => now()->addDays($plan->duration_days),
-        ]);
+            return $subscription;
+        });
     }
 
     private function getColor(string $key): string

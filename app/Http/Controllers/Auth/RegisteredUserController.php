@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\UserNotificationService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,8 @@ use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
+    public function __construct(private UserNotificationService $notifications) {}
+
     /**
      * Display the registration view.
      */
@@ -46,6 +49,8 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
+        $this->notifications->sendWelcome($user);
+        $this->notifications->sendAdminNewRegistration($user);
 
         return redirect(route('dashboard', absolute: false));
     }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\UserActionMail;
 use App\Models\CopySubscription;
 use App\Models\Expert;
 use App\Models\MiningPlan;
@@ -13,6 +14,7 @@ use App\Models\StakingPlan;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class UserSubscriptionTest extends TestCase
@@ -45,6 +47,7 @@ class UserSubscriptionTest extends TestCase
 
     public function test_user_can_subscribe_to_staking_plan(): void
     {
+        Mail::fake();
         $plan = StakingPlan::factory()->create(['min_amount' => 100, 'is_active' => true]);
 
         $this->actingAs($this->user)
@@ -58,6 +61,11 @@ class UserSubscriptionTest extends TestCase
             'staking_plan_id' => $plan->id,
             'amount' => 1000,
         ]);
+
+        Mail::assertSent(UserActionMail::class, function (UserActionMail $mail) {
+            return $mail->hasTo($this->user->email)
+                && $mail->subjectLine === 'Stake created';
+        });
     }
 
     public function test_user_can_subscribe_to_mining_plan(): void

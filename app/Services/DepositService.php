@@ -11,6 +11,8 @@ use Illuminate\Support\Collection;
 
 class DepositService
 {
+    public function __construct(private UserNotificationService $notifications) {}
+
     public function getActiveMethods(): Collection
     {
         $prices = MarketPair::where('is_active', true)
@@ -59,6 +61,8 @@ class DepositService
                 'proof_mime' => $proof->getMimeType(),
             ]);
         }
+
+        $this->notifications->sendDepositSubmitted($user, $deposit, $method->label);
 
         return $deposit;
     }

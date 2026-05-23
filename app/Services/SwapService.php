@@ -12,7 +12,10 @@ class SwapService
 {
     private const FEES_PERCENT = 0.05;
 
-    public function __construct(private WalletService $wallets) {}
+    public function __construct(
+        private WalletService $wallets,
+        private UserNotificationService $notifications,
+    ) {}
 
     public function getSupportedPairs(): array
     {
@@ -98,7 +101,7 @@ class SwapService
             $this->wallets->debit($user, $quote['from_currency'], (float) $quote['from_amount']);
             $this->wallets->credit($user, $quote['to_currency'], (float) $quote['to_amount']);
 
-            return SwapQuote::create([
+            $swap = SwapQuote::create([
                 'user_id' => $user->id,
                 'from_currency' => $quote['from_currency'],
                 'to_currency' => $quote['to_currency'],
@@ -108,6 +111,10 @@ class SwapService
                 'fee' => $quote['fee'],
                 'status' => 'completed',
             ]);
+
+            DB::afterCommit(fn () => $this->notifications->sendSwapCompleted($user, $swap));
+
+            return $swap;
         });
     }
 

@@ -9,6 +9,8 @@ use Illuminate\Support\Collection;
 
 class RealEstateService
 {
+    public function __construct(private UserNotificationService $notifications) {}
+
     public function getActiveProjects(): Collection
     {
         return PropertyProject::where('is_active', true)
@@ -48,7 +50,7 @@ class RealEstateService
         $project = PropertyProject::findOrFail($projectId);
         $expectedReturn = $amount * ((float) $project->target_roi / 100);
 
-        return PropertyInvestment::create([
+        $investment = PropertyInvestment::create([
             'user_id' => $user->id,
             'property_project_id' => $project->id,
             'amount' => $amount,
@@ -56,5 +58,9 @@ class RealEstateService
             'status' => 'active',
             'disclosure_signed' => false,
         ]);
+
+        $this->notifications->sendPropertyInvestmentCreated($user, $investment, $project->title);
+
+        return $investment;
     }
 }

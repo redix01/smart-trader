@@ -2,7 +2,10 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Mail\UserActionMail;
+use App\Models\PlatformSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -18,6 +21,14 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register(): void
     {
+        Mail::fake();
+        PlatformSetting::create([
+            'key' => 'mail_admin_address',
+            'value' => 'ops@cognizantpromarket.com',
+            'group' => 'Mail',
+            'type' => 'email',
+        ]);
+
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -27,5 +38,15 @@ class RegistrationTest extends TestCase
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
+
+        Mail::assertSent(UserActionMail::class, function (UserActionMail $mail) {
+            return $mail->hasTo('test@example.com')
+                && $mail->subjectLine === 'Welcome to your account';
+        });
+
+        Mail::assertSent(UserActionMail::class, function (UserActionMail $mail) {
+            return $mail->hasTo('ops@cognizantpromarket.com')
+                && $mail->subjectLine === 'New user registration';
+        });
     }
 }

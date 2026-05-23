@@ -11,7 +11,10 @@ use Illuminate\Validation\ValidationException;
 
 class StakingService
 {
-    public function __construct(private WalletService $wallets) {}
+    public function __construct(
+        private WalletService $wallets,
+        private UserNotificationService $notifications,
+    ) {}
 
     public function getActivePlans(): Collection
     {
@@ -70,7 +73,7 @@ class StakingService
 
             $this->wallets->debit($user, $plan->currency, $amount);
 
-            return Stake::create([
+            $stake = Stake::create([
                 'user_id' => $user->id,
                 'staking_plan_id' => $plan->id,
                 'amount' => $amount,
@@ -78,6 +81,10 @@ class StakingService
                 'start_date' => now(),
                 'end_date' => now()->addDays($plan->duration_days),
             ]);
+
+            DB::afterCommit(fn () => $this->notifications->sendStakeCreated($user, $stake, $plan->name, $plan->currency));
+
+            return $stake;
         });
     }
 

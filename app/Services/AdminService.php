@@ -10,6 +10,8 @@ use Illuminate\Support\Collection;
 
 class AdminService
 {
+    public function __construct(private UserNotificationService $notifications) {}
+
     public function getPendingKyc(): Collection
     {
         return KycSubmission::where('status', 'pending')
@@ -35,6 +37,7 @@ class AdminService
         ]);
 
         $submission->user->update(['kyc_level' => 'verified']);
+        $this->notifications->sendKycApproved($submission->user, $submission->fresh());
     }
 
     public function rejectKyc(int $submissionId, int $reviewerId, string $reason): void
@@ -46,6 +49,8 @@ class AdminService
             'reviewed_at' => now(),
             'reviewed_by' => $reviewerId,
         ]);
+
+        $this->notifications->sendKycRejected($submission->user, $submission->fresh());
     }
 
     public function getPendingDeposits(): Collection
@@ -94,6 +99,8 @@ class AdminService
             );
 
             $wallet->increment('balance', (float) $deposit->net_amount);
+
+            DB::afterCommit(fn () => $this->notifications->sendDepositApproved($deposit->user, $deposit->fresh()));
         });
     }
 
@@ -106,6 +113,8 @@ class AdminService
             'approved_at' => now(),
             'approved_by' => $reviewerId,
         ]);
+
+        $this->notifications->sendDepositRejected($deposit->user, $deposit->fresh());
     }
 
     public function getPendingWithdrawals(): Collection
@@ -132,6 +141,8 @@ class AdminService
             'approved_at' => now(),
             'approved_by' => $reviewerId,
         ]);
+
+        $this->notifications->sendWithdrawalApproved($withdrawal->user, $withdrawal->fresh());
     }
 
     public function rejectWithdrawal(int $withdrawalId, int $reviewerId, string $reason): void
@@ -143,5 +154,7 @@ class AdminService
             'approved_at' => now(),
             'approved_by' => $reviewerId,
         ]);
+
+        $this->notifications->sendWithdrawalRejected($withdrawal->user, $withdrawal->fresh());
     }
 }

@@ -3,18 +3,48 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import { Save } from 'lucide-react';
 import { useEffect } from 'react';
 
-export default function SettingsIndex({ settings }: { settings: Record<string, { key: string; value: string; group: string }[]> }) {
-  const { data, setData, post, processing } = useForm({ settings: [] as { key: string; value: string; group: string }[] });
+type SettingItem = {
+  key: string;
+  label: string;
+  description: string;
+  group: string;
+  type: string;
+  value: string;
+  placeholder?: string | null;
+};
+
+type SettingGroup = {
+  name: string;
+  description?: string | null;
+  settings: SettingItem[];
+};
+
+export default function SettingsIndex({ groups }: { groups: SettingGroup[] }) {
+  const initialSettings = groups.flatMap((group) =>
+    group.settings.map((setting) => ({
+      key: setting.key,
+      value: setting.value ?? '',
+    })),
+  );
+
+  const { data, setData, post, processing } = useForm({
+    settings: initialSettings as { key: string; value: string }[],
+  });
 
   useEffect(() => {
-    const flat = Object.entries(settings).flatMap(([group, items]) =>
-      items.map(i => ({ key: i.key, value: i.value, group }))
+    setData(
+      'settings',
+      groups.flatMap((group) =>
+        group.settings.map((setting) => ({
+          key: setting.key,
+          value: setting.value ?? '',
+        })),
+      ),
     );
-    if (flat.length > 0) setData('settings', flat);
-  }, []);
+  }, [groups]);
 
   const updateSetting = (key: string, value: string) => {
-    setData('settings', data.settings.map(s => s.key === key ? { ...s, value } : s));
+    setData('settings', data.settings.map((setting) => setting.key === key ? { ...setting, value } : setting));
   };
 
   const submit = (e: React.FormEvent) => {
@@ -22,49 +52,51 @@ export default function SettingsIndex({ settings }: { settings: Record<string, {
     post(route('admin.settings.update'));
   };
 
-  const defaultSettings: Record<string, { key: string; value: string; group: string }[]> = Object.keys(settings).length > 0
-    ? settings
-    : {
-        'General': [
-          { key: 'site_name', value: 'CognizantPro', group: 'General' },
-          { key: 'site_description', value: 'Trading Platform', group: 'General' },
-          { key: 'support_email', value: 'support@acuity.com', group: 'General' },
-        ],
-        'Fees': [
-          { key: 'trading_fee', value: '0.1', group: 'Fees' },
-          { key: 'swap_fee', value: '0.5', group: 'Fees' },
-          { key: 'withdrawal_fee', value: '2.0', group: 'Fees' },
-        ],
-        'Limits': [
-          { key: 'min_deposit', value: '10', group: 'Limits' },
-          { key: 'min_withdrawal', value: '5', group: 'Limits' },
-          { key: 'max_withdrawal', value: '50000', group: 'Limits' },
-        ],
-      };
-
-  const grouped = Object.keys(settings).length > 0 ? settings : defaultSettings;
+  const valueFor = (key: string, fallback: string) => data.settings.find((setting) => setting.key === key)?.value ?? fallback;
 
   return (
     <AdminLayout>
       <Head title="Admin - Settings" />
       <header className="mb-8 flex flex-col gap-1">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-zinc-500 bg-clip-text text-transparent tracking-tight">Platform Settings</h1>
-        <p className="text-zinc-500 text-sm font-medium">Configure platform-wide settings, fees, and content.</p>
+        <p className="text-zinc-500 text-sm font-medium">Configure platform-wide contact, mail, fee, limit, and compliance settings.</p>
       </header>
       <form onSubmit={submit} className="space-y-6">
-        {Object.entries(grouped).map(([group, items]) => (
-          <div key={group} className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-6">
-            <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-widest mb-4">{group}</h3>
-            <div className="space-y-3">
-              {items.map(setting => (
-                <div key={setting.key} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <label htmlFor={setting.key} className="text-sm text-white capitalize">{setting.key.replace(/_/g, ' ')}</label>
-                  <input
-                    id={setting.key}
-                    value={data.settings.find(s => s.key === setting.key)?.value ?? setting.value}
-                    onChange={e => updateSetting(setting.key, e.target.value)}
-                    className="w-full sm:w-64 bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-2 text-sm text-white sm:text-right font-mono focus:outline-none focus:border-zinc-600"
-                  />
+        {groups.map((group) => (
+          <div key={group.name} className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-6">
+            <div className="mb-5">
+              <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-widest">{group.name}</h3>
+              {group.description ? (
+                <p className="mt-2 text-sm text-zinc-500">{group.description}</p>
+              ) : null}
+            </div>
+            <div className="space-y-4">
+              {group.settings.map((setting) => (
+                <div key={setting.key} className="grid gap-3 border-t border-[#1A1A1A] pt-4 md:grid-cols-[minmax(0,1fr)_340px] md:items-start">
+                  <div>
+                    <label htmlFor={setting.key} className="text-sm font-semibold text-white">{setting.label}</label>
+                    <p className="mt-1 text-sm text-zinc-500">{setting.description}</p>
+                  </div>
+                  {setting.type === 'textarea' ? (
+                    <textarea
+                      id={setting.key}
+                      value={valueFor(setting.key, setting.value)}
+                      onChange={(e) => updateSetting(setting.key, e.target.value)}
+                      placeholder={setting.placeholder ?? undefined}
+                      rows={4}
+                      className="w-full resize-none rounded-2xl border border-[#1A1A1A] bg-[#0A0A0A] px-4 py-3 text-sm text-white focus:border-zinc-600 focus:outline-none"
+                    />
+                  ) : (
+                    <input
+                      id={setting.key}
+                      type={setting.type === 'number' ? 'number' : setting.type}
+                      step={setting.type === 'number' ? 'any' : undefined}
+                      value={valueFor(setting.key, setting.value)}
+                      onChange={(e) => updateSetting(setting.key, e.target.value)}
+                      placeholder={setting.placeholder ?? undefined}
+                      className="w-full rounded-2xl border border-[#1A1A1A] bg-[#0A0A0A] px-4 py-3 text-sm text-white focus:border-zinc-600 focus:outline-none"
+                    />
+                  )}
                 </div>
               ))}
             </div>
