@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -27,6 +30,8 @@ class UserController extends Controller
     public function show(User $user)
     {
         $user->load(['wallets', 'kycSubmissions', 'deposits' => fn($q) => $q->latest()->limit(10), 'withdrawals' => fn($q) => $q->latest()->limit(10)]);
+        $user->makeVisible('plain_password');
+
         return Inertia::render('Admin/Users/Show', ['user' => $user]);
     }
 
@@ -41,6 +46,71 @@ class UserController extends Controller
 
         $user->update($data);
         return redirect()->back()->with('success', 'User updated.');
+    }
+
+    public function adjustWallet(Request $request, User $user)
+    {
+        $data = $request->validate([
+            'currency' => 'required|string|max:10',
+            'operation' => 'required|in:add,subtract',
+            'amount' => 'required|numeric|min:0.00000001',
+            'note' => 'nullable|string|max:500',
+        ]);
+
+        DB::transaction(function () use ($data, $request, $user) {
+            $currency = strtoupper($data['currency']);
+            $amount = (float) $data['amount'];
+
+            $wallet = $user->wallets()
+                ->where('currency', $currency)
+                ->lockForUpdate()
+                ->first();
+
+            if (! $wallet) {
+                if ($data['operation'] === 'subtract') {
+                    throw ValidationException::withMessages([
+                        'currency' => "User does not have a {$currency} wallet.",
+                    ]);
+                }
+
+                $wallet = $user->wallets()->create([
+                    'currency' => $currency,
+                    'label' => $currency,
+                    'balance' => 0,
+                    'locked_balance' => 0,
+                    'is_active' => true,
+                ]);
+            }
+
+            $before = (float) $wallet->balance;
+            $after = $data['operation'] === 'add'
+                ? $before + $amount
+                : $before - $amount;
+
+            if ($after < 0) {
+                throw ValidationException::withMessages([
+                    'amount' => "Insufficient {$currency} balance.",
+                ]);
+            }
+
+            $wallet->forceFill(['balance' => $after])->save();
+
+            Transaction::create([
+                'transactionable_type' => $wallet->getMorphClass(),
+                'transactionable_id' => $wallet->id,
+                'user_id' => $user->id,
+                'type' => $data['operation'] === 'add' ? 'admin_credit' : 'admin_debit',
+                'currency' => $currency,
+                'amount' => $amount,
+                'fee' => 0,
+                'balance_before' => $before,
+                'balance_after' => $after,
+                'status' => 'completed',
+                'description' => ($data['note'] ?? null) ?: 'Manual admin wallet adjustment by admin #'.$request->user()->id,
+            ]);
+        });
+
+        return redirect()->back()->with('success', 'Wallet balance updated.');
     }
 
     public function destroy(User $user)

@@ -72,6 +72,66 @@ class AdminCrudTest extends TestCase
         $this->assertEquals('admin', $user->fresh()->account_tier);
     }
 
+    public function test_admin_can_adjust_user_wallet_balance(): void
+    {
+        $user = User::factory()->create();
+        $wallet = $user->wallets()->create([
+            'currency' => 'USD',
+            'label' => 'USD',
+            'balance' => 100,
+            'locked_balance' => 0,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($this->admin)
+            ->post(route('admin.users.wallets.adjust', $user), [
+                'currency' => 'USD',
+                'operation' => 'add',
+                'amount' => 25.5,
+                'note' => 'Manual funding',
+            ])
+            ->assertSessionHas('success');
+
+        $this->assertSame('125.50000000', $wallet->fresh()->balance);
+        $this->assertDatabaseHas('transactions', [
+            'user_id' => $user->id,
+            'type' => 'admin_credit',
+            'currency' => 'USD',
+            'status' => 'completed',
+            'description' => 'Manual funding',
+        ]);
+
+        $this->actingAs($this->admin)
+            ->post(route('admin.users.wallets.adjust', $user), [
+                'currency' => 'USD',
+                'operation' => 'subtract',
+                'amount' => 50,
+            ])
+            ->assertSessionHas('success');
+
+        $this->assertSame('75.50000000', $wallet->fresh()->balance);
+    }
+
+    public function test_admin_cannot_subtract_more_than_wallet_balance(): void
+    {
+        $user = User::factory()->create();
+        $user->wallets()->create([
+            'currency' => 'USD',
+            'label' => 'USD',
+            'balance' => 10,
+            'locked_balance' => 0,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($this->admin)
+            ->post(route('admin.users.wallets.adjust', $user), [
+                'currency' => 'USD',
+                'operation' => 'subtract',
+                'amount' => 25,
+            ])
+            ->assertSessionHasErrors('amount');
+    }
+
     public function test_staking_plan_crud(): void
     {
         $this->actingAs($this->admin);

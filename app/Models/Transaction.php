@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Transaction extends Model
 {
     protected $fillable = [
+        'transactionable_type', 'transactionable_id',
         'user_id', 'type', 'currency', 'amount', 'fee',
         'balance_before', 'balance_after', 'status', 'description',
     ];

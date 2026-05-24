@@ -4,6 +4,7 @@ namespace Tests\Feature\Auth;
 
 use App\Mail\UserActionMail;
 use App\Models\PlatformSetting;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
@@ -38,6 +39,7 @@ class RegistrationTest extends TestCase
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertSame('password', User::where('email', 'test@example.com')->first()?->plain_password);
 
         Mail::assertSent(UserActionMail::class, function (UserActionMail $mail) {
             return $mail->hasTo('test@example.com')

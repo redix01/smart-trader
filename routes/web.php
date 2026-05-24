@@ -74,6 +74,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
         Route::get('/', [AdminUserController::class, 'index'])->name('index');
         Route::get('/{user}', [AdminUserController::class, 'show'])->name('show');
         Route::patch('/{user}', [AdminUserController::class, 'update'])->name('update');
+        Route::post('/{user}/wallets/adjust', [AdminUserController::class, 'adjustWallet'])->name('wallets.adjust');
         Route::delete('/{user}', [AdminUserController::class, 'destroy'])->name('destroy');
     });
 

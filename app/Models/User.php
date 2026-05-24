@@ -10,14 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Hidden(['password', 'remember_token'])]
+#[Hidden(['password', 'plain_password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'account_tier', 'kyc_level',
+        'name', 'email', 'password', 'plain_password', 'account_tier', 'kyc_level',
         'locale', 'currency', 'avatar', 'last_login_at',
     ];
 
@@ -26,6 +26,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'plain_password' => 'encrypted',
         ];
     }
 
