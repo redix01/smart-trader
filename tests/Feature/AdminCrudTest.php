@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Expert;
+use App\Models\MarketPair;
 use App\Models\MiningPlan;
 use App\Models\PlatformSetting;
 use App\Models\PropertyProject;
@@ -132,6 +133,57 @@ class AdminCrudTest extends TestCase
             ->assertSessionHasErrors('amount');
     }
 
+    public function test_admin_can_place_trade_for_selected_user(): void
+    {
+        $user = User::factory()->create(['kyc_level' => 'verified']);
+        $pair = MarketPair::create([
+            'base_currency' => 'BTC',
+            'quote_currency' => 'USDT',
+            'current_price' => 50000,
+            'price_change_24h' => 0,
+            'volume_24h' => 0,
+            'high_24h' => 50000,
+            'low_24h' => 50000,
+            'market_cap' => 0,
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+
+        $user->wallets()->create([
+            'currency' => 'USD',
+            'label' => 'USD',
+            'balance' => 1000,
+            'locked_balance' => 0,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.trade-room.index', ['user_id' => $user->id]))
+            ->assertOk();
+
+        $this->actingAs($this->admin)
+            ->post(route('admin.trade-room.store'), [
+                'user_id' => $user->id,
+                'market_type' => 'crypto',
+                'pair_id' => $pair->id,
+                'pair' => 'BTC/USDT',
+                'side' => 'buy',
+                'type' => 'Market',
+                'amount' => 0.01,
+            ])
+            ->assertRedirect(route('admin.trade-room.index', ['user_id' => $user->id]))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('orders', [
+            'user_id' => $user->id,
+            'pair' => 'BTC/USDT',
+            'side' => 'buy',
+            'status' => 'completed',
+        ]);
+        $this->assertEquals('499.50000000', $user->wallets()->where('currency', 'USD')->firstOrFail()->balance);
+        $this->assertEquals('0.01000000', $user->wallets()->where('currency', 'BTC')->firstOrFail()->balance);
+    }
+
     public function test_staking_plan_crud(): void
     {
         $this->actingAs($this->admin);
@@ -229,6 +281,7 @@ class AdminCrudTest extends TestCase
             'admin.kyc.index',
             'admin.deposits.index',
             'admin.withdrawals.index',
+            'admin.trade-room.index',
             'admin.staking-plans.index',
             'admin.mining-plans.index',
             'admin.experts.index',

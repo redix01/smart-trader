@@ -5,7 +5,7 @@ import Header from '@/Components/Header';
 import {
     LayoutDashboard, Users, ShieldCheck, ArrowUpCircle, ArrowDownCircle,
     Database, Pickaxe, UserCheck, CreditCard, Zap, ArrowLeftRight,
-    Settings, ArrowLeft, LogOut,
+    Settings, ArrowLeft, LogOut, ChartCandlestick,
 } from 'lucide-react';
 
 const adminNav = [
@@ -18,6 +18,7 @@ const adminNav = [
     { label: 'Mining Plans',    icon: Pickaxe,         route: 'admin.mining-plans.index' },
     { label: 'Experts',         icon: UserCheck,       route: 'admin.experts.index' },
     { label: 'Deposit Methods', icon: CreditCard,      route: 'admin.deposit-methods.index' },
+    { label: 'Trade Room',      icon: ChartCandlestick, route: 'admin.trade-room.index' },
     { label: 'Trade Orders',    icon: Zap,             route: 'admin.orders.index' },
     { label: 'Swap History',    icon: ArrowLeftRight,  route: 'admin.swaps.index' },
     { label: 'Settings',        icon: Settings,        route: 'admin.settings.index' },

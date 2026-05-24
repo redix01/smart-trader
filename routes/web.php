@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\PropertyProjectController as AdminPropertyProject
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\StakingPlanController as AdminStakingPlanController;
 use App\Http\Controllers\Admin\SwapController as AdminSwapController;
+use App\Http\Controllers\Admin\TradeRoomController as AdminTradeRoomController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\WithdrawalController as AdminWithdrawalController;
 use App\Http\Controllers\AssetsController;
@@ -69,6 +70,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/trade-room', [AdminTradeRoomController::class, 'index'])->name('trade-room.index');
+    Route::post('/trade-room', [AdminTradeRoomController::class, 'store'])->name('trade-room.store');
 
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [AdminUserController::class, 'index'])->name('index');
