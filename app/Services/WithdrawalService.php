@@ -65,6 +65,7 @@ class WithdrawalService
                 'amount' => number_format((float) $w->amount, 2),
                 'fee' => number_format((float) $w->fee, 2),
                 'net' => number_format((float) $w->net_amount, 2),
+                'currency' => $w->currency,
                 'status' => $w->status,
                 'date' => $w->created_at->format('Y-m-d H:i'),
             ]);

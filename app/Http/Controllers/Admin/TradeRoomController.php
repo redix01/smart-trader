@@ -45,16 +45,7 @@ class TradeRoomController extends Controller
     {
         $this->coinMarketCap->syncMarketPairs();
 
-        $data = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'market_type' => 'required|in:crypto,stocks,forex',
-            'pair_id' => 'nullable|exists:market_pairs,id',
-            'pair' => 'required|string|max:32',
-            'side' => 'required|in:buy,sell',
-            'type' => 'required|in:Market,Limit',
-            'amount' => 'required|numeric|min:0.00000001',
-            'price' => 'nullable|numeric|min:0.00000001',
-        ]);
+        $data = $request->validate($this->tradeRules($request));
 
         $user = User::findOrFail($data['user_id']);
 
@@ -71,6 +62,25 @@ class TradeRoomController extends Controller
 
         return redirect()->route('admin.trade-room.index', ['user_id' => $user->id])
             ->with('success', 'Trade placed for '.$user->name.'.');
+    }
+
+    private function tradeRules(Request $request): array
+    {
+        $rules = [
+            'user_id' => 'required|exists:users,id',
+            'market_type' => 'required|in:crypto,stocks,forex',
+            'pair' => 'required|string|max:32',
+            'side' => 'required|in:buy,sell',
+            'type' => 'required|in:Market,Limit',
+            'amount' => 'required|numeric|min:0.00000001',
+            'price' => 'nullable|numeric|min:0.00000001',
+        ];
+
+        $rules['pair_id'] = $request->input('market_type') === 'crypto'
+            ? 'required|exists:market_pairs,id'
+            : 'nullable|integer';
+
+        return $rules;
     }
 
     private function cryptoPairs()

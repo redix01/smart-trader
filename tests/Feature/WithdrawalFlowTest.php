@@ -40,6 +40,68 @@ class WithdrawalFlowTest extends TestCase
             ->assertOk();
     }
 
+    public function test_withdrawal_requests_are_visible_to_user_and_admin(): void
+    {
+        $admin = User::factory()->create(['account_tier' => 'admin']);
+        Withdrawal::factory()->create([
+            'user_id' => $this->user->id,
+            'amount' => 250,
+            'fee' => 2.5,
+            'net_amount' => 247.5,
+            'currency' => 'USD',
+            'status' => 'pending',
+        ]);
+
+        $this->actingAs($this->user)
+            ->get(route('withdraw'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Withdraw')
+                ->has('history', 1, fn ($withdrawal) => $withdrawal
+                    ->where('amount', '250.00')
+                    ->where('currency', 'USD')
+                    ->where('status', 'pending')
+                    ->etc()
+                )
+            );
+
+        $this->actingAs($this->user)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Dashboard')
+                ->has('recentWithdrawals', 1, fn ($withdrawal) => $withdrawal
+                    ->where('amount', '250.00')
+                    ->where('status', 'pending')
+                    ->etc()
+                )
+            );
+
+        $this->actingAs($admin)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Admin/Dashboard')
+                ->has('pendingWithdrawals', 1, fn ($withdrawal) => $withdrawal
+                    ->where('amount', '250.00')
+                    ->where('currency', 'USD')
+                    ->etc()
+                )
+            );
+
+        $this->actingAs($admin)
+            ->get(route('admin.withdrawals.index'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Admin/Withdrawals/Index')
+                ->has('withdrawals.data', 1, fn ($withdrawal) => $withdrawal
+                    ->where('status', 'pending')
+                    ->where('currency', 'USD')
+                    ->etc()
+                )
+            );
+    }
+
     public function test_user_can_submit_withdrawal(): void
     {
         Mail::fake();
@@ -133,11 +195,20 @@ class WithdrawalFlowTest extends TestCase
 
     public function test_admin_can_reject_withdrawal(): void
     {
+        Mail::fake();
         $admin = User::factory()->create(['account_tier' => 'admin']);
-        $withdrawal = Withdrawal::factory()->create([
-            'user_id' => $this->user->id,
-            'status' => 'pending',
-        ]);
+
+        $this->actingAs($this->user)
+            ->post(route('withdraw.store'), [
+                'method' => 'wallet',
+                'amount' => 500,
+                'currency' => 'USD',
+                'destination' => ['wallet_address' => '0x1234567890abcdef'],
+            ])
+            ->assertSessionHas('success');
+
+        $withdrawal = Withdrawal::where('user_id', $this->user->id)->firstOrFail();
+        $this->assertEquals('9500.00000000', $this->user->wallets()->where('currency', 'USD')->firstOrFail()->balance);
 
         $this->actingAs($admin)
             ->post(route('admin.withdrawals.reject', $withdrawal->id), [
@@ -145,5 +216,6 @@ class WithdrawalFlowTest extends TestCase
             ])->assertSessionHas('success');
 
         $this->assertEquals('rejected', $withdrawal->fresh()->status);
+        $this->assertEquals('10000.00000000', $this->user->wallets()->where('currency', 'USD')->firstOrFail()->balance);
     }
 }

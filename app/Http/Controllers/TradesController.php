@@ -90,15 +90,7 @@ class TradesController extends Controller
     {
         $this->coinMarketCap->syncMarketPairs();
 
-        $data = $request->validate([
-            'market_type' => 'required|in:crypto,stocks,forex',
-            'pair_id' => 'nullable|exists:market_pairs,id',
-            'pair' => 'required|string|max:32',
-            'side' => 'required|in:buy,sell',
-            'type' => 'required|in:Market,Limit',
-            'amount' => 'required|numeric|min:0.00000001',
-            'price' => 'nullable|numeric|min:0.00000001',
-        ]);
+        $data = $request->validate($this->tradeRules($request));
 
         $this->trades->placeOrder(
             $request->user(),
@@ -113,5 +105,23 @@ class TradesController extends Controller
 
         return redirect()->route('trades', ['asset' => explode('/', $data['pair'])[0]])
             ->with('success', 'Trade executed successfully.');
+    }
+
+    private function tradeRules(Request $request): array
+    {
+        $rules = [
+            'market_type' => 'required|in:crypto,stocks,forex',
+            'pair' => 'required|string|max:32',
+            'side' => 'required|in:buy,sell',
+            'type' => 'required|in:Market,Limit',
+            'amount' => 'required|numeric|min:0.00000001',
+            'price' => 'nullable|numeric|min:0.00000001',
+        ];
+
+        $rules['pair_id'] = $request->input('market_type') === 'crypto'
+            ? 'required|exists:market_pairs,id'
+            : 'nullable|integer';
+
+        return $rules;
     }
 }

@@ -144,4 +144,38 @@ class TradeFlowTest extends TestCase
         $this->assertEquals('813.85000000', $user->wallets()->where('currency', 'USD')->firstOrFail()->balance);
         $this->assertEquals('1.00000000', $user->wallets()->where('currency', 'AAPL')->firstOrFail()->balance);
     }
+
+    public function test_user_can_execute_forex_trade_with_static_pair_id(): void
+    {
+        $user = User::factory()->create([
+            'kyc_level' => 'verified',
+        ]);
+
+        Wallet::factory()->create([
+            'user_id' => $user->id,
+            'currency' => 'USD',
+            'balance' => 1000,
+        ]);
+
+        $this->actingAs($user)
+            ->post(route('trades.store'), [
+                'market_type' => 'forex',
+                'pair_id' => 201,
+                'pair' => 'EUR/USD',
+                'side' => 'buy',
+                'type' => 'Market',
+                'amount' => 100,
+            ])
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('orders', [
+            'user_id' => $user->id,
+            'pair' => 'EUR/USD',
+            'side' => 'buy',
+            'status' => 'completed',
+        ]);
+
+        $this->assertEquals('891.44155000', $user->wallets()->where('currency', 'USD')->firstOrFail()->balance);
+        $this->assertEquals('100.00000000', $user->wallets()->where('currency', 'EUR')->firstOrFail()->balance);
+    }
 }

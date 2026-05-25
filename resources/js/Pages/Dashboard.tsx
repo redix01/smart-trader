@@ -34,9 +34,17 @@ interface DashboardProps {
     symbol: string;
     progress: number;
   };
+  recentWithdrawals?: Array<{
+    id: number;
+    method: string;
+    amount: string;
+    currency: string;
+    status: string;
+    date: string;
+  }>;
 }
 
-export default function Dashboard({ kpi, wallets, kyc_status, chart }: DashboardProps) {
+export default function Dashboard({ kpi, wallets, kyc_status, chart, recentWithdrawals = [] }: DashboardProps) {
   const [showBalance, setShowBalance] = useState(true);
   const [quickTradeTab, setQuickTradeTab] = useState<'Buy' | 'Sell' | 'Swap'>('Buy');
   const chartSymbol = chart?.symbol ?? 'BINANCE:BTCUSDT';
@@ -110,6 +118,11 @@ export default function Dashboard({ kpi, wallets, kyc_status, chart }: Dashboard
   const [swapAmount, setSwapAmount] = useState('');
   const swapRate = 18.5;
   const swapEstimate = swapAmount ? (parseFloat(swapAmount || '0') * swapRate).toFixed(6) : '0.00';
+  const statusClass = (status: string) => status === 'approved'
+    ? 'bg-emerald-500/10 text-emerald-500'
+    : status === 'rejected'
+      ? 'bg-rose-500/10 text-rose-500'
+      : 'bg-amber-500/10 text-amber-500';
 
   return (
     <AppLayout>
@@ -206,6 +219,38 @@ export default function Dashboard({ kpi, wallets, kyc_status, chart }: Dashboard
                 </Link>
               </div>
               <div ref={chartRef} className="flex-1 w-full" />
+            </div>
+
+            <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden">
+              <div className="px-6 py-4 border-b border-[#1A1A1A] flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-bold text-white">Withdrawal Requests</p>
+                  <p className="text-[10px] text-zinc-500 font-medium">Recent payout activity</p>
+                </div>
+                <Link href={route('withdraw')} className="text-[10px] font-bold text-blue-500 hover:text-blue-400 transition-colors flex items-center gap-1 uppercase tracking-widest">
+                  View all <ArrowUpRight size={12} />
+                </Link>
+              </div>
+              {recentWithdrawals.length > 0 ? (
+                <div className="divide-y divide-[#0A0A0A]">
+                  {recentWithdrawals.map((withdrawal) => (
+                    <div key={withdrawal.id} className="px-6 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-sm font-bold text-white">{withdrawal.method}</p>
+                        <p className="text-xs text-zinc-500 font-mono">{withdrawal.date}</p>
+                      </div>
+                      <div className="flex items-center gap-3 sm:justify-end">
+                        <span className="text-sm font-bold text-white font-mono">${withdrawal.amount} {withdrawal.currency}</span>
+                        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${statusClass(withdrawal.status)}`}>
+                          {withdrawal.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="px-6 py-8 text-sm text-zinc-500 font-medium">No withdrawal requests yet.</div>
+              )}
             </div>
           </div>
 

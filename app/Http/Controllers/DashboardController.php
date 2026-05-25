@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MarketPair;
 use App\Services\CoinMarketCapService;
 use App\Services\PortfolioService;
+use App\Services\WithdrawalService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,6 +14,7 @@ class DashboardController extends Controller
     public function __construct(
         private PortfolioService $portfolio,
         private CoinMarketCapService $coinMarketCap,
+        private WithdrawalService $withdrawals,
     ) {}
 
     public function __invoke(Request $request)
@@ -53,6 +55,7 @@ class DashboardController extends Controller
                 'symbol' => $isCrypto ? 'BINANCE:' . $chartCurrency . 'USDT' : 'FX:' . $chartCurrency . 'USD',
                 'progress' => $progress,
             ],
+            'recentWithdrawals' => $this->withdrawals->getUserWithdrawals($user)->take(5)->values(),
         ]);
     }
 }

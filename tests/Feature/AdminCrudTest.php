@@ -184,6 +184,41 @@ class AdminCrudTest extends TestCase
         $this->assertEquals('0.01000000', $user->wallets()->where('currency', 'BTC')->firstOrFail()->balance);
     }
 
+    public function test_admin_can_place_forex_trade_for_selected_user(): void
+    {
+        $user = User::factory()->create(['kyc_level' => 'verified']);
+
+        $user->wallets()->create([
+            'currency' => 'USD',
+            'label' => 'USD',
+            'balance' => 1000,
+            'locked_balance' => 0,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($this->admin)
+            ->post(route('admin.trade-room.store'), [
+                'user_id' => $user->id,
+                'market_type' => 'forex',
+                'pair_id' => 201,
+                'pair' => 'EUR/USD',
+                'side' => 'buy',
+                'type' => 'Market',
+                'amount' => 100,
+            ])
+            ->assertRedirect(route('admin.trade-room.index', ['user_id' => $user->id]))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('orders', [
+            'user_id' => $user->id,
+            'pair' => 'EUR/USD',
+            'side' => 'buy',
+            'status' => 'completed',
+        ]);
+        $this->assertEquals('891.44155000', $user->wallets()->where('currency', 'USD')->firstOrFail()->balance);
+        $this->assertEquals('100.00000000', $user->wallets()->where('currency', 'EUR')->firstOrFail()->balance);
+    }
+
     public function test_staking_plan_crud(): void
     {
         $this->actingAs($this->admin);

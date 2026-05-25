@@ -4,9 +4,19 @@ import { ArrowUpRight, ShieldCheck, Info, ChevronDown, Building2, User, CreditCa
 
 interface WithdrawProps {
   balance: number;
+  history?: Array<{
+    id: number;
+    method: string;
+    amount: string;
+    fee: string;
+    net: string;
+    currency: string;
+    status: string;
+    date: string;
+  }>;
 }
 
-export default function Withdraw({ balance }: WithdrawProps) {
+export default function Withdraw({ balance, history = [] }: WithdrawProps) {
   const { data, setData, post, processing, errors } = useForm({
     method: 'Bank Transfer',
     amount: '',
@@ -31,6 +41,11 @@ export default function Withdraw({ balance }: WithdrawProps) {
   const isBankTransfer = data.method === 'Bank Transfer';
   const isCryptoWallet = data.method === 'Bitcoin Wallet' || data.method === 'Ethereum Wallet';
   const isPayPal = data.method === 'PayPal';
+  const statusClass = (status: string) => status === 'approved'
+    ? 'bg-emerald-500/10 text-emerald-500'
+    : status === 'rejected'
+      ? 'bg-rose-500/10 text-rose-500'
+      : 'bg-amber-500/10 text-amber-500';
 
   return (
     <AppLayout>
@@ -192,6 +207,50 @@ export default function Withdraw({ balance }: WithdrawProps) {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="bg-[#111] border border-[#1A1A1A] rounded-[32px] overflow-hidden">
+          <div className="px-6 py-5 border-b border-[#1A1A1A] flex items-center justify-between">
+            <div>
+              <h2 className="text-base font-bold text-white">Withdrawal History</h2>
+              <p className="text-xs text-zinc-500 font-medium">Track requests submitted for admin review.</p>
+            </div>
+            <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">{history.length} requests</span>
+          </div>
+          {history.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-[#1A1A1A]">
+                    <th className="px-6 py-3.5 text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Method</th>
+                    <th className="px-6 py-3.5 text-[10px] font-bold text-zinc-600 uppercase tracking-widest text-right">Amount</th>
+                    <th className="px-6 py-3.5 text-[10px] font-bold text-zinc-600 uppercase tracking-widest text-right">Fee</th>
+                    <th className="px-6 py-3.5 text-[10px] font-bold text-zinc-600 uppercase tracking-widest text-right">Net</th>
+                    <th className="px-6 py-3.5 text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Status</th>
+                    <th className="px-6 py-3.5 text-[10px] font-bold text-zinc-600 uppercase tracking-widest text-right">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#0A0A0A]">
+                  {history.map((withdrawal) => (
+                    <tr key={withdrawal.id} className="hover:bg-[#151515] transition-colors">
+                      <td className="px-6 py-4 text-sm font-bold text-white">{withdrawal.method}</td>
+                      <td className="px-6 py-4 text-right text-sm font-bold text-white font-mono">${withdrawal.amount} {withdrawal.currency}</td>
+                      <td className="px-6 py-4 text-right text-sm text-rose-500 font-mono">${withdrawal.fee}</td>
+                      <td className="px-6 py-4 text-right text-sm text-zinc-300 font-mono">${withdrawal.net}</td>
+                      <td className="px-6 py-4">
+                        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${statusClass(withdrawal.status)}`}>
+                          {withdrawal.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right text-xs text-zinc-500 font-mono">{withdrawal.date}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="px-6 py-8 text-sm text-zinc-500 font-medium">No withdrawal requests yet.</div>
+          )}
         </div>
       </div>
     </AppLayout>

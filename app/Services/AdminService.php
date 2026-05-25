@@ -135,26 +135,62 @@ class AdminService
 
     public function approveWithdrawal(int $withdrawalId, int $reviewerId): void
     {
-        $withdrawal = Withdrawal::findOrFail($withdrawalId);
-        $withdrawal->update([
-            'status' => 'approved',
-            'approved_at' => now(),
-            'approved_by' => $reviewerId,
-        ]);
+        DB::transaction(function () use ($withdrawalId, $reviewerId) {
+            $withdrawal = Withdrawal::whereKey($withdrawalId)
+                ->lockForUpdate()
+                ->with('user')
+                ->firstOrFail();
 
-        $this->notifications->sendWithdrawalApproved($withdrawal->user, $withdrawal->fresh());
+            if ($withdrawal->status === 'approved') {
+                return;
+            }
+
+            abort_if($withdrawal->status !== 'pending', 422, 'Only pending withdrawals can be approved.');
+
+            $withdrawal->update([
+                'status' => 'approved',
+                'approved_at' => now(),
+                'approved_by' => $reviewerId,
+            ]);
+
+            DB::afterCommit(fn () => $this->notifications->sendWithdrawalApproved($withdrawal->user, $withdrawal->fresh()));
+        });
     }
 
     public function rejectWithdrawal(int $withdrawalId, int $reviewerId, string $reason): void
     {
-        $withdrawal = Withdrawal::findOrFail($withdrawalId);
-        $withdrawal->update([
-            'status' => 'rejected',
-            'admin_notes' => $reason,
-            'approved_at' => now(),
-            'approved_by' => $reviewerId,
-        ]);
+        DB::transaction(function () use ($withdrawalId, $reviewerId, $reason) {
+            $withdrawal = Withdrawal::whereKey($withdrawalId)
+                ->lockForUpdate()
+                ->with('user')
+                ->firstOrFail();
 
-        $this->notifications->sendWithdrawalRejected($withdrawal->user, $withdrawal->fresh());
+            if ($withdrawal->status === 'rejected') {
+                return;
+            }
+
+            abort_if($withdrawal->status !== 'pending', 422, 'Only pending withdrawals can be rejected.');
+
+            $withdrawal->update([
+                'status' => 'rejected',
+                'admin_notes' => $reason,
+                'approved_at' => now(),
+                'approved_by' => $reviewerId,
+            ]);
+
+            $wallet = $withdrawal->user->wallets()->firstOrCreate(
+                ['currency' => $withdrawal->currency],
+                [
+                    'label' => $withdrawal->currency,
+                    'balance' => 0,
+                    'locked_balance' => 0,
+                    'is_active' => true,
+                ]
+            );
+
+            $wallet->increment('balance', (float) $withdrawal->amount);
+
+            DB::afterCommit(fn () => $this->notifications->sendWithdrawalRejected($withdrawal->user, $withdrawal->fresh()));
+        });
     }
 }
