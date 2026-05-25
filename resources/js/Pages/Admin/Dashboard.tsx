@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { motion } from 'motion/react';
 import {
@@ -52,6 +52,18 @@ function SectionTable({ title, icon, items, type, color }: {
   const indexRoute = type === 'kyc' ? 'admin.kyc.index'
     : type === 'deposit' ? 'admin.deposits.index'
     : 'admin.withdrawals.index';
+  const rejectRoute = type === 'kyc' ? 'admin.kyc.reject'
+    : type === 'deposit' ? 'admin.deposits.reject'
+    : 'admin.withdrawals.reject';
+  const declineItem = (item: PendingItem) => {
+    const reason = prompt(`Decline ${type} reason:`);
+
+    if (!reason?.trim()) {
+      return;
+    }
+
+    router.post(route(rejectRoute, item.id), { reason: reason.trim() }, { preserveScroll: true });
+  };
 
   return (
     <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl overflow-hidden flex flex-col">
@@ -128,14 +140,10 @@ function SectionTable({ title, icon, items, type, color }: {
                           <Check size={15} />
                         </button>
                         <button
-                          onClick={() => post(
-                            type === 'kyc' ? route('admin.kyc.reject', item.id)
-                            : type === 'deposit' ? route('admin.deposits.reject', item.id)
-                            : route('admin.withdrawals.reject', item.id)
-                          )}
+                          onClick={() => declineItem(item)}
                           disabled={processing}
                           className="p-2 bg-rose-500/10 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all disabled:opacity-50"
-                          title="Reject"
+                          title="Decline"
                         >
                           <X size={15} />
                         </button>

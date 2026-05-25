@@ -1,9 +1,18 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { ArrowLeft, Check, X } from 'lucide-react';
 
 export default function WithdrawalShow({ withdrawal }: { withdrawal: any }) {
-  const { post, setData, processing } = useForm({ reason: '' });
+  const { post, processing } = useForm({});
+  const declineWithdrawal = () => {
+    const reason = prompt('Decline withdrawal reason:');
+
+    if (!reason?.trim()) {
+      return;
+    }
+
+    router.post(route('admin.withdrawals.reject', withdrawal.id), { reason: reason.trim() }, { preserveScroll: true });
+  };
 
   return (
     <AdminLayout>
@@ -26,8 +35,8 @@ export default function WithdrawalShow({ withdrawal }: { withdrawal: any }) {
           <div className="mt-6 flex gap-3">
             <button onClick={() => post(route('admin.withdrawals.approve', withdrawal.id))} disabled={processing}
               className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-500 rounded-xl text-sm hover:bg-emerald-500 hover:text-black transition-all disabled:opacity-50"><Check size={16} /> Approve</button>
-            <button onClick={() => { const r = prompt('Rejection reason:'); if (r) { setData('reason', r); setTimeout(() => post(route('admin.withdrawals.reject', withdrawal.id)), 0); } }} disabled={processing}
-              className="flex items-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-500 rounded-xl text-sm hover:bg-rose-500 hover:text-white transition-all disabled:opacity-50"><X size={16} /> Reject</button>
+            <button onClick={declineWithdrawal} disabled={processing}
+              className="flex items-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-500 rounded-xl text-sm hover:bg-rose-500 hover:text-white transition-all disabled:opacity-50"><X size={16} /> Decline</button>
           </div>
         )}
       </div>
