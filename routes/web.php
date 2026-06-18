@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\DepositController as AdminDepositController;
 use App\Http\Controllers\Admin\DepositMethodController as AdminDepositMethodController;
 use App\Http\Controllers\Admin\ExpertController as AdminExpertController;
 use App\Http\Controllers\Admin\KycController as AdminKycController;
+use App\Http\Controllers\Admin\MailController as AdminMailController;
 use App\Http\Controllers\Admin\MiningPlanController as AdminMiningPlanController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PropertyProjectController as AdminPropertyProjectController;
@@ -14,22 +14,22 @@ use App\Http\Controllers\Admin\SwapController as AdminSwapController;
 use App\Http\Controllers\Admin\TradeRoomController as AdminTradeRoomController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\WithdrawalController as AdminWithdrawalController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AssetsController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\KycController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\ExpertsController;
+use App\Http\Controllers\KycController;
 use App\Http\Controllers\MarketsController;
 use App\Http\Controllers\MiningController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RealEstateController;
-use App\Http\Controllers\SupportController;
 use App\Http\Controllers\StakingController;
+use App\Http\Controllers\SupportController;
 use App\Http\Controllers\SwapController;
 use App\Http\Controllers\TradesController;
 use App\Http\Controllers\WithdrawalController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::view('/', 'frontpage.index')->name('landing');
 Route::view('/about', 'frontpage.about')->name('landing.about');
@@ -70,6 +70,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/mail', [AdminMailController::class, 'index'])->name('mail.index');
+    Route::post('/mail', [AdminMailController::class, 'store'])->name('mail.store');
     Route::get('/trade-room', [AdminTradeRoomController::class, 'index'])->name('trade-room.index');
     Route::post('/trade-room', [AdminTradeRoomController::class, 'store'])->name('trade-room.store');
 

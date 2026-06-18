@@ -5,12 +5,13 @@ import Header from '@/Components/Header';
 import {
     LayoutDashboard, Users, ShieldCheck, ArrowUpCircle, ArrowDownCircle,
     Database, Pickaxe, UserCheck, CreditCard, Zap, ArrowLeftRight,
-    Settings, ArrowLeft, LogOut, ChartCandlestick,
+    Settings, ArrowLeft, LogOut, ChartCandlestick, Mail,
 } from 'lucide-react';
 
 const adminNav = [
     { label: 'Dashboard',       icon: LayoutDashboard, route: 'admin.dashboard' },
     { label: 'Users',           icon: Users,           route: 'admin.users.index' },
+    { label: 'Send Mail',       icon: Mail,            route: 'admin.mail.index' },
     { label: 'KYC',             icon: ShieldCheck,     route: 'admin.kyc.index' },
     { label: 'Deposits',        icon: ArrowUpCircle,   route: 'admin.deposits.index' },
     { label: 'Withdrawals',     icon: ArrowDownCircle, route: 'admin.withdrawals.index' },

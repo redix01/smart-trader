@@ -2,14 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Mail\AdminBroadcastMail;
 use App\Models\Expert;
 use App\Models\MarketPair;
 use App\Models\MiningPlan;
-use App\Models\PlatformSetting;
 use App\Models\PropertyProject;
 use App\Models\StakingPlan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class AdminCrudTest extends TestCase
@@ -60,6 +61,70 @@ class AdminCrudTest extends TestCase
         $this->actingAs($this->admin)
             ->get(route('admin.users.show', $user))
             ->assertOk();
+    }
+
+    public function test_admin_mail_page_loads(): void
+    {
+        User::factory()->count(3)->create();
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.mail.index'))
+            ->assertOk();
+    }
+
+    public function test_admin_can_send_branded_mail_to_users_and_manual_addresses(): void
+    {
+        Mail::fake();
+
+        $user = User::factory()->create([
+            'name' => 'Taylor Client',
+            'email' => 'taylor@example.com',
+        ]);
+
+        $this->actingAs($this->admin)
+            ->post(route('admin.mail.store'), [
+                'user_ids' => [$user->id],
+                'manual_emails' => 'outside@example.com, taylor@example.com',
+                'subject' => 'Portfolio review',
+                'heading' => 'Your account update',
+                'message' => 'Your message body.',
+                'header_label' => 'CognizantPro Market',
+                'header_color' => '#111827',
+                'accent_color' => '#d97706',
+                'footer_text' => 'Footer message.',
+                'action_label' => 'Open Account',
+                'action_url' => 'https://example.com/account',
+            ])
+            ->assertRedirect(route('admin.mail.index'))
+            ->assertSessionHas('success', 'Mail sent to 2 recipients.');
+
+        Mail::assertSent(AdminBroadcastMail::class, 2);
+        Mail::assertSent(AdminBroadcastMail::class, fn (AdminBroadcastMail $mail) => $mail->hasTo('taylor@example.com')
+            && $mail->subjectLine === 'Portfolio review'
+            && $mail->heading === 'Your account update'
+            && $mail->headerColor === '#111827'
+            && $mail->accentColor === '#d97706');
+        Mail::assertSent(AdminBroadcastMail::class, fn (AdminBroadcastMail $mail) => $mail->hasTo('outside@example.com'));
+    }
+
+    public function test_admin_mail_requires_a_recipient(): void
+    {
+        Mail::fake();
+
+        $this->actingAs($this->admin)
+            ->post(route('admin.mail.store'), [
+                'user_ids' => [],
+                'manual_emails' => '',
+                'subject' => 'Portfolio review',
+                'heading' => 'Your account update',
+                'message' => 'Your message body.',
+                'header_color' => '#111827',
+                'accent_color' => '#d97706',
+                'footer_text' => 'Footer message.',
+            ])
+            ->assertSessionHasErrors('recipients');
+
+        Mail::assertNothingSent();
     }
 
     public function test_admin_can_toggle_user_role(): void
