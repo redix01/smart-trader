@@ -397,7 +397,7 @@
                 <svg class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h6v-2H4v2zM4 15h6v-2H4v2zM4 11h6V9H4v2zM4 7h6V5H4v2zM4 3h6V1H4v2z"></path>
                 </svg>
-                <span class="ml-3" sidebar-toggle-item>Send Notifications</span>
+                <span class="ml-3" sidebar-toggle-item>Send Mail</span>
             </a>
           </li>
           <li>

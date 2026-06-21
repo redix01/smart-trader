@@ -2,271 +2,254 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\WebsiteSettingsHelper;
 use App\Http\Controllers\Controller;
+use App\Mail\AdminBroadcastMail;
+use App\Models\AdminMailLog;
 use App\Models\User;
-use App\Models\UserNotification;
-use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class NotificationController extends Controller
 {
-    protected $notificationService;
-
-    public function __construct(NotificationService $notificationService)
-    {
-        $this->notificationService = $notificationService;
-    }
-
-    /**
-     * Display the notification form
-     */
     public function index()
     {
         $users = User::where('role', 'user')
             ->select('id', 'name', 'email', 'status')
+            ->whereNotNull('email')
             ->orderBy('name')
             ->get();
 
-        return view('admin.notifications.index', compact('users'));
+        $mailHistory = AdminMailLog::query()
+            ->latest('sent_at')
+            ->latest()
+            ->paginate(10);
+
+        return view('admin.notifications.index', [
+            'users' => $users,
+            'mailHistory' => $mailHistory,
+            'defaultHeaderColor' => WebsiteSettingsHelper::getPrimaryColor(),
+            'defaultSenderOptions' => $this->getSenderOptions(),
+        ]);
     }
 
-    /**
-     * Send notification to selected users
-     */
     public function sendNotification(Request $request)
     {
-        $request->validate([
-            'recipient_type' => 'required|in:selected,all',
-            'user_ids' => 'required_if:recipient_type,selected|array',
+        $validated = $request->validate([
+            'recipient_source' => 'required|in:users,manual,all_users',
+            'user_ids' => 'nullable|array',
             'user_ids.*' => 'exists:users,id',
-            'title' => 'required|string|max:255',
-            'message' => 'required|string|max:1000',
-            'type' => 'required|in:system,announcement,maintenance,security,update'
+            'manual_emails' => 'nullable|string',
+            'from_identity' => 'required|in:admin,support,custom',
+            'custom_from_email' => 'nullable|email',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string|max:5000',
+            'header_color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'accent_label' => 'nullable|string|max:40',
+            'footer_note' => 'nullable|string|max:255',
         ]);
 
-        try {
-            $recipientType = $request->recipient_type;
-            $title = $request->title;
-            $message = $request->message;
-            $type = $request->type;
-            $adminId = (int) auth()->id();
+        $emails = $this->resolveRecipients(
+            $validated['recipient_source'],
+            $validated['user_ids'] ?? [],
+            $validated['manual_emails'] ?? ''
+        );
 
-            if ($recipientType === 'all') {
-                // Send to all users
-                $users = User::where('role', 'user')->get();
-                $result = $this->notificationService->sendBulkNotifications(
-                    $users,
-                    $type,
-                    $title,
-                    $message,
-                    $adminId
+        if (empty($emails)) {
+            return back()
+                ->withInput()
+                ->with('error', 'Please provide at least one valid recipient email.');
+        }
+
+        $fromEmail = $this->resolveFromEmail(
+            $validated['from_identity'],
+            $validated['custom_from_email'] ?? null
+        );
+
+        if (!$fromEmail) {
+            return back()
+                ->withInput()
+                ->with('error', 'A valid sender email is required.');
+        }
+
+        $siteName = WebsiteSettingsHelper::getSiteName();
+        $fromName = $siteName . ' ' . ucfirst($validated['from_identity']);
+        $sentCount = 0;
+
+        try {
+            foreach ($emails as $email) {
+                Mail::to($email)->send(
+                    (new AdminBroadcastMail([
+                        'subject' => $validated['subject'],
+                        'message' => $validated['message'],
+                        'header_color' => $validated['header_color'],
+                        'accent_label' => $validated['accent_label'] ?? null,
+                        'footer_note' => $validated['footer_note'] ?? null,
+                        'recipient_email' => $email,
+                    ]))->from($fromEmail, $fromName)
                 );
-                $sentCount = $result['success_count'];
-            } else {
-                // Send to selected users
-                $userIds = $request->user_ids;
-                $users = User::whereIn('id', $userIds)->get();
-                $result = $this->notificationService->sendBulkNotifications(
-                    $users,
-                    $type,
-                    $title,
-                    $message,
-                    $adminId
-                );
-                $sentCount = $result['success_count'];
+
+                $sentCount++;
             }
 
-            Log::info('Admin notification sent', [
-                'admin_id' => $adminId,
-                'recipient_type' => $recipientType,
-                'user_count' => $sentCount,
-                'title' => $title,
-                'type' => $type
+            AdminMailLog::create([
+                'admin_user_id' => auth()->id(),
+                'sender_email' => $fromEmail,
+                'sender_name' => $fromName,
+                'recipient_source' => $validated['recipient_source'],
+                'recipients' => $emails,
+                'recipient_count' => count($emails),
+                'subject' => $validated['subject'],
+                'message' => $validated['message'],
+                'header_color' => $validated['header_color'],
+                'accent_label' => $validated['accent_label'] ?? null,
+                'footer_note' => $validated['footer_note'] ?? null,
+                'sent_at' => now(),
             ]);
 
-            return redirect()->back()->with('success', "Notification sent successfully to {$sentCount} user(s).");
-
-        } catch (\Exception $e) {
-            Log::error('Failed to send admin notification: ' . $e->getMessage(), [
-                'admin_id' => (int) auth()->id(),
-                'request_data' => $request->all()
+            Log::info('Admin mail broadcast sent', [
+                'admin_id' => auth()->id(),
+                'sender_email' => $fromEmail,
+                'recipient_count' => count($emails),
+                'recipient_source' => $validated['recipient_source'],
+                'subject' => $validated['subject'],
             ]);
 
-            return redirect()->back()->with('error', 'Failed to send notification. Please try again.');
+            return back()->with('success', "Mail sent successfully to {$sentCount} recipient(s).");
+        } catch (\Throwable $e) {
+            Log::error('Failed to send admin mail broadcast', [
+                'admin_id' => auth()->id(),
+                'sender_email' => $fromEmail,
+                'recipient_count' => count($emails),
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Mail sending failed. Check your mail configuration and try again.');
         }
     }
 
-    /**
-     * Get user details for AJAX requests
-     */
     public function getUserDetails(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id'
+            'user_id' => 'required|exists:users,id',
         ]);
 
-        $user = User::findOrFail($request->user_id);
-        
+        $user = User::findOrFail($request->string('user_id'));
+
         return response()->json([
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
             'status' => $user->status,
-            'created_at' => $user->created_at->format('M d, Y')
+            'created_at' => optional($user->created_at)->format('M d, Y'),
         ]);
     }
 
-    /**
-     * Get notification statistics
-     */
     public function getStats()
     {
-        $totalUsers = User::where('role', 'user')->count();
-        $activeUsers = User::where('role', 'user')->where('status', 'active')->count();
-        $inactiveUsers = User::where('role', 'user')->where('status', 'inactive')->count();
-
         return response()->json([
-            'total_users' => $totalUsers,
-            'active_users' => $activeUsers,
-            'inactive_users' => $inactiveUsers
+            'total_users' => User::where('role', 'user')->count(),
+            'mail_enabled_users' => User::where('role', 'user')->whereNotNull('email')->count(),
+            'mail_count' => AdminMailLog::count(),
         ]);
     }
 
-    /**
-     * Get notification history
-     */
-    public function getHistory(Request $request)
+    public function getHistory()
     {
-        $query = UserNotification::with('user')
-            ->where('data->sent_by', 'admin')
-            ->orderBy('created_at', 'desc');
-
-        // Filter by type if provided
-        if ($request->has('type') && $request->type) {
-            $query->where('type', $request->type);
-        }
-
-        // Filter by date range if provided
-        if ($request->has('date_from') && $request->date_from) {
-            $query->whereDate('created_at', '>=', $request->date_from);
-        }
-
-        if ($request->has('date_to') && $request->date_to) {
-            $query->whereDate('created_at', '<=', $request->date_to);
-        }
-
-        $notifications = $query->paginate(20);
-
-        return response()->json($notifications);
+        return response()->json(
+            AdminMailLog::query()->latest('sent_at')->latest()->paginate(20)
+        );
     }
 
-    /**
-     * Update a notification
-     */
-    public function update(Request $request, $id)
+    public function show(string $id)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'message' => 'required|string|max:1000',
-            'type' => 'required|in:system,announcement,maintenance,security,update'
-        ]);
-
-        try {
-            $notification = UserNotification::findOrFail($id);
-            
-            // Check if it's an admin notification
-            if (!isset($notification->data['sent_by']) || $notification->data['sent_by'] !== 'admin') {
-                return response()->json(['error' => 'Only admin notifications can be edited'], 403);
-            }
-
-            $notification->update([
-                'title' => $request->title,
-                'message' => $request->message,
-                'type' => $request->type,
-                'data' => array_merge($notification->data, [
-                    'type' => $request->type,
-                    'edited_by' => auth()->id(),
-                    'edited_at' => now()->toISOString()
-                ])
-            ]);
-
-            Log::info('Admin notification updated', [
-                'notification_id' => $id,
-                'admin_id' => auth()->id(),
-                'title' => $request->title
-            ]);
-
-            return response()->json(['success' => true, 'message' => 'Notification updated successfully']);
-
-        } catch (\Exception $e) {
-            Log::error('Failed to update notification: ' . $e->getMessage(), [
-                'notification_id' => $id,
-                'admin_id' => auth()->id()
-            ]);
-
-            return response()->json(['error' => 'Failed to update notification'], 500);
-        }
+        return response()->json(AdminMailLog::findOrFail($id));
     }
 
-    /**
-     * Delete a notification
-     */
-    public function destroy($id)
+    public function update(Request $request, string $id)
     {
-        try {
-            $notification = UserNotification::findOrFail($id);
-            
-            // Check if it's an admin notification
-            if (!isset($notification->data['sent_by']) || $notification->data['sent_by'] !== 'admin') {
-                return response()->json(['error' => 'Only admin notifications can be deleted'], 403);
-            }
+        $mailLog = AdminMailLog::findOrFail($id);
 
-            $notification->delete();
+        $mailLog->update($request->validate([
+            'accent_label' => 'nullable|string|max:40',
+            'footer_note' => 'nullable|string|max:255',
+            'header_color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+        ]));
 
-            Log::info('Admin notification deleted', [
-                'notification_id' => $id,
-                'admin_id' => auth()->id()
-            ]);
-
-            return response()->json(['success' => true, 'message' => 'Notification deleted successfully']);
-
-        } catch (\Exception $e) {
-            Log::error('Failed to delete notification: ' . $e->getMessage(), [
-                'notification_id' => $id,
-                'admin_id' => auth()->id()
-            ]);
-
-            return response()->json(['error' => 'Failed to delete notification'], 500);
-        }
+        return response()->json(['success' => true]);
     }
 
-    /**
-     * Get notification details for editing
-     */
-    public function show($id)
+    public function destroy(string $id)
     {
-        try {
-            $notification = UserNotification::with('user')->findOrFail($id);
-            
-            // Check if it's an admin notification
-            if (!isset($notification->data['sent_by']) || $notification->data['sent_by'] !== 'admin') {
-                return response()->json(['error' => 'Only admin notifications can be viewed'], 403);
-            }
+        AdminMailLog::findOrFail($id)->delete();
 
-            return response()->json([
-                'id' => $notification->id,
-                'title' => $notification->title,
-                'message' => $notification->message,
-                'type' => $notification->type,
-                'user_name' => $notification->user->name,
-                'user_email' => $notification->user->email,
-                'created_at' => $notification->created_at->format('M d, Y H:i'),
-                'read_at' => $notification->read_at ? $notification->read_at->format('M d, Y H:i') : null
-            ]);
+        return response()->json(['success' => true]);
+    }
 
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Notification not found'], 404);
+    protected function resolveRecipients(string $source, array $userIds, string $manualEmails): array
+    {
+        if ($source === 'all_users') {
+            return User::where('role', 'user')
+                ->whereNotNull('email')
+                ->pluck('email')
+                ->filter()
+                ->map(fn ($email) => Str::lower(trim($email)))
+                ->unique()
+                ->values()
+                ->all();
         }
+
+        if ($source === 'users') {
+            return User::whereIn('id', $userIds)
+                ->whereNotNull('email')
+                ->pluck('email')
+                ->filter()
+                ->map(fn ($email) => Str::lower(trim($email)))
+                ->unique()
+                ->values()
+                ->all();
+        }
+
+        $emails = preg_split('/[\s,;]+/', $manualEmails, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+        return collect($emails)
+            ->map(fn ($email) => Str::lower(trim($email)))
+            ->filter(fn ($email) => filter_var($email, FILTER_VALIDATE_EMAIL))
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    protected function resolveFromEmail(string $identity, ?string $customEmail): ?string
+    {
+        if ($identity === 'custom') {
+            return $customEmail && filter_var($customEmail, FILTER_VALIDATE_EMAIL)
+                ? Str::lower(trim($customEmail))
+                : null;
+        }
+
+        $options = $this->getSenderOptions();
+
+        return $options[$identity] ?? null;
+    }
+
+    protected function getSenderOptions(): array
+    {
+        $defaultFrom = config('mail.from.address', 'hello@example.com');
+        $defaultDomain = Str::after($defaultFrom, '@');
+
+        if (!$defaultDomain || $defaultDomain === $defaultFrom) {
+            $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+            $defaultDomain = $appHost ?: 'example.com';
+        }
+
+        return [
+            'admin' => 'admin@' . $defaultDomain,
+            'support' => 'support@' . $defaultDomain,
+        ];
     }
 }
