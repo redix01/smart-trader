@@ -1,685 +1,385 @@
 @extends('admin.layouts.app')
 
+@php
+    $selectedUsersCount = $users->count();
+    $mailCount = $mailHistory->total();
+@endphp
+
 @section('content')
-<div class="p-6">
-    <!-- Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Notification Management</h1>
-        <p class="text-gray-600 dark:text-gray-400 mt-2">Send notifications to users and manage notification history.</p>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Users</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="total-users">{{ $users->count() }}</p>
-                </div>
-                <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                    </svg>
-                </div>
-            </div>
+<div class="p-6 space-y-8">
+    <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-sky-500">Admin Mail</p>
+            <h1 class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">Send branded emails from the admin panel</h1>
+            <p class="mt-2 max-w-3xl text-sm text-gray-600 dark:text-gray-400">
+                Choose recipients from users or enter direct email addresses, set the sender identity, tweak the header color, and send a polished email template with your platform branding.
+            </p>
         </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Active Users</p>
-                    <p class="text-2xl font-bold text-green-600 dark:text-green-400" id="active-users">{{ $users->where('status', 'active')->count() }}</p>
-                </div>
-                <div class="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
-                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Notifications</p>
-                    <p class="text-2xl font-bold text-purple-600 dark:text-purple-400" id="total-notifications">0</p>
-                </div>
-                <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
-                    <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h6v-2H4v2zM4 15h6v-2H4v2zM4 11h6V9H4v2zM4 7h6V5H4v2zM4 3h6V1H4v2z"></path>
-                    </svg>
-                </div>
-            </div>
+        <div class="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-700 dark:border-sky-900/60 dark:bg-sky-950/40 dark:text-sky-200">
+            Current mailer: <span class="font-semibold">{{ config('mail.default') }}</span>
         </div>
     </div>
 
-    <!-- Tabs -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-        <!-- Tab Headers -->
-        <div class="border-b border-gray-200 dark:border-gray-700">
-            <nav class="flex space-x-8 px-6" aria-label="Tabs">
-                <button id="send-tab" class="tab-button active py-4 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600 dark:text-blue-400">
-                    Send Notification
-                </button>
-                <button id="history-tab" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300">
-                    Notification History
-                </button>
-            </nav>
+    @if (session('success'))
+        <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-200">
+            {{ session('success') }}
         </div>
+    @endif
 
-        <!-- Tab Content -->
-        <div class="p-6">
-            <!-- Send Notification Tab -->
-            <div id="send-tab-content" class="tab-content">
-                <form id="notification-form" action="{{ route('admin.notifications.send') }}" method="POST">
-                    @csrf
-                    
-                    <!-- Recipient Type Selection -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Recipient Type</label>
-                        <div class="flex space-x-4">
-                            <label class="flex items-center">
-                                <input type="radio" name="recipient_type" value="selected" class="form-radio text-blue-600" checked>
-                                <span class="ml-2 text-gray-700 dark:text-gray-300">Selected Users</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="radio" name="recipient_type" value="all" class="form-radio text-blue-600">
-                                <span class="ml-2 text-gray-700 dark:text-gray-300">All Users</span>
-                            </label>
-                        </div>
-                    </div>
+    @if (session('error'))
+        <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-200">
+            {{ session('error') }}
+        </div>
+    @endif
 
-            <!-- User Selection (shown when "Selected Users" is chosen) -->
-            <div id="user-selection" class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Select Users</label>
-                <select id="user-select" multiple class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white" size="8">
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                    @endforeach
-                </select>
-                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Hold Ctrl (or Cmd on Mac) to select multiple users</p>
+    @if ($errors->any())
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-200">
+            <ul class="space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <div class="grid gap-6 md:grid-cols-3">
+        <div class="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <p class="text-sm text-gray-500 dark:text-gray-400">Reachable Users</p>
+            <p class="mt-3 text-3xl font-semibold text-gray-900 dark:text-white">{{ $selectedUsersCount }}</p>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Users with email addresses available for direct outreach.</p>
+        </div>
+        <div class="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <p class="text-sm text-gray-500 dark:text-gray-400">Emails Logged</p>
+            <p class="mt-3 text-3xl font-semibold text-gray-900 dark:text-white">{{ $mailCount }}</p>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Stored admin mail sends from this panel.</p>
+        </div>
+        <div class="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <p class="text-sm text-gray-500 dark:text-gray-400">Default Senders</p>
+            <div class="mt-3 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                <div class="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-700/70">{{ $defaultSenderOptions['admin'] }}</div>
+                <div class="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-700/70">{{ $defaultSenderOptions['support'] }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
+        <div class="rounded-[28px] border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <div class="border-b border-gray-200 px-6 py-5 dark:border-gray-700">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Compose Mail</h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Use one of the sender identities below and send to users or external addresses.</p>
             </div>
 
-                    <!-- Notification Type -->
-                    <div class="mb-6">
-                        <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notification Type</label>
-                        <select name="type" id="type" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
-                            <option value="">Select notification type</option>
-                            <option value="system">System Notification</option>
-                            <option value="announcement">Announcement</option>
-                            <option value="maintenance">Maintenance Alert</option>
-                            <option value="security">Security Alert</option>
-                            <option value="update">Platform Update</option>
+            <form action="{{ route('admin.notifications.send') }}" method="POST" class="space-y-8 p-6" id="admin-mail-form">
+                @csrf
+
+                <div class="grid gap-6 md:grid-cols-2">
+                    <div class="space-y-3">
+                        <label for="from_identity" class="text-sm font-medium text-gray-700 dark:text-gray-300">Send From</label>
+                        <select
+                            id="from_identity"
+                            name="from_identity"
+                            class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        >
+                            <option value="admin" @selected(old('from_identity') === 'admin')>Admin ({{ $defaultSenderOptions['admin'] }})</option>
+                            <option value="support" @selected(old('from_identity') === 'support')>Support ({{ $defaultSenderOptions['support'] }})</option>
+                            <option value="custom" @selected(old('from_identity') === 'custom')>Other email address</option>
                         </select>
                     </div>
 
-                    <!-- Title -->
-                    <div class="mb-6">
-                        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title</label>
-                        <input type="text" name="title" id="title" required maxlength="255" 
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                               placeholder="Enter notification title...">
-                    </div>
-
-                    <!-- Message -->
-                    <div class="mb-6">
-                        <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message</label>
-                        <textarea name="message" id="message" required maxlength="1000" rows="4" 
-                                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                  placeholder="Enter your message..."></textarea>
-                        <div class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            <span id="char-count">0</span>/1000 characters
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="flex justify-end space-x-4">
-                        <button type="button" id="preview-btn" class="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:ring-2 focus:ring-blue-500">
-                            Preview
-                        </button>
-                        <button type="submit" id="send-btn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                            <span id="send-btn-text">Send Notification</span>
-                            <svg id="send-btn-spinner" class="hidden animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Notification History Tab -->
-            <div id="history-tab-content" class="tab-content hidden">
-                <!-- Filters -->
-                <div class="mb-6 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Type</label>
-                            <select id="filter-type" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-600 dark:text-white">
-                                <option value="">All Types</option>
-                                <option value="system">System</option>
-                                <option value="announcement">Announcement</option>
-                                <option value="maintenance">Maintenance</option>
-                                <option value="security">Security</option>
-                                <option value="update">Update</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date From</label>
-                            <input type="date" id="filter-date-from" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-600 dark:text-white">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date To</label>
-                            <input type="date" id="filter-date-to" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-600 dark:text-white">
-                        </div>
-                        <div class="flex items-end">
-                            <button id="filter-btn" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500">
-                                Filter
-                            </button>
-                        </div>
+                    <div id="custom-from-wrapper" class="space-y-3 {{ old('from_identity') === 'custom' ? '' : 'hidden' }}">
+                        <label for="custom_from_email" class="text-sm font-medium text-gray-700 dark:text-gray-300">Custom Sender Email</label>
+                        <input
+                            type="email"
+                            id="custom_from_email"
+                            name="custom_from_email"
+                            value="{{ old('custom_from_email') }}"
+                            placeholder="team@example.com"
+                            class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        >
                     </div>
                 </div>
 
-                <!-- Notifications Table -->
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-gray-50 dark:bg-gray-700">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">User</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Title</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Message</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="notifications-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                            <!-- Table content will be loaded via AJAX -->
-                        </tbody>
-                    </table>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Recipients</label>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Choose user records, paste direct emails, or broadcast to all users with email addresses.</p>
+                    </div>
+
+                    <div class="grid gap-4 md:grid-cols-3">
+                        <label class="cursor-pointer rounded-2xl border border-gray-200 p-4 transition hover:border-sky-400 dark:border-gray-700">
+                            <input type="radio" name="recipient_source" value="users" class="mail-recipient-source sr-only" @checked(old('recipient_source', 'users') === 'users')>
+                            <span class="block text-sm font-semibold text-gray-900 dark:text-white">Select users</span>
+                            <span class="mt-1 block text-sm text-gray-500 dark:text-gray-400">Pick one or more registered users.</span>
+                        </label>
+                        <label class="cursor-pointer rounded-2xl border border-gray-200 p-4 transition hover:border-sky-400 dark:border-gray-700">
+                            <input type="radio" name="recipient_source" value="manual" class="mail-recipient-source sr-only" @checked(old('recipient_source') === 'manual')>
+                            <span class="block text-sm font-semibold text-gray-900 dark:text-white">Enter emails</span>
+                            <span class="mt-1 block text-sm text-gray-500 dark:text-gray-400">Paste comma, space, or line-separated emails.</span>
+                        </label>
+                        <label class="cursor-pointer rounded-2xl border border-gray-200 p-4 transition hover:border-sky-400 dark:border-gray-700">
+                            <input type="radio" name="recipient_source" value="all_users" class="mail-recipient-source sr-only" @checked(old('recipient_source') === 'all_users')>
+                            <span class="block text-sm font-semibold text-gray-900 dark:text-white">All users</span>
+                            <span class="mt-1 block text-sm text-gray-500 dark:text-gray-400">Send to every user with a valid email.</span>
+                        </label>
+                    </div>
+
+                    <div id="users-panel" class="space-y-3">
+                        <label for="user_ids" class="text-sm font-medium text-gray-700 dark:text-gray-300">Choose Users</label>
+                        <select
+                            id="user_ids"
+                            name="user_ids[]"
+                            multiple
+                            size="8"
+                            class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        >
+                            @foreach ($users as $user)
+                                <option value="{{ $user->id }}" @selected(collect(old('user_ids', []))->contains($user->id))>
+                                    {{ $user->name }} - {{ $user->email }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Hold Cmd or Ctrl to select multiple users.</p>
+                    </div>
+
+                    <div id="manual-panel" class="space-y-3 {{ old('recipient_source') === 'manual' ? '' : 'hidden' }}">
+                        <label for="manual_emails" class="text-sm font-medium text-gray-700 dark:text-gray-300">Manual Emails</label>
+                        <textarea
+                            id="manual_emails"
+                            name="manual_emails"
+                            rows="5"
+                            placeholder="first@example.com, second@example.com"
+                            class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        >{{ old('manual_emails') }}</textarea>
+                    </div>
                 </div>
 
-                <!-- Pagination -->
-                <div id="pagination-container" class="mt-6 flex items-center justify-between">
-                    <!-- Pagination will be loaded here -->
-                </div>
-            </div>
-        </div>
-    </div>
+                <div class="grid gap-6 md:grid-cols-2">
+                    <div class="space-y-3 md:col-span-2">
+                        <label for="subject" class="text-sm font-medium text-gray-700 dark:text-gray-300">Subject</label>
+                        <input
+                            type="text"
+                            id="subject"
+                            name="subject"
+                            value="{{ old('subject') }}"
+                            maxlength="255"
+                            placeholder="Enter email subject"
+                            class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        >
+                    </div>
 
-    <!-- Preview Modal -->
-    <div id="preview-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
-            <div class="mt-3">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Notification Preview</h3>
-                    <button id="close-preview" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+                    <div class="space-y-3">
+                        <label for="header_color" class="text-sm font-medium text-gray-700 dark:text-gray-300">Header Color</label>
+                        <div class="flex items-center gap-3 rounded-2xl border border-gray-300 bg-white px-4 py-2 dark:border-gray-600 dark:bg-gray-700">
+                            <input type="color" id="header_color_picker" value="{{ old('header_color', $defaultHeaderColor) }}" class="h-10 w-14 cursor-pointer rounded-lg border-0 bg-transparent p-0">
+                            <input
+                                type="text"
+                                id="header_color"
+                                name="header_color"
+                                value="{{ old('header_color', $defaultHeaderColor) }}"
+                                class="w-full border-0 bg-transparent px-0 py-0 text-sm text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <label for="accent_label" class="text-sm font-medium text-gray-700 dark:text-gray-300">Header Tag</label>
+                        <input
+                            type="text"
+                            id="accent_label"
+                            name="accent_label"
+                            value="{{ old('accent_label', 'Admin Update') }}"
+                            maxlength="40"
+                            placeholder="Admin Update"
+                            class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        >
+                    </div>
+
+                    <div class="space-y-3 md:col-span-2">
+                        <label for="message" class="text-sm font-medium text-gray-700 dark:text-gray-300">Message</label>
+                        <textarea
+                            id="message"
+                            name="message"
+                            rows="8"
+                            maxlength="5000"
+                            placeholder="Write the main email message here..."
+                            class="w-full rounded-3xl border border-gray-300 bg-white px-4 py-4 text-sm text-gray-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        >{{ old('message') }}</textarea>
+                        <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                            <span>Plain text is converted into styled paragraphs in the email body.</span>
+                            <span><span id="message-count">0</span>/5000</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 md:col-span-2">
+                        <label for="footer_note" class="text-sm font-medium text-gray-700 dark:text-gray-300">Footer Note</label>
+                        <input
+                            type="text"
+                            id="footer_note"
+                            name="footer_note"
+                            value="{{ old('footer_note', 'This mailbox is monitored by the support team for urgent replies.') }}"
+                            maxlength="255"
+                            placeholder="Optional support or reply note"
+                            class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        >
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3 border-t border-gray-200 pt-6 dark:border-gray-700 md:flex-row md:items-center md:justify-between">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Each recipient is sent individually to avoid exposing other email addresses.</p>
+                    <button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-sky-700">
+                        Send Mail
                     </button>
                 </div>
-                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <div class="flex items-center mb-2">
-                        <div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                        <span id="preview-type" class="text-sm font-medium text-gray-600 dark:text-gray-400"></span>
+            </form>
+        </div>
+
+        <div class="space-y-6">
+            <div class="overflow-hidden rounded-[28px] border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                <div id="preview-header" class="px-6 py-6" style="background: linear-gradient(135deg, {{ old('header_color', $defaultHeaderColor) }} 0%, #0f172a 160%);">
+                    <div class="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-white" id="preview-accent">
+                        {{ old('accent_label', 'Admin Update') }}
                     </div>
-                    <h4 id="preview-title" class="font-semibold text-gray-900 dark:text-white mb-2"></h4>
-                    <p id="preview-message" class="text-gray-700 dark:text-gray-300 text-sm"></p>
+                    <div class="mt-4 flex items-center gap-4">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 p-2 backdrop-blur">
+                            @if(\App\Helpers\WebsiteSettingsHelper::hasImageLogo())
+                                <img src="{{ \App\Helpers\WebsiteSettingsHelper::getLogoUrl() }}" alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}" class="max-h-10 w-auto">
+                            @elseif(\App\Helpers\WebsiteSettingsHelper::hasTextLogo())
+                                <span class="text-lg font-bold text-white">{{ \App\Helpers\WebsiteSettingsHelper::getTextLogo() }}</span>
+                            @else
+                                <span class="text-lg font-bold text-white">{{ strtoupper(substr(\App\Helpers\WebsiteSettingsHelper::getSiteName(), 0, 1)) }}</span>
+                            @endif
+                        </div>
+                        <div>
+                            <p class="text-lg font-semibold text-white">{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}</p>
+                            <p class="text-sm text-white/80">{{ \App\Helpers\WebsiteSettingsHelper::getSiteTagline() ?: 'Official platform communication' }}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-4">
-                    <p id="preview-recipients" class="text-sm text-gray-600 dark:text-gray-400"></p>
+                <div class="space-y-5 p-6">
+                    <div class="rounded-2xl bg-gray-50 p-4 dark:bg-gray-700/60">
+                        <p class="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Subject</p>
+                        <p class="mt-2 text-lg font-semibold text-gray-900 dark:text-white" id="preview-subject">{{ old('subject', 'Your subject will appear here') }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900 dark:text-white">Message Preview</p>
+                        <div id="preview-message" class="mt-3 space-y-3 text-sm leading-7 text-gray-600 dark:text-gray-300">
+                            <p>{{ old('message', 'Write your email content on the left and the preview updates here.') }}</p>
+                        </div>
+                    </div>
+                    <div class="rounded-2xl border border-dashed border-gray-300 p-4 dark:border-gray-600">
+                        <p class="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Footer Note</p>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300" id="preview-footer">{{ old('footer_note', 'This mailbox is monitored by the support team for urgent replies.') }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Edit Modal -->
-    <div id="edit-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-10 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white dark:bg-gray-800">
-            <div class="mt-3">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Edit Notification</h3>
-                    <button id="close-edit" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
+            <div class="rounded-[28px] border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                <div class="border-b border-gray-200 px-6 py-5 dark:border-gray-700">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Recent Mail Sends</h2>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Latest messages sent from the admin panel.</p>
                 </div>
-                <form id="edit-form">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Type</label>
-                            <select id="edit-type" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
-                                <option value="system">System Notification</option>
-                                <option value="announcement">Announcement</option>
-                                <option value="maintenance">Maintenance Alert</option>
-                                <option value="security">Security Alert</option>
-                                <option value="update">Platform Update</option>
-                            </select>
+                <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                    @forelse ($mailHistory as $log)
+                        <div class="p-6">
+                            <div class="flex items-start justify-between gap-4">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $log->subject }}</p>
+                                    <p class="mt-1 text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">{{ $log->sender_email }}</p>
+                                </div>
+                                <span class="rounded-full px-3 py-1 text-xs font-semibold" style="background-color: {{ $log->header_color }}20; color: {{ $log->header_color }};">
+                                    {{ $log->recipient_count }} recipients
+                                </span>
+                            </div>
+                            <p class="mt-3 line-clamp-3 text-sm text-gray-600 dark:text-gray-300">{{ $log->message }}</p>
+                            <div class="mt-4 flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                                <span>{{ ucfirst(str_replace('_', ' ', $log->recipient_source)) }}</span>
+                                <span>{{ optional($log->sent_at)->format('M d, Y h:i A') }}</span>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title</label>
-                            <input type="text" id="edit-title" required maxlength="255" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    @empty
+                        <div class="p-6 text-sm text-gray-500 dark:text-gray-400">
+                            No admin emails have been logged yet.
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message</label>
-                            <textarea id="edit-message" required maxlength="1000" rows="4" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"></textarea>
-                        </div>
-                    </div>
-                    <div class="mt-6 flex justify-end space-x-4">
-                        <button type="button" id="cancel-edit" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
-                            Cancel
-                        </button>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500">
-                            Update Notification
-                        </button>
-                    </div>
-                </form>
+                    @endforelse
+                </div>
+                <div class="border-t border-gray-200 px-6 py-4 dark:border-gray-700">
+                    {{ $mailHistory->links() }}
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-@push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const users = @json($users);
-    let currentNotificationId = null;
-    let currentPage = 1;
+document.addEventListener('DOMContentLoaded', function () {
+    const fromIdentity = document.getElementById('from_identity');
+    const customFromWrapper = document.getElementById('custom-from-wrapper');
+    const recipientInputs = Array.from(document.querySelectorAll('.mail-recipient-source'));
+    const usersPanel = document.getElementById('users-panel');
+    const manualPanel = document.getElementById('manual-panel');
+    const subject = document.getElementById('subject');
+    const message = document.getElementById('message');
+    const headerColor = document.getElementById('header_color');
+    const headerColorPicker = document.getElementById('header_color_picker');
+    const accentLabel = document.getElementById('accent_label');
+    const footerNote = document.getElementById('footer_note');
+    const previewHeader = document.getElementById('preview-header');
+    const previewSubject = document.getElementById('preview-subject');
+    const previewMessage = document.getElementById('preview-message');
+    const previewAccent = document.getElementById('preview-accent');
+    const previewFooter = document.getElementById('preview-footer');
+    const messageCount = document.getElementById('message-count');
 
-    // Tab functionality
-    const sendTab = document.getElementById('send-tab');
-    const historyTab = document.getElementById('history-tab');
-    const sendTabContent = document.getElementById('send-tab-content');
-    const historyTabContent = document.getElementById('history-tab-content');
-
-    sendTab.addEventListener('click', function() {
-        switchTab('send');
-    });
-
-    historyTab.addEventListener('click', function() {
-        switchTab('history');
-        loadNotifications();
-    });
-
-    function switchTab(tab) {
-        // Update tab buttons
-        document.querySelectorAll('.tab-button').forEach(btn => {
-            btn.classList.remove('active', 'border-blue-500', 'text-blue-600', 'dark:text-blue-400');
-            btn.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
-        });
-
-        // Hide all tab content
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.add('hidden');
-        });
-
-        if (tab === 'send') {
-            sendTab.classList.add('active', 'border-blue-500', 'text-blue-600', 'dark:text-blue-400');
-            sendTab.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
-            sendTabContent.classList.remove('hidden');
-        } else {
-            historyTab.classList.add('active', 'border-blue-500', 'text-blue-600', 'dark:text-blue-400');
-            historyTab.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
-            historyTabContent.classList.remove('hidden');
-        }
+    function syncSenderVisibility() {
+        customFromWrapper.classList.toggle('hidden', fromIdentity.value !== 'custom');
     }
 
-    // Load notifications history
-    function loadNotifications(page = 1) {
-        const type = document.getElementById('filter-type').value;
-        const dateFrom = document.getElementById('filter-date-from').value;
-        const dateTo = document.getElementById('filter-date-to').value;
+    function syncRecipientPanels() {
+        const selected = recipientInputs.find((input) => input.checked)?.value;
+        usersPanel.classList.toggle('hidden', selected !== 'users');
+        manualPanel.classList.toggle('hidden', selected !== 'manual');
 
-        const params = new URLSearchParams({
-            page: page,
-            ...(type && { type: type }),
-            ...(dateFrom && { date_from: dateFrom }),
-            ...(dateTo && { date_to: dateTo })
-        });
-
-        fetch(`{{ route('admin.notifications.history') }}?${params}`)
-            .then(response => response.json())
-            .then(data => {
-                renderNotificationsTable(data.data);
-                renderPagination(data);
-                document.getElementById('total-notifications').textContent = data.total;
-            })
-            .catch(error => {
-                console.error('Error loading notifications:', error);
-            });
-    }
-
-    // Render notifications table
-    function renderNotificationsTable(notifications) {
-        const tbody = document.getElementById('notifications-table-body');
-        tbody.innerHTML = '';
-
-        if (notifications.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                        No notifications found
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        notifications.forEach(notification => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-medium text-gray-900 dark:text-white">${notification.user.name}</div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">${notification.user.email}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTypeBadgeClass(notification.type)}">
-                        ${notification.type}
-                    </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                    ${notification.title}
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate">
-                    ${notification.message}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${notification.read_at ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'}">
-                        ${notification.read_at ? 'Read' : 'Unread'}
-                    </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    ${new Date(notification.created_at).toLocaleDateString()}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button onclick="viewNotification(${notification.id})" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3">View</button>
-                    <button onclick="editNotification(${notification.id})" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-3">Edit</button>
-                    <button onclick="deleteNotification(${notification.id})" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">Delete</button>
-                </td>
-            `;
-            tbody.appendChild(row);
+        recipientInputs.forEach((input) => {
+            const card = input.closest('label');
+            card.classList.toggle('border-sky-500', input.checked);
+            card.classList.toggle('bg-sky-50', input.checked);
+            card.classList.toggle('dark:bg-sky-950/20', input.checked);
         });
     }
 
-    // Get type badge class
-    function getTypeBadgeClass(type) {
-        const classes = {
-            'system': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-            'announcement': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-            'maintenance': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-            'security': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-            'update': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-        };
-        return classes[type] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+    function renderPreview() {
+        const color = /^#[0-9A-Fa-f]{6}$/.test(headerColor.value) ? headerColor.value : '#3B82F6';
+        previewHeader.style.background = `linear-gradient(135deg, ${color} 0%, #0f172a 160%)`;
+        previewSubject.textContent = subject.value.trim() || 'Your subject will appear here';
+        previewAccent.textContent = accentLabel.value.trim() || 'Admin Update';
+        previewFooter.textContent = footerNote.value.trim() || 'No footer note provided.';
+        messageCount.textContent = message.value.length;
+
+        const paragraphs = message.value.trim()
+            ? message.value.trim().split(/\n{2,}/).map((paragraph) => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`).join('')
+            : '<p>Write your email content on the left and the preview updates here.</p>';
+
+        previewMessage.innerHTML = paragraphs;
     }
 
-    // Render pagination
-    function renderPagination(data) {
-        const container = document.getElementById('pagination-container');
-        if (data.last_page <= 1) {
-            container.innerHTML = '';
-            return;
-        }
+    fromIdentity.addEventListener('change', syncSenderVisibility);
+    recipientInputs.forEach((input) => input.addEventListener('change', syncRecipientPanels));
+    [subject, message, accentLabel, footerNote, headerColor].forEach((input) => input.addEventListener('input', renderPreview));
 
-        let pagination = '<div class="flex items-center justify-between"><div class="flex-1 flex justify-between sm:hidden">';
-        
-        if (data.prev_page_url) {
-            pagination += `<a href="#" onclick="loadNotifications(${data.current_page - 1})" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">Previous</a>`;
-        }
-        
-        if (data.next_page_url) {
-            pagination += `<a href="#" onclick="loadNotifications(${data.current_page + 1})" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">Next</a>`;
-        }
-        
-        pagination += '</div><div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">';
-        pagination += `<div><p class="text-sm text-gray-700 dark:text-gray-300">Showing <span class="font-medium">${data.from}</span> to <span class="font-medium">${data.to}</span> of <span class="font-medium">${data.total}</span> results</p></div>`;
-        pagination += '<div><nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">';
-        
-        // Previous button
-        if (data.prev_page_url) {
-            pagination += `<a href="#" onclick="loadNotifications(${data.current_page - 1})" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">Previous</a>`;
-        }
-        
-        // Page numbers
-        for (let i = 1; i <= data.last_page; i++) {
-            if (i === data.current_page) {
-                pagination += `<span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-50 text-sm font-medium text-blue-600 dark:bg-blue-900 dark:text-blue-200">${i}</span>`;
-            } else {
-                pagination += `<a href="#" onclick="loadNotifications(${i})" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">${i}</a>`;
-            }
-        }
-        
-        // Next button
-        if (data.next_page_url) {
-            pagination += `<a href="#" onclick="loadNotifications(${data.current_page + 1})" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">Next</a>`;
-        }
-        
-        pagination += '</nav></div></div></div>';
-        container.innerHTML = pagination;
-    }
-
-    // Filter functionality
-    document.getElementById('filter-btn').addEventListener('click', function() {
-        loadNotifications(1);
+    headerColorPicker.addEventListener('input', function () {
+        headerColor.value = this.value;
+        renderPreview();
     });
 
-    // Global functions for notification actions
-    window.viewNotification = function(id) {
-        fetch(`{{ route('admin.notifications.show', '') }}/${id}`)
-            .then(response => response.json())
-            .then(data => {
-                alert(`Notification Details:\n\nUser: ${data.user_name} (${data.user_email})\nType: ${data.type}\nTitle: ${data.title}\nMessage: ${data.message}\nCreated: ${data.created_at}\nRead: ${data.read_at || 'Not read'}`);
-            })
-            .catch(error => {
-                console.error('Error loading notification:', error);
-                alert('Error loading notification details');
-            });
-    };
-
-    window.editNotification = function(id) {
-        currentNotificationId = id;
-        fetch(`{{ route('admin.notifications.show', '') }}/${id}`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('edit-type').value = data.type;
-                document.getElementById('edit-title').value = data.title;
-                document.getElementById('edit-message').value = data.message;
-                document.getElementById('edit-modal').classList.remove('hidden');
-            })
-            .catch(error => {
-                console.error('Error loading notification:', error);
-                alert('Error loading notification details');
-            });
-    };
-
-    window.deleteNotification = function(id) {
-        if (confirm('Are you sure you want to delete this notification?')) {
-            fetch(`{{ route('admin.notifications.destroy', '') }}/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Notification deleted successfully');
-                    loadNotifications(currentPage);
-                } else {
-                    alert('Error: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting notification:', error);
-                alert('Error deleting notification');
-            });
-        }
-    };
-
-    // Edit form submission
-    document.getElementById('edit-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = {
-            type: document.getElementById('edit-type').value,
-            title: document.getElementById('edit-title').value,
-            message: document.getElementById('edit-message').value
-        };
-
-        fetch(`{{ route('admin.notifications.update', '') }}/${currentNotificationId}`, {
-            method: 'PUT',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Notification updated successfully');
-                document.getElementById('edit-modal').classList.add('hidden');
-                loadNotifications(currentPage);
-            } else {
-                alert('Error: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error updating notification:', error);
-            alert('Error updating notification');
-        });
-    });
-
-    // Close edit modal
-    document.getElementById('close-edit').addEventListener('click', function() {
-        document.getElementById('edit-modal').classList.add('hidden');
-    });
-
-    document.getElementById('cancel-edit').addEventListener('click', function() {
-        document.getElementById('edit-modal').classList.add('hidden');
-    });
-
-    // Close edit modal when clicking outside
-    document.getElementById('edit-modal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.classList.add('hidden');
+    headerColor.addEventListener('input', function () {
+        if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
+            headerColorPicker.value = this.value;
         }
     });
 
-    // Original send notification functionality (keeping existing code)
-    const recipientTypeRadios = document.querySelectorAll('input[name="recipient_type"]');
-    const userSelection = document.getElementById('user-selection');
-    const userSelect = document.getElementById('user-select');
-    const messageTextarea = document.getElementById('message');
-    const charCount = document.getElementById('char-count');
-    const previewBtn = document.getElementById('preview-btn');
-    const previewModal = document.getElementById('preview-modal');
-    const closePreview = document.getElementById('close-preview');
-    const sendBtn = document.getElementById('send-btn');
-    const sendBtnText = document.getElementById('send-btn-text');
-    const sendBtnSpinner = document.getElementById('send-btn-spinner');
-    const form = document.getElementById('notification-form');
-
-    let selectedUserIds = [];
-
-    // Toggle user selection visibility
-    recipientTypeRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (this.value === 'selected') {
-                userSelection.style.display = 'block';
-            } else {
-                userSelection.style.display = 'none';
-                // Clear selections when switching to "All Users"
-                userSelect.selectedIndex = -1;
-                selectedUserIds = [];
-            }
-        });
-    });
-
-    // Character count for message
-    messageTextarea.addEventListener('input', function() {
-        charCount.textContent = this.value.length;
-    });
-
-    // Handle user selection from dropdown
-    userSelect.addEventListener('change', function() {
-        selectedUserIds = Array.from(this.selectedOptions).map(option => parseInt(option.value));
-        console.log('Selected user IDs:', selectedUserIds);
-    });
-
-    // Preview functionality
-    previewBtn.addEventListener('click', function() {
-        const type = document.getElementById('type').value;
-        const title = document.getElementById('title').value;
-        const message = document.getElementById('message').value;
-        const recipientType = document.querySelector('input[name="recipient_type"]:checked').value;
-
-        if (!type || !title || !message) {
-            alert('Please fill in all required fields');
-            return;
-        }
-
-        if (recipientType === 'selected' && selectedUserIds.length === 0) {
-            alert('Please select at least one user');
-            return;
-        }
-
-        // Update preview content
-        document.getElementById('preview-type').textContent = type.charAt(0).toUpperCase() + type.slice(1);
-        document.getElementById('preview-title').textContent = title;
-        document.getElementById('preview-message').textContent = message;
-        
-        const recipientCount = recipientType === 'all' ? users.length : selectedUserIds.length;
-        document.getElementById('preview-recipients').textContent = `Will be sent to ${recipientCount} user(s)`;
-
-        previewModal.classList.remove('hidden');
-    });
-
-    // Close preview modal
-    closePreview.addEventListener('click', function() {
-        previewModal.classList.add('hidden');
-    });
-
-    // Close preview modal when clicking outside
-    previewModal.addEventListener('click', function(e) {
-        if (e.target === previewModal) {
-            previewModal.classList.add('hidden');
-        }
-    });
-
-    // Form submission
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const recipientType = document.querySelector('input[name="recipient_type"]:checked').value;
-        
-        if (recipientType === 'selected' && selectedUserIds.length === 0) {
-            alert('Please select at least one user');
-            return;
-        }
-
-        // Add selected user IDs to form data
-        selectedUserIds.forEach(userId => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'user_ids[]';
-            input.value = userId;
-            form.appendChild(input);
-        });
-
-        // Show loading state
-        sendBtn.disabled = true;
-        sendBtnText.textContent = 'Sending...';
-        sendBtnSpinner.classList.remove('hidden');
-
-        // Submit form
-        this.submit();
-    });
+    syncSenderVisibility();
+    syncRecipientPanels();
+    renderPreview();
 });
 </script>
-@endpush
 @endsection
