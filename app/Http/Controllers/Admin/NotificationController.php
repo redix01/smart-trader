@@ -81,14 +81,16 @@ class NotificationController extends Controller
         try {
             foreach ($emails as $email) {
                 Mail::to($email)->send(
-                    (new AdminBroadcastMail([
+                    new AdminBroadcastMail([
                         'subject' => $validated['subject'],
                         'message' => $validated['message'],
                         'header_color' => $validated['header_color'],
                         'accent_label' => $validated['accent_label'] ?? null,
                         'footer_note' => $validated['footer_note'] ?? null,
                         'recipient_email' => $email,
-                    ]))->from($fromEmail, $fromName)
+                        'from_email' => $fromEmail,
+                        'from_name' => $fromName,
+                    ])
                 );
 
                 $sentCount++;
