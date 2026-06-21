@@ -5,6 +5,7 @@ namespace App\Mail;
 use App\Helpers\WebsiteSettingsHelper;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -21,6 +22,10 @@ class AdminBroadcastMail extends Mailable
     {
         return new Envelope(
             subject: $this->mailData['subject'],
+            from: new Address(
+                $this->mailData['from_email'],
+                $this->mailData['from_name'] ?? WebsiteSettingsHelper::getSiteName()
+            ),
         );
     }
 

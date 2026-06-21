@@ -9,32 +9,32 @@
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#eef2ff; margin:0; padding:32px 12px;">
         <tr>
             <td align="center">
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px; background-color:#ffffff; border-radius:24px; overflow:hidden; box-shadow:0 20px 45px rgba(15, 23, 42, 0.12);">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px; background-color:#ffffff; border-radius:22px; overflow:hidden; box-shadow:0 20px 45px rgba(15, 23, 42, 0.12);">
                     <tr>
                         <td style="padding:0; background:linear-gradient(135deg, {{ $headerColor }} 0%, #0f172a 160%);">
-                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:32px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:26px 28px;">
                                 @if(!empty($accentLabel))
                                     <tr>
                                         <td>
-                                            <span style="display:inline-block; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,0.16); color:#ffffff; font-size:11px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase;">
+                                            <span style="display:inline-block; padding:7px 12px; border-radius:999px; background:rgba(255,255,255,0.16); color:#ffffff; font-size:10px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase;">
                                                 {{ $accentLabel }}
                                             </span>
                                         </td>
                                     </tr>
                                 @endif
                                 <tr>
-                                    <td style="padding-top:18px;">
+                                    <td style="padding-top:14px;">
                                         <table role="presentation" cellpadding="0" cellspacing="0">
                                             <tr>
                                                 <td style="vertical-align:middle;">
                                                     @if(\App\Helpers\WebsiteSettingsHelper::hasImageLogo())
-                                                        <img src="{{ \App\Helpers\WebsiteSettingsHelper::getLogoUrl() }}" alt="{{ $siteName }}" style="display:block; max-height:56px; width:auto;">
+                                                        <img src="{{ \App\Helpers\WebsiteSettingsHelper::getLogoUrl() }}" alt="{{ $siteName }}" style="display:block; max-height:46px; width:auto;">
                                                     @elseif(\App\Helpers\WebsiteSettingsHelper::hasTextLogo())
-                                                        <div style="display:inline-block; padding:14px 18px; border-radius:16px; background:rgba(255,255,255,0.12); color:#ffffff; font-size:22px; font-weight:700;">
+                                                        <div style="display:inline-block; padding:11px 15px; border-radius:14px; background:rgba(255,255,255,0.12); color:#ffffff; font-size:19px; font-weight:700;">
                                                             {{ \App\Helpers\WebsiteSettingsHelper::getTextLogo() }}
                                                         </div>
                                                     @else
-                                                        <div style="display:inline-block; padding:14px 18px; border-radius:16px; background:rgba(255,255,255,0.12); color:#ffffff; font-size:22px; font-weight:700;">
+                                                        <div style="display:inline-block; padding:11px 15px; border-radius:14px; background:rgba(255,255,255,0.12); color:#ffffff; font-size:19px; font-weight:700;">
                                                             {{ $siteName }}
                                                         </div>
                                                     @endif
@@ -44,9 +44,9 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-top:24px; color:#ffffff;">
-                                        <div style="font-size:30px; line-height:1.2; font-weight:700;">{{ $subjectLine }}</div>
-                                        <div style="margin-top:10px; font-size:14px; line-height:1.7; color:rgba(255,255,255,0.82);">
+                                    <td style="padding-top:18px; color:#ffffff;">
+                                        <div style="font-size:25px; line-height:1.2; font-weight:700;">{{ $subjectLine }}</div>
+                                        <div style="margin-top:8px; font-size:13px; line-height:1.7; color:rgba(255,255,255,0.82);">
                                             {{ $siteTagline ?: 'Official communication from our admin team.' }}
                                         </div>
                                     </td>

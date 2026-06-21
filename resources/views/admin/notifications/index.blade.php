@@ -235,23 +235,23 @@
 
         <div class="space-y-6">
             <div class="overflow-hidden rounded-[28px] border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                <div id="preview-header" class="px-6 py-6" style="background: linear-gradient(135deg, {{ old('header_color', $defaultHeaderColor) }} 0%, #0f172a 160%);">
-                    <div class="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-white" id="preview-accent">
+                <div id="preview-header" class="px-6 py-5" style="background: linear-gradient(135deg, {{ old('header_color', $defaultHeaderColor) }} 0%, #0f172a 160%);">
+                    <div class="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-white" id="preview-accent">
                         {{ old('accent_label', 'Admin Update') }}
                     </div>
-                    <div class="mt-4 flex items-center gap-4">
-                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 p-2 backdrop-blur">
+                    <div class="mt-3 flex items-center gap-3">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 p-2 backdrop-blur">
                             @if(\App\Helpers\WebsiteSettingsHelper::hasImageLogo())
-                                <img src="{{ \App\Helpers\WebsiteSettingsHelper::getLogoUrl() }}" alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}" class="max-h-10 w-auto">
+                                <img src="{{ \App\Helpers\WebsiteSettingsHelper::getLogoUrl() }}" alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}" class="max-h-8 w-auto">
                             @elseif(\App\Helpers\WebsiteSettingsHelper::hasTextLogo())
-                                <span class="text-lg font-bold text-white">{{ \App\Helpers\WebsiteSettingsHelper::getTextLogo() }}</span>
+                                <span class="text-base font-bold text-white">{{ \App\Helpers\WebsiteSettingsHelper::getTextLogo() }}</span>
                             @else
-                                <span class="text-lg font-bold text-white">{{ strtoupper(substr(\App\Helpers\WebsiteSettingsHelper::getSiteName(), 0, 1)) }}</span>
+                                <span class="text-base font-bold text-white">{{ strtoupper(substr(\App\Helpers\WebsiteSettingsHelper::getSiteName(), 0, 1)) }}</span>
                             @endif
                         </div>
                         <div>
-                            <p class="text-lg font-semibold text-white">{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}</p>
-                            <p class="text-sm text-white/80">{{ \App\Helpers\WebsiteSettingsHelper::getSiteTagline() ?: 'Official platform communication' }}</p>
+                            <p class="text-base font-semibold text-white">{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}</p>
+                            <p class="text-xs text-white/80">{{ \App\Helpers\WebsiteSettingsHelper::getSiteTagline() ?: 'Official platform communication' }}</p>
                         </div>
                     </div>
                 </div>
