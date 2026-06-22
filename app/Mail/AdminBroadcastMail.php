@@ -9,6 +9,8 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Symfony\Component\Mime\Address as SymfonyAddress;
+use Symfony\Component\Mime\Email;
 
 class AdminBroadcastMail extends Mailable
 {
@@ -20,12 +22,24 @@ class AdminBroadcastMail extends Mailable
 
     public function envelope(): Envelope
     {
+        $fromEmail = $this->mailData['from_email'];
+        $fromName = $this->mailData['from_name'] ?? WebsiteSettingsHelper::getSiteName();
+
         return new Envelope(
             subject: $this->mailData['subject'],
-            from: new Address(
-                $this->mailData['from_email'],
-                $this->mailData['from_name'] ?? WebsiteSettingsHelper::getSiteName()
-            ),
+            from: new Address($fromEmail, $fromName),
+            replyTo: [
+                new Address($fromEmail, $fromName),
+            ],
+            using: [
+                function (Email $message) use ($fromEmail, $fromName): void {
+                    $address = new SymfonyAddress($fromEmail, $fromName);
+
+                    $message->from($address);
+                    $message->sender($address);
+                    $message->replyTo($address);
+                },
+            ],
         );
     }
 
