@@ -90,23 +90,29 @@
                 </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
                                 @forelse($deposits as $deposit)
+                                    @php
+                                        $user = $deposit->user;
+                                        $userAvatar = $user?->avatar_url ?? asset('assets/img/avatar.svg');
+                                        $userName = $user?->name ?? 'Deleted user';
+                                        $userEmail = $user?->email ?? 'No email available';
+                                    @endphp
                                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                                         <td class="p-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white hidden sm:table-cell">
                                             #{{ substr($deposit->id, 0, 6) }}
                     </td>
                                         <td class="p-4 whitespace-nowrap">
                                             <div class="flex items-center">
-                                                <img class="w-10 h-10 rounded-full" src="{{ $deposit->user->avatar_url }}" alt="{{ $deposit->user->name }}">
+                                                <img class="w-10 h-10 rounded-full" src="{{ $userAvatar }}" alt="{{ $userName }}">
                                                 <div class="ml-4">
                                                     <div class="text-sm font-medium text-gray-900 dark:text-white">
-                                                        {{ $deposit->user->name }}
+                                                        {{ $userName }}
                                                         <span class="sm:hidden text-xs text-gray-500 ml-2">#{{ substr($deposit->id, 0, 6) }}</span>
                                                     </div>
                                                     <div class="text-sm text-gray-500 dark:text-gray-400">
-                                                        {{ $deposit->user->email }}
+                                                        {{ $userEmail }}
                                                     </div>
                                                 </div>
-                        </div>
+	                        </div>
                     </td>
                                         <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">
                                             ${{ number_format($deposit->amount, 2) }}
