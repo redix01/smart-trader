@@ -1,4 +1,11 @@
 <div class="max-h-96 overflow-y-auto space-y-6">
+    @php
+        $user = $deposit->user;
+        $userAvatar = $user?->avatar_url ?? asset('assets/img/avatar.svg');
+        $userName = $user?->name ?? 'Deleted user';
+        $userPhone = $user?->phone ?? 'No phone';
+    @endphp
+
     <!-- Deposit Information -->
     <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
         <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Deposit Information</h4>
@@ -64,10 +71,10 @@
     <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
         <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">User Information</h4>
         <div class="flex items-center space-x-4">
-            <img class="w-12 h-12 rounded-full" src="{{ $deposit->user->avatar_url }}" alt="{{ $deposit->user->name }}">
+            <img class="w-12 h-12 rounded-full" src="{{ $userAvatar }}" alt="{{ $userName }}">
             <div>
-                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $deposit->user->name }}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $deposit->user->phone ?? 'No phone' }}</p>
+                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $userName }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $userPhone }}</p>
             </div>
         </div>
     </div>
