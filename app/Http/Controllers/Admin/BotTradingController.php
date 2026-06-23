@@ -196,11 +196,10 @@ class BotTradingController extends Controller
     public function resume(BotTrading $bot)
     {
         try {
-            // Check if bot is paused
-            if ($bot->status !== 'paused') {
+            if ($bot->isActive()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Bot must be paused to resume'
+                    'message' => 'Bot is already active.'
                 ], 400);
             }
 
@@ -214,11 +213,12 @@ class BotTradingController extends Controller
             $user->createNotification(
                 'bot_resumed',
                 'Bot Resumed',
-                "Your bot '{$bot->name}' has been resumed and is now active again.",
+                "Your bot '{$bot->name}' has been resumed by an administrator and is now active again.",
                 [
                     'bot_id' => $bot->id,
                     'bot_name' => $bot->name,
-                    'action' => 'resumed'
+                    'action' => 'resumed',
+                    'resumed_by' => 'admin',
                 ]
             );
 
@@ -243,30 +243,11 @@ class BotTradingController extends Controller
     public function stop(BotTrading $bot)
     {
         try {
-            // Check if bot is already stopped
             if ($bot->status === 'stopped') {
                 return response()->json([
                     'success' => false,
                     'message' => 'Bot is already stopped'
                 ], 400);
-            }
-
-            $profitTransferred = false;
-            $profitAmount = 0;
-
-            // Transfer profits to user's trading balance before stopping
-            if ($bot->total_profit > 0) {
-                $user = $bot->user;
-                $profitAmount = $bot->total_profit;
-                $user->increment('trading_balance', $profitAmount);
-                $profitTransferred = true;
-                
-                Log::info("Bot profits transferred to user on permanent stop", [
-                    'bot_id' => $bot->id,
-                    'user_id' => $user->id,
-                    'profit_transferred' => $profitAmount,
-                    'new_trading_balance' => $user->fresh()->trading_balance
-                ]);
             }
 
             $bot->update([
@@ -276,30 +257,24 @@ class BotTradingController extends Controller
 
             // Create notification for the user
             $user = $bot->user;
-            $profitMessage = $profitTransferred ? 
-                " Profits of $" . number_format($profitAmount, 2) . " have been transferred to your trading balance." : 
-                "";
-            
+
             $user->createNotification(
                 'bot_stopped',
-                'Bot Stopped Permanently',
-                "Your bot '{$bot->name}' has been permanently stopped by an administrator.{$profitMessage}",
+                'Bot Stopped',
+                "Your bot '{$bot->name}' has been stopped by an administrator. It can be resumed later from the admin panel.",
                 [
                     'bot_id' => $bot->id,
                     'bot_name' => $bot->name,
                     'action' => 'stopped',
-                    'profit_transferred' => $profitTransferred,
-                    'profit_amount' => $profitAmount
+                    'stopped_by' => 'admin',
                 ]
             );
 
-            Log::info("Admin permanently stopped bot {$bot->id} by user " . auth()->id());
+            Log::info("Admin stopped bot {$bot->id} by user " . auth()->id());
 
             return response()->json([
                 'success' => true,
-                'message' => 'Bot stopped permanently!' . ($profitTransferred ? ' Profits have been transferred to your trading balance.' : ''),
-                'profit_transferred' => $profitTransferred,
-                'profit_amount' => $profitAmount
+                'message' => 'Bot stopped successfully! It can be resumed later.',
             ]);
         } catch (\Exception $e) {
             Log::error("Admin bot stop failed: " . $e->getMessage());
@@ -614,13 +589,6 @@ class BotTradingController extends Controller
      */
     public function start(BotTrading $bot)
     {
-        if ($bot->isStopped()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Bot is permanently stopped and cannot be restarted.'
-            ], 400);
-        }
-
         if ($bot->isActive()) {
             return response()->json([
                 'success' => false,

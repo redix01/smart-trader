@@ -687,7 +687,7 @@ function resumeBot(botId) {
 }
 
 function stopBot(botId) {
-    if (confirm('Are you sure you want to PERMANENTLY STOP this bot? This action cannot be undone and all profits will be transferred to your trading balance.')) {
+    if (confirm('Are you sure you want to stop this bot? It will remain stopped until an admin resumes it.')) {
         fetch(`/admin/bot-trading/${botId}/stop`, {
             method: 'POST',
             headers: {
@@ -698,7 +698,7 @@ function stopBot(botId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Bot stopped permanently! ' + (data.profit_transferred ? 'Profits have been transferred to your trading balance.' : ''));
+                alert('Bot stopped successfully!');
                 location.reload();
             } else {
                 alert('Failed to stop bot: ' + data.message);
@@ -712,7 +712,7 @@ function stopBot(botId) {
 }
 
 function startBot(botId) {
-    if (confirm('Are you sure you want to start this bot? It will begin trading immediately.')) {
+    if (confirm('Are you sure you want to resume this bot? It will become active again immediately.')) {
         fetch(`/admin/bot-trading/${botId}/start`, {
             method: 'POST',
             headers: {
@@ -723,15 +723,15 @@ function startBot(botId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Bot started successfully!');
+                alert('Bot resumed successfully!');
                 location.reload();
             } else {
-                alert('Failed to start bot: ' + data.message);
+                alert('Failed to resume bot: ' + data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while starting the bot');
+            alert('An error occurred while resuming the bot');
         });
     }
 }
