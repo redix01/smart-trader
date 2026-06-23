@@ -1,32 +1,32 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="p-4 bg-gray-50 dark:bg-gray-900 min-h-screen">
+<div class="min-h-screen bg-gray-50 p-3 dark:bg-gray-900 sm:p-4">
     <!-- Page Header -->
     <div class="mb-6">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-            <div class="flex items-center space-x-4">
-                <a href="{{ route('admin.bot-trading.show', $bot) }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700">
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <a href="{{ route('admin.bot-trading.show', $bot) }}" class="inline-flex w-full items-center justify-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 sm:w-auto">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>
                     Back to Bot
                 </a>
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Bot Configuration</h1>
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Edit Bot Configuration</h1>
                     <p class="text-gray-600 dark:text-gray-400 mt-1">{{ $bot->name }} - {{ $bot->user->name }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="max-w-4xl mx-auto">
+    <div class="mx-auto max-w-4xl">
         <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="px-4 py-4 border-b border-gray-200 dark:border-gray-700 sm:px-6">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Bot Settings</h3>
             </div>
             
-            <form action="{{ route('admin.bot-trading.update', $bot) }}" method="POST" class="p-6">
+            <form action="{{ route('admin.bot-trading.update', $bot) }}" method="POST" class="p-4 sm:p-6">
                 @csrf
                 @method('PATCH')
                 
@@ -132,11 +132,11 @@
                 </div>
 
                 <!-- Form Actions -->
-                <div class="mt-8 flex items-center justify-end space-x-3">
-                    <a href="{{ route('admin.bot-trading.show', $bot) }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600">
+                <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
+                    <a href="{{ route('admin.bot-trading.show', $bot) }}" class="inline-flex w-full items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 sm:w-auto">
                         Cancel
                     </a>
-                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <button type="submit" class="inline-flex w-full items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto">
                         Update Bot
                     </button>
                 </div>

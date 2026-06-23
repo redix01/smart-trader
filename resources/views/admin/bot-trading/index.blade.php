@@ -1,15 +1,15 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="p-4 bg-gray-50 dark:bg-gray-900 min-h-screen">
+<div class="min-h-screen bg-gray-50 p-3 dark:bg-gray-900 sm:p-4">
     <!-- Page Header -->
     <div class="mb-6">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Bot Trading Management</h1>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Bot Trading Management</h1>
                 <p class="text-gray-600 dark:text-gray-400 mt-1">Manage all trading bots across the platform</p>
             </div>
-            <button onclick="location.reload()" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+            <button onclick="location.reload()" class="inline-flex w-full items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 sm:w-auto">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                 </svg>
@@ -19,9 +19,9 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 sm:gap-6">
         <!-- Total Bots Card -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 p-5 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200 sm:p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Bots</p>
@@ -39,7 +39,7 @@
         </div>
 
         <!-- Total Profit Card -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 p-5 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200 sm:p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Profit</p>
@@ -57,7 +57,7 @@
         </div>
 
         <!-- Total Trades Card -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 p-5 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200 sm:p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Trades</p>
@@ -75,7 +75,7 @@
         </div>
 
         <!-- Stopped Bots Card -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 p-5 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200 sm:p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Stopped Bots</p>
@@ -95,13 +95,13 @@
     </div>
 
     <!-- Bots Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+    <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div class="border-b border-gray-200 px-4 py-4 dark:border-gray-700 sm:px-6">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">All Trading Bots</h3>
         </div>
         
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <div class="-mx-3 overflow-x-auto px-3 sm:mx-0 sm:px-0">
+            <table class="min-w-[880px] divide-y divide-gray-200 dark:divide-gray-700 sm:min-w-full">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">BOT INFO</th>
@@ -114,7 +114,7 @@
                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($bots as $bot)
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-4 py-4 whitespace-nowrap sm:px-6">
                             <div>
                                 <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $bot->name }}</div>
                                 <div class="text-sm text-gray-500 dark:text-gray-400">{{ $bot->base_asset }}/{{ $bot->quote_asset }}</div>
@@ -122,13 +122,13 @@
                                 <div class="text-xs text-gray-400 dark:text-gray-500">Created: {{ $bot->created_at->format('M d, Y H:i') }}</div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-4 py-4 whitespace-nowrap sm:px-6">
                             <div>
                                 <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $bot->user->name }}</div>
                                 <div class="text-sm text-gray-500 dark:text-gray-400">{{ $bot->user->email }}</div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-4 py-4 whitespace-nowrap sm:px-6">
                             @if($bot->status === 'active')
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                     <span class="w-2 h-2 bg-green-400 rounded-full mr-1.5"></span>
@@ -146,7 +146,7 @@
                                 </span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-4 py-4 whitespace-nowrap sm:px-6">
                             <div>
                                 <div class="text-sm font-medium text-gray-900 dark:text-white">
                                     Profit: ${{ number_format($bot->total_profit, 2) }}
@@ -159,17 +159,17 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div class="flex flex-wrap gap-2">
+                        <td class="px-4 py-4 whitespace-nowrap text-sm font-medium sm:px-6">
+                            <div class="flex flex-wrap gap-2 sm:flex-nowrap">
                                 <!-- View Button -->
                                 <a href="{{ route('admin.bot-trading.show', $bot) }}" 
-                                   class="px-2 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors">
+                                   class="inline-flex items-center justify-center px-2 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors min-w-[88px]">
                                     View Details
                                 </a>
                                 
                                 <!-- Delete Button -->
                                 <button onclick="deleteBot({{ $bot->id }})" 
-                                        class="px-2 py-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded transition-colors">
+                                        class="inline-flex items-center justify-center px-2 py-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded transition-colors min-w-[88px]">
                                     Delete
                                 </button>
                             </div>
