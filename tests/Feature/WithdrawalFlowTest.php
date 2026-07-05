@@ -132,6 +132,11 @@ class WithdrawalFlowTest extends TestCase
             return $mail->hasTo('admin@cognizantpromarket.com')
                 && $mail->subjectLine === 'New withdrawal request';
         });
+
+        Mail::assertSent(UserActionMail::class, function (UserActionMail $mail) {
+            return $mail->hasTo($this->user->email)
+                && $mail->subjectLine === 'Withdrawal request submitted';
+        });
     }
 
     public function test_withdrawal_respects_admin_minimum_limit(): void

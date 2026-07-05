@@ -176,6 +176,23 @@ class UserNotificationService
 
     public function sendWithdrawalSubmitted(User $user, Withdrawal $withdrawal): void
     {
+        $this->sendToUser(
+            $user,
+            'Withdrawal request submitted',
+            'Your withdrawal request has been received',
+            'Your withdrawal request was submitted successfully and is now pending admin approval.',
+            [
+                'Amount' => $this->formatAmount((float) $withdrawal->amount, $withdrawal->currency),
+                'Fee' => $this->formatAmount((float) $withdrawal->fee, $withdrawal->currency),
+                'Net amount' => $this->formatAmount((float) $withdrawal->net_amount, $withdrawal->currency),
+                'Currency' => strtoupper($withdrawal->currency),
+                'Method' => strtoupper($withdrawal->method),
+                'Status' => strtoupper($withdrawal->status),
+            ],
+            'View Withdrawals',
+            route('withdraw')
+        );
+
         $this->sendToAdmin(
             'New withdrawal request',
             'A withdrawal request needs review',
