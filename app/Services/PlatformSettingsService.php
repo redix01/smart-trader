@@ -29,6 +29,16 @@ class PlatformSettingsService
         return (string) ($this->get('mail_admin_name') ?: config('mail.admin_name', 'Admin'));
     }
 
+    public function getMailFromName(): string
+    {
+        return (string) ($this->get('mail_from_name') ?: config('mail.from.name'));
+    }
+
+    public function getSiteName(): string
+    {
+        return (string) ($this->get('site_name') ?: config('app.name'));
+    }
+
     public function getFloat(string $key, float $default = 0): float
     {
         $value = $this->get($key);

@@ -217,16 +217,16 @@ class UserNotificationService
         $this->sendToUser(
             $user,
             'Withdrawal approved',
-            'Your withdrawal has been approved',
-            'Your withdrawal request has been approved and is being processed to the destination you provided.',
+            'Your withdrawal is on its way',
+            "We've reviewed and approved your withdrawal request. The funds below are now being sent to the destination you provided.",
             [
-                'Amount' => $this->formatAmount((float) $withdrawal->amount, $withdrawal->currency),
-                'Net amount' => $this->formatAmount((float) $withdrawal->net_amount, $withdrawal->currency),
+                'Amount requested' => $this->formatAmount((float) $withdrawal->amount, $withdrawal->currency),
+                'Amount you will receive' => $this->formatAmount((float) $withdrawal->net_amount, $withdrawal->currency),
                 'Currency' => strtoupper($withdrawal->currency),
-                'Approved at' => $withdrawal->approved_at?->format('Y-m-d H:i') ?? now()->format('Y-m-d H:i'),
-                'Status' => 'APPROVED',
+                'Approved on' => $withdrawal->approved_at?->format('Y-m-d H:i') ?? now()->format('Y-m-d H:i'),
+                'Status' => 'Approved',
             ],
-            'View Withdrawals',
+            'View your withdrawals',
             route('withdraw')
         );
     }

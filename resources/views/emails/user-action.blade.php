@@ -9,7 +9,7 @@
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e4e4e7;border-radius:12px;overflow:hidden;">
         <tr>
             <td style="padding:28px 28px 16px;background:#09090b;color:#ffffff;">
-                <div style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#a1a1aa;">{{ config('app.name') }}</div>
+                <div style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#a1a1aa;">{{ $brandName }}</div>
                 <h1 style="margin:12px 0 0;font-size:24px;line-height:1.3;">{{ $heading }}</h1>
             </td>
         </tr>
