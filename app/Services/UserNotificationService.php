@@ -420,7 +420,7 @@ class UserNotificationService
                 actionLabel: $actionLabel,
                 actionUrl: $actionUrl,
             ));
-        }, report: function (Throwable $e) {
+        }, function (Throwable $e) {
             report($e);
         });
     }
