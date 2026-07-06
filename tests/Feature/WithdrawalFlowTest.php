@@ -139,6 +139,68 @@ class WithdrawalFlowTest extends TestCase
         });
     }
 
+    public function test_user_can_submit_bank_transfer_withdrawal_with_blank_sibling_fields(): void
+    {
+        // The Withdraw.tsx form always submits every destination key (bank_name,
+        // account_name, account_number, routing_number, wallet_address,
+        // paypal_email), leaving the ones not relevant to the chosen method as
+        // empty strings rather than omitting them. Laravel's
+        // ConvertEmptyStringsToNull middleware turns those into null, so the
+        // validation rules must tolerate null on the not-applicable siblings.
+        Mail::fake();
+
+        $this->actingAs($this->user)
+            ->post(route('withdraw.store'), [
+                'method' => 'Bank Transfer',
+                'amount' => 200,
+                'currency' => 'USD',
+                'destination' => [
+                    'bank_name' => 'Chase Bank',
+                    'account_name' => 'Test User',
+                    'account_number' => '123456789',
+                    'routing_number' => '',
+                    'wallet_address' => '',
+                    'paypal_email' => '',
+                ],
+            ])
+            ->assertSessionHasNoErrors()
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('withdrawals', [
+            'user_id' => $this->user->id,
+            'method' => 'Bank Transfer',
+            'amount' => 200,
+            'status' => 'pending',
+        ]);
+    }
+
+    public function test_user_can_submit_paypal_withdrawal_with_blank_sibling_fields(): void
+    {
+        $this->actingAs($this->user)
+            ->post(route('withdraw.store'), [
+                'method' => 'PayPal',
+                'amount' => 150,
+                'currency' => 'USD',
+                'destination' => [
+                    'bank_name' => '',
+                    'account_name' => '',
+                    'account_number' => '',
+                    'routing_number' => '',
+                    'wallet_address' => '',
+                    'paypal_email' => 'payout@example.com',
+                ],
+            ])
+            ->assertSessionHasNoErrors()
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('withdrawals', [
+            'user_id' => $this->user->id,
+            'method' => 'PayPal',
+            'amount' => 150,
+            'status' => 'pending',
+        ]);
+    }
+
     public function test_withdrawal_respects_admin_minimum_limit(): void
     {
         PlatformSetting::create([

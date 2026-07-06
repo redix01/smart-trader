@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { ArrowUpRight, ShieldCheck, Info, ChevronDown, Building2, User, CreditCard, Landmark } from 'lucide-react';
+import Modal from '@/Components/Modal';
+import { ArrowUpRight, ShieldCheck, Info, ChevronDown, Building2, User, CreditCard, Landmark, CheckCircle2, XCircle } from 'lucide-react';
 
 interface WithdrawProps {
   balance: number;
@@ -17,7 +19,7 @@ interface WithdrawProps {
 }
 
 export default function Withdraw({ balance, history = [] }: WithdrawProps) {
-  const { data, setData, post, processing, errors } = useForm({
+  const { data, setData, post, processing, errors, reset } = useForm({
     method: 'Bank Transfer',
     amount: '',
     currency: 'USD',
@@ -31,9 +33,27 @@ export default function Withdraw({ balance, history = [] }: WithdrawProps) {
     },
   });
 
+  const [confirmation, setConfirmation] = useState<{ status: 'success' | 'error'; message: string } | null>(null);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    post(route('withdraw.store'));
+    post(route('withdraw.store'), {
+      preserveScroll: true,
+      onSuccess: () => {
+        reset('amount', 'destination');
+        setConfirmation({
+          status: 'success',
+          message: 'Your withdrawal request has been submitted and is now pending admin approval.',
+        });
+      },
+      onError: (formErrors) => {
+        const firstError = Object.values(formErrors)[0];
+        setConfirmation({
+          status: 'error',
+          message: typeof firstError === 'string' ? firstError : 'Your withdrawal request could not be submitted. Please check the form and try again.',
+        });
+      },
+    });
   };
 
   const netAmount = data.amount ? (parseFloat(data.amount) * 0.99).toFixed(2) : '0.00';
@@ -253,6 +273,26 @@ export default function Withdraw({ balance, history = [] }: WithdrawProps) {
           )}
         </div>
       </div>
+
+      <Modal show={confirmation !== null} maxWidth="sm" onClose={() => setConfirmation(null)}>
+        <div className="p-8 text-center space-y-5">
+          <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center ${confirmation?.status === 'success' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+            {confirmation?.status === 'success' ? <CheckCircle2 size={32} /> : <XCircle size={32} />}
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-lg font-bold text-white">
+              {confirmation?.status === 'success' ? 'Withdrawal Request Sent' : 'Withdrawal Request Rejected'}
+            </h3>
+            <p className="text-sm text-zinc-400 font-medium">{confirmation?.message}</p>
+          </div>
+          <button
+            onClick={() => setConfirmation(null)}
+            className={`w-full py-3.5 rounded-2xl font-bold text-sm transition-all ${confirmation?.status === 'success' ? 'bg-emerald-600 text-white hover:bg-emerald-500' : 'bg-rose-600 text-white hover:bg-rose-500'}`}
+          >
+            {confirmation?.status === 'success' ? 'Done' : 'Try Again'}
+          </button>
+        </div>
+      </Modal>
     </AppLayout>
   );
 }
