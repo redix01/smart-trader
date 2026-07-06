@@ -198,6 +198,59 @@ class WithdrawalFlowTest extends TestCase
         });
     }
 
+    public function test_admin_sees_all_withdrawals_in_index(): void
+    {
+        $admin = User::factory()->create(['account_tier' => 'admin']);
+
+        $this->actingAs($this->user)
+            ->post(route('withdraw.store'), [
+                'method' => 'wallet',
+                'amount' => 250,
+                'currency' => 'USD',
+                'destination' => ['wallet_address' => '0xabc'],
+            ])->assertSessionHas('success');
+
+        $this->actingAs($admin)
+            ->get(route('admin.withdrawals.index'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Admin/Withdrawals/Index')
+                ->has('withdrawals.data', 1, fn ($w) => $w
+                    ->where('status', 'pending')
+                    ->where('amount', '250.00')
+                    ->where('currency', 'USD')
+                    ->where('user.name', $this->user->name)
+                    ->etc()
+                )
+            );
+    }
+
+    public function test_admin_dashboard_shows_pending_withdrawals(): void
+    {
+        $admin = User::factory()->create(['account_tier' => 'admin']);
+
+        $this->actingAs($this->user)
+            ->post(route('withdraw.store'), [
+                'method' => 'wallet',
+                'amount' => 300,
+                'currency' => 'USD',
+                'destination' => ['wallet_address' => '0xabc'],
+            ])->assertSessionHas('success');
+
+        $this->actingAs($admin)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Admin/Dashboard')
+                ->has('pendingWithdrawals', 1, fn ($w) => $w
+                    ->where('amount', '300.00')
+                    ->where('currency', 'USD')
+                    ->where('user_name', $this->user->name)
+                    ->etc()
+                )
+            );
+    }
+
     public function test_admin_can_reject_withdrawal(): void
     {
         Mail::fake();

@@ -45,16 +45,4 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Deposit rejected.');
     }
 
-    public function approveWithdrawal(Request $request, int $id)
-    {
-        $this->admin->approveWithdrawal($id, $request->user()->id);
-        return redirect()->back()->with('success', 'Withdrawal approved.');
-    }
-
-    public function rejectWithdrawal(Request $request, int $id)
-    {
-        $data = $request->validate(['reason' => 'required|string|max:500']);
-        $this->admin->rejectWithdrawal($id, $request->user()->id, $data['reason']);
-        return redirect()->back()->with('success', 'Withdrawal rejected.');
-    }
 }
