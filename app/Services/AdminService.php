@@ -135,14 +135,14 @@ class AdminService
 
     public function approveWithdrawal(int $withdrawalId, int $reviewerId): void
     {
-        DB::transaction(function () use ($withdrawalId, $reviewerId) {
+        $withdrawal = DB::transaction(function () use ($withdrawalId, $reviewerId) {
             $withdrawal = Withdrawal::whereKey($withdrawalId)
                 ->lockForUpdate()
                 ->with('user')
                 ->firstOrFail();
 
             if ($withdrawal->status === 'approved') {
-                return;
+                return $withdrawal;
             }
 
             abort_if($withdrawal->status !== 'pending', 422, 'Only pending withdrawals can be approved.');
@@ -153,20 +153,22 @@ class AdminService
                 'approved_by' => $reviewerId,
             ]);
 
-            DB::afterCommit(fn () => $this->notifications->sendWithdrawalApproved($withdrawal->user, $withdrawal->fresh()));
+            return $withdrawal;
         });
+
+        $this->notifications->sendWithdrawalApproved($withdrawal->user, $withdrawal->fresh());
     }
 
     public function rejectWithdrawal(int $withdrawalId, int $reviewerId, string $reason): void
     {
-        DB::transaction(function () use ($withdrawalId, $reviewerId, $reason) {
+        $withdrawal = DB::transaction(function () use ($withdrawalId, $reviewerId, $reason) {
             $withdrawal = Withdrawal::whereKey($withdrawalId)
                 ->lockForUpdate()
                 ->with('user')
                 ->firstOrFail();
 
             if ($withdrawal->status === 'rejected') {
-                return;
+                return $withdrawal;
             }
 
             abort_if($withdrawal->status !== 'pending', 422, 'Only pending withdrawals can be rejected.');
@@ -190,7 +192,9 @@ class AdminService
 
             $wallet->increment('balance', (float) $withdrawal->amount);
 
-            DB::afterCommit(fn () => $this->notifications->sendWithdrawalRejected($withdrawal->user, $withdrawal->fresh()));
+            return $withdrawal;
         });
+
+        $this->notifications->sendWithdrawalRejected($withdrawal->user, $withdrawal->fresh());
     }
 }

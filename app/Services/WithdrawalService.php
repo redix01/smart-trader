@@ -18,7 +18,7 @@ class WithdrawalService
 
     public function createWithdrawal(User $user, array $data): Withdrawal
     {
-        return DB::transaction(function () use ($user, $data) {
+        $withdrawal = DB::transaction(function () use ($user, $data) {
             $currency = strtoupper((string) ($data['currency'] ?? 'USD'));
             $amount = (float) $data['amount'];
             $feePercent = $this->settings->getPercent('withdrawal_fee', 1.0);
@@ -36,7 +36,7 @@ class WithdrawalService
 
             $wallet->decrement('balance', $amount);
 
-            $withdrawal = Withdrawal::create([
+            return Withdrawal::create([
                 'user_id' => $user->id,
                 'method' => $data['method'],
                 'amount' => $amount,
@@ -46,11 +46,11 @@ class WithdrawalService
                 'destination_details' => $data['destination'] ?? [],
                 'status' => 'pending',
             ]);
-
-            DB::afterCommit(fn () => $this->notifications->sendWithdrawalSubmitted($user, $withdrawal));
-
-            return $withdrawal;
         });
+
+        $this->notifications->sendWithdrawalSubmitted($user, $withdrawal);
+
+        return $withdrawal;
     }
 
     public function getUserWithdrawals(User $user): Collection
