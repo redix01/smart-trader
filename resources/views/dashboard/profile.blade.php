@@ -240,7 +240,7 @@
                             </svg>
                         </a> -->
                         
-                        <button class="w-full flex items-center justify-between p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors">
+                        <a href="{{ route('user.referrals') }}" class="w-full flex items-center justify-between p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors">
                             <div class="flex items-center space-x-3">
                                 <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -252,7 +252,7 @@
                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                             </svg>
-                        </button>
+                        </a>
                         
                         <a href="{{ route('user.transactions.index') }}" class="w-full flex items-center justify-between p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors">
                             <div class="flex items-center space-x-3">

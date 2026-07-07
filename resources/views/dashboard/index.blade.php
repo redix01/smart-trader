@@ -120,8 +120,11 @@
                     </div>
                 </div>
                 <div class="mb-4">
-                    <div class="text-3xl font-bold text-purple-400">{{ number_format($winRate, 1) }}%</div>
-                    <div class="text-sm text-gray-400">{{ $winRate >= 70 ? 'Strong Performance' : ($winRate >= 50 ? 'Good Performance' : 'Learning Phase') }}</div>
+                    <div class="text-3xl font-bold text-purple-400">{{ number_format($user->trading_strength, 1) }}%</div>
+                    <div class="text-sm text-gray-400">{{ $user->trading_strength_label }}</div>
+                    <div class="mt-3 w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-purple-500 h-2 rounded-full transition-all duration-500" style="width: {{ min(100, max(0, $user->trading_strength)) }}%"></div>
+                    </div>
                 </div>
                 <div class="space-y-3">
                     <div class="flex justify-between text-sm">

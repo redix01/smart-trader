@@ -283,6 +283,16 @@
                         <span class="font-semibold text-gray-900 dark:text-white">${{ number_format($user->referral_balance, 2) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Referral Code</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ $user->referral_code ?: 'N/A' }}</span>
+                    </div>
+                    @if($user->referrer)
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Referred By</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ $user->referrer->name }}</span>
+                    </div>
+                    @endif
+                    <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600 dark:text-gray-400">Holding Balance</span>
                         <span class="font-semibold text-gray-900 dark:text-white">${{ number_format($user->holding_balance, 2) }}</span>
                     </div>

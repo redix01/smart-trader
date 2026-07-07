@@ -11,6 +11,7 @@ use App\Mail\RejectWithdrawalMail;
 use App\Models\Deposit;
 use App\Models\User;
 use App\Models\Withdrawal;
+use App\Services\ReferralService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -87,6 +88,13 @@ class TransactionController extends Controller
                     $user->balance += $deposit->amount; // Default to main balance
             }
         $user->save();
+
+            // Process referral reward for the user's first approved deposit
+            try {
+                app(ReferralService::class)->processDepositReward($user, $deposit);
+            } catch (\Exception $e) {
+                \Log::error('Referral reward processing failed: ' . $e->getMessage());
+            }
 
             // Create notification directly
             $deposit->user->createNotification(

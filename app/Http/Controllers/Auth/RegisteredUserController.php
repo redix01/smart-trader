@@ -17,9 +17,17 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('auth.register');
+        $referralCode = $request->query('ref');
+
+        if ($referralCode) {
+            session(['referral_code' => $referralCode]);
+        } else {
+            $referralCode = session('referral_code');
+        }
+
+        return view('auth.register', compact('referralCode'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -64,6 +72,11 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $referrer = null;
+        if ($request->filled('ref')) {
+            $referrer = User::where('referral_code', $request->ref)->first();
+        }
+
         $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
@@ -72,7 +85,20 @@ class RegisteredUserController extends Controller
             'country' => $request->country,
             'currency' => $request->currency,
             'password' => Hash::make($request->password),
+            'referred_by' => $referrer ? $referrer->id : null,
         ]);
+
+        if ($referrer) {
+            $referrer->createNotification(
+                'new_referral',
+                'New Referral Signup',
+                "{$user->name} just signed up using your referral link. You will earn a reward when they make their first deposit.",
+                [
+                    'referred_user_id' => $user->id,
+                    'referred_user_name' => $user->name,
+                ]
+            );
+        }
 
         // Generate verification code
         $verificationCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);

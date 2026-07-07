@@ -36,6 +36,9 @@
             <form method="POST" action="{{ route('register') }}" class="space-y-6">
                 @csrf
                 
+                <!-- Referral code (auto-filled from referral link) -->
+                <input type="hidden" name="ref" value="{{ old('ref', $referralCode ?? '') }}">
+                
                 <!-- Name Field -->
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>

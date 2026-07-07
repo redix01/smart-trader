@@ -18,6 +18,20 @@ class User extends Authenticatable
     }
 
     /**
+     * Auto-generate a unique referral code for new users.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if (empty($user->referral_code)) {
+                do {
+                    $user->referral_code = Str::upper(Str::random(8));
+                } while (static::where('referral_code', $user->referral_code)->exists());
+            }
+        });
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -33,6 +47,8 @@ class User extends Authenticatable
         'trading_balance',
         'mining_balance',
         'referral_balance',
+        'referral_code',
+        'referred_by',
         'holding_balance',
         'staking_balance',
         'profit',
@@ -225,6 +241,45 @@ class User extends Authenticatable
     }
 
     /**
+     * Trading strength scales automatically with the user's trading balance.
+     *
+     * A trading balance equal to the cap returns 100% strength.
+     * The value is clamped between 0% and 100%.
+     */
+    public function getTradingStrengthAttribute(): float
+    {
+        $cap = 100000; // Balance amount that equals 100% strength
+
+        if ($cap <= 0) {
+            return 0.0;
+        }
+
+        return min(100.0, max(0.0, ($this->trading_balance / $cap) * 100));
+    }
+
+    /**
+     * Human-readable label for the current trading strength.
+     */
+    public function getTradingStrengthLabelAttribute(): string
+    {
+        $strength = $this->trading_strength;
+
+        if ($strength >= 75) {
+            return 'Elite Performance';
+        }
+
+        if ($strength >= 50) {
+            return 'Strong Performance';
+        }
+
+        if ($strength >= 25) {
+            return 'Good Performance';
+        }
+
+        return 'Learning Phase';
+    }
+
+    /**
      * Get the user's avatar URL
      */
     public function getAvatarUrlAttribute()
@@ -325,6 +380,24 @@ class User extends Authenticatable
     public function fundTransfers()
     {
         return $this->hasMany(FundTransfer::class);
+    }
+
+    /**
+     * Referral relationships
+     */
+    public function referrer()
+    {
+        return $this->belongsTo(User::class, 'referred_by');
+    }
+
+    public function referredUsers()
+    {
+        return $this->hasMany(User::class, 'referred_by');
+    }
+
+    public function referralRecords()
+    {
+        return $this->hasMany(Referral::class, 'referrer_id');
     }
 
     /**

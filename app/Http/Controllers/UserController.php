@@ -106,6 +106,24 @@ class UserController extends Controller
         return view('dashboard.profile', compact('user'));
     }
 
+    public function referrals()
+    {
+        $user = Auth::user()->load(['referredUsers', 'referralRecords.referredUser']);
+
+        $referralLink = route('register', ['ref' => $user->referral_code]);
+        $totalReferrals = $user->referredUsers->count();
+        $totalEarnings = $user->referralRecords->where('status', 'paid')->sum('amount');
+        $pendingEarnings = $user->referralRecords->where('status', 'pending')->sum('amount');
+
+        return view('dashboard.referrals', compact(
+            'user',
+            'referralLink',
+            'totalReferrals',
+            'totalEarnings',
+            'pendingEarnings'
+        ));
+    }
+
     public function updateProfile(Request $request, $id)
     {
         $validated = $request->validate([
