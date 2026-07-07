@@ -11,6 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+       $middleware->append(\App\Http\Middleware\DetectUserLocale::class);
        $middleware->alias([
             'admin' => \App\Http\Middleware\isAdmin::class,
             'honeypot' => \App\Http\Middleware\HoneypotMiddleware::class,

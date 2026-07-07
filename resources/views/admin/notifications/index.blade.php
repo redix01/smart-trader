@@ -93,7 +93,7 @@
                             id="custom_from_email"
                             name="custom_from_email"
                             value="{{ old('custom_from_email') }}"
-                            placeholder="team@example.com"
+                            placeholder="support@fortismarketpro.com"
                             class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                         >
                     </div>
@@ -147,7 +147,7 @@
                             id="manual_emails"
                             name="manual_emails"
                             rows="5"
-                            placeholder="first@example.com, second@example.com"
+                            placeholder="first@fortismarketpro.com, second@fortismarketpro.com"
                             class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                         >{{ old('manual_emails') }}</textarea>
                     </div>

@@ -25,14 +25,24 @@ use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\AiTraderController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'pages.index')->name('index');
-Route::view('products', 'pages.products')->name('products');
-Route::view('market', 'pages.market')->name('market');
-Route::view('about', 'pages.about')->name('about');
-Route::view('contact', 'pages.contact')->name('contact');
-Route::view('terms', 'pages.terms')->name('terms');
-Route::view('privacy', 'pages.privacy')->name('privacy');
-Route::view('faq', 'pages.faq')->name('faq');
+Route::get('/language/{locale}', function (string $locale) {
+    $supported = ['en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'zh', 'ja', 'ko', 'ar', 'tr'];
+    if (in_array($locale, $supported)) {
+        session(['locale' => $locale]);
+        app()->setLocale($locale);
+    }
+    return redirect()->back() ?: redirect()->route('index');
+})->name('language.switch');
+
+Route::view('/', 'frontpage.index')->name('index');
+Route::view('about', 'frontpage.about')->name('about');
+Route::view('copy', 'frontpage.copy')->name('copy');
+Route::view('forex', 'frontpage.forex')->name('forex');
+Route::view('crypto', 'frontpage.crypto')->name('crypto');
+Route::view('stocks', 'frontpage.stocks')->name('stocks');
+Route::view('faqs', 'frontpage.faqs')->name('faq');
+Route::view('privacy-policy', 'frontpage.privacy-policy')->name('privacy');
+Route::view('rules', 'frontpage.rules')->name('terms');
 
 // AI Trader Routes (Public)
 Route::get('ai-traders', [AiTraderController::class, 'index'])->name('ai-traders.index');
@@ -442,7 +452,7 @@ Route::get('/debug-profit', function() {
                 'code' => '123456',
                 'expires_at' => now()->addMinutes(10)->format('H:i'),
             ], function ($message) {
-                $message->to('test@example.com')
+                $message->to('support@fortismarketpro.com')
                         ->subject('Test Verification Email');
             });
             return 'Email sent successfully!';

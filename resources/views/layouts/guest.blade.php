@@ -63,6 +63,24 @@
                 {{ $slot }}
             </div>
         </div>
+        <!-- Language Switcher -->
+        <div class="mt-4 text-center">
+            <div x-data="{ langOpen: false }" class="relative inline-block text-left">
+                <button @click="langOpen = !langOpen" class="inline-flex items-center text-xs text-gray-500 hover:text-gray-400 transition-colors">
+                    <svg class="h-3.5 w-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m0 4a7 7 0 100 14 7 7 0 000-14z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15V5a2 2 0 00-2-2H9"/></svg>
+                    {{ strtoupper(app()->getLocale()) }}
+                    <svg class="h-3 w-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div x-show="langOpen" @click.away="langOpen = false" class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg z-50 py-1 max-h-48 overflow-y-auto min-w-[120px]" style="display: none;">
+                    @foreach(['en' => 'English', 'es' => 'Español', 'fr' => 'Français', 'de' => 'Deutsch', 'pt' => 'Português', 'it' => 'Italiano', 'ru' => 'Русский', 'zh' => '中文', 'ja' => '日本語', 'ko' => '한국어', 'ar' => 'العربية', 'tr' => 'Türkçe'] as $code => $name)
+                        <a href="{{ url('/language/' . $code) }}" class="block px-4 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 whitespace-nowrap {{ app()->getLocale() === $code ? 'font-bold' : '' }}">
+                            {{ $name }}
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
         <script>
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {

@@ -1,11 +1,11 @@
 
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ env('APP_NAME') }} - Sign Up</title>
+    <title>{{ env('APP_NAME') }} - {{ __('Sign Up') }}</title>
     <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/x-icon">
     
     <!-- Tailwind CSS CDN for immediate styling -->
@@ -41,7 +41,7 @@
                 
                 <!-- Name Field -->
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                    <label for="name" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Full Name') }}</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -54,7 +54,7 @@
                             type="text" 
                             value="{{ old('name') }}"
                             class="block w-full pl-10 pr-3 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors @error('name') border-red-500 focus:ring-red-500 @enderror"
-                            placeholder="Enter your full name"
+                            placeholder="{{ __('Enter your full name') }}"
                             required 
                             autocomplete="name"
                             autofocus
@@ -67,7 +67,7 @@
 
                 <!-- Username Field -->
                 <div>
-                    <label for="username" class="block text-sm font-medium text-gray-300 mb-2">Username</label>
+                    <label for="username" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Username') }}</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -80,7 +80,7 @@
                             type="text" 
                             value="{{ old('username') }}"
                             class="block w-full pl-10 pr-3 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors @error('username') border-red-500 focus:ring-red-500 @enderror"
-                            placeholder="Enter unique username"
+                            placeholder="{{ __('Enter unique username') }}"
                             required 
                             autocomplete="username"
                         >
@@ -92,7 +92,7 @@
 
                 <!-- Email Field -->
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Email') }}</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -106,7 +106,7 @@
                             type="email" 
                             value="{{ old('email') }}"
                             class="block w-full pl-10 pr-3 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors @error('email') border-red-500 focus:ring-red-500 @enderror"
-                            placeholder="Enter your email"
+                            placeholder="{{ __('Enter your email') }}"
                             required 
                             autocomplete="email"
                         >
@@ -118,7 +118,7 @@
 
                 <!-- Phone Field -->
                 <div>
-                    <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
+                    <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Phone Number') }}</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -131,7 +131,7 @@
                             type="tel" 
                             value="{{ old('phone') }}"
                             class="block w-full pl-10 pr-3 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors @error('phone') border-red-500 focus:ring-red-500 @enderror"
-                            placeholder="Enter your phone number"
+                            placeholder="{{ __('Enter your phone number') }}"
                             required 
                             autocomplete="tel"
                         >
@@ -143,7 +143,7 @@
 
                 <!-- Country Field -->
                 <div>
-                    <label for="country" class="block text-sm font-medium text-gray-300 mb-2">Country</label>
+                    <label for="country" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Country') }}</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -156,7 +156,7 @@
                             class="block w-full pl-10 pr-3 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors @error('country') border-red-500 focus:ring-red-500 @enderror"
                             required 
                         >
-                            <option value="">Select your country</option>
+                            <option value="">{{ __('Select your country') }}</option>
                             <option value="United States" {{ old('country') == 'United States' ? 'selected' : '' }}>🇺🇸 United States</option>
                             <option value="United Kingdom" {{ old('country') == 'United Kingdom' ? 'selected' : '' }}>🇬🇧 United Kingdom</option>
                             <option value="Canada" {{ old('country') == 'Canada' ? 'selected' : '' }}>🇨🇦 Canada</option>
@@ -197,7 +197,7 @@
 
                 <!-- Currency Field -->
                 <div>
-                    <label for="currency" class="block text-sm font-medium text-gray-300 mb-2">Preferred Currency</label>
+                    <label for="currency" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Preferred Currency') }}</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -211,7 +211,7 @@
                             class="block w-full pl-10 pr-3 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors @error('currency') border-red-500 focus:ring-red-500 @enderror"
                             required
                         >
-                            <option value="">Select your preferred currency</option>
+                            <option value="">{{ __('Select your preferred currency') }}</option>
                             <option value="USD" {{ old('currency') == 'USD' ? 'selected' : '' }}>USD</option>
                             <option value="EUR" {{ old('currency') == 'EUR' ? 'selected' : '' }}>EUR</option>
                             <option value="GBP" {{ old('currency') == 'GBP' ? 'selected' : '' }}>GBP</option>
@@ -231,7 +231,7 @@
 
                 <!-- Password Field -->
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Password') }}</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -243,7 +243,7 @@
                             name="password" 
                             type="password" 
                             class="block w-full pl-10 pr-10 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors @error('password') border-red-500 focus:ring-red-500 @enderror"
-                            placeholder="Enter your password"
+                            placeholder="{{ __('Enter your password') }}"
                             required 
                             autocomplete="new-password"
                         >
@@ -269,7 +269,7 @@
 
                 <!-- Confirm Password Field -->
                 <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
+                    <label for="password_confirmation" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Confirm Password') }}</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -281,7 +281,7 @@
                             name="password_confirmation" 
                             type="password" 
                             class="block w-full pl-10 pr-10 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                            placeholder="Confirm your password"
+                            placeholder="{{ __('Confirm your password') }}"
                             required 
                             autocomplete="new-password"
                         >
@@ -327,8 +327,8 @@
                         required
                     >
                     <label for="terms" class="ml-2 block text-sm text-gray-300">
-                        I agree to the 
-                        <a href="#" class="text-blue-400 hover:text-blue-300 transition-colors">Terms & Conditions</a>
+                        {{ __('I agree to the') }}
+                        <a href="#" class="text-blue-400 hover:text-blue-300 transition-colors">{{ __('Terms & Conditions') }}</a>
                     </label>
         </div>
 
@@ -338,13 +338,13 @@
                     id="registerSubmitBtn"
                     class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105"
                 >
-                    <span id="registerBtnText">Create Account</span>
+                    <span id="registerBtnText">{{ __('Create Account') }}</span>
                     <span id="registerBtnSpinner" class="hidden">
                         <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Creating Account...
+                        {{ __('Creating Account...') }}
                     </span>
                 </button>
             </form>
@@ -352,9 +352,9 @@
             <!-- Sign In Link -->
             <div class="mt-6 text-center">
                 <p class="text-sm text-gray-400">
-                    Have an account? 
+                    {{ __('Have an account?') }}
                     <a href="{{ route('login') }}" class="font-medium text-blue-400 hover:text-blue-300 transition-colors">
-                        Sign In
+                        {{ __('Sign In') }}
                     </a>
                 </p>
         </div>
@@ -363,7 +363,7 @@
         <!-- Back to Home Link -->
         <div class="mt-8 text-center">
             <a href="{{ route('index') }}" class="text-sm text-gray-500 hover:text-gray-400 transition-colors">
-                ← Back to Home
+                ← {{ __('Back to Home') }}
             </a>
         </div>
     </div>

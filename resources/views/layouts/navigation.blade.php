@@ -53,6 +53,24 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
+                        <!-- Language Switcher -->
+                        <div class="border-t border-gray-200 dark:border-gray-600"></div>
+                        <div x-data="{ langOpen: false }" class="relative">
+                            <button @click="langOpen = !langOpen" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between">
+                                <span>{{ __('Language') }}: {{ strtoupper(app()->getLocale()) }}</span>
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                            <div x-show="langOpen" @click.away="langOpen = false" class="absolute right-0 mt-0 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg z-50 max-h-48 overflow-y-auto" style="display: none;">
+                                @foreach(['en' => 'English', 'es' => 'Español', 'fr' => 'Français', 'de' => 'Deutsch', 'pt' => 'Português', 'it' => 'Italiano', 'ru' => 'Русский', 'zh' => '中文', 'ja' => '日本語', 'ko' => '한국어', 'ar' => 'العربية', 'tr' => 'Türkçe'] as $code => $name)
+                                    <a href="{{ url('/language/' . $code) }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 {{ app()->getLocale() === $code ? 'font-bold bg-gray-100 dark:bg-gray-700' : '' }}">
+                                        {{ $name }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-200 dark:border-gray-600"></div>
+
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

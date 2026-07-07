@@ -1,11 +1,11 @@
 
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ env('APP_NAME') }} - Sign In</title>
+    <title>{{ env('APP_NAME') }} - {{ __('Sign In') }}</title>
     <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/x-icon">
     
     <!-- Tailwind CSS CDN for immediate styling -->
@@ -38,7 +38,7 @@
                 
                 <!-- Email Field -->
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Email') }}</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -52,7 +52,7 @@
                             type="email" 
                             value="{{ old('email') }}"
                             class="block w-full pl-10 pr-3 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors @error('email') border-red-500 focus:ring-red-500 @enderror"
-                            placeholder="Enter your email"
+                            placeholder="{{ __('Enter your email') }}"
                             required 
                             autocomplete="email"
                             autofocus
@@ -65,7 +65,7 @@
 
                 <!-- Password Field -->
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Password') }}</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -77,7 +77,7 @@
                             name="password" 
                             type="password" 
                             class="block w-full pl-10 pr-10 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors @error('password') border-red-500 focus:ring-red-500 @enderror"
-                            placeholder="Enter your password"
+                            placeholder="{{ __('Enter your password') }}"
                             required 
                             autocomplete="current-password"
                         >
@@ -126,13 +126,13 @@
                             class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-600 rounded bg-gray-700"
                         >
                         <label for="remember" class="ml-2 block text-sm text-gray-300">
-                            Remember me
+                            {{ __('Remember me') }}
                         </label>
         </div>
                     
             @if (Route::has('password.request'))
                         <a href="{{ route('password.request') }}" class="text-sm text-blue-400 hover:text-blue-300 transition-colors">
-                            Forgot Password?
+                            {{ __('Forgot Password?') }}
                 </a>
             @endif
                 </div>
@@ -143,13 +143,13 @@
                     id="loginSubmitBtn"
                     class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105"
                 >
-                    <span id="loginBtnText">Sign In</span>
+                    <span id="loginBtnText">{{ __('Sign In') }}</span>
                     <span id="loginBtnSpinner" class="hidden">
                         <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Signing In...
+                        {{ __('Signing In...') }}
                     </span>
                 </button>
             </form>
@@ -157,9 +157,9 @@
             <!-- Sign Up Link -->
             <div class="mt-6 text-center">
                 <p class="text-sm text-gray-400">
-                    Don't have an account? 
+                    {{ __("Don't have an account?") }}
                     <a href="{{ route('register') }}" class="font-medium text-blue-400 hover:text-blue-300 transition-colors">
-                        Sign Up
+                        {{ __('Sign Up') }}
                     </a>
                 </p>
             </div>
@@ -168,7 +168,7 @@
         <!-- Back to Home Link -->
         <div class="mt-8 text-center">
             <a href="{{ route('index') }}" class="text-sm text-gray-500 hover:text-gray-400 transition-colors">
-                ← Back to Home
+                ← {{ __('Back to Home') }}
             </a>
         </div>
     </div>

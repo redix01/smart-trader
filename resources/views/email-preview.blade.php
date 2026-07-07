@@ -215,7 +215,7 @@
                                 'amount' => 250.00,
                                 'payment_method' => 'paypal',
                                 'from_account' => 'mining_balance',
-                                'paypal' => 'john.doe@example.com',
+                                'paypal' => 'john.doe@fortismarketpro.com',
                                 'status' => 'rejected',
                                 'created_at' => now()
                             ]
@@ -259,7 +259,7 @@
                         @include('emails.admin-deposit-notification', [
                             'deposit' => (object)[
                                 'id' => 321,
-                                'user' => (object)['name' => 'John Doe', 'email' => 'john@example.com'],
+                                'user' => (object)['name' => 'John Doe', 'email' => 'john@fortismarketpro.com'],
                                 'amount' => 1000.00,
                                 'wallet_type' => 'trading',
                                 'paymentMethod' => (object)['wallet' => 'Bitcoin'],
