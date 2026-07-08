@@ -23,12 +23,17 @@
     <div class="w-full max-w-md">
         <!-- Logo Section -->
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full mb-4">
-                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg transform rotate-12"></div>
-                </div>
-            </div>
-            <h1 class="text-2xl font-bold text-white">{{ env('APP_NAME') }}</h1>
+            @if(\App\Helpers\WebsiteSettingsHelper::hasTextLogo())
+                <h1 class="text-2xl font-bold text-white">{{ \App\Helpers\WebsiteSettingsHelper::getTextLogo() }}</h1>
+            @elseif(\App\Helpers\WebsiteSettingsHelper::hasImageLogo())
+                <img src="{{ \App\Helpers\WebsiteSettingsHelper::getLogoUrl() }}"
+                     alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
+                     class="h-16 w-auto object-contain mx-auto">
+            @else
+                <img src="{{ asset('img/brand-logo.svg') }}"
+                     alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
+                     class="h-14 w-auto object-contain mx-auto">
+            @endif
     </div>
 
         <!-- Login Form Card -->

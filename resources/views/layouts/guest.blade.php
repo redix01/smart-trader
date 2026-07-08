@@ -46,14 +46,16 @@
                         </div>
                     @elseif(\App\Helpers\WebsiteSettingsHelper::hasImageLogo())
                         <!-- Image Logo -->
-                        <img src="{{ \App\Helpers\WebsiteSettingsHelper::getLogoUrl() }}" 
-                             alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}" 
-                             width="200" height="160" 
+                        <img src="{{ \App\Helpers\WebsiteSettingsHelper::getLogoUrl() }}"
+                             alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
+                             width="200" height="160"
                              style="background-color: white; object-fit: contain;">
                     @else
-                        <!-- Site Name as Logo (fallback) -->
-                        <div class="flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg" style="width: 200px; height: 160px;">
-                            <span class="text-white font-bold text-2xl text-center">{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}</span>
+                        <!-- Brand Logo (default) -->
+                        <div class="flex items-center justify-center px-6 py-4 rounded-lg" style="width: 200px; height: 160px; background-color: #0C0F19;">
+                            <img src="{{ asset('img/brand-logo.svg') }}"
+                                 alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
+                                 class="w-full h-auto object-contain">
                         </div>
                     @endif
                 </a>
