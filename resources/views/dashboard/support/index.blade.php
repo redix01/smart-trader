@@ -188,4 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 @endif
 @endif
+
+<script src="//code.jivosite.com/widget/GdsLrZG4BH" async></script>
 @endsection
