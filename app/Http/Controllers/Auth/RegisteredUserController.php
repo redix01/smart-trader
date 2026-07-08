@@ -8,7 +8,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -86,6 +85,7 @@ class RegisteredUserController extends Controller
             'currency' => $request->currency,
             'password' => Hash::make($request->password),
             'referred_by' => $referrer ? $referrer->id : null,
+            'email_verified_at' => now(),
         ]);
 
         if ($referrer) {
@@ -100,42 +100,8 @@ class RegisteredUserController extends Controller
             );
         }
 
-        // Generate verification code
-        $verificationCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        
-        $user->update([
-            'verification_code' => $verificationCode,
-            'verification_code_expires_at' => now()->addMinutes(10),
-        ]);
+        Auth::login($user);
 
-        // Send verification email
-        $this->sendVerificationEmail($user, $verificationCode);
-
-        // Redirect to verification page instead of logging in
-        return redirect()->route('verification.show', ['email' => $user->email])->with('success', 'Registration successful! Please check your email for the verification code.');
-    }
-
-    /**
-     * Send verification email.
-     */
-    private function sendVerificationEmail(User $user, string $code): void
-    {
-        $data = [
-            'name' => $user->name,
-            'code' => $code,
-            'expires_at' => now()->addMinutes(10)->format('H:i'),
-        ];
-
-        try {
-            Mail::send('emails.verification', $data, function ($message) use ($user) {
-                $message->to($user->email)
-                        ->subject('Verify Your Email Address');
-            });
-            
-            \Log::info('Verification email sent successfully to: ' . $user->email);
-        } catch (\Exception $e) {
-            \Log::error('Failed to send verification email to: ' . $user->email . ' Error: ' . $e->getMessage());
-            throw $e;
-        }
+        return redirect()->intended(route('user.dashboard', absolute: false));
     }
 }

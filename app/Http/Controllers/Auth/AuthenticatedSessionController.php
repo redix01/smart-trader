@@ -58,19 +58,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = Auth::user();
-        
-        // Check if email is verified
-        if (!$user->email_verified_at) {
-            // Log out the user since email is not verified
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-            
-            // Redirect to verification page with error message
-            return redirect()->route('verification.show', ['email' => $user->email])
-                ->with('error', 'Please verify your email address before logging in. We\'ve sent you a verification code.');
-        }
-        
+
         $user->last_login_at = now();
         $user->save();
 
