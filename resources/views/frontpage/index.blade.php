@@ -475,6 +475,48 @@ Trade your way, every day!</p>
 	</div>
 </div>
 
+<!-- Start Trading Now -->
+<section class="py-5" style="background:#000;">
+  <div class="text-center" style="max-width:800px; margin:0 auto; padding:0 16px;">
+    <h2 style="color:#fff; font-weight:600; font-size:2.25rem; margin-bottom:12px;">Start Trading <span style="color:#2FE6DE;">Now</span></h2>
+    <p style="color:#9ca3af; font-size:1.125rem; margin-bottom:40px;">Choose how you want to trade and invest in stocks and financial markets</p>
+  </div>
+  <div class="container">
+    <div class="row" style="display:flex; flex-wrap:wrap; gap:24px; justify-content:center;">
+      <div class="col-md-4" style="flex:1 1 300px; max-width:380px;">
+        <div style="background:#0d0f13; border:1px solid #1f2937; border-radius:8px; padding:32px; height:100%;">
+          <div style="width:48px; height:48px; border-radius:50%; background:#1a1428; display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
+            <i class="fas fa-chart-line" style="color:#2FE6DE; font-size:1.25rem;"></i>
+          </div>
+          <h3 style="color:#fff; font-size:1.25rem; font-weight:600; margin-bottom:8px;">Stock Trading</h3>
+          <p style="color:#9ca3af; margin-bottom:16px;">Trade stocks with advanced charts and real-time market data</p>
+          <a href="{{ route('register') }}" style="color:#2FE6DE; text-decoration:none; font-weight:500;">Trade Now <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+      <div class="col-md-4" style="flex:1 1 300px; max-width:380px;">
+        <div style="background:#0d0f13; border:1px solid #1f2937; border-radius:8px; padding:32px; height:100%;">
+          <div style="width:48px; height:48px; border-radius:50%; background:#1a1428; display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
+            <i class="fas fa-copy" style="color:#2FE6DE; font-size:1.25rem;"></i>
+          </div>
+          <h3 style="color:#fff; font-size:1.25rem; font-weight:600; margin-bottom:8px;">Copy Trading</h3>
+          <p style="color:#9ca3af; margin-bottom:16px;">Automatically copy the trades of successful traders</p>
+          <a href="{{ route('register') }}" style="color:#2FE6DE; text-decoration:none; font-weight:500;">Start Copying <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+      <div class="col-md-4" style="flex:1 1 300px; max-width:380px;">
+        <div style="background:#0d0f13; border:1px solid #1f2937; border-radius:8px; padding:32px; height:100%;">
+          <div style="width:48px; height:48px; border-radius:50%; background:#1a1428; display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
+            <i class="fas fa-robot" style="color:#2FE6DE; font-size:1.25rem;"></i>
+          </div>
+          <h3 style="color:#fff; font-size:1.25rem; font-weight:600; margin-bottom:8px;">Bot Trading</h3>
+          <p style="color:#9ca3af; margin-bottom:16px;">Automate your trading with AI-powered bots and strategies</p>
+          <a href="{{ route('register') }}" style="color:#2FE6DE; text-decoration:none; font-weight:500;">Start Bot <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 	<section class="py-5 row">
 	<div class="text-center px-4 px-md-0 col-md-6 col-12 mx-auto wow slideInUp">
 		<video preload="auto" autoplay loop muted  playsinline webkit-playsinline x5-playsinline style="width: 100%; height: 100%;display: block;
