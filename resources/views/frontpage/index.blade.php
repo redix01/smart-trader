@@ -292,6 +292,12 @@ $(document).ready(function(){
       </div>
   </div>
 </div>
+<!-- TradingView Ticker Tape -->
+<div style="height: 40px; overflow: hidden; background: #000;">
+  <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-ticker-tape.js"></script>
+  <tv-ticker-tape symbols="FOREXCOM:SPXUSD,FOREXCOM:NSXUSD,FOREXCOM:DJI,FX:EURUSD,BITSTAMP:BTCUSD,BITSTAMP:ETHUSD,CMCMARKETS:GOLD,NASDAQ:AAPL,NASDAQ:MSFT,NASDAQ:GOOGL,NASDAQ:AMZN,NYSE:TSLA"></tv-ticker-tape>
+</div>
+
 <nav class="navbar navbar-expand-md navbar-dark bg-dark text-light py-0">
 
     <!-- Brand -->
