@@ -445,7 +445,7 @@ Trade your way, every day!</p>
 <section class="py-5" style="background:#000;">
   <div class="text-center" style="max-width:800px; margin:0 auto; padding:0 16px;">
     <p style="color:#9ca3af; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; font-size:0.9rem; margin-bottom:16px;">Trusted by thousands of users worldwide</p>
-    <h2 style="color:#fff; font-weight:600; font-size:2.25rem; margin-bottom:12px;">Start Trading <span style="color:#2FE6DE;">Now</span></h2>
+    <h2 style="color:#fff; font-weight:600; font-size:2.25rem; margin-bottom:12px;">Start Trading <span style="color:#2563eb !important;">Now</span></h2>
     <p style="color:#9ca3af; font-size:1.125rem; margin-bottom:40px;">Choose how you want to trade and invest in stocks and financial markets</p>
   </div>
   <div class="container">
@@ -453,31 +453,31 @@ Trade your way, every day!</p>
       <div class="col-md-4" style="flex:1 1 300px; max-width:380px;">
         <div style="background:#0d0f13; border:1px solid #1f2937; border-radius:8px; padding:32px; height:100%;">
           <div style="width:48px; height:48px; border-radius:50%; background:#1a1428; display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
-            <i class="fas fa-chart-line" style="color:#2FE6DE; font-size:1.25rem;"></i>
+            <i class="fas fa-chart-line" style="color:#2563eb !important; font-size:1.25rem;"></i>
           </div>
           <h3 style="color:#fff; font-size:1.25rem; font-weight:600; margin-bottom:8px;">Stock Trading</h3>
           <p style="color:#9ca3af; margin-bottom:16px;">Trade stocks with advanced charts and real-time market data</p>
-          <a href="{{ route('register') }}" style="color:#2FE6DE; text-decoration:none; font-weight:500;">Trade Now <i class="fas fa-arrow-right"></i></a>
+          <a href="{{ route('register') }}" style="color:#2563eb !important; text-decoration:none; font-weight:500;">Trade Now <i class="fas fa-arrow-right"></i></a>
         </div>
       </div>
       <div class="col-md-4" style="flex:1 1 300px; max-width:380px;">
         <div style="background:#0d0f13; border:1px solid #1f2937; border-radius:8px; padding:32px; height:100%;">
           <div style="width:48px; height:48px; border-radius:50%; background:#1a1428; display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
-            <i class="fas fa-copy" style="color:#2FE6DE; font-size:1.25rem;"></i>
+            <i class="fas fa-copy" style="color:#2563eb !important; font-size:1.25rem;"></i>
           </div>
           <h3 style="color:#fff; font-size:1.25rem; font-weight:600; margin-bottom:8px;">Copy Trading</h3>
           <p style="color:#9ca3af; margin-bottom:16px;">Automatically copy the trades of successful traders</p>
-          <a href="{{ route('register') }}" style="color:#2FE6DE; text-decoration:none; font-weight:500;">Start Copying <i class="fas fa-arrow-right"></i></a>
+          <a href="{{ route('register') }}" style="color:#2563eb !important; text-decoration:none; font-weight:500;">Start Copying <i class="fas fa-arrow-right"></i></a>
         </div>
       </div>
       <div class="col-md-4" style="flex:1 1 300px; max-width:380px;">
         <div style="background:#0d0f13; border:1px solid #1f2937; border-radius:8px; padding:32px; height:100%;">
           <div style="width:48px; height:48px; border-radius:50%; background:#1a1428; display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
-            <i class="fas fa-robot" style="color:#2FE6DE; font-size:1.25rem;"></i>
+            <i class="fas fa-robot" style="color:#2563eb !important; font-size:1.25rem;"></i>
           </div>
           <h3 style="color:#fff; font-size:1.25rem; font-weight:600; margin-bottom:8px;">Bot Trading</h3>
           <p style="color:#9ca3af; margin-bottom:16px;">Automate your trading with AI-powered bots and strategies</p>
-          <a href="{{ route('register') }}" style="color:#2FE6DE; text-decoration:none; font-weight:500;">Start Bot <i class="fas fa-arrow-right"></i></a>
+          <a href="{{ route('register') }}" style="color:#2563eb !important; text-decoration:none; font-weight:500;">Start Bot <i class="fas fa-arrow-right"></i></a>
         </div>
       </div>
     </div>
@@ -504,7 +504,7 @@ margin: 0 auto;" src="medias/play_724p.mp4"></video></div>
 <section class="py-5" style="background:#0C0F19;">
   <div class="container">
     <div class="text-center mb-5">
-      <h2 style="color:#fff; font-weight:700; font-size:2.25rem;">Trading <span style="color:#2FE6DE;">Advantages</span></h2>
+      <h2 style="color:#fff; font-weight:700; font-size:2.25rem;">Trading <span style="color:#2563eb !important;">Advantages</span></h2>
       <p style="color:#9ca3af; font-size:1.125rem; max-width:800px; margin:0 auto;">
         Discover the key benefits that make our platform the preferred choice for successful traders worldwide.
       </p>
@@ -514,15 +514,15 @@ margin: 0 auto;" src="medias/play_724p.mp4"></video></div>
         <div style="background:#151821; border:1px solid #1f2937; border-radius:16px; overflow:hidden; height:100%;">
           <div style="height:180px; background:linear-gradient(135deg,#1a1428,#0d0f13);"></div>
           <div style="padding:24px; position:relative;">
-            <div style="position:absolute; top:-24px; left:24px; width:48px; height:48px; border-radius:50%; background:#1a1428; border:2px solid #2FE6DE; display:flex; align-items:center; justify-content:center;">
-              <i class="fas fa-percent" style="color:#2FE6DE; font-size:1.1rem;"></i>
+            <div style="position:absolute; top:-24px; left:24px; width:48px; height:48px; border-radius:50%; background:#1a1428; border:2px solid #2563eb !important; display:flex; align-items:center; justify-content:center;">
+              <i class="fas fa-percent" style="color:#2563eb !important; font-size:1.1rem;"></i>
             </div>
             <h3 style="color:#fff; font-size:1.25rem; font-weight:600; margin-top:24px; margin-bottom:12px;">Low Trading Fees</h3>
             <p style="color:#9ca3af; margin-bottom:16px;">Maximize your profits with our competitive fee structure. We offer some of the lowest trading fees in the industry, ensuring more of your gains stay in your pocket.</p>
             <ul style="list-style:none; padding-left:0; color:#9ca3af; margin-bottom:0;">
-              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Low trading fees</li>
-              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> No hidden charges</li>
-              <li><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Volume discounts available</li>
+              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2563eb !important; margin-right:8px;"></i> Low trading fees</li>
+              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2563eb !important; margin-right:8px;"></i> No hidden charges</li>
+              <li><i class="fas fa-check-circle" style="color:#2563eb !important; margin-right:8px;"></i> Volume discounts available</li>
             </ul>
           </div>
         </div>
@@ -531,15 +531,15 @@ margin: 0 auto;" src="medias/play_724p.mp4"></video></div>
         <div style="background:#151821; border:1px solid #1f2937; border-radius:16px; overflow:hidden; height:100%;">
           <div style="height:180px; background:linear-gradient(135deg,#1a1428,#0d0f13);"></div>
           <div style="padding:24px; position:relative;">
-            <div style="position:absolute; top:-24px; left:24px; width:48px; height:48px; border-radius:50%; background:#1a1428; border:2px solid #2FE6DE; display:flex; align-items:center; justify-content:center;">
-              <i class="fas fa-headset" style="color:#2FE6DE; font-size:1.1rem;"></i>
+            <div style="position:absolute; top:-24px; left:24px; width:48px; height:48px; border-radius:50%; background:#1a1428; border:2px solid #2563eb !important; display:flex; align-items:center; justify-content:center;">
+              <i class="fas fa-headset" style="color:#2563eb !important; font-size:1.1rem;"></i>
             </div>
             <h3 style="color:#fff; font-size:1.25rem; font-weight:600; margin-top:24px; margin-bottom:12px;">24/7 Support</h3>
             <p style="color:#9ca3af; margin-bottom:16px;">Get help whenever you need it with our round-the-clock customer support. Our expert team is always ready to assist you with any trading questions or technical issues.</p>
             <ul style="list-style:none; padding-left:0; color:#9ca3af; margin-bottom:0;">
-              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Live chat support</li>
-              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Expert trading guidance</li>
-              <li><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Multilingual support</li>
+              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2563eb !important; margin-right:8px;"></i> Live chat support</li>
+              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2563eb !important; margin-right:8px;"></i> Expert trading guidance</li>
+              <li><i class="fas fa-check-circle" style="color:#2563eb !important; margin-right:8px;"></i> Multilingual support</li>
             </ul>
           </div>
         </div>
@@ -548,15 +548,15 @@ margin: 0 auto;" src="medias/play_724p.mp4"></video></div>
         <div style="background:#151821; border:1px solid #1f2937; border-radius:16px; overflow:hidden; height:100%;">
           <div style="height:180px; background:linear-gradient(135deg,#1a1428,#0d0f13);"></div>
           <div style="padding:24px; position:relative;">
-            <div style="position:absolute; top:-24px; left:24px; width:48px; height:48px; border-radius:50%; background:#1a1428; border:2px solid #2FE6DE; display:flex; align-items:center; justify-content:center;">
-              <i class="fas fa-globe" style="color:#2FE6DE; font-size:1.1rem;"></i>
+            <div style="position:absolute; top:-24px; left:24px; width:48px; height:48px; border-radius:50%; background:#1a1428; border:2px solid #2563eb !important; display:flex; align-items:center; justify-content:center;">
+              <i class="fas fa-globe" style="color:#2563eb !important; font-size:1.1rem;"></i>
             </div>
             <h3 style="color:#fff; font-size:1.25rem; font-weight:600; margin-top:24px; margin-bottom:12px;">Global Markets</h3>
             <p style="color:#9ca3af; margin-bottom:16px;">Access global financial markets from a single platform. Trade stocks, cryptocurrencies, and other assets from major exchanges worldwide with real-time data and execution.</p>
             <ul style="list-style:none; padding-left:0; color:#9ca3af; margin-bottom:0;">
-              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> 120+ trading pairs</li>
-              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Multiple asset classes</li>
-              <li><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Real-time market data</li>
+              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2563eb !important; margin-right:8px;"></i> 120+ trading pairs</li>
+              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2563eb !important; margin-right:8px;"></i> Multiple asset classes</li>
+              <li><i class="fas fa-check-circle" style="color:#2563eb !important; margin-right:8px;"></i> Real-time market data</li>
             </ul>
           </div>
         </div>
