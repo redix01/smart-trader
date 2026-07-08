@@ -481,14 +481,14 @@
                                 </div>
                             @elseif(\App\Helpers\WebsiteSettingsHelper::hasImageLogo())
                                 <!-- Image Logo -->
-                                <img src="{{ \App\Helpers\WebsiteSettingsHelper::getLogoUrl() }}" 
-                                     alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}" 
+                                <img src="{{ \App\Helpers\WebsiteSettingsHelper::getLogoUrl() }}"
+                                     alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
                                      class="h-16 w-auto object-contain">
                             @else
-                                <!-- Site Name as Logo (fallback) -->
-                                <div class="h-16 flex items-center">
-                                    <span class="text-white font-extrabold text-2xl tracking-wide">{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}</span>
-                                </div>
+                                <!-- Brand Logo (default) -->
+                                <img src="{{ asset('img/brand-logo.svg') }}"
+                                     alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
+                                     class="h-10 w-auto object-contain">
                             @endif
                         </div>
                     </div>
