@@ -289,9 +289,36 @@ $(document).ready(function(){
   </div>
 </div>
 <!-- TradingView Ticker Tape -->
-<div style="background: #000;">
-  <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-ticker-tape.js"></script>
-  <tv-ticker-tape theme="dark" symbols="FOREXCOM:SPXUSD,FOREXCOM:NSXUSD,FOREXCOM:DJI,FX:EURUSD,BITSTAMP:BTCUSD,BITSTAMP:ETHUSD,CMCMARKETS:GOLD,NASDAQ:AAPL,NASDAQ:MSFT,NASDAQ:GOOGL,NASDAQ:AMZN,NYSE:TSLA"></tv-ticker-tape>
+<div class="tradingview-widget-container" style="background: #000;">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+  {
+  "symbols": [
+    {"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"},
+    {"proName": "FOREXCOM:NSXUSD", "title": "Nasdaq 100"},
+    {"proName": "FOREXCOM:DJI", "title": "Dow 30"},
+    {"proName": "FX:EURUSD", "title": "EUR/USD"},
+    {"proName": "BITSTAMP:BTCUSD", "title": "BTC/USD"},
+    {"proName": "BITSTAMP:ETHUSD", "title": "ETH/USD"},
+    {"proName": "CMCMARKETS:GOLD", "title": "Gold"},
+    {"proName": "NASDAQ:AAPL", "title": "Apple"},
+    {"proName": "NASDAQ:MSFT", "title": "Microsoft"},
+    {"proName": "NASDAQ:GOOGL", "title": "Google"},
+    {"proName": "NASDAQ:AMZN", "title": "Amazon"},
+    {"proName": "NYSE:TSLA", "title": "Tesla"}
+  ],
+  "showSymbolLogo": true,
+  "colorTheme": "dark",
+  "isTransparent": false,
+  "displayMode": "adaptive",
+  "locale": "en"
+  }
+  </script>
+  <style>
+    .tradingview-widget-container .tradingview-widget-copyright {
+      display: none;
+    }
+  </style>
 </div>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark text-light py-0">
