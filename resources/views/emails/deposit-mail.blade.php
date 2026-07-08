@@ -31,7 +31,7 @@
                              style="height: 40px; width: auto;">
                     @else
                         <!-- Site Name as Logo (fallback) -->
-                        <h3 style="margin: 0; color: white;">{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}</h3>
+                        <h3 style="margin: 0; color: white; font-weight: bold;">{{ env('APP_NAME') }}</h3>
                     @endif
                 </div>
                 <h2 class="text-center">Deposit Confirmation</h2>
@@ -58,7 +58,7 @@
                   </tr>
                 </table>
 
-                <p class="mt-4">If you have any questions or concerns regarding this transaction, feel free to contact us <a target="_blank" href="mailto:support@coincachex.com">support@coincachex.com</a>.</p>
+                <p class="mt-4">If you have any questions or concerns regarding this transaction, feel free to contact us <a target="_blank" href="mailto:{{ config('mail.from.address') }}">{{ config('mail.from.address') }}</a>.</p>
 
                 <p>Thank you for choosing our service!</p>
 
