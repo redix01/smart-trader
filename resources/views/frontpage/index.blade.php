@@ -512,7 +512,9 @@ margin: 0 auto;" src="medias/play_724p.mp4"></video></div>
     <div class="row">
       <div class="col-md-4 mb-4">
         <div style="background:#151821; border:1px solid #1f2937; border-radius:16px; overflow:hidden; height:100%;">
-          <div style="height:180px; background:linear-gradient(135deg,#1a1428,#0d0f13);"></div>
+          <div style="height:180px; background:linear-gradient(135deg,#1a1428,#0d0f13); display:flex; align-items:center; justify-content:center;">
+            <i class="fas fa-percent" style="color:#2563eb !important; font-size:3.5rem; opacity:0.85;"></i>
+          </div>
           <div style="padding:24px; position:relative;">
             <div style="position:absolute; top:-24px; left:24px; width:48px; height:48px; border-radius:50%; background:#1a1428; border:2px solid #2563eb !important; display:flex; align-items:center; justify-content:center;">
               <i class="fas fa-percent" style="color:#2563eb !important; font-size:1.1rem;"></i>
@@ -529,7 +531,9 @@ margin: 0 auto;" src="medias/play_724p.mp4"></video></div>
       </div>
       <div class="col-md-4 mb-4">
         <div style="background:#151821; border:1px solid #1f2937; border-radius:16px; overflow:hidden; height:100%;">
-          <div style="height:180px; background:linear-gradient(135deg,#1a1428,#0d0f13);"></div>
+          <div style="height:180px; background:linear-gradient(135deg,#1a1428,#0d0f13); display:flex; align-items:center; justify-content:center;">
+            <i class="fas fa-headset" style="color:#2563eb !important; font-size:3.5rem; opacity:0.85;"></i>
+          </div>
           <div style="padding:24px; position:relative;">
             <div style="position:absolute; top:-24px; left:24px; width:48px; height:48px; border-radius:50%; background:#1a1428; border:2px solid #2563eb !important; display:flex; align-items:center; justify-content:center;">
               <i class="fas fa-headset" style="color:#2563eb !important; font-size:1.1rem;"></i>
@@ -546,7 +550,9 @@ margin: 0 auto;" src="medias/play_724p.mp4"></video></div>
       </div>
       <div class="col-md-4 mb-4">
         <div style="background:#151821; border:1px solid #1f2937; border-radius:16px; overflow:hidden; height:100%;">
-          <div style="height:180px; background:linear-gradient(135deg,#1a1428,#0d0f13);"></div>
+          <div style="height:180px; background:linear-gradient(135deg,#1a1428,#0d0f13); display:flex; align-items:center; justify-content:center;">
+            <i class="fas fa-globe" style="color:#2563eb !important; font-size:3.5rem; opacity:0.85;"></i>
+          </div>
           <div style="padding:24px; position:relative;">
             <div style="position:absolute; top:-24px; left:24px; width:48px; height:48px; border-radius:50%; background:#1a1428; border:2px solid #2563eb !important; display:flex; align-items:center; justify-content:center;">
               <i class="fas fa-globe" style="color:#2563eb !important; font-size:1.1rem;"></i>
