@@ -125,15 +125,11 @@ border-color:#1d4ed8 !important;
           <div class="dropdown">
             <a href="#" class="nav-link d-flex justify-content-between" data-toggle="dropdown">Products</a>
             <div class="dropdown-menu p-3">
-              <a class="dropdown-item px-2 d-flex py-3 " href="{{ url("/copy") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/magic.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>Copy Trading</h5>
-                  <p class="mb-0">Experience the power of social trading</p>
-                </div>
-              </a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Spot</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Margin</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Bot Trading</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Copy Trading</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">AI Traders</a>
             </div>
           </div>
         </li>
@@ -307,15 +303,11 @@ $(document).ready(function(){
           <div class="dropdown">
             <a href="#" class="nav-link" data-toggle="dropdown">Products</a>
             <div class="dropdown-menu dropdown-menu-right p-3">
-              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/copy") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/magic.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>Copy Trading</h5>
-                  <p class="mb-0">Experience the power of social trading</p>
-                </div>
-              </a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Spot</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Margin</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Bot Trading</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Copy Trading</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">AI Traders</a>
             </div>
           </div>
         </li>
@@ -419,14 +411,33 @@ $(document).ready(function(){
 <footer>
 	<div class="container">
     @include('frontpage.partials.logo', ['class' => 'wow slideInLeft d-inline-block', 'height' => '44px'])<br />
-    <p class="mt-3 mb-5 wow slideInLeft d-flex flex-wrap wow slideInLeft">
-      <a href="{{ url("/about") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">About us</a>
-      <a href="{{ url("/privacy-policy") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Privacy</a>
-      <a href="{{ url("/rules") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Terms of service</a>
-      <a href="{{ url("/forex") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Forex</a>
-      <a href="{{ url("/crypto") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Crypto</a>
-      <a href="{{ url("/stocks") }}" class="font-weight-bold col-6 pl-3 py-2 col-md mr-auto">Stocks</a>
-    </p>
+    <div class="row mt-4 mb-5 wow slideInLeft">
+      <div class="col-6 col-md-3 mb-3">
+        <h5 class="font-weight-bold text-white mb-3">Products</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ route('user.dashboard') }}" class="text-light">Spot Trading</a></li>
+          <li><a href="{{ route('user.dashboard') }}" class="text-light">Margin Trading</a></li>
+          <li><a href="{{ route('user.dashboard') }}" class="text-light">Bot Trading</a></li>
+          <li><a href="{{ route('user.dashboard') }}" class="text-light">Copy Trading</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-3 mb-3">
+        <h5 class="font-weight-bold text-white mb-3">Markets</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ url("/forex") }}" class="text-light">Forex</a></li>
+          <li><a href="{{ url("/crypto") }}" class="text-light">Crypto</a></li>
+          <li><a href="{{ url("/stocks") }}" class="text-light">Stocks</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-3 mb-3">
+        <h5 class="font-weight-bold text-white mb-3">Company</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ url("/about") }}" class="text-light">About us</a></li>
+          <li><a href="{{ url("/privacy-policy") }}" class="text-light">Privacy</a></li>
+          <li><a href="{{ url("/rules") }}" class="text-light">Terms of service</a></li>
+        </ul>
+      </div>
+    </div>
    <div class='wow slideInUp'>
     <p>Trading carries substantial risk. You may lose more than your initial investment. Before trading, please read the relevant risk disclosure statements.</p>
     <hr class="my-3 my-md-5" style="border-color: rgba(255, 255, 255, 0.2) !important">

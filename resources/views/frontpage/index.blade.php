@@ -125,15 +125,11 @@ border-color:#1d4ed8 !important;
           <div class="dropdown">
             <a href="#" class="nav-link d-flex justify-content-between" data-toggle="dropdown">Products</a>
             <div class="dropdown-menu p-3">
-              <a class="dropdown-item px-2 d-flex py-3 " href="{{ url("/copy") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/magic.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>Copy Trading</h5>
-                  <p class="mb-0">Experience the power of social trading</p>
-                </div>
-              </a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Spot</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Margin</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Bot Trading</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Copy Trading</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">AI Traders</a>
             </div>
           </div>
         </li>
@@ -293,9 +289,9 @@ $(document).ready(function(){
   </div>
 </div>
 <!-- TradingView Ticker Tape -->
-<div style="height: 40px; overflow: hidden; background: #000;">
+<div style="background: #000;">
   <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-ticker-tape.js"></script>
-  <tv-ticker-tape symbols="FOREXCOM:SPXUSD,FOREXCOM:NSXUSD,FOREXCOM:DJI,FX:EURUSD,BITSTAMP:BTCUSD,BITSTAMP:ETHUSD,CMCMARKETS:GOLD,NASDAQ:AAPL,NASDAQ:MSFT,NASDAQ:GOOGL,NASDAQ:AMZN,NYSE:TSLA"></tv-ticker-tape>
+  <tv-ticker-tape theme="dark" symbols="FOREXCOM:SPXUSD,FOREXCOM:NSXUSD,FOREXCOM:DJI,FX:EURUSD,BITSTAMP:BTCUSD,BITSTAMP:ETHUSD,CMCMARKETS:GOLD,NASDAQ:AAPL,NASDAQ:MSFT,NASDAQ:GOOGL,NASDAQ:AMZN,NYSE:TSLA"></tv-ticker-tape>
 </div>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark text-light py-0">
@@ -313,15 +309,11 @@ $(document).ready(function(){
           <div class="dropdown">
             <a href="#" class="nav-link" data-toggle="dropdown">Products</a>
             <div class="dropdown-menu dropdown-menu-right p-3">
-              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/copy") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/magic.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>Copy Trading</h5>
-                  <p class="mb-0">Experience the power of social trading</p>
-                </div>
-              </a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Spot</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Margin</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Bot Trading</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Copy Trading</a>
+              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">AI Traders</a>
             </div>
           </div>
         </li>
@@ -437,7 +429,7 @@ Trade your way, every day!</p>
 </div>
 <!-- TradingView Market Data Widget -->
 <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-market-data.js"></script>
-<tv-market-data symbol-sectors='[{"sectionName":"Forex","symbols":["FX:EURUSD","FX:GBPUSD","FX:USDJPY","FX:USDCHF","FX:AUDUSD","FX:USDCAD"]},{"sectionName":"Cryptocurrency","symbols":["BINANCE:BTCUSDT","BINANCE:ETHUSDT","BINANCE:SOLUSDT","BINANCE:BNBUSDT","KUCOIN:HYPEUSDT","BITSTAMP:XRPUSD"]},{"sectionName":"Stocks","symbols":["NASDAQ:TSLA","NASDAQ:NVDA","NASDAQ:AAPL","NASDAQ:MU","NASDAQ:MSFT","NASDAQ:SPCX","NASDAQ:META","NASDAQ:AMZN","NASDAQ:GOOGL","NSE:TRENT"]}]'></tv-market-data>
+<tv-market-data theme="dark" symbol-sectors='[{"sectionName":"Forex","symbols":["FX:EURUSD","FX:GBPUSD","FX:USDJPY","FX:USDCHF","FX:AUDUSD","FX:USDCAD"]},{"sectionName":"Cryptocurrency","symbols":["BINANCE:BTCUSDT","BINANCE:ETHUSDT","BINANCE:SOLUSDT","BINANCE:BNBUSDT","KUCOIN:HYPEUSDT","BITSTAMP:XRPUSD"]},{"sectionName":"Stocks","symbols":["NASDAQ:TSLA","NASDAQ:NVDA","NASDAQ:AAPL","NASDAQ:MU","NASDAQ:MSFT","NASDAQ:SPCX","NASDAQ:META","NASDAQ:AMZN","NASDAQ:GOOGL","NSE:TRENT"]}]'></tv-market-data>
 
 
 
@@ -448,15 +440,11 @@ Trade your way, every day!</p>
 		</div>
 	</section>
 </div></div>
-<div class="bg-light py-5" id="waypoint">
-	<div class="container px-4">
-		<h2 class="text-dark mb-5 text-center">Trusted by thousands of users worldwide</h2>
-	</div>
-</div>
 
 <!-- Start Trading Now -->
 <section class="py-5" style="background:#000;">
   <div class="text-center" style="max-width:800px; margin:0 auto; padding:0 16px;">
+    <p style="color:#9ca3af; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; font-size:0.9rem; margin-bottom:16px;">Trusted by thousands of users worldwide</p>
     <h2 style="color:#fff; font-weight:600; font-size:2.25rem; margin-bottom:12px;">Start Trading <span style="color:#2FE6DE;">Now</span></h2>
     <p style="color:#9ca3af; font-size:1.125rem; margin-bottom:40px;">Choose how you want to trade and invest in stocks and financial markets</p>
   </div>
@@ -511,6 +499,72 @@ margin: 0 auto;" src="medias/play_723p.mp4"></video>
 margin: 0 auto;" src="medias/play_724p.mp4"></video></div>
 		</div>
 	</section>
+
+<!-- Trading Advantages -->
+<section class="py-5" style="background:#0C0F19;">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 style="color:#fff; font-weight:700; font-size:2.25rem;">Trading <span style="color:#2FE6DE;">Advantages</span></h2>
+      <p style="color:#9ca3af; font-size:1.125rem; max-width:800px; margin:0 auto;">
+        Discover the key benefits that make our platform the preferred choice for successful traders worldwide.
+      </p>
+    </div>
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div style="background:#151821; border:1px solid #1f2937; border-radius:16px; overflow:hidden; height:100%;">
+          <div style="height:180px; background:linear-gradient(135deg,#1a1428,#0d0f13);"></div>
+          <div style="padding:24px; position:relative;">
+            <div style="position:absolute; top:-24px; left:24px; width:48px; height:48px; border-radius:50%; background:#1a1428; border:2px solid #2FE6DE; display:flex; align-items:center; justify-content:center;">
+              <i class="fas fa-percent" style="color:#2FE6DE; font-size:1.1rem;"></i>
+            </div>
+            <h3 style="color:#fff; font-size:1.25rem; font-weight:600; margin-top:24px; margin-bottom:12px;">Low Trading Fees</h3>
+            <p style="color:#9ca3af; margin-bottom:16px;">Maximize your profits with our competitive fee structure. We offer some of the lowest trading fees in the industry, ensuring more of your gains stay in your pocket.</p>
+            <ul style="list-style:none; padding-left:0; color:#9ca3af; margin-bottom:0;">
+              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Low trading fees</li>
+              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> No hidden charges</li>
+              <li><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Volume discounts available</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div style="background:#151821; border:1px solid #1f2937; border-radius:16px; overflow:hidden; height:100%;">
+          <div style="height:180px; background:linear-gradient(135deg,#1a1428,#0d0f13);"></div>
+          <div style="padding:24px; position:relative;">
+            <div style="position:absolute; top:-24px; left:24px; width:48px; height:48px; border-radius:50%; background:#1a1428; border:2px solid #2FE6DE; display:flex; align-items:center; justify-content:center;">
+              <i class="fas fa-headset" style="color:#2FE6DE; font-size:1.1rem;"></i>
+            </div>
+            <h3 style="color:#fff; font-size:1.25rem; font-weight:600; margin-top:24px; margin-bottom:12px;">24/7 Support</h3>
+            <p style="color:#9ca3af; margin-bottom:16px;">Get help whenever you need it with our round-the-clock customer support. Our expert team is always ready to assist you with any trading questions or technical issues.</p>
+            <ul style="list-style:none; padding-left:0; color:#9ca3af; margin-bottom:0;">
+              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Live chat support</li>
+              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Expert trading guidance</li>
+              <li><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Multilingual support</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div style="background:#151821; border:1px solid #1f2937; border-radius:16px; overflow:hidden; height:100%;">
+          <div style="height:180px; background:linear-gradient(135deg,#1a1428,#0d0f13);"></div>
+          <div style="padding:24px; position:relative;">
+            <div style="position:absolute; top:-24px; left:24px; width:48px; height:48px; border-radius:50%; background:#1a1428; border:2px solid #2FE6DE; display:flex; align-items:center; justify-content:center;">
+              <i class="fas fa-globe" style="color:#2FE6DE; font-size:1.1rem;"></i>
+            </div>
+            <h3 style="color:#fff; font-size:1.25rem; font-weight:600; margin-top:24px; margin-bottom:12px;">Global Markets</h3>
+            <p style="color:#9ca3af; margin-bottom:16px;">Access global financial markets from a single platform. Trade stocks, cryptocurrencies, and other assets from major exchanges worldwide with real-time data and execution.</p>
+            <ul style="list-style:none; padding-left:0; color:#9ca3af; margin-bottom:0;">
+              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> 120+ trading pairs</li>
+              <li class="mb-2"><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Multiple asset classes</li>
+              <li><i class="fas fa-check-circle" style="color:#2FE6DE; margin-right:8px;"></i> Real-time market data</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="container text-center py-4">
 	<section class="py-5">
 		<div class="py-4 section-title">
@@ -705,14 +759,33 @@ $('.marquee').marquee({
 <footer>
 	<div class="container">
     @include('frontpage.partials.logo', ['class' => 'wow slideInLeft d-inline-block', 'height' => '44px'])<br />
-    <p class="mt-3 mb-5 wow slideInLeft d-flex flex-wrap wow slideInLeft">
-      <a href="{{ url("/about") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">About us</a>
-      <a href="{{ url("/privacy-policy") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Privacy</a>
-      <a href="{{ url("/rules") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Terms of service</a>
-      <a href="{{ url("/forex") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Forex</a>
-      <a href="{{ url("/crypto") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Crypto</a>
-      <a href="{{ url("/stocks") }}" class="font-weight-bold col-6 pl-3 py-2 col-md mr-auto">Stocks</a>
-    </p>
+    <div class="row mt-4 mb-5 wow slideInLeft">
+      <div class="col-6 col-md-3 mb-3">
+        <h5 class="font-weight-bold text-white mb-3">Products</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ route('user.dashboard') }}" class="text-light">Spot Trading</a></li>
+          <li><a href="{{ route('user.dashboard') }}" class="text-light">Margin Trading</a></li>
+          <li><a href="{{ route('user.dashboard') }}" class="text-light">Bot Trading</a></li>
+          <li><a href="{{ route('user.dashboard') }}" class="text-light">Copy Trading</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-3 mb-3">
+        <h5 class="font-weight-bold text-white mb-3">Markets</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ url("/forex") }}" class="text-light">Forex</a></li>
+          <li><a href="{{ url("/crypto") }}" class="text-light">Crypto</a></li>
+          <li><a href="{{ url("/stocks") }}" class="text-light">Stocks</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-3 mb-3">
+        <h5 class="font-weight-bold text-white mb-3">Company</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ url("/about") }}" class="text-light">About us</a></li>
+          <li><a href="{{ url("/privacy-policy") }}" class="text-light">Privacy</a></li>
+          <li><a href="{{ url("/rules") }}" class="text-light">Terms of service</a></li>
+        </ul>
+      </div>
+    </div>
    <div class='wow slideInUp'>
     <p>Trading carries substantial risk. You may lose more than your initial investment. Before trading, please read the relevant risk disclosure statements.</p>
     <hr class="my-3 my-md-5" style="border-color: rgba(255, 255, 255, 0.2) !important">
