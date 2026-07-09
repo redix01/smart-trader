@@ -28,7 +28,7 @@ class WithdrawalController extends Controller
 
     public function show(Withdrawal $withdrawal)
     {
-        $withdrawal->load('user');
+        $withdrawal->load('user', 'approver');
         return Inertia::render('Admin/Withdrawals/Show', ['withdrawal' => $withdrawal]);
     }
 
