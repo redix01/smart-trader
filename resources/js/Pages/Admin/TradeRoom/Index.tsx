@@ -93,7 +93,7 @@ export default function TradeRoomIndex({
               className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-3 text-sm font-bold text-white outline-none"
             >
               {users.map(user => (
-                <option key={user.id} value={user.id}>{user.name} - {user.email}</option>
+                <option key={user.id} value={user.id}>{user?.name ?? 'Unknown'} - {user?.email ?? ''}</option>
               ))}
             </select>
             {selectedUser && (

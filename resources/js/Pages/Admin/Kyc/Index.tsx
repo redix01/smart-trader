@@ -33,7 +33,7 @@ export default function KycIndex({ submissions, filters }: { submissions: { data
           <tbody className="divide-y divide-[#0A0A0A]">
             {submissions.data.map(s => (
               <tr key={s.id} className="hover:bg-[#151515] transition-colors">
-                <td className="px-6 py-4"><span className="text-sm font-bold text-white">{s.user.name}</span><br /><span className="text-xs text-zinc-500">{s.user.email}</span></td>
+                <td className="px-6 py-4"><span className="text-sm font-bold text-white">{s.user?.name ?? 'Deleted User'}</span><br /><span className="text-xs text-zinc-500">{s.user?.email ?? ''}</span></td>
                 <td className="px-6 py-4 text-xs text-zinc-400">{s.document_type}</td>
                 <td className="px-6 py-4"><span className={`text-xs font-bold px-2 py-1 rounded-full ${s.status === 'approved' ? 'bg-emerald-500/10 text-emerald-500' : s.status === 'rejected' ? 'bg-rose-500/10 text-rose-500' : 'bg-amber-500/10 text-amber-500'}`}>{s.status}</span></td>
                 <td className="px-6 py-4 text-xs text-zinc-500 font-mono">{s.submitted_at}</td>

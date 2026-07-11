@@ -15,7 +15,7 @@ export default function SwapShow({ swap }: { swap: any }) {
       </div>
       <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-6 max-w-2xl">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div><p className="text-xs text-zinc-500">User</p><p className="text-white font-medium">{swap.user.name} ({swap.user.email})</p></div>
+          <div><p className="text-xs text-zinc-500">User</p><p className="text-white font-medium">{swap.user?.name ?? 'Deleted User'} ({swap.user?.email ?? 'N/A'})</p></div>
           <div><p className="text-xs text-zinc-500">Status</p><p className="text-white font-medium capitalize">{swap.status}</p></div>
           <div><p className="text-xs text-zinc-500">From</p><p className="text-white font-medium">{swap.from_currency}</p></div>
           <div><p className="text-xs text-zinc-500">To</p><p className="text-white font-medium">{swap.to_currency}</p></div>

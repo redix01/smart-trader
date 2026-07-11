@@ -210,12 +210,12 @@ export default function WithdrawalShow({ withdrawal }: { withdrawal: any }) {
             <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-4 space-y-3">
               <div>
                 <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-0.5">Name</p>
-                <p className="text-sm font-bold text-white">{withdrawal.user.name}</p>
+                <p className="text-sm font-bold text-white">{withdrawal.user?.name ?? 'Deleted User'}</p>
               </div>
               <div className="h-px bg-[#1A1A1A]" />
               <div>
                 <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-0.5">Email</p>
-                <p className="text-sm text-zinc-300 break-all">{withdrawal.user.email}</p>
+                <p className="text-sm text-zinc-300 break-all">{withdrawal.user?.email ?? 'N/A'}</p>
               </div>
             </div>
           </div>

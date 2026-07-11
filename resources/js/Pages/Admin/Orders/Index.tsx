@@ -42,7 +42,7 @@ export default function OrdersIndex({ orders, filters }: { orders: { data: Order
             <tbody className="divide-y divide-[#0A0A0A]">
               {orders.data.map(o => (
                 <tr key={o.id} className="hover:bg-[#151515] transition-colors">
-                  <td className="px-6 py-4"><span className="text-sm font-bold text-white">{o.user.name}</span></td>
+                  <td className="px-6 py-4"><span className="text-sm font-bold text-white">{o.user?.name ?? 'Deleted User'}</span></td>
                   <td className="px-6 py-4"><span className={`text-xs font-bold px-2 py-1 rounded-full ${o.side === 'buy' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>{o.side}</span></td>
                   <td className="px-6 py-4 text-sm text-zinc-400">{o.pair}</td>
                   <td className="px-6 py-4 text-right"><span className="text-sm font-bold text-white font-mono">{Number(o.amount).toFixed(4)}</span></td>

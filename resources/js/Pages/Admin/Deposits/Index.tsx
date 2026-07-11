@@ -33,7 +33,7 @@ export default function DepositsIndex({ deposits, filters }: { deposits: { data:
           <tbody className="divide-y divide-[#0A0A0A]">
             {deposits.data.map(d => (
               <tr key={d.id} className="hover:bg-[#151515] transition-colors">
-                <td className="px-6 py-4"><span className="text-sm font-bold text-white">{d.user.name}</span></td>
+                <td className="px-6 py-4"><span className="text-sm font-bold text-white">{d.user?.name ?? 'Deleted User'}</span></td>
                 <td className="px-6 py-4 text-right"><span className="text-sm font-bold text-white font-mono">${d.amount} {d.currency}</span></td>
                 <td className="px-6 py-4"><span className={`text-xs font-bold px-2 py-1 rounded-full ${d.status === 'approved' ? 'bg-emerald-500/10 text-emerald-500' : d.status === 'rejected' ? 'bg-rose-500/10 text-rose-500' : 'bg-amber-500/10 text-amber-500'}`}>{d.status}</span></td>
                 <td className="px-6 py-4 text-xs text-zinc-500 font-mono">{d.created_at}</td>

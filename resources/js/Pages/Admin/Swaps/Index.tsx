@@ -37,7 +37,7 @@ export default function SwapsIndex({ swaps, filters }: { swaps: { data: Swap[]; 
             <tbody className="divide-y divide-[#0A0A0A]">
               {swaps.data.map(s => (
                 <tr key={s.id} className="hover:bg-[#151515] transition-colors">
-                  <td className="px-6 py-4"><span className="text-sm font-bold text-white">{s.user.name}</span></td>
+                  <td className="px-6 py-4"><span className="text-sm font-bold text-white">{s.user?.name ?? 'Deleted User'}</span></td>
                   <td className="px-6 py-4 text-sm text-zinc-400">{s.from_currency}</td>
                   <td className="px-6 py-4 text-sm text-zinc-400">{s.to_currency}</td>
                   <td className="px-6 py-4 text-right"><span className="text-sm font-bold text-white font-mono">{Number(s.from_amount).toFixed(2)} → {Number(s.to_amount).toFixed(6)}</span></td>

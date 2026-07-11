@@ -45,7 +45,7 @@ export default function WithdrawalsIndex({ withdrawals, filters }: { withdrawals
           <tbody className="divide-y divide-[#0A0A0A]">
             {withdrawals.data.map(w => (
               <tr key={w.id} className="hover:bg-[#151515] transition-colors">
-                <td className="px-6 py-4"><span className="text-sm font-bold text-white">{w.user.name}</span></td>
+                <td className="px-6 py-4"><span className="text-sm font-bold text-white">{w.user?.name ?? 'Deleted User'}</span></td>
                 <td className="px-6 py-4 text-right"><span className="text-sm font-bold text-white font-mono">${w.amount} {w.currency}</span></td>
                 <td className="px-6 py-4"><span className={`text-xs font-bold px-2 py-1 rounded-full ${w.status === 'approved' ? 'bg-emerald-500/10 text-emerald-500' : w.status === 'rejected' ? 'bg-rose-500/10 text-rose-500' : 'bg-amber-500/10 text-amber-500'}`}>{w.status}</span></td>
                 <td className="px-6 py-4 text-xs text-zinc-500 font-mono">{w.created_at}</td>

@@ -26,7 +26,7 @@ export default function DepositShow({ deposit }: { deposit: any }) {
       </div>
       <div className="bg-[#111] border border-[#1A1A1A] rounded-3xl p-6 max-w-2xl">
         <div className="space-y-4">
-          <div><p className="text-xs text-zinc-500">User</p><p className="text-white font-medium">{deposit.user.name} ({deposit.user.email})</p></div>
+          <div><p className="text-xs text-zinc-500">User</p><p className="text-white font-medium">{deposit.user?.name ?? 'Deleted User'} ({deposit.user?.email ?? 'N/A'})</p></div>
           <div><p className="text-xs text-zinc-500">Amount</p><p className="text-white font-medium font-mono">${deposit.amount} {deposit.currency}</p></div>
           <div><p className="text-xs text-zinc-500">Status</p><p className="text-white font-medium capitalize">{deposit.status}</p></div>
           <div><p className="text-xs text-zinc-500">Submitted</p><p className="text-white font-medium">{deposit.created_at}</p></div>

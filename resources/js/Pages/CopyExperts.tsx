@@ -7,7 +7,7 @@ import { Users, TrendingUp, Check, Star, ShieldCheck, ChevronRight, BarChart3, C
 interface Expert {
   id: number;
   name: string;
-  avatar: string;
+  avatar: string | null;
   win_rate: string;
   profit_share: string;
   status: string;
@@ -82,7 +82,7 @@ export default function CopyExperts({ experts }: CopyExpertsProps) {
               <div className="p-8 border-b border-[#1A1A1A] flex items-center gap-6">
                 <div className="relative">
                   <div className="w-20 h-20 rounded-[28px] overflow-hidden bg-white/5 border border-white/10 group-hover:border-emerald-500/50 transition-all relative z-10">
-                    <img src={expert.avatar} alt={expert.name} className="w-full h-full object-cover" />
+                    <img src={expert.avatar ?? '/images/avatar-placeholder.svg'} alt={expert.name} className="w-full h-full object-cover" />
                   </div>
                   <div className="absolute -top-2 -right-2 w-8 h-8 bg-[#0A0A0A] border-4 border-[#111] rounded-full flex items-center justify-center text-blue-500 z-20">
                     <Check size={14} strokeWidth={4} />
