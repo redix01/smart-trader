@@ -14,7 +14,7 @@
                 </a>
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Edit Bot Configuration</h1>
-                    <p class="text-gray-600 dark:text-gray-400 mt-1">{{ $bot->name }} - {{ $bot->user->name }}</p>
+                    <p class="text-gray-600 dark:text-gray-400 mt-1">{{ $bot->name }} - {{ $bot->user->name ?? 'Unknown User' }}</p>
                 </div>
             </div>
         </div>

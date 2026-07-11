@@ -124,8 +124,8 @@
                         </td>
                         <td class="px-4 py-4 whitespace-nowrap sm:px-6">
                             <div>
-                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $bot->user->name }}</div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ $bot->user->email }}</div>
+                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $bot->user->name ?? 'Unknown User' }}</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ $bot->user->email ?? 'N/A' }}</div>
                             </div>
                         </td>
                         <td class="px-4 py-4 whitespace-nowrap sm:px-6">
