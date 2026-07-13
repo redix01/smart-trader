@@ -31,4 +31,11 @@ class ExpertsController extends Controller
 
         return redirect()->route('experts')->with('success', 'Subscribed to expert strategy.');
     }
+
+    public function destroy(Request $request, int $subscription)
+    {
+        $this->expert->cancel($request->user(), $subscription);
+
+        return redirect()->route('experts')->with('success', 'Expert subscription cancelled. No profits were transferred.');
+    }
 }

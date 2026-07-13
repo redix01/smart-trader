@@ -351,6 +351,24 @@ class UserNotificationService
         );
     }
 
+    public function sendExpertSubscriptionCancelled(User $user, CopySubscription $subscription, string $expertName): void
+    {
+        $this->sendToUser(
+            $user,
+            'Expert subscription cancelled',
+            'Your copy-trading allocation has been stopped',
+            "Your subscription to {$expertName} has been cancelled. No profits were transferred — your allocation remains unchanged.",
+            [
+                'Expert' => $expertName,
+                'Allocation' => $this->formatAmount((float) $subscription->allocation_amount, 'USD'),
+                'Cancelled at' => $subscription->cancelled_at?->format('Y-m-d H:i') ?? now()->format('Y-m-d H:i'),
+                'Status' => 'CANCELLED',
+            ],
+            'View Experts',
+            route('experts')
+        );
+    }
+
     public function sendPropertyInvestmentCreated(User $user, PropertyInvestment $investment, string $projectTitle): void
     {
         $this->sendToUser(

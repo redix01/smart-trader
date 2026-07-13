@@ -63,6 +63,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/mining', [MiningController::class, 'store'])->name('mining.store');
     Route::get('/experts', [ExpertsController::class, 'index'])->name('experts');
     Route::post('/experts', [ExpertsController::class, 'store'])->name('experts.store');
+    Route::delete('/experts/{subscription}', [ExpertsController::class, 'destroy'])->name('experts.destroy');
     Route::get('/realestate', [RealEstateController::class, 'index'])->name('realestate');
     Route::post('/realestate', [RealEstateController::class, 'store'])->name('realestate.store');
     Route::get('/support', SupportController::class)->name('support');
@@ -107,6 +108,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::resource('staking-plans', AdminStakingPlanController::class)->except(['show', 'create', 'edit']);
     Route::resource('mining-plans', AdminMiningPlanController::class)->except(['show', 'create', 'edit']);
     Route::resource('experts', AdminExpertController::class)->except(['show', 'create', 'edit']);
+    Route::get('experts/{expert}/subscriptions', [AdminExpertController::class, 'subscriptions'])->name('experts.subscriptions');
+    Route::post('experts/subscriptions/{subscription}/cancel', [AdminExpertController::class, 'cancelSubscription'])->name('experts.subscriptions.cancel');
     Route::resource('property-projects', AdminPropertyProjectController::class)->except(['show', 'create', 'edit']);
 
     Route::prefix('orders')->name('orders.')->group(function () {

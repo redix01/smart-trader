@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import { motion } from 'motion/react';
-import { Users, TrendingUp, Check, Star, ShieldCheck, ChevronRight, BarChart3, Clock } from 'lucide-react';
+import { Users, TrendingUp, Check, Star, ChevronRight, BarChart3, XCircle } from 'lucide-react';
 
 interface Expert {
   id: number;
@@ -14,11 +14,21 @@ interface Expert {
   total_volume: string;
 }
 
-interface CopyExpertsProps {
-  experts: Expert[];
+interface Subscription {
+  id: number;
+  expert_name: string;
+  allocated: string;
+  current_value: string;
+  status: string;
+  date: string;
 }
 
-export default function CopyExperts({ experts }: CopyExpertsProps) {
+interface CopyExpertsProps {
+  experts: Expert[];
+  subscriptions: Subscription[];
+}
+
+export default function CopyExperts({ experts, subscriptions }: CopyExpertsProps) {
   const { data, setData, post, processing } = useForm({
     expert_id: 0,
     amount: '',
@@ -28,6 +38,14 @@ export default function CopyExperts({ experts }: CopyExpertsProps) {
   const handleCopy = (expertId: number) => {
     setSelectedExpert(expertId === selectedExpert ? null : expertId);
   };
+
+  const cancel = (sub: Subscription) => {
+    if (confirm(`Cancel your subscription to ${sub.expert_name}? No profits will be transferred.`)) {
+      router.delete(route('experts.destroy', sub.id));
+    }
+  };
+
+  const activeSubscriptions = subscriptions.filter(s => s.status === 'active');
 
   return (
     <AppLayout>
@@ -69,6 +87,34 @@ export default function CopyExperts({ experts }: CopyExpertsProps) {
             </div>
           </div>
         </div>
+
+        {activeSubscriptions.length > 0 && (
+          <div>
+            <h2 className="text-2xl font-bold text-white">Your Active Subscriptions</h2>
+            <p className="text-zinc-500 mt-1">You are currently copying the following experts.</p>
+            <div className="mt-6 space-y-4">
+              {activeSubscriptions.map(sub => (
+                <div key={sub.id} className="bg-[#111] border border-[#1A1A1A] rounded-[24px] p-6 flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+                      <h3 className="text-lg font-bold text-white">{sub.expert_name}</h3>
+                    </div>
+                    <div className="flex gap-6 mt-2">
+                      <div><span className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Allocated</span><p className="text-sm font-mono text-zinc-300">${sub.allocated}</p></div>
+                      <div><span className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Current Value</span><p className="text-sm font-mono text-zinc-300">${sub.current_value}</p></div>
+                      <div><span className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Since</span><p className="text-sm text-zinc-300">{sub.date}</p></div>
+                    </div>
+                  </div>
+                  <button onClick={() => cancel(sub)}
+                    className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-rose-500 bg-rose-500/10 rounded-xl hover:bg-rose-500 hover:text-white transition-all">
+                    <XCircle size={14} /> Cancel
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div>
           <h2 className="text-2xl font-bold text-white">Top Performing Strategies</h2>

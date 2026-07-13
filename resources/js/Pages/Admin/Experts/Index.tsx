@@ -1,6 +1,6 @@
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, useForm, router, Link } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Users } from 'lucide-react';
 import { useState } from 'react';
 
 interface Expert {
@@ -48,7 +48,8 @@ export default function ExpertsIndex({ experts }: { experts: { data: Expert[] } 
                     {expert.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-right">
+                <td className="px-6 py-4 text-right flex items-center justify-end gap-1">
+                  <Link href={route('admin.experts.subscriptions', expert.id)} className="p-2 text-emerald-500 hover:bg-emerald-500/10 rounded-lg"><Users size={14} /></Link>
                   <button onClick={() => setEditing(expert)} className="p-2 text-blue-500 hover:bg-blue-500/10 rounded-lg"><Pencil size={14} /></button>
                   <button onClick={() => { if (confirm('Delete?')) router.delete(route('admin.experts.destroy', expert.id)); }} className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg"><Trash2 size={14} /></button>
                 </td>

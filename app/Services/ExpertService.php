@@ -26,6 +26,21 @@ class ExpertService
             ]);
     }
 
+    public function cancel(User $user, int $subscriptionId): void
+    {
+        $subscription = $user->copySubscriptions()
+            ->where('id', $subscriptionId)
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        $subscription->update([
+            'status' => 'cancelled',
+            'cancelled_at' => now(),
+        ]);
+
+        $this->notifications->sendExpertSubscriptionCancelled($user, $subscription, $subscription->expert?->name ?? 'Unknown');
+    }
+
     public function subscribe(User $user, int $expertId, float $amount): CopySubscription
     {
         $expert = Expert::findOrFail($expertId);
