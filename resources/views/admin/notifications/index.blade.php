@@ -84,6 +84,9 @@
                             <option value="support" @selected(old('from_identity') === 'support')>Support ({{ $defaultSenderOptions['support'] }})</option>
                             <option value="custom" @selected(old('from_identity') === 'custom')>Other email address</option>
                         </select>
+                        <p id="sending-as-hint" class="text-xs text-gray-500 dark:text-gray-400">
+                            Mail will be sent as: <strong class="text-gray-700 dark:text-gray-300">{{ old('from_identity') === 'custom' ? old('custom_from_email', 'custom@example.com') : $defaultSenderOptions[old('from_identity', 'admin')] }}</strong>
+                        </p>
                     </div>
 
                     <div id="custom-from-wrapper" class="space-y-3 {{ old('from_identity') === 'custom' ? '' : 'hidden' }}">
@@ -314,6 +317,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     const fromIdentity = document.getElementById('from_identity');
     const customFromWrapper = document.getElementById('custom-from-wrapper');
+    const customFromEmail = document.getElementById('custom_from_email');
+    const sendingAsHint = document.getElementById('sending-as-hint');
     const recipientInputs = Array.from(document.querySelectorAll('.mail-recipient-source'));
     const usersPanel = document.getElementById('users-panel');
     const manualPanel = document.getElementById('manual-panel');
@@ -332,6 +337,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function syncSenderVisibility() {
         customFromWrapper.classList.toggle('hidden', fromIdentity.value !== 'custom');
+        updateSendingAsHint();
+    }
+
+    function updateSendingAsHint() {
+        const identity = fromIdentity.value;
+        let email;
+        if (identity === 'custom') {
+            email = customFromEmail.value.trim() || 'custom@example.com';
+        } else {
+            email = identity === 'admin'
+                ? '{{ $defaultSenderOptions['admin'] }}'
+                : '{{ $defaultSenderOptions['support'] }}';
+        }
+        sendingAsHint.innerHTML = 'Mail will be sent as: <strong class="text-gray-700 dark:text-gray-300">' + email + '</strong>';
     }
 
     function syncRecipientPanels() {
@@ -363,6 +382,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     fromIdentity.addEventListener('change', syncSenderVisibility);
+    customFromEmail.addEventListener('input', updateSendingAsHint);
     recipientInputs.forEach((input) => input.addEventListener('change', syncRecipientPanels));
     [subject, message, accentLabel, footerNote, headerColor].forEach((input) => input.addEventListener('input', renderPreview));
 

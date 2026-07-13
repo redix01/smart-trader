@@ -119,7 +119,7 @@ class NotificationController extends Controller
                 'subject' => $validated['subject'],
             ]);
 
-            return back()->with('success', "Mail sent successfully to {$sentCount} recipient(s).");
+            return back()->with('success', "Mail sent successfully to {$sentCount} recipient(s) from {$fromEmail}.");
         } catch (\Throwable $e) {
             Log::error('Failed to send admin mail broadcast', [
                 'admin_id' => auth()->id(),
@@ -128,9 +128,19 @@ class NotificationController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
+            $errorMsg = 'Mail sending failed. ';
+            $mailer = config('mail.default');
+            if ($mailer === 'log') {
+                $errorMsg .= 'Your mail driver is set to "log" — emails are written to logs but not delivered. Set MAIL_MAILER=sendmail or MAIL_MAILER=smtp in your .env file.';
+            } elseif ($mailer === 'sendmail') {
+                $errorMsg .= 'Sendmail failed — verify that sendmail/postfix is running on the server. Error: ' . $e->getMessage();
+            } else {
+                $errorMsg .= 'Check your mail configuration. Error: ' . $e->getMessage();
+            }
+
             return back()
                 ->withInput()
-                ->with('error', 'Mail sending failed. Check your mail configuration and try again.');
+                ->with('error', $errorMsg);
         }
     }
 
