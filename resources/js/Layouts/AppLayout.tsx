@@ -16,6 +16,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
   const { url, props } = usePage<PageProps>();
   const flash = props.flash;
+  const siteName = props.platform?.site_name ?? 'QuantumExtrade';
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);
@@ -68,7 +69,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         </main>
         <footer className="p-6 border-t border-[#1A1A1A] bg-[#0A0A0A] text-center">
           <p className="text-zinc-600 text-xs font-medium">
-            &copy; 2026 CognizantPro Market. All rights reserved.
+            &copy; 2026 {siteName}. All rights reserved.
             <span className="mx-2 text-[#222]">|</span>
             Secure Institutional Grade Trading Platform
           </p>

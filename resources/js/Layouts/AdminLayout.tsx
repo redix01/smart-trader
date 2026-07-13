@@ -28,6 +28,7 @@ const adminNav = [
 export default function AdminLayout({ children }: PropsWithChildren) {
     const { url, props } = usePage();
     const user = props.auth?.user as Record<string, any> | undefined;
+    const siteName = (props as any).platform?.site_name ?? 'QuantumExtrade';
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
 
@@ -65,7 +66,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                 <div className="p-6 border-b border-[#1A1A1A] flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="flex flex-col gap-1">
-                            <BrandLogo className="h-10 w-auto object-contain" alt="CognizantPro Market Admin" />
+                            <BrandLogo className="h-10 w-auto object-contain" alt={`${siteName} Admin`} />
                             <span className="text-[10px] font-bold uppercase tracking-widest text-amber-600 pl-1">Admin Panel</span>
                         </div>
                     </div>
@@ -143,7 +144,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                 </main>
                 <footer className="p-6 border-t border-[#1A1A1A] bg-[#0A0A0A] text-center">
                     <p className="text-zinc-600 text-xs font-medium">
-                        &copy; 2026 CognizantPro Market. Admin Panel.
+                        &copy; 2026 {siteName}. Admin Panel.
                         <span className="mx-2 text-[#222]">|</span>
                         Secure Administration Interface
                     </p>

@@ -43,6 +43,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'walletSummary' => $user ? $portfolio->summary($user) : null,
             'platform' => [
+                'site_name' => $platformSettings->getSiteName(),
                 'livechat_widget_code' => $liveChatWidgetCode,
                 'support_email' => $supportEmail,
                 'support_phone' => $supportPhone,

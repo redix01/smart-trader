@@ -103,8 +103,8 @@ class PlatformSettingsService
                 'label' => 'Site Name',
                 'description' => 'Platform name shown across the admin-managed experience.',
                 'type' => 'text',
-                'default' => 'CognizantPro Market',
-                'placeholder' => 'CognizantPro Market',
+                'default' => config('app.name'),
+                'placeholder' => config('app.name'),
             ],
             'site_description' => [
                 'group' => 'General',

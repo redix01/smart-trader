@@ -21,6 +21,7 @@ export type PageProps<
         error?: string;
     };
     platform: {
+        site_name: string;
         livechat_widget_code?: string;
         support_email?: string;
         support_phone?: string;
