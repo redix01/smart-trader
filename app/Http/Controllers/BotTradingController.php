@@ -431,24 +431,6 @@ class BotTradingController extends Controller
         }
 
         try {
-            $profitTransferred = false;
-            $profitAmount = 0;
-
-            // Transfer profits to user's trading balance before stopping
-            if ($bot->total_profit > 0) {
-                $user = Auth::user();
-                $profitAmount = $bot->total_profit;
-                $user->increment('trading_balance', $profitAmount);
-                $profitTransferred = true;
-                
-                \Log::info('Bot profits transferred to user on manual stop', [
-                    'bot_id' => $bot->id,
-                    'user_id' => $user->id,
-                    'profit_transferred' => $profitAmount,
-                    'new_trading_balance' => $user->fresh()->trading_balance
-                ]);
-            }
-
             $bot->update([
                 'status' => 'stopped',
                 'stopped_at' => now(),
@@ -456,20 +438,16 @@ class BotTradingController extends Controller
 
             // Create notification for the user
             $user = Auth::user();
-            $profitMessage = $profitTransferred ? 
-                " Profits of $" . number_format($profitAmount, 2) . " have been transferred to your trading balance." : 
-                "";
-            
             $user->createNotification(
                 'bot_stopped',
                 'Bot Stopped Permanently',
-                "Your bot '{$bot->name}' has been permanently stopped.{$profitMessage}",
+                "Your bot '{$bot->name}' has been permanently stopped.",
                 [
                     'bot_id' => $bot->id,
                     'bot_name' => $bot->name,
                     'action' => 'stopped',
-                    'profit_transferred' => $profitTransferred,
-                    'profit_amount' => $profitAmount
+                    'profit_transferred' => false,
+                    'profit_amount' => 0
                 ]
             );
 
@@ -477,9 +455,9 @@ class BotTradingController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Bot stopped successfully!' . ($profitTransferred ? ' Profits have been transferred to your trading balance.' : ''),
-                'profit_transferred' => $profitTransferred,
-                'profit_amount' => $profitAmount
+                'message' => 'Bot stopped successfully!',
+                'profit_transferred' => false,
+                'profit_amount' => 0
             ]);
         } catch (\Exception $e) {
             \Log::error('Bot stop failed: ' . $e->getMessage());
