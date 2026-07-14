@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class LandingPagesTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_public_landing_pages_can_be_rendered(): void
     {
         $pages = [
@@ -25,10 +28,13 @@ class LandingPagesTest extends TestCase
         }
     }
 
-    public function test_landing_page_mentions_cognizant_promarket(): void
+    public function test_main_landing_page_uses_the_quantum_extrade_design(): void
     {
         $this->get('/')
             ->assertOk()
-            ->assertSee('Cognizant ProMarket', false);
+            ->assertSee('QuantumExtrade', false)
+            ->assertSee('All your financial assets in one place', false)
+            ->assertDontSee('Start Trading Now', false)
+            ->assertDontSee('Trading Advantages', false);
     }
 }
