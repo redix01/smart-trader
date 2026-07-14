@@ -33,8 +33,10 @@ class LandingPagesTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('QuantumExtrade', false)
-            ->assertSee('All your financial assets in one place', false)
-            ->assertDontSee('Start Trading Now', false)
-            ->assertDontSee('Trading Advantages', false);
+            ->assertSee('Advanced Trading', false)
+            ->assertSee('AI-Powered', false)
+            ->assertSee('Trading Advantages', false)
+            ->assertDontSee('All your trading essentials integrated into one app', false)
+            ->assertDontSee('Multiple ways to trade', false);
     }
 }
