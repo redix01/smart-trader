@@ -8,14 +8,29 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('avatar')->nullable()->after('email');
-            $table->string('locale', 5)->default('en')->after('avatar');
-            $table->string('currency', 5)->default('USD')->after('locale');
-            $table->string('kyc_level', 32)->default('unverified')->after('currency');
-            $table->string('account_tier', 32)->default('standard')->after('kyc_level');
-            $table->timestamp('last_login_at')->nullable()->after('account_tier');
-        });
+        $columns = [
+            'avatar'       => ['type' => 'string', 'nullable' => true, 'after' => 'email'],
+            'locale'       => ['type' => 'string', 'length' => 5, 'default' => 'en', 'after' => 'avatar'],
+            'currency'     => ['type' => 'string', 'length' => 5, 'default' => 'USD', 'after' => 'locale'],
+            'kyc_level'    => ['type' => 'string', 'length' => 32, 'default' => 'unverified', 'after' => 'currency'],
+            'account_tier' => ['type' => 'string', 'length' => 32, 'default' => 'standard', 'after' => 'kyc_level'],
+            'last_login_at' => ['type' => 'timestamp', 'nullable' => true, 'after' => 'account_tier'],
+        ];
+
+        foreach ($columns as $name => $def) {
+            if (Schema::hasColumn('users', $name)) {
+                continue;
+            }
+            Schema::table('users', function (Blueprint $table) use ($name, $def) {
+                $col = match ($def['type']) {
+                    'timestamp' => $table->timestamp($name)->nullable($def['nullable'] ?? false),
+                    default    => $table->string($name, $def['length'] ?? 191)->nullable($def['nullable'] ?? false)->default($def['default'] ?? null),
+                };
+                if (isset($def['after'])) {
+                    $col->after($def['after']);
+                }
+            });
+        }
     }
 
     public function down(): void
