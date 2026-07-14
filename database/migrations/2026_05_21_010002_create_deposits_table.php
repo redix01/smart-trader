@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('deposits', function (Blueprint $table) {
+        if (!Schema::hasTable('deposits')) {
+            Schema::create('deposits', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('deposit_method_id')->constrained();
@@ -25,7 +26,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['user_id', 'status']);
-        });
+            });
+        }
     }
 
     public function down(): void

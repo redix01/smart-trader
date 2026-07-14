@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('copy_subscriptions', function (Blueprint $table) {
+        if (!Schema::hasTable('copy_subscriptions')) {
+            Schema::create('copy_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('expert_id')->constrained()->cascadeOnDelete();
@@ -19,7 +20,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['user_id', 'status']);
-        });
+            });
+        }
     }
 
     public function down(): void

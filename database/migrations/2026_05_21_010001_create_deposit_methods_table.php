@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('deposit_methods', function (Blueprint $table) {
+        if (!Schema::hasTable('deposit_methods')) {
+            Schema::create('deposit_methods', function (Blueprint $table) {
             $table->id();
             $table->string('currency', 10);
             $table->string('network', 32);
@@ -22,7 +23,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
             $table->timestamps();
-        });
+            });
+        }
     }
 
     public function down(): void

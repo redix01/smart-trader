@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('kyc_submissions', function (Blueprint $table) {
+        if (!Schema::hasTable('kyc_submissions')) {
+            Schema::create('kyc_submissions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('status', 32)->default('pending');
@@ -20,7 +21,8 @@ return new class extends Migration
             $table->timestamp('reviewed_at')->nullable();
             $table->foreignId('reviewed_by')->nullable()->constrained('users');
             $table->timestamps();
-        });
+            });
+        }
     }
 
     public function down(): void

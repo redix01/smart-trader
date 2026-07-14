@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('market_pairs', function (Blueprint $table) {
+        if (!Schema::hasTable('market_pairs')) {
+            Schema::create('market_pairs', function (Blueprint $table) {
             $table->id();
             $table->string('base_currency', 10);
             $table->string('quote_currency', 10);
@@ -24,7 +25,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['base_currency', 'quote_currency']);
-        });
+            });
+        }
     }
 
     public function down(): void

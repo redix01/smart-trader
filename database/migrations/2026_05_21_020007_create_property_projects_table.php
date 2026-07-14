@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('property_projects', function (Blueprint $table) {
+        if (!Schema::hasTable('property_projects')) {
+            Schema::create('property_projects', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('region')->nullable();
@@ -22,7 +23,8 @@ return new class extends Migration
             $table->text('disclosure')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-        });
+            });
+        }
     }
 
     public function down(): void

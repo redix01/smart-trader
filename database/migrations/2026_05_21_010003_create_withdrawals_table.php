@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('withdrawals', function (Blueprint $table) {
+        if (!Schema::hasTable('withdrawals')) {
+            Schema::create('withdrawals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('method', 64);
@@ -24,7 +25,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['user_id', 'status']);
-        });
+            });
+        }
     }
 
     public function down(): void

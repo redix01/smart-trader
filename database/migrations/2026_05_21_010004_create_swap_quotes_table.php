@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('swap_quotes', function (Blueprint $table) {
+        if (!Schema::hasTable('swap_quotes')) {
+            Schema::create('swap_quotes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('from_currency', 10);
@@ -19,7 +20,8 @@ return new class extends Migration
             $table->decimal('fee', 20, 8)->default(0);
             $table->string('status', 32)->default('pending');
             $table->timestamps();
-        });
+            });
+        }
     }
 
     public function down(): void

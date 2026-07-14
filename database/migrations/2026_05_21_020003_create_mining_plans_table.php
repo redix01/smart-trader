@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('mining_plans', function (Blueprint $table) {
+        if (!Schema::hasTable('mining_plans')) {
+            Schema::create('mining_plans', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->decimal('min_amount', 20, 2);
@@ -19,7 +20,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
             $table->timestamps();
-        });
+            });
+        }
     }
 
     public function down(): void

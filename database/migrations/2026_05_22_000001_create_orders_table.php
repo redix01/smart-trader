@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        if (!Schema::hasTable('orders')) {
+            Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('type', 16)->default('market');
@@ -25,7 +26,8 @@ return new class extends Migration
 
             $table->index(['user_id', 'status']);
             $table->index(['pair', 'status']);
-        });
+            });
+        }
     }
 
     public function down(): void

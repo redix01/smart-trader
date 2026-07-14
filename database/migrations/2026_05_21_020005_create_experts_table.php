@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('experts', function (Blueprint $table) {
+        if (!Schema::hasTable('experts')) {
+            Schema::create('experts', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('avatar')->nullable();
@@ -19,7 +20,8 @@ return new class extends Migration
             $table->text('bio')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-        });
+            });
+        }
     }
 
     public function down(): void

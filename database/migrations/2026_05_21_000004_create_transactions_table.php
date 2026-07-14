@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        if (!Schema::hasTable('transactions')) {
+            Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->morphs('transactionable');
@@ -25,7 +26,8 @@ return new class extends Migration
             $table->index(['user_id', 'type']);
             $table->index(['user_id', 'status']);
             $table->index('created_at');
-        });
+            });
+        }
     }
 
     public function down(): void

@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('mining_subscriptions', function (Blueprint $table) {
+        if (!Schema::hasTable('mining_subscriptions')) {
+            Schema::create('mining_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('mining_plan_id')->constrained()->cascadeOnDelete();
@@ -20,7 +21,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['user_id', 'status']);
-        });
+            });
+        }
     }
 
     public function down(): void
