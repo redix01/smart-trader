@@ -38,7 +38,7 @@
 <link href="css/animate.css" rel="stylesheet" />
 <link rel="stylesheet" href="css/intlTelInput.css">
 
-<title>{{ config('app.name') }}</title>
+<title>QuantumExtrade</title>
 <link rel="manifest" href="js/manifest.json">
 <meta name="theme-color" content="#0C0F19">
 <meta name="msapplication-navbutton-color" content="#0C0F19">
@@ -54,12 +54,12 @@
 <link href="{{ asset("favicon.ico") }}" rel="icon" type="image/x-icon" />
 <link rel="icon" sizes="192x192" href="{{ asset("frontpage/images/logo.png") }}">
 
-<meta name="keywords" content="{{ config('app.name') }}, Options, Crypto" />
+<meta name="keywords" content="QuantumExtrade, Options, Crypto" />
 <meta property="og:image" content="images/logo.png" />
-<meta property="og:site_name" content="{{ config('app.name') }}">
-<meta property="og:title" content="Crypto Trading With {{ config('app.name') }}" />
-<meta name="description" content="Crypto Trading With {{ config('app.name') }}, is totally different from its competitors trying to achieve something special starting with the...">
-<meta property="og:description" content="Crypto Trading With {{ config('app.name') }}, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:site_name" content="QuantumExtrade">
+<meta property="og:title" content="Crypto Trading With QuantumExtrade" />
+<meta name="description" content="Crypto Trading With QuantumExtrade, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:description" content="Crypto Trading With QuantumExtrade, is totally different from its competitors trying to achieve something special starting with the...">
 <meta property="og:type" content="website" />
 
 <script src="js/bootstrap-select.js"></script>
@@ -421,7 +421,7 @@ $(document).ready(function(){
 <div class="container text-center py-4 text-white">
 	<section class="py-5 wow slideInUp">
 		<h2 class='text-center text-white h2 font-bold mb-4 hyphenated'>Multiple ways to trade</h2>
-		<p class='text-center text-lightGray text-lg font-normal leading-8'>Experience trading excellence on the go, from any browser or desktop, with {{ config('app.name') }} .
+		<p class='text-center text-lightGray text-lg font-normal leading-8'>Experience trading excellence on the go, from any browser or desktop, with QuantumExtrade .
 
 Trade your way, every day!</p>
 
@@ -534,7 +534,7 @@ margin: 0 auto;" src="medias/play_725p.mp4"></video></div>
 	<section class="py-5">
 		<div class="py-4 section-title">
 			<h2 class="mb-4">Built for today’s ambitious earners</h2>
-			<p class="text-muted">Thousands of forward-thinking users rely on {{ config('app.name') }} everyday to turbo-charge their financial operations</p>
+			<p class="text-muted">Thousands of forward-thinking users rely on QuantumExtrade everyday to turbo-charge their financial operations</p>
 		</div>
 		<div class="marquee-parent">
 			<div class="row justify-content-center wow slideInLeft">
@@ -651,7 +651,7 @@ margin: 0 auto;" src="medias/play_725p.mp4"></video></div>
 						<div class="card-body text-left shadow-sm rounded-lg">
 							<div style="color: #e94a15"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
 							<h5 class="my-3">"Amazing broker"</h5>
-							<p class="text-muted">{{ config('app.name') }} is one of the best trading broker I’ve used since i started crypto trading. With their advanced trading software and my personal knowledge I’ve managed to earn over $6m</p>
+							<p class="text-muted">QuantumExtrade is one of the best trading broker I’ve used since i started crypto trading. With their advanced trading software and my personal knowledge I’ve managed to earn over $6m</p>
 							<hr/>
 							<div class="d-flex justify-content-center">
 								<div class="mr-auto my-auto">
@@ -744,7 +744,7 @@ $('.marquee').marquee({
 @if(!empty($livechatWidgetCode))
 {!! $livechatWidgetCode !!}
 @endif
-    <p class="mb-0 mt-md-4 wow slideInLeft text-uppercase" >© 2016 - 2026 {{ config('app.name') }}. All rights reserved.</p>
+    <p class="mb-0 mt-md-4 wow slideInLeft text-uppercase" >© 2016 - 2026 QuantumExtrade. All rights reserved.</p>
   </div>
 
 </footer>
