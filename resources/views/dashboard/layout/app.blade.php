@@ -1040,7 +1040,9 @@
 
             // Load notifications
             function loadNotifications() {
-                fetch('/user/notifications/recent')
+                fetch('/user/notifications/recent', {
+                    headers: { 'Accept': 'application/json' }
+                })
                     .then(response => response.json())
                     .then(data => {
                         if (data.notifications && data.notifications.length > 0) {
@@ -1084,7 +1086,9 @@
 
             // Load unread count
             function loadUnreadCount() {
-                fetch('/user/notifications/unread-count')
+                fetch('/user/notifications/unread-count', {
+                    headers: { 'Accept': 'application/json' }
+                })
                     .then(response => response.json())
                     .then(data => {
                         if (data.count > 0) {

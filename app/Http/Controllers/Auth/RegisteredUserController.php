@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -52,7 +53,7 @@ class RegisteredUserController extends Controller
                 'user_agent' => $request->userAgent(),
                 'filled_honeypot_fields' => $filledHoneypotFields,
                 'time_difference' => $timeDifference,
-                'timestamp' => now()
+                'timestamp' => now(),
             ]);
             
             // Return a generic error message to avoid revealing the honeypot
@@ -71,12 +72,15 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $hasReferralCode = Schema::hasColumn('users', 'referral_code');
+        $hasReferredBy = Schema::hasColumn('users', 'referred_by');
+
         $referrer = null;
-        if ($request->filled('ref')) {
+        if ($hasReferralCode && $hasReferredBy && $request->filled('ref')) {
             $referrer = User::where('referral_code', $request->ref)->first();
         }
 
-        $user = User::create([
+        $attributes = [
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
@@ -84,9 +88,14 @@ class RegisteredUserController extends Controller
             'country' => $request->country,
             'currency' => $request->currency,
             'password' => Hash::make($request->password),
-            'referred_by' => $referrer ? $referrer->id : null,
             'email_verified_at' => now(),
-        ]);
+        ];
+
+        if ($hasReferredBy) {
+            $attributes['referred_by'] = $referrer?->id;
+        }
+
+        $user = User::create($attributes);
 
         if ($referrer) {
             $referrer->createNotification(
@@ -102,6 +111,11 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect()->intended(route('user.dashboard', absolute: false));
+        // Notification polling can leave an AJAX endpoint in the guest
+        // session as the intended URL. Registration must always finish on the
+        // user dashboard, never on a JSON endpoint.
+        $request->session()->forget('url.intended');
+
+        return redirect()->route('user.dashboard');
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class User extends Authenticatable
@@ -23,7 +24,9 @@ class User extends Authenticatable
     protected static function booted(): void
     {
         static::creating(function (User $user) {
-            if (empty($user->referral_code)) {
+            // Keep user creation available during deployments where application
+            // code reaches the server before the referral migration does.
+            if (Schema::hasColumn($user->getTable(), 'referral_code') && empty($user->referral_code)) {
                 do {
                     $user->referral_code = Str::upper(Str::random(8));
                 } while (static::where('referral_code', $user->referral_code)->exists());
