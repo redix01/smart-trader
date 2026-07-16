@@ -5,8 +5,8 @@
         <!-- Hero Section with Slider -->
 <div class="bg-[#0D091C] py-16 md:py-24 relative overflow-hidden">
     <!-- Background elements -->
-    <div class="absolute top-20 right-20 w-64 h-64 bg-[#00FF99]/10 rounded-full filter blur-3xl"></div>
-    <div class="absolute bottom-10 left-10 w-80 h-80 bg-[#00FF99]/5 rounded-full filter blur-3xl"></div>
+    <div class="absolute top-20 right-20 w-64 h-64 bg-[#3B82F6]/10 rounded-full filter blur-3xl"></div>
+    <div class="absolute bottom-10 left-10 w-80 h-80 bg-[#3B82F6]/5 rounded-full filter blur-3xl"></div>
 
     <div class="container mx-auto px-4 relative z-10">
         <div class="flex flex-col lg:flex-row items-center">
@@ -16,7 +16,7 @@
                     <div class="hero-slide active" data-slide="1">
                         <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                             <span class="text-white">Advanced Trading </span><br>
-                            <span class="text-[#00FF99]">Platform</span>
+                            <span class="text-[#3B82F6]">Platform</span>
                         </h1>
 
                         <p class="text-gray-300 text-lg mb-8 max-w-xl">
@@ -28,7 +28,7 @@
                     <div class="hero-slide" data-slide="2">
                         <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                             <span class="text-white">AI-Powered </span><br>
-                            <span class="text-[#00FF99]">Trading Bots</span>
+                            <span class="text-[#3B82F6]">Trading Bots</span>
                         </h1>
 
                         <p class="text-gray-300 text-lg mb-8 max-w-xl">
@@ -40,7 +40,7 @@
                     <div class="hero-slide" data-slide="3">
                         <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                             <span class="text-white">Copy Trading </span><br>
-                            <span class="text-[#00FF99]">Success</span>
+                            <span class="text-[#3B82F6]">Success</span>
                         </h1>
 
                         <p class="text-gray-300 text-lg mb-8 max-w-xl">
@@ -52,19 +52,19 @@
                 <!-- Slider Navigation -->
                 <div class="flex space-x-2 mb-8">
                     <button class="hero-nav-dot active" data-slide="1">
-                        <span class="block w-3 h-3 rounded-full bg-[#00FF99]"></span>
+                        <span class="block w-3 h-3 rounded-full bg-[#3B82F6]"></span>
                     </button>
                     <button class="hero-nav-dot" data-slide="2">
-                        <span class="block w-3 h-3 rounded-full bg-[#00FF99]/30"></span>
+                        <span class="block w-3 h-3 rounded-full bg-[#3B82F6]/30"></span>
                     </button>
                     <button class="hero-nav-dot" data-slide="3">
-                        <span class="block w-3 h-3 rounded-full bg-[#00FF99]/30"></span>
+                        <span class="block w-3 h-3 rounded-full bg-[#3B82F6]/30"></span>
                     </button>
                 </div>
 
                 <!-- Get Started Button -->
-<div class="bg-[#1A1428]/50 p-4 rounded-xl border border-[#00FF99]/10 mb-6 max-w-md">
-    <a href="{{ route('register') }}" class="block bg-[#00FF99] text-black font-medium px-8 py-4 rounded-lg hover:brightness-110 transition-all text-center">
+<div class="bg-[#1A1428]/50 p-4 rounded-xl border border-[#3B82F6]/10 mb-6 max-w-md">
+    <a href="{{ route('register') }}" class="block bg-[#3B82F6] text-white font-medium px-8 py-4 rounded-lg hover:brightness-110 transition-all text-center">
         Get Started
     </a>
 </div>
@@ -77,65 +77,65 @@
                     <div class="hero-illustration active" data-slide="1">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" class="w-full h-auto md:max-w-lg max-w-sm mx-auto">
                             <!-- Trading Dashboard Illustration -->
-                            <rect x="100" y="100" width="600" height="400" rx="20" fill="#1A1428" stroke="#00FF99" stroke-opacity="0.3" stroke-width="2"/>
+                            <rect x="100" y="100" width="600" height="400" rx="20" fill="#1A1428" stroke="#3B82F6" stroke-opacity="0.3" stroke-width="2"/>
 
                             <!-- Chart Area -->
                             <rect x="120" y="180" width="360" height="300" rx="10" fill="#0D091C"/>
-                            <polyline points="120,380 180,320 240,350 300,280 360,300 420,250 480,280" stroke="#00FF99" stroke-width="3" fill="none"/>
-                            <circle cx="180" cy="320" r="5" fill="#00FF99"/>
-                            <circle cx="240" cy="350" r="5" fill="#00FF99"/>
-                            <circle cx="300" cy="280" r="5" fill="#00FF99"/>
-                            <circle cx="360" cy="300" r="5" fill="#00FF99"/>
-                            <circle cx="420" cy="250" r="5" fill="#00FF99"/>
-                            <circle cx="480" cy="280" r="5" fill="#00FF99"/>
+                            <polyline points="120,380 180,320 240,350 300,280 360,300 420,250 480,280" stroke="#3B82F6" stroke-width="3" fill="none"/>
+                            <circle cx="180" cy="320" r="5" fill="#3B82F6"/>
+                            <circle cx="240" cy="350" r="5" fill="#3B82F6"/>
+                            <circle cx="300" cy="280" r="5" fill="#3B82F6"/>
+                            <circle cx="360" cy="300" r="5" fill="#3B82F6"/>
+                            <circle cx="420" cy="250" r="5" fill="#3B82F6"/>
+                            <circle cx="480" cy="280" r="5" fill="#3B82F6"/>
 
                             <!-- Chart Grid Lines -->
-                            <line x1="120" y1="230" x2="480" y2="230" stroke="#00FF99" stroke-opacity="0.1" stroke-width="1"/>
-                            <line x1="120" y1="280" x2="480" y2="280" stroke="#00FF99" stroke-opacity="0.1" stroke-width="1"/>
-                            <line x1="120" y1="330" x2="480" y2="330" stroke="#00FF99" stroke-opacity="0.1" stroke-width="1"/>
-                            <line x1="120" y1="380" x2="480" y2="380" stroke="#00FF99" stroke-opacity="0.1" stroke-width="1"/>
-                            <line x1="180" y1="180" x2="180" y2="480" stroke="#00FF99" stroke-opacity="0.1" stroke-width="1"/>
-                            <line x1="240" y1="180" x2="240" y2="480" stroke="#00FF99" stroke-opacity="0.1" stroke-width="1"/>
-                            <line x1="300" y1="180" x2="300" y2="480" stroke="#00FF99" stroke-opacity="0.1" stroke-width="1"/>
-                            <line x1="360" y1="180" x2="360" y2="480" stroke="#00FF99" stroke-opacity="0.1" stroke-width="1"/>
-                            <line x1="420" y1="180" x2="420" y2="480" stroke="#00FF99" stroke-opacity="0.1" stroke-width="1"/>
+                            <line x1="120" y1="230" x2="480" y2="230" stroke="#3B82F6" stroke-opacity="0.1" stroke-width="1"/>
+                            <line x1="120" y1="280" x2="480" y2="280" stroke="#3B82F6" stroke-opacity="0.1" stroke-width="1"/>
+                            <line x1="120" y1="330" x2="480" y2="330" stroke="#3B82F6" stroke-opacity="0.1" stroke-width="1"/>
+                            <line x1="120" y1="380" x2="480" y2="380" stroke="#3B82F6" stroke-opacity="0.1" stroke-width="1"/>
+                            <line x1="180" y1="180" x2="180" y2="480" stroke="#3B82F6" stroke-opacity="0.1" stroke-width="1"/>
+                            <line x1="240" y1="180" x2="240" y2="480" stroke="#3B82F6" stroke-opacity="0.1" stroke-width="1"/>
+                            <line x1="300" y1="180" x2="300" y2="480" stroke="#3B82F6" stroke-opacity="0.1" stroke-width="1"/>
+                            <line x1="360" y1="180" x2="360" y2="480" stroke="#3B82F6" stroke-opacity="0.1" stroke-width="1"/>
+                            <line x1="420" y1="180" x2="420" y2="480" stroke="#3B82F6" stroke-opacity="0.1" stroke-width="1"/>
 
                             <!-- Sidebar -->
                             <rect x="500" y="180" width="180" height="300" rx="10" fill="#0D091C"/>
 
                             <!-- Sidebar Items -->
-                            <rect x="520" y="200" width="140" height="40" rx="5" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="540" cy="220" r="10" fill="#00FF99" fill-opacity="0.3"/>
+                            <rect x="520" y="200" width="140" height="40" rx="5" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="540" cy="220" r="10" fill="#3B82F6" fill-opacity="0.3"/>
                             <rect x="560" y="215" width="80" height="10" rx="2" fill="white" fill-opacity="0.5"/>
 
-                            <rect x="520" y="250" width="140" height="40" rx="5" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="540" cy="270" r="10" fill="#00FF99" fill-opacity="0.3"/>
+                            <rect x="520" y="250" width="140" height="40" rx="5" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="540" cy="270" r="10" fill="#3B82F6" fill-opacity="0.3"/>
                             <rect x="560" y="265" width="80" height="10" rx="2" fill="white" fill-opacity="0.5"/>
 
-                            <rect x="520" y="300" width="140" height="40" rx="5" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="540" cy="320" r="10" fill="#00FF99" fill-opacity="0.3"/>
+                            <rect x="520" y="300" width="140" height="40" rx="5" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="540" cy="320" r="10" fill="#3B82F6" fill-opacity="0.3"/>
                             <rect x="560" y="315" width="80" height="10" rx="2" fill="white" fill-opacity="0.5"/>
 
-                            <rect x="520" y="350" width="140" height="40" rx="5" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="540" cy="370" r="10" fill="#00FF99" fill-opacity="0.3"/>
+                            <rect x="520" y="350" width="140" height="40" rx="5" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="540" cy="370" r="10" fill="#3B82F6" fill-opacity="0.3"/>
                             <rect x="560" y="365" width="80" height="10" rx="2" fill="white" fill-opacity="0.5"/>
 
-                            <rect x="520" y="400" width="140" height="40" rx="5" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="540" cy="420" r="10" fill="#00FF99" fill-opacity="0.3"/>
+                            <rect x="520" y="400" width="140" height="40" rx="5" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="540" cy="420" r="10" fill="#3B82F6" fill-opacity="0.3"/>
                             <rect x="560" y="415" width="80" height="10" rx="2" fill="white" fill-opacity="0.5"/>
 
                             <!-- Header -->
                             <rect x="120" y="120" width="560" height="40" rx="5" fill="#0D091C"/>
-                            <circle cx="140" cy="140" r="10" fill="#00FF99"/>
+                            <circle cx="140" cy="140" r="10" fill="#3B82F6"/>
                             <rect x="160" y="135" width="100" height="10" rx="2" fill="white" fill-opacity="0.7"/>
-                            <rect x="500" y="135" width="60" height="10" rx="2" fill="#00FF99" fill-opacity="0.5"/>
-                            <rect x="570" y="135" width="60" height="10" rx="2" fill="#00FF99" fill-opacity="0.5"/>
+                            <rect x="500" y="135" width="60" height="10" rx="2" fill="#3B82F6" fill-opacity="0.5"/>
+                            <rect x="570" y="135" width="60" height="10" rx="2" fill="#3B82F6" fill-opacity="0.5"/>
 
                             <!-- Floating Elements -->
-                            <circle cx="650" cy="80" r="30" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="700" cy="150" r="20" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="80" cy="200" r="25" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="50" cy="350" r="15" fill="#00FF99" fill-opacity="0.1"/>
+                            <circle cx="650" cy="80" r="30" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="700" cy="150" r="20" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="80" cy="200" r="25" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="50" cy="350" r="15" fill="#3B82F6" fill-opacity="0.1"/>
                         </svg>
                     </div>
 
@@ -143,63 +143,63 @@
                     <div class="hero-illustration" data-slide="2">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" class="w-full h-auto md:max-w-lg max-w-sm mx-auto">
                             <!-- AI Bot Trading Illustration -->
-                            <circle cx="400" cy="300" r="180" fill="#1A1428" stroke="#00FF99" stroke-opacity="0.3" stroke-width="2"/>
+                            <circle cx="400" cy="300" r="180" fill="#1A1428" stroke="#3B82F6" stroke-opacity="0.3" stroke-width="2"/>
 
                             <!-- Robot Head -->
-                            <rect x="340" y="200" width="120" height="100" rx="20" fill="#0D091C" stroke="#00FF99" stroke-width="2"/>
+                            <rect x="340" y="200" width="120" height="100" rx="20" fill="#0D091C" stroke="#3B82F6" stroke-width="2"/>
 
                             <!-- Robot Eyes -->
-                            <circle cx="370" cy="230" r="15" fill="#00FF99" fill-opacity="0.3"/>
-                            <circle cx="370" cy="230" r="8" fill="#00FF99"/>
-                            <circle cx="430" cy="230" r="15" fill="#00FF99" fill-opacity="0.3"/>
-                            <circle cx="430" cy="230" r="8" fill="#00FF99"/>
+                            <circle cx="370" cy="230" r="15" fill="#3B82F6" fill-opacity="0.3"/>
+                            <circle cx="370" cy="230" r="8" fill="#3B82F6"/>
+                            <circle cx="430" cy="230" r="15" fill="#3B82F6" fill-opacity="0.3"/>
+                            <circle cx="430" cy="230" r="8" fill="#3B82F6"/>
 
                             <!-- Robot Mouth -->
-                            <rect x="365" y="260" width="70" height="10" rx="5" fill="#00FF99" fill-opacity="0.5"/>
-                            <rect x="365" y="275" width="30" height="5" rx="2" fill="#00FF99" fill-opacity="0.5"/>
-                            <rect x="405" y="275" width="30" height="5" rx="2" fill="#00FF99" fill-opacity="0.5"/>
+                            <rect x="365" y="260" width="70" height="10" rx="5" fill="#3B82F6" fill-opacity="0.5"/>
+                            <rect x="365" y="275" width="30" height="5" rx="2" fill="#3B82F6" fill-opacity="0.5"/>
+                            <rect x="405" y="275" width="30" height="5" rx="2" fill="#3B82F6" fill-opacity="0.5"/>
 
                             <!-- Robot Antennas -->
-                            <line x1="360" y1="200" x2="350" y2="170" stroke="#00FF99" stroke-width="2"/>
-                            <circle cx="350" cy="170" r="5" fill="#00FF99"/>
-                            <line x1="440" y1="200" x2="450" y2="170" stroke="#00FF99" stroke-width="2"/>
-                            <circle cx="450" cy="170" r="5" fill="#00FF99"/>
+                            <line x1="360" y1="200" x2="350" y2="170" stroke="#3B82F6" stroke-width="2"/>
+                            <circle cx="350" cy="170" r="5" fill="#3B82F6"/>
+                            <line x1="440" y1="200" x2="450" y2="170" stroke="#3B82F6" stroke-width="2"/>
+                            <circle cx="450" cy="170" r="5" fill="#3B82F6"/>
 
                             <!-- Robot Body -->
-                            <rect x="320" y="310" width="160" height="120" rx="20" fill="#0D091C" stroke="#00FF99" stroke-width="2"/>
+                            <rect x="320" y="310" width="160" height="120" rx="20" fill="#0D091C" stroke="#3B82F6" stroke-width="2"/>
 
                             <!-- Robot Control Panel -->
                             <rect x="340" y="330" width="120" height="80" rx="10" fill="#1A1428"/>
 
                             <!-- Robot Buttons and Lights -->
-                            <circle cx="360" cy="350" r="8" fill="#00FF99"/>
-                            <circle cx="390" cy="350" r="8" fill="#00FF99" fill-opacity="0.6"/>
-                            <circle cx="420" cy="350" r="8" fill="#00FF99" fill-opacity="0.3"/>
+                            <circle cx="360" cy="350" r="8" fill="#3B82F6"/>
+                            <circle cx="390" cy="350" r="8" fill="#3B82F6" fill-opacity="0.6"/>
+                            <circle cx="420" cy="350" r="8" fill="#3B82F6" fill-opacity="0.3"/>
 
-                            <rect x="350" y="370" width="100" height="10" rx="5" fill="#00FF99" fill-opacity="0.2"/>
-                            <rect x="350" y="390" width="70" height="10" rx="5" fill="#00FF99" fill-opacity="0.4"/>
+                            <rect x="350" y="370" width="100" height="10" rx="5" fill="#3B82F6" fill-opacity="0.2"/>
+                            <rect x="350" y="390" width="70" height="10" rx="5" fill="#3B82F6" fill-opacity="0.4"/>
 
                             <!-- Stock Symbols Floating Around -->
-                            <text x="250" y="200" font-family="Arial" font-size="20" fill="#00FF99">AAPL</text>
-                            <text x="500" y="220" font-family="Arial" font-size="20" fill="#00FF99">MSFT</text>
-                            <text x="300" y="400" font-family="Arial" font-size="20" fill="#00FF99">GOOGL</text>
-                            <text x="480" y="380" font-family="Arial" font-size="20" fill="#00FF99">TSLA</text>
-                            <text x="520" y="300" font-family="Arial" font-size="20" fill="#00FF99">AMZN</text>
-                            <text x="220" y="300" font-family="Arial" font-size="20" fill="#00FF99">NVDA</text>
+                            <text x="250" y="200" font-family="Arial" font-size="20" fill="#3B82F6">AAPL</text>
+                            <text x="500" y="220" font-family="Arial" font-size="20" fill="#3B82F6">MSFT</text>
+                            <text x="300" y="400" font-family="Arial" font-size="20" fill="#3B82F6">GOOGL</text>
+                            <text x="480" y="380" font-family="Arial" font-size="20" fill="#3B82F6">TSLA</text>
+                            <text x="520" y="300" font-family="Arial" font-size="20" fill="#3B82F6">AMZN</text>
+                            <text x="220" y="300" font-family="Arial" font-size="20" fill="#3B82F6">NVDA</text>
 
                             <!-- Data Streams -->
-                            <path d="M250,210 C270,230 290,240 320,310" stroke="#00FF99" stroke-opacity="0.3" stroke-width="1" fill="none" stroke-dasharray="5,5"/>
-                            <path d="M500,230 C480,250 460,270 480,310" stroke="#00FF99" stroke-opacity="0.3" stroke-width="1" fill="none" stroke-dasharray="5,5"/>
-                            <path d="M300,390 C310,380 315,370 320,360" stroke="#00FF99" stroke-opacity="0.3" stroke-width="1" fill="none" stroke-dasharray="5,5"/>
-                            <path d="M480,370 C470,360 465,350 460,340" stroke="#00FF99" stroke-opacity="0.3" stroke-width="1" fill="none" stroke-dasharray="5,5"/>
-                            <path d="M510,300 C490,300 480,300 480,310" stroke="#00FF99" stroke-opacity="0.3" stroke-width="1" fill="none" stroke-dasharray="5,5"/>
-                            <path d="M230,300 C250,300 270,300 320,310" stroke="#00FF99" stroke-opacity="0.3" stroke-width="1" fill="none" stroke-dasharray="5,5"/>
+                            <path d="M250,210 C270,230 290,240 320,310" stroke="#3B82F6" stroke-opacity="0.3" stroke-width="1" fill="none" stroke-dasharray="5,5"/>
+                            <path d="M500,230 C480,250 460,270 480,310" stroke="#3B82F6" stroke-opacity="0.3" stroke-width="1" fill="none" stroke-dasharray="5,5"/>
+                            <path d="M300,390 C310,380 315,370 320,360" stroke="#3B82F6" stroke-opacity="0.3" stroke-width="1" fill="none" stroke-dasharray="5,5"/>
+                            <path d="M480,370 C470,360 465,350 460,340" stroke="#3B82F6" stroke-opacity="0.3" stroke-width="1" fill="none" stroke-dasharray="5,5"/>
+                            <path d="M510,300 C490,300 480,300 480,310" stroke="#3B82F6" stroke-opacity="0.3" stroke-width="1" fill="none" stroke-dasharray="5,5"/>
+                            <path d="M230,300 C250,300 270,300 320,310" stroke="#3B82F6" stroke-opacity="0.3" stroke-width="1" fill="none" stroke-dasharray="5,5"/>
 
                             <!-- Floating Elements -->
-                            <circle cx="200" cy="150" r="30" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="600" cy="200" r="40" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="550" cy="450" r="25" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="250" cy="450" r="35" fill="#00FF99" fill-opacity="0.1"/>
+                            <circle cx="200" cy="150" r="30" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="600" cy="200" r="40" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="550" cy="450" r="25" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="250" cy="450" r="35" fill="#3B82F6" fill-opacity="0.1"/>
                         </svg>
                     </div>
 
@@ -207,61 +207,61 @@
                     <div class="hero-illustration" data-slide="3">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" class="w-full h-auto md:max-w-lg max-w-sm mx-auto">
                             <!-- Secure Transactions Illustration -->
-                            <rect x="250" y="150" width="300" height="300" rx="20" fill="#1A1428" stroke="#00FF99" stroke-opacity="0.3" stroke-width="2"/>
+                            <rect x="250" y="150" width="300" height="300" rx="20" fill="#1A1428" stroke="#3B82F6" stroke-opacity="0.3" stroke-width="2"/>
 
                             <!-- Lock Body -->
-                            <rect x="325" y="250" width="150" height="150" rx="10" fill="#0D091C" stroke="#00FF99" stroke-width="3"/>
+                            <rect x="325" y="250" width="150" height="150" rx="10" fill="#0D091C" stroke="#3B82F6" stroke-width="3"/>
 
                             <!-- Lock Shackle -->
-                            <path d="M350,250 L350,200 Q400,180 450,200 L450,250" fill="none" stroke="#00FF99" stroke-width="8" stroke-linecap="round"/>
+                            <path d="M350,250 L350,200 Q400,180 450,200 L450,250" fill="none" stroke="#3B82F6" stroke-width="8" stroke-linecap="round"/>
 
                             <!-- Keyhole -->
-                            <circle cx="400" cy="325" r="25" fill="#1A1428" stroke="#00FF99" stroke-width="2"/>
-                            <rect x="395" y="325" width="10" height="25" rx="5" fill="#1A1428" stroke="#00FF99" stroke-width="2"/>
+                            <circle cx="400" cy="325" r="25" fill="#1A1428" stroke="#3B82F6" stroke-width="2"/>
+                            <rect x="395" y="325" width="10" height="25" rx="5" fill="#1A1428" stroke="#3B82F6" stroke-width="2"/>
 
                             <!-- Digital Elements -->
-                            <circle cx="250" cy="150" r="10" fill="#00FF99" fill-opacity="0.5"/>
-                            <line x1="250" y1="150" x2="300" y2="200" stroke="#00FF99" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="5,5"/>
+                            <circle cx="250" cy="150" r="10" fill="#3B82F6" fill-opacity="0.5"/>
+                            <line x1="250" y1="150" x2="300" y2="200" stroke="#3B82F6" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="5,5"/>
 
-                            <circle cx="550" cy="150" r="10" fill="#00FF99" fill-opacity="0.5"/>
-                            <line x1="550" y1="150" x2="500" y2="200" stroke="#00FF99" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="5,5"/>
+                            <circle cx="550" cy="150" r="10" fill="#3B82F6" fill-opacity="0.5"/>
+                            <line x1="550" y1="150" x2="500" y2="200" stroke="#3B82F6" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="5,5"/>
 
-                            <circle cx="250" cy="450" r="10" fill="#00FF99" fill-opacity="0.5"/>
-                            <line x1="250" y1="450" x2="300" y2="400" stroke="#00FF99" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="5,5"/>
+                            <circle cx="250" cy="450" r="10" fill="#3B82F6" fill-opacity="0.5"/>
+                            <line x1="250" y1="450" x2="300" y2="400" stroke="#3B82F6" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="5,5"/>
 
-                            <circle cx="550" cy="450" r="10" fill="#00FF99" fill-opacity="0.5"/>
-                            <line x1="550" y1="450" x2="500" y2="400" stroke="#00FF99" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="5,5"/>
+                            <circle cx="550" cy="450" r="10" fill="#3B82F6" fill-opacity="0.5"/>
+                            <line x1="550" y1="450" x2="500" y2="400" stroke="#3B82F6" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="5,5"/>
 
                             <!-- Binary Code Background -->
-                            <text x="270" y="180" font-family="monospace" font-size="10" fill="#00FF99" fill-opacity="0.3">10110101</text>
-                            <text x="270" y="195" font-family="monospace" font-size="10" fill="#00FF99" fill-opacity="0.3">01001010</text>
-                            <text x="270" y="210" font-family="monospace" font-size="10" fill="#00FF99" fill-opacity="0.3">11010010</text>
+                            <text x="270" y="180" font-family="monospace" font-size="10" fill="#3B82F6" fill-opacity="0.3">10110101</text>
+                            <text x="270" y="195" font-family="monospace" font-size="10" fill="#3B82F6" fill-opacity="0.3">01001010</text>
+                            <text x="270" y="210" font-family="monospace" font-size="10" fill="#3B82F6" fill-opacity="0.3">11010010</text>
 
-                            <text x="450" y="180" font-family="monospace" font-size="10" fill="#00FF99" fill-opacity="0.3">10110101</text>
-                            <text x="450" y="195" font-family="monospace" font-size="10" fill="#00FF99" fill-opacity="0.3">01001010</text>
-                            <text x="450" y="210" font-family="monospace" font-size="10" fill="#00FF99" fill-opacity="0.3">11010010</text>
+                            <text x="450" y="180" font-family="monospace" font-size="10" fill="#3B82F6" fill-opacity="0.3">10110101</text>
+                            <text x="450" y="195" font-family="monospace" font-size="10" fill="#3B82F6" fill-opacity="0.3">01001010</text>
+                            <text x="450" y="210" font-family="monospace" font-size="10" fill="#3B82F6" fill-opacity="0.3">11010010</text>
 
-                            <text x="270" y="420" font-family="monospace" font-size="10" fill="#00FF99" fill-opacity="0.3">10110101</text>
-                            <text x="270" y="435" font-family="monospace" font-size="10" fill="#00FF99" fill-opacity="0.3">01001010</text>
-                            <text x="270" y="450" font-family="monospace" font-size="10" fill="#00FF99" fill-opacity="0.3">11010010</text>
+                            <text x="270" y="420" font-family="monospace" font-size="10" fill="#3B82F6" fill-opacity="0.3">10110101</text>
+                            <text x="270" y="435" font-family="monospace" font-size="10" fill="#3B82F6" fill-opacity="0.3">01001010</text>
+                            <text x="270" y="450" font-family="monospace" font-size="10" fill="#3B82F6" fill-opacity="0.3">11010010</text>
 
-                            <text x="450" y="420" font-family="monospace" font-size="10" fill="#00FF99" fill-opacity="0.3">10110101</text>
-                            <text x="450" y="435" font-family="monospace" font-size="10" fill="#00FF99" fill-opacity="0.3">01001010</text>
-                            <text x="450" y="450" font-family="monospace" font-size="10" fill="#00FF99" fill-opacity="0.3">11010010</text>
+                            <text x="450" y="420" font-family="monospace" font-size="10" fill="#3B82F6" fill-opacity="0.3">10110101</text>
+                            <text x="450" y="435" font-family="monospace" font-size="10" fill="#3B82F6" fill-opacity="0.3">01001010</text>
+                            <text x="450" y="450" font-family="monospace" font-size="10" fill="#3B82F6" fill-opacity="0.3">11010010</text>
 
                             <!-- Shield Elements -->
-                            <path d="M200,300 L200,350 Q250,400 300,350 L300,300 Q250,320 200,300 Z" fill="#0D091C" stroke="#00FF99" stroke-opacity="0.5" stroke-width="1"/>
-                            <path d="M500,300 L500,350 Q550,400 600,350 L600,300 Q550,320 500,300 Z" fill="#0D091C" stroke="#00FF99" stroke-opacity="0.5" stroke-width="1"/>
+                            <path d="M200,300 L200,350 Q250,400 300,350 L300,300 Q250,320 200,300 Z" fill="#0D091C" stroke="#3B82F6" stroke-opacity="0.5" stroke-width="1"/>
+                            <path d="M500,300 L500,350 Q550,400 600,350 L600,300 Q550,320 500,300 Z" fill="#0D091C" stroke="#3B82F6" stroke-opacity="0.5" stroke-width="1"/>
 
                             <!-- Floating Elements -->
-                            <circle cx="150" cy="200" r="30" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="650" cy="200" r="40" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="650" cy="400" r="25" fill="#00FF99" fill-opacity="0.1"/>
-                            <circle cx="150" cy="400" r="35" fill="#00FF99" fill-opacity="0.1"/>
+                            <circle cx="150" cy="200" r="30" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="650" cy="200" r="40" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="650" cy="400" r="25" fill="#3B82F6" fill-opacity="0.1"/>
+                            <circle cx="150" cy="400" r="35" fill="#3B82F6" fill-opacity="0.1"/>
                         </svg>
                     </div>
                 </div>
-                <div class="absolute top-1/4 right-1/4 w-64 h-64 bg-[#00FF99]/10 rounded-full filter blur-3xl -z-10"></div>
+                <div class="absolute top-1/4 right-1/4 w-64 h-64 bg-[#3B82F6]/10 rounded-full filter blur-3xl -z-10"></div>
             </div>
         </div>
     </div>
@@ -271,38 +271,38 @@
 <div class="py-16 bg-gradient-to-b from-[#0D091C] to-[#0A0714]">
     <div class="container mx-auto px-4">
         <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold mb-4">Why Choose <span class="text-[#00FF99]">{{ config('app.name') }}</span></h2>
+            <h2 class="text-3xl font-bold mb-4">Why Choose <span class="text-[#3B82F6]">{{ config('app.name') }}</span></h2>
             <p class="text-gray-400 max-w-2xl mx-auto">Our platform offers a comprehensive suite of tools and features designed to enhance your trading experience.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all">
-                <div class="w-14 h-14 rounded-full bg-[#00FF99]/10 flex items-center justify-center mb-6">
-                    <i class="fas fa-shield-alt text-[#00FF99] text-2xl"></i>
+            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all">
+                <div class="w-14 h-14 rounded-full bg-[#3B82F6]/10 flex items-center justify-center mb-6">
+                    <i class="fas fa-shield-alt text-[#3B82F6] text-2xl"></i>
                 </div>
                 <h3 class="text-xl font-semibold mb-3">Advanced Security</h3>
                 <p class="text-gray-400">Industry-leading security measures to protect your assets.</p>
             </div>
 
-            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all">
-                <div class="w-14 h-14 rounded-full bg-[#00FF99]/10 flex items-center justify-center mb-6">
-                    <i class="fas fa-chart-line text-[#00FF99] text-2xl"></i>
+            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all">
+                <div class="w-14 h-14 rounded-full bg-[#3B82F6]/10 flex items-center justify-center mb-6">
+                    <i class="fas fa-chart-line text-[#3B82F6] text-2xl"></i>
                 </div>
                 <h3 class="text-xl font-semibold mb-3">Professional Tools</h3>
                 <p class="text-gray-400">Advanced charting and real-time market data for informed decisions.</p>
             </div>
 
-            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all">
-                <div class="w-14 h-14 rounded-full bg-[#00FF99]/10 flex items-center justify-center mb-6">
-                    <i class="fas fa-robot text-[#00FF99] text-2xl"></i>
+            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all">
+                <div class="w-14 h-14 rounded-full bg-[#3B82F6]/10 flex items-center justify-center mb-6">
+                    <i class="fas fa-robot text-[#3B82F6] text-2xl"></i>
                 </div>
                 <h3 class="text-xl font-semibold mb-3">AI-Powered Trading</h3>
                 <p class="text-gray-400">Utilize our AI-powered trading bots based on predefined strategies.</p>
             </div>
 
-            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all">
-                <div class="w-14 h-14 rounded-full bg-[#00FF99]/10 flex items-center justify-center mb-6">
-                    <i class="fas fa-bolt text-[#00FF99] text-2xl"></i>
+            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all">
+                <div class="w-14 h-14 rounded-full bg-[#3B82F6]/10 flex items-center justify-center mb-6">
+                    <i class="fas fa-bolt text-[#3B82F6] text-2xl"></i>
                 </div>
                 <h3 class="text-xl font-semibold mb-3">Fast Execution</h3>
                 <p class="text-gray-400">High-performance matching engine for minimal latency and slippage.</p>
@@ -315,30 +315,30 @@
 <div class="py-16 bg-[#0A0714]">
     <div class="container mx-auto px-4">
         <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold mb-4">Security & <span class="text-[#00FF99]">Compliance</span></h2>
+            <h2 class="text-3xl font-bold mb-4">Security & <span class="text-[#3B82F6]">Compliance</span></h2>
             <p class="text-gray-400 max-w-2xl mx-auto">Your security and regulatory compliance are our top priorities. We maintain the highest standards to protect your investments.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10 text-center">
-                <div class="w-16 h-16 rounded-full bg-[#00FF99]/10 flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-shield-alt text-[#00FF99] text-2xl"></i>
+            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10 text-center">
+                <div class="w-16 h-16 rounded-full bg-[#3B82F6]/10 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-shield-alt text-[#3B82F6] text-2xl"></i>
                 </div>
                 <h3 class="text-xl font-semibold mb-3">Bank-Grade Security</h3>
                 <p class="text-gray-400">Multi-layer security with cold storage, 2FA, and regular security audits to protect your funds.</p>
             </div>
 
-            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10 text-center">
-                <div class="w-16 h-16 rounded-full bg-[#00FF99]/10 flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-certificate text-[#00FF99] text-2xl"></i>
+            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10 text-center">
+                <div class="w-16 h-16 rounded-full bg-[#3B82F6]/10 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-certificate text-[#3B82F6] text-2xl"></i>
                 </div>
                 <h3 class="text-xl font-semibold mb-3">Regulatory Compliance</h3>
                 <p class="text-gray-400">Fully compliant with international financial regulations and anti-money laundering standards.</p>
             </div>
 
-            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10 text-center">
-                <div class="w-16 h-16 rounded-full bg-[#00FF99]/10 flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-user-shield text-[#00FF99] text-2xl"></i>
+            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10 text-center">
+                <div class="w-16 h-16 rounded-full bg-[#3B82F6]/10 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-user-shield text-[#3B82F6] text-2xl"></i>
                 </div>
                 <h3 class="text-xl font-semibold mb-3">KYC Verification</h3>
                 <p class="text-gray-400">Comprehensive Know Your Customer verification process to ensure platform integrity and user safety.</p>
@@ -350,31 +350,31 @@
 <!-- Stats Counter Section -->
 <div class="py-12 bg-[#0A0714]">
     <div class="container mx-auto px-4">
-        <div class="bg-[#1A1428] rounded-xl p-8 border border-[#00FF99]/10">
+        <div class="bg-[#1A1428] rounded-xl p-8 border border-[#3B82F6]/10">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                 <div class="counter-item">
-                    <div class="text-[#00FF99] text-2xl md:text-4xl font-bold mb-2" data-count="50">
+                    <div class="text-[#3B82F6] text-2xl md:text-4xl font-bold mb-2" data-count="50">
                         <span class="counter">50</span><span>K+</span>
                     </div>
                     <p class="text-gray-300">Active Traders</p>
                 </div>
 
                 <div class="counter-item">
-                    <div class="text-[#00FF99] text-2xl md:text-4xl font-bold mb-2" data-count="120">
+                    <div class="text-[#3B82F6] text-2xl md:text-4xl font-bold mb-2" data-count="120">
                         <span class="counter">120</span><span>+</span>
                     </div>
                     <p class="text-gray-300">Trading Pairs</p>
                 </div>
 
                 <div class="counter-item">
-                    <div class="text-[#00FF99] text-2xl md:text-4xl font-bold mb-2" data-count="99">
+                    <div class="text-[#3B82F6] text-2xl md:text-4xl font-bold mb-2" data-count="99">
                         <span class="counter">99</span><span>.9%</span>
                     </div>
                     <p class="text-gray-300">Uptime Guarantee</p>
                 </div>
 
                 <div class="counter-item">
-                    <div class="text-[#00FF99] text-2xl md:text-4xl font-bold mb-2" data-count="2">
+                    <div class="text-[#3B82F6] text-2xl md:text-4xl font-bold mb-2" data-count="2">
                         <span class="counter">2</span><span>B+</span>
                     </div>
                     <p class="text-gray-300">Trading Volume</p>
@@ -384,16 +384,16 @@
     </div>
 </div>
 
-<div class="relative rounded-2xl overflow-hidden mb-16 shadow-2xl shadow-[#00FF99]/10 border border-[#00FF99]/10 group">
-                <div class="absolute inset-0 bg-gradient-to-r from-[#00FF99]/20 to-purple-600/20 blur-xl opacity-30 group-hover:opacity-40 transition-opacity"></div>
+<div class="relative rounded-2xl overflow-hidden mb-16 shadow-2xl shadow-[#3B82F6]/10 border border-[#3B82F6]/10 group">
+                <div class="absolute inset-0 bg-gradient-to-r from-[#3B82F6]/20 to-purple-600/20 blur-xl opacity-30 group-hover:opacity-40 transition-opacity"></div>
                 <img src="{{ asset('front/1.jpeg') }}"
                      alt="About {{ config('app.name') }}"
                      class="w-full h-64 md:h-[500px] object-cover rounded-2xl relative z-10 transition-transform duration-700 group-hover:scale-105">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#0A0714] via-transparent to-transparent z-20 rounded-2xl"></div>
                 <div class="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-30">
                     <div class="flex items-center space-x-4 mb-4">
-                        <div class="w-12 h-12 rounded-full bg-[#00FF99]/20 flex items-center justify-center">
-                            <i class="fas fa-chart-line text-[#00FF99]"></i>
+                        <div class="w-12 h-12 rounded-full bg-[#3B82F6]/20 flex items-center justify-center">
+                            <i class="fas fa-chart-line text-[#3B82F6]"></i>
                         </div>
                     </div>
                 </div>
@@ -405,23 +405,23 @@
     <div class="py-16 bg-gradient-to-b from-[#0D091C] to-[#0A0714]">
         <div class="container mx-auto px-4">
             <div class="text-center mb-12">
-                <div class="inline-block mb-4 px-4 py-1 bg-[#00FF99]/10 rounded-full border border-[#00FF99]/20">
-                    <span class="text-[#00FF99] text-sm font-medium">Why Traders Choose Us</span>
+                <div class="inline-block mb-4 px-4 py-1 bg-[#3B82F6]/10 rounded-full border border-[#3B82F6]/20">
+                    <span class="text-[#3B82F6] text-sm font-medium">Why Traders Choose Us</span>
                 </div>
-                <h2 class="text-3xl md:text-4xl font-bold mb-6">Trading <span class="text-[#00FF99]">Advantages</span></h2>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">Trading <span class="text-[#3B82F6]">Advantages</span></h2>
                 <p class="text-xl text-gray-300 max-w-3xl mx-auto">Discover the key benefits that make our platform the preferred choice for successful traders worldwide.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-[#1A1428] rounded-xl border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-[#00FF99]/5 overflow-hidden">
+                <div class="bg-[#1A1428] rounded-xl border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-[#3B82F6]/5 overflow-hidden">
                     <div class="h-48 relative overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
                              alt="Low Trading Fees"
                              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#1A1428]/80 via-transparent to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
-                            <div class="w-12 h-12 rounded-full bg-[#00FF99]/20 flex items-center justify-center">
-                                <i class="fas fa-percentage text-[#00FF99] text-xl"></i>
+                            <div class="w-12 h-12 rounded-full bg-[#3B82F6]/20 flex items-center justify-center">
+                                <i class="fas fa-percentage text-[#3B82F6] text-xl"></i>
                             </div>
                         </div>
                     </div>
@@ -431,22 +431,22 @@
 </p>
                         <ul class="text-gray-400 space-y-2">
                             <li class="flex items-start">
-                                <i class="fas fa-check-circle text-[#00FF99] mt-1 mr-2"></i>
+                                <i class="fas fa-check-circle text-[#3B82F6] mt-1 mr-2"></i>
                                 <span>0.1% trading fees</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-check-circle text-[#00FF99] mt-1 mr-2"></i>
+                                <i class="fas fa-check-circle text-[#3B82F6] mt-1 mr-2"></i>
                                 <span>No hidden charges</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-check-circle text-[#00FF99] mt-1 mr-2"></i>
+                                <i class="fas fa-check-circle text-[#3B82F6] mt-1 mr-2"></i>
                                 <span>Volume discounts available</span>
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <div class="bg-[#1A1428] rounded-xl border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-[#00FF99]/5 overflow-hidden">
+                <div class="bg-[#1A1428] rounded-xl border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-[#3B82F6]/5 overflow-hidden">
                     <div class="h-48 relative overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
                              alt="24/7 Support"
@@ -463,22 +463,22 @@
                         <p class="text-gray-300 mb-4">Get help whenever you need it with our round-the-clock customer support. Our expert team is always ready to assist you with any trading questions or technical issues.</p>
                         <ul class="text-gray-400 space-y-2">
                             <li class="flex items-start">
-                                <i class="fas fa-check-circle text-[#00FF99] mt-1 mr-2"></i>
+                                <i class="fas fa-check-circle text-[#3B82F6] mt-1 mr-2"></i>
                                 <span>Live chat support</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-check-circle text-[#00FF99] mt-1 mr-2"></i>
+                                <i class="fas fa-check-circle text-[#3B82F6] mt-1 mr-2"></i>
                                 <span>Expert trading guidance</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-check-circle text-[#00FF99] mt-1 mr-2"></i>
+                                <i class="fas fa-check-circle text-[#3B82F6] mt-1 mr-2"></i>
                                 <span>Multilingual support</span>
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <div class="bg-[#1A1428] rounded-xl border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-[#00FF99]/5 overflow-hidden">
+                <div class="bg-[#1A1428] rounded-xl border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-[#3B82F6]/5 overflow-hidden">
                     <div class="h-48 relative overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
                              alt="Global Markets"
@@ -495,15 +495,15 @@
                         <p class="text-gray-300 mb-4">Access global financial markets from a single platform. Trade stocks, cryptocurrencies, and other assets from major exchanges worldwide with real-time data and execution.</p>
                         <ul class="text-gray-400 space-y-2">
                             <li class="flex items-start">
-                                <i class="fas fa-check-circle text-[#00FF99] mt-1 mr-2"></i>
+                                <i class="fas fa-check-circle text-[#3B82F6] mt-1 mr-2"></i>
                                 <span>120+ trading pairs</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-check-circle text-[#00FF99] mt-1 mr-2"></i>
+                                <i class="fas fa-check-circle text-[#3B82F6] mt-1 mr-2"></i>
                                 <span>Multiple asset classes</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-check-circle text-[#00FF99] mt-1 mr-2"></i>
+                                <i class="fas fa-check-circle text-[#3B82F6] mt-1 mr-2"></i>
                                 <span>Real-time market data</span>
                             </li>
                         </ul>
@@ -517,13 +517,13 @@
 <div class="py-12 bg-gradient-to-b from-[#0A0714] to-[#0D091C]">
     <div class="container mx-auto px-4">
         <div class="text-center mb-10">
-            <h2 class="text-3xl font-bold mb-4">Popular <span class="text-[#00FF99]">Stocks</span></h2>
+            <h2 class="text-3xl font-bold mb-4">Popular <span class="text-[#3B82F6]">Stocks</span></h2>
             <p class="text-gray-400 max-w-2xl mx-auto">Track and trade the most popular stocks with real-time data and advanced tools</p>
         </div>
 
         <!-- Market Status Indicator -->
         <div class="flex justify-center mb-6">
-            <div class="bg-[#1A1428] rounded-lg px-4 py-2 border border-[#00FF99]/10">
+            <div class="bg-[#1A1428] rounded-lg px-4 py-2 border border-[#3B82F6]/10">
                 <div class="flex items-center space-x-2">
                     <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                     <span class="text-sm text-gray-300" id="market-status">Market Status: <span class="text-green-400">Loading...</span></span>
@@ -534,7 +534,7 @@
 
         <!-- Desktop Table View (hidden on mobile) -->
         <div class="hidden md:block overflow-x-auto">
-            <table class="min-w-full bg-[#1A1428] rounded-xl overflow-hidden border border-[#00FF99]/10">
+            <table class="min-w-full bg-[#1A1428] rounded-xl overflow-hidden border border-[#3B82F6]/10">
                 <thead>
                     <tr class="bg-[#0D091C]">
                         <th class="px-6 py-4 text-left text-sm font-medium text-gray-400">#</th>
@@ -547,7 +547,7 @@
                         <th class="px-6 py-4 text-right text-sm font-medium text-gray-400">Action</th>
                     </tr>
                 </thead>
-                <tbody id="stock-market-table" class="divide-y divide-[#00FF99]/5">
+                <tbody id="stock-market-table" class="divide-y divide-[#3B82F6]/5">
                     <!-- Loading state will be replaced by JavaScript -->
                 </tbody>
             </table>
@@ -562,34 +562,34 @@
 
         <!-- Quick Stats -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            <div class="bg-[#1A1428] rounded-lg p-4 border border-[#00FF99]/10">
+            <div class="bg-[#1A1428] rounded-lg p-4 border border-[#3B82F6]/10">
                 <div class="text-center">
                     <div class="text-green-400 text-xl font-bold" id="gainers-count">-</div>
                     <div class="text-xs text-gray-400">Gainers</div>
                 </div>
             </div>
-            <div class="bg-[#1A1428] rounded-lg p-4 border border-[#00FF99]/10">
+            <div class="bg-[#1A1428] rounded-lg p-4 border border-[#3B82F6]/10">
                 <div class="text-center">
                     <div class="text-red-400 text-xl font-bold" id="losers-count">-</div>
                     <div class="text-xs text-gray-400">Losers</div>
                 </div>
             </div>
-            <div class="bg-[#1A1428] rounded-lg p-4 border border-[#00FF99]/10">
+            <div class="bg-[#1A1428] rounded-lg p-4 border border-[#3B82F6]/10">
                 <div class="text-center">
-                    <div class="text-[#00FF99] text-xl font-bold" id="total-volume">-</div>
+                    <div class="text-[#3B82F6] text-xl font-bold" id="total-volume">-</div>
                     <div class="text-xs text-gray-400">Total Volume</div>
                 </div>
             </div>
-            <div class="bg-[#1A1428] rounded-lg p-4 border border-[#00FF99]/10">
+            <div class="bg-[#1A1428] rounded-lg p-4 border border-[#3B82F6]/10">
                 <div class="text-center">
-                    <div class="text-[#00FF99] text-xl font-bold" id="avg-change">-</div>
+                    <div class="text-[#3B82F6] text-xl font-bold" id="avg-change">-</div>
                     <div class="text-xs text-gray-400">Avg Change</div>
                 </div>
             </div>
         </div>
 
         <div class="text-center mt-8">
-                         <a href="{{ route('stocks') }}" class="inline-block px-6 py-3 bg-[#00FF99]/10 text-[#00FF99] rounded-lg border border-[#00FF99]/30 hover:bg-[#00FF99]/20 transition-colors">
+                         <a href="{{ route('stocks') }}" class="inline-block px-6 py-3 bg-[#3B82F6]/10 text-[#3B82F6] rounded-lg border border-[#3B82F6]/30 hover:bg-[#3B82F6]/20 transition-colors">
                 View All Markets <i class="fas fa-arrow-right ml-2"></i>
             </a>
         </div>
@@ -700,7 +700,7 @@ class StockMarketWidget {
                 <tr>
                     <td colspan="8" class="px-6 py-8 text-center text-gray-400">
                         <div class="flex justify-center items-center">
-                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-[#00FF99]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-[#3B82F6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -715,9 +715,9 @@ class StockMarketWidget {
         const cardsContainer = document.getElementById('stock-market-cards');
         if (cardsContainer) {
             cardsContainer.innerHTML = `
-                <div class="bg-[#1A1428] rounded-xl p-4 border border-[#00FF99]/10">
+                <div class="bg-[#1A1428] rounded-xl p-4 border border-[#3B82F6]/10">
                     <div class="flex justify-center items-center py-8 text-gray-400">
-                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-[#00FF99]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-[#3B82F6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -778,15 +778,15 @@ class StockMarketWidget {
             const logoUrl = this.getStockLogo(stock.symbol);
 
             html += `
-                <tr class="hover:bg-[#00FF99]/5 transition-colors animate-fadeIn">
+                <tr class="hover:bg-[#3B82F6]/5 transition-colors animate-fadeIn">
                     <td class="px-6 py-4 text-gray-400 font-medium">${index + 1}</td>
                     <td class="px-6 py-4">
                         <div class="flex items-center">
-                            <div class="w-10 h-10 mr-3 rounded-full bg-[#00FF99]/10 flex items-center justify-center overflow-hidden">
+                            <div class="w-10 h-10 mr-3 rounded-full bg-[#3B82F6]/10 flex items-center justify-center overflow-hidden">
                                 <img src="${logoUrl}" alt="${stock.symbol}" class="w-6 h-6"
                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                <div class="w-6 h-6 rounded-full bg-[#00FF99]/20 flex items-center justify-center" style="display:none">
-                                    <span class="text-xs font-bold text-[#00FF99]">${stock.symbol.charAt(0)}</span>
+                                <div class="w-6 h-6 rounded-full bg-[#3B82F6]/20 flex items-center justify-center" style="display:none">
+                                    <span class="text-xs font-bold text-[#3B82F6]">${stock.symbol.charAt(0)}</span>
                                 </div>
                             </div>
                             <div>
@@ -813,7 +813,7 @@ class StockMarketWidget {
                         ${this.formatVolume(stock.marketCap)}
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <button class="px-4 py-1 bg-[#00FF99]/10 text-[#00FF99] rounded-lg hover:bg-[#00FF99]/20 transition-colors text-sm font-medium">
+                        <button class="px-4 py-1 bg-[#3B82F6]/10 text-[#3B82F6] rounded-lg hover:bg-[#3B82F6]/20 transition-colors text-sm font-medium">
                             Trade
                         </button>
                     </td>
@@ -835,14 +835,14 @@ class StockMarketWidget {
             const logoUrl = this.getStockLogo(stock.symbol);
 
             html += `
-                <div class="bg-[#1A1428] rounded-xl p-4 border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all animate-fadeIn">
+                <div class="bg-[#1A1428] rounded-xl p-4 border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all animate-fadeIn">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center">
-                            <div class="w-12 h-12 mr-3 flex-shrink-0 rounded-full bg-[#00FF99]/10 flex items-center justify-center overflow-hidden">
+                            <div class="w-12 h-12 mr-3 flex-shrink-0 rounded-full bg-[#3B82F6]/10 flex items-center justify-center overflow-hidden">
                                 <img src="${logoUrl}" alt="${stock.symbol}" class="w-8 h-8"
                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                <div class="w-8 h-8 rounded-full bg-[#00FF99]/20 flex items-center justify-center" style="display:none">
-                                    <span class="text-sm font-bold text-[#00FF99]">${stock.symbol.charAt(0)}</span>
+                                <div class="w-8 h-8 rounded-full bg-[#3B82F6]/20 flex items-center justify-center" style="display:none">
+                                    <span class="text-sm font-bold text-[#3B82F6]">${stock.symbol.charAt(0)}</span>
                                 </div>
                             </div>
                             <div>
@@ -867,7 +867,7 @@ class StockMarketWidget {
                         </div>
                     </div>
 
-                    <button class="block w-full py-2 text-center bg-[#00FF99]/10 text-[#00FF99] rounded-lg hover:bg-[#00FF99]/20 transition-colors text-sm font-medium">
+                    <button class="block w-full py-2 text-center bg-[#3B82F6]/10 text-[#3B82F6] rounded-lg hover:bg-[#3B82F6]/20 transition-colors text-sm font-medium">
                         Trade ${stock.symbol}
                     </button>
                 </div>
@@ -985,13 +985,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /* Table hover effects */
 #stock-market-table tr:hover {
-    background-color: rgba(0, 255, 153, 0.05);
+    background-color: rgba(59, 130, 246, 0.05);
 }
 
 /* Mobile card hover effects */
 #stock-market-cards .bg-\[#1A1428\]:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0, 255, 153, 0.1);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
 }
 
 /* Loading animation */
@@ -1017,18 +1017,18 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="py-16 bg-[#0A0714]">
     <div class="container mx-auto px-4">
         <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold mb-4">Trading <span class="text-[#00FF99]">Plans</span></h2>
+            <h2 class="text-3xl font-bold mb-4">Trading <span class="text-[#3B82F6]">Plans</span></h2>
             <p class="text-gray-400 max-w-2xl mx-auto">Select the trading plan that matches your experience level and investment goals. All plans include professional support and advanced trading tools.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all">
+                            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all">
 
                     <div class="text-center mb-6">
                         <h3 class="text-xl font-semibold mb-2">Gold Plan</h3>
-                        <div class="text-[#00FF99] text-4xl font-bold mb-2">$25,000<span class="text-lg text-gray-400">/7-2days</span></div>
+                        <div class="text-[#3B82F6] text-4xl font-bold mb-2">$25,000<span class="text-lg text-gray-400">/7-2days</span></div>
                         <p class="text-gray-400">Beginner Trading Plan</p>
-                        <p class="text-xs text-[#00FF99] mt-1">*Minimum $5,000</p>
+                        <p class="text-xs text-[#3B82F6] mt-1">*Minimum $5,000</p>
                     </div>
 
                     <ul class="space-y-3 mb-8">
@@ -1067,17 +1067,17 @@ document.addEventListener('DOMContentLoaded', function() {
         </li>
     </ul>
 
-                    <a href="{{ route('register') }}" class="block w-full py-3 text-center bg-[#00FF99]/10 text-[#00FF99] hover:bg-[#00FF99]/20 rounded-lg transition-all">
+                    <a href="{{ route('register') }}" class="block w-full py-3 text-center bg-[#3B82F6]/10 text-[#3B82F6] hover:bg-[#3B82F6]/20 rounded-lg transition-all">
                         Get Started
                     </a>
                 </div>
-                            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all">
+                            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all">
 
                     <div class="text-center mb-6">
                         <h3 class="text-xl font-semibold mb-2">VIP Plan</h3>
-                        <div class="text-[#00FF99] text-4xl font-bold mb-2">$100,000<span class="text-lg text-gray-400">/7-4days</span></div>
+                        <div class="text-[#3B82F6] text-4xl font-bold mb-2">$100,000<span class="text-lg text-gray-400">/7-4days</span></div>
                         <p class="text-gray-400">Advanced Trading Plan</p>
-                        <p class="text-xs text-[#00FF99] mt-1">*Minimum $25,000</p>
+                        <p class="text-xs text-[#3B82F6] mt-1">*Minimum $25,000</p>
                     </div>
 
                     <ul class="space-y-3 mb-8">
@@ -1116,20 +1116,20 @@ document.addEventListener('DOMContentLoaded', function() {
         </li>
     </ul>
 
-                    <a href="{{ route('register') }}" class="block w-full py-3 text-center bg-[#00FF99]/10 text-[#00FF99] hover:bg-[#00FF99]/20 rounded-lg transition-all">
+                    <a href="{{ route('register') }}" class="block w-full py-3 text-center bg-[#3B82F6]/10 text-[#3B82F6] hover:bg-[#3B82F6]/20 rounded-lg transition-all">
                         Get Started
                     </a>
                 </div>
-                            <div class="bg-[#1A1428] rounded-xl p-6 border-2 border-[#00FF99] relative transform hover:scale-105 transition-all">
-                                            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#00FF99] text-black px-4 py-1 rounded-full text-sm font-medium">
+                            <div class="bg-[#1A1428] rounded-xl p-6 border-2 border-[#3B82F6] relative transform hover:scale-105 transition-all">
+                                            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#3B82F6] text-white px-4 py-1 rounded-full text-sm font-medium">
                             Recommended
                         </div>
 
                     <div class="text-center mb-6">
                         <h3 class="text-xl font-semibold mb-2">Membership Card Plan</h3>
-                        <div class="text-[#00FF99] text-4xl font-bold mb-2">$1,000,000<span class="text-lg text-gray-400">/7-4days</span></div>
+                        <div class="text-[#3B82F6] text-4xl font-bold mb-2">$1,000,000<span class="text-lg text-gray-400">/7-4days</span></div>
                         <p class="text-gray-400">Professional Trading Plan</p>
-                        <p class="text-xs text-[#00FF99] mt-1">*Minimum $100,000</p>
+                        <p class="text-xs text-[#3B82F6] mt-1">*Minimum $100,000</p>
                     </div>
 
                     <ul class="space-y-3 mb-8">
@@ -1168,7 +1168,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </li>
     </ul>
 
-                    <a href="{{ route('register') }}" class="block w-full py-3 text-center bg-[#00FF99] text-black hover:brightness-110 rounded-lg transition-all">
+                    <a href="{{ route('register') }}" class="block w-full py-3 text-center bg-[#3B82F6] text-white hover:brightness-110 rounded-lg transition-all">
                         Get Started
                     </a>
                 </div>
@@ -1180,40 +1180,40 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="py-16 bg-gradient-to-b from-[#0A0714] to-[#0D091C]">
     <div class="container mx-auto px-4">
         <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold mb-4">Start Trading <span class="text-[#00FF99]">Now</span></h2>
+            <h2 class="text-3xl font-bold mb-4">Start Trading <span class="text-[#3B82F6]">Now</span></h2>
             <p class="text-gray-400 max-w-2xl mx-auto">Choose how you want to trade and invest in stocks and financial markets</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-             <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all">
-                <div class="w-12 h-12 rounded-full bg-[#00FF99]/10 flex items-center justify-center mb-4">
-                    <i class="fas fa-chart-line text-[#00FF99] text-xl"></i>
+             <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all">
+                <div class="w-12 h-12 rounded-full bg-[#3B82F6]/10 flex items-center justify-center mb-4">
+                    <i class="fas fa-chart-line text-[#3B82F6] text-xl"></i>
                 </div>
                 <h3 class="text-xl font-semibold mb-2">Stock Trading</h3>
                 <p class="text-gray-400 mb-4">Trade stocks with advanced charts and real-time market data</p>
-                <a href="{{ route('login') }}" class="text-[#00FF99] hover:underline flex items-center text-sm">
+                <a href="{{ route('login') }}" class="text-[#3B82F6] hover:underline flex items-center text-sm">
                     Trade Now <i class="fas fa-arrow-right ml-2"></i>
                 </a>
             </div>
 
-            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all">
-                <div class="w-12 h-12 rounded-full bg-[#00FF99]/10 flex items-center justify-center mb-4">
-                    <i class="fas fa-copy text-[#00FF99] text-xl"></i>
+            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all">
+                <div class="w-12 h-12 rounded-full bg-[#3B82F6]/10 flex items-center justify-center mb-4">
+                    <i class="fas fa-copy text-[#3B82F6] text-xl"></i>
                 </div>
                 <h3 class="text-xl font-semibold mb-2">Copy Trading</h3>
                 <p class="text-gray-400 mb-4">Automatically copy the trades of successful traders</p>
-                <a href="{{ route('login') }}" class="text-[#00FF99] hover:underline flex items-center text-sm">
+                <a href="{{ route('login') }}" class="text-[#3B82F6] hover:underline flex items-center text-sm">
                     Start Copying <i class="fas fa-arrow-right ml-2"></i>
                 </a>
             </div>
 
-            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all">
-                <div class="w-12 h-12 rounded-full bg-[#00FF99]/10 flex items-center justify-center mb-4">
-                    <i class="fas fa-robot text-[#00FF99] text-xl"></i>
+            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all">
+                <div class="w-12 h-12 rounded-full bg-[#3B82F6]/10 flex items-center justify-center mb-4">
+                    <i class="fas fa-robot text-[#3B82F6] text-xl"></i>
                 </div>
                 <h3 class="text-xl font-semibold mb-2">Bot Trading</h3>
                 <p class="text-gray-400 mb-4">Automate your trading with AI-powered bots and strategies</p>
-                <a href="{{ route('login') }}" class="text-[#00FF99] hover:underline flex items-center text-sm">
+                <a href="{{ route('login') }}" class="text-[#3B82F6] hover:underline flex items-center text-sm">
                     Start Bot <i class="fas fa-arrow-right ml-2"></i>
                 </a>
             </div>
@@ -1226,14 +1226,14 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="py-16 bg-gradient-to-b from-[#0A0714] to-[#0D091C]">
     <div class="container mx-auto px-4">
         <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold mb-4">What Our <span class="text-[#00FF99]">Traders Say</span></h2>
+            <h2 class="text-3xl font-bold mb-4">What Our <span class="text-[#3B82F6]">Traders Say</span></h2>
             <p class="text-gray-400 max-w-2xl mx-auto">Join thousands of successful traders who trust our platform for their trading needs.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10">
+            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10">
                 <div class="flex items-center mb-4">
-                    <div class="flex text-[#00FF99]">
+                    <div class="flex text-[#3B82F6]">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
@@ -1243,8 +1243,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <p class="text-gray-300 mb-4">"The AI trading bots have completely transformed my trading strategy. I've seen consistent profits since I started using the platform."</p>
                 <div class="flex items-center">
-                    <div class="w-10 h-10 rounded-full bg-[#00FF99]/20 flex items-center justify-center mr-3">
-                        <span class="text-[#00FF99] font-bold">MJ</span>
+                    <div class="w-10 h-10 rounded-full bg-[#3B82F6]/20 flex items-center justify-center mr-3">
+                        <span class="text-[#3B82F6] font-bold">MJ</span>
                     </div>
                     <div>
                         <div class="font-medium text-white">Michael Johnson</div>
@@ -1253,9 +1253,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
 
-            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10">
+            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10">
                 <div class="flex items-center mb-4">
-                    <div class="flex text-[#00FF99]">
+                    <div class="flex text-[#3B82F6]">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
@@ -1265,8 +1265,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <p class="text-gray-300 mb-4">"Copy trading has been a game-changer for me. I can follow successful traders and learn from their strategies while earning profits."</p>
                 <div class="flex items-center">
-                    <div class="w-10 h-10 rounded-full bg-[#00FF99]/20 flex items-center justify-center mr-3">
-                        <span class="text-[#00FF99] font-bold">SC</span>
+                    <div class="w-10 h-10 rounded-full bg-[#3B82F6]/20 flex items-center justify-center mr-3">
+                        <span class="text-[#3B82F6] font-bold">SC</span>
                     </div>
                     <div>
                         <div class="font-medium text-white">Sarah Chen</div>
@@ -1275,9 +1275,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
 
-            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#00FF99]/10">
+            <div class="bg-[#1A1428] rounded-xl p-6 border border-[#3B82F6]/10">
                 <div class="flex items-center mb-4">
-                    <div class="flex text-[#00FF99]">
+                    <div class="flex text-[#3B82F6]">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
@@ -1287,8 +1287,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <p class="text-gray-300 mb-4">"The security features and customer support are outstanding. I feel confident trading with my funds on this platform."</p>
                 <div class="flex items-center">
-                    <div class="w-10 h-10 rounded-full bg-[#00FF99]/20 flex items-center justify-center mr-3">
-                        <span class="text-[#00FF99] font-bold">DR</span>
+                    <div class="w-10 h-10 rounded-full bg-[#3B82F6]/20 flex items-center justify-center mr-3">
+                        <span class="text-[#3B82F6] font-bold">DR</span>
                     </div>
                     <div>
                         <div class="font-medium text-white">David Rodriguez</div>
@@ -1303,21 +1303,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- CTA Section -->
 <div class="py-16 bg-[#0A0714] relative overflow-hidden">
-    <div class="absolute top-0 right-0 w-96 h-96 bg-[#00FF99]/5 rounded-full filter blur-3xl"></div>
-    <div class="absolute bottom-0 left-0 w-96 h-96 bg-[#00FF99]/5 rounded-full filter blur-3xl"></div>
+    <div class="absolute top-0 right-0 w-96 h-96 bg-[#3B82F6]/5 rounded-full filter blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-[#3B82F6]/5 rounded-full filter blur-3xl"></div>
 
     <div class="container mx-auto px-4 relative z-10">
-        <div class="bg-gradient-to-r from-[#1A1428] to-[#0D091C] rounded-2xl p-8 md:p-12 border border-[#00FF99]/10 shadow-xl">
+        <div class="bg-gradient-to-r from-[#1A1428] to-[#0D091C] rounded-2xl p-8 md:p-12 border border-[#3B82F6]/10 shadow-xl">
             <div class="max-w-4xl mx-auto text-center">
                 <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Start Your Trading Journey?</h2>
                 <p class="text-gray-300 text-lg mb-10 max-w-2xl mx-auto">
                     Join thousands of traders worldwide and experience the power of our advanced trading platform.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <a href="{{ route('register') }}" class="bg-[#00FF99] text-black font-medium px-8 py-4 rounded-lg hover:brightness-110 transition-all text-center">
+                    <a href="{{ route('register') }}" class="bg-[#3B82F6] text-white font-medium px-8 py-4 rounded-lg hover:brightness-110 transition-all text-center">
                         Create Account
                     </a>
-                    <a href="{{ route('about') }}" class="bg-transparent text-white font-medium px-8 py-4 rounded-lg border border-[#00FF99]/30 hover:bg-[#00FF99] transition-colors text-center">
+                    <a href="{{ route('about') }}" class="bg-transparent text-white font-medium px-8 py-4 rounded-lg border border-[#3B82F6]/30 hover:bg-[#3B82F6] transition-colors text-center">
                         About Us
                     </a>
                 </div>
@@ -1424,7 +1424,7 @@ async function fetchStockData() {
 
         // Show error message in cards
         document.querySelector('#stock-market-cards').innerHTML = `
-            <div class="bg-[#1A1428] rounded-xl p-4 border border-[#00FF99]/10">
+            <div class="bg-[#1A1428] rounded-xl p-4 border border-[#3B82F6]/10">
                 <div class="flex justify-center items-center py-8 text-red-400">
                     <i class="fas fa-exclamation-circle mr-2"></i>
                     <span>Unable to load market data. Please try again later.</span>
@@ -1446,13 +1446,13 @@ function updateMarketTable(data) {
         const priceChangeBgClass = stock.change >= 0 ? 'bg-green-500/10' : 'bg-red-500/10';
 
         tableHTML += `
-            <tr class="hover:bg-[#00FF99]/5 transition-colors">
+            <tr class="hover:bg-[#3B82F6]/5 transition-colors">
                 <td class="px-6 py-4 text-gray-400">${index + 1}</td>
                 <td class="px-6 py-4">
                     <div class="flex items-center">
-                        <div class="w-8 h-8 mr-3 rounded-full bg-[#00FF99]/10 flex items-center justify-center overflow-hidden">
+                        <div class="w-8 h-8 mr-3 rounded-full bg-[#3B82F6]/10 flex items-center justify-center overflow-hidden">
                             <img src="${stock.logo}" alt="${stock.symbol}" class="w-6 h-6" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                            <span class="text-xs font-bold text-[#00FF99]" style="display:none">${stock.symbol.charAt(0)}</span>
+                            <span class="text-xs font-bold text-[#3B82F6]" style="display:none">${stock.symbol.charAt(0)}</span>
                         </div>
                         <div>
                             <div class="font-medium">${stock.name}</div>
@@ -1470,7 +1470,7 @@ function updateMarketTable(data) {
                 <td class="px-6 py-4 text-right text-gray-300">${formatVolume(stock.volume)}</td>
                 <td class="px-6 py-4 text-right text-gray-300">${formatVolume(stock.marketCap)}</td>
                 <td class="px-6 py-4 text-right">
-                    <a href="{{ route('register') }}" class="px-4 py-1 bg-[#00FF99]/10 text-[#00FF99] rounded-lg hover:bg-[#00FF99]/20 transition-colors text-sm">Trade</a>
+                    <a href="{{ route('register') }}" class="px-4 py-1 bg-[#3B82F6]/10 text-[#3B82F6] rounded-lg hover:bg-[#3B82F6]/20 transition-colors text-sm">Trade</a>
                 </td>
             </tr>
         `;
@@ -1490,12 +1490,12 @@ function updateMarketCards(data) {
         const priceChangeClass = stock.change >= 0 ? 'text-green-500' : 'text-red-500';
 
         cardsHTML += `
-            <div class="bg-[#1A1428] rounded-xl p-4 border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all">
+            <div class="bg-[#1A1428] rounded-xl p-4 border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center">
-                        <div class="w-10 h-10 mr-3 flex-shrink-0 rounded-full bg-[#00FF99]/10 flex items-center justify-center overflow-hidden">
+                        <div class="w-10 h-10 mr-3 flex-shrink-0 rounded-full bg-[#3B82F6]/10 flex items-center justify-center overflow-hidden">
                             <img src="${stock.logo}" alt="${stock.symbol}" class="w-6 h-6" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                            <span class="text-xs font-bold text-[#00FF99]" style="display:none">${stock.symbol.charAt(0)}</span>
+                            <span class="text-xs font-bold text-[#3B82F6]" style="display:none">${stock.symbol.charAt(0)}</span>
                         </div>
                         <div>
                             <div class="font-medium">${stock.name}</div>
@@ -1519,7 +1519,7 @@ function updateMarketCards(data) {
                     </div>
                 </div>
 
-                <a href="{{ route('register') }}" class="block w-full py-2 text-center bg-[#00FF99]/10 text-[#00FF99] rounded-lg hover:bg-[#00FF99]/20 transition-colors text-sm">Trade</a>
+                <a href="{{ route('register') }}" class="block w-full py-2 text-center bg-[#3B82F6]/10 text-[#3B82F6] rounded-lg hover:bg-[#3B82F6]/20 transition-colors text-sm">Trade</a>
             </div>
         `;
     });
@@ -1617,13 +1617,13 @@ function initHeroSlider() {
         // Update navigation dots
         dots.forEach(dot => {
             dot.classList.remove('active');
-            dot.querySelector('span').classList.remove('bg-[#00FF99]');
-            dot.querySelector('span').classList.add('bg-[#00FF99]/30');
+            dot.querySelector('span').classList.remove('bg-[#3B82F6]');
+            dot.querySelector('span').classList.add('bg-[#3B82F6]/30');
 
             if (dot.dataset.slide == slideNumber) {
                 dot.classList.add('active');
-                dot.querySelector('span').classList.remove('bg-[#00FF99]/30');
-                dot.querySelector('span').classList.add('bg-[#00FF99]');
+                dot.querySelector('span').classList.remove('bg-[#3B82F6]/30');
+                dot.querySelector('span').classList.add('bg-[#3B82F6]');
             }
         });
 
@@ -1670,29 +1670,29 @@ document.addEventListener('DOMContentLoaded', function() {
 /* Button Styles */
 .btn-primary {
     display: inline-block;
-    background-color: rgba(0, 255, 153, 0.1);
-    color: #00FF99;
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #3B82F6;
     border-radius: 0.5rem;
     transition: all 0.2s;
 }
 
 .btn-primary:hover {
-    background-color: rgba(0, 255, 153, 0.2);
+    background-color: rgba(59, 130, 246, 0.2);
 }
 
 .btn-secondary {
     display: inline-block;
-    background-color: rgba(0, 255, 153, 0.1);
-    color: #00FF99;
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #3B82F6;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
-    border: 1px solid rgba(0, 255, 153, 0.3);
+    border: 1px solid rgba(59, 130, 246, 0.3);
     transition: all 0.2s;
 }
 
 .btn-secondary:hover {
-    background-color: rgba(0, 255, 153, 0.2);
-    border-color: rgba(0, 255, 153, 0.5);
+    background-color: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
 }
 
 /* Animation */
@@ -1752,7 +1752,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .hero-nav-dot:hover span {
-    background-color: rgba(0, 255, 153, 0.8) !important;
+    background-color: rgba(59, 130, 246, 0.8) !important;
 }
 </style>
     </main>

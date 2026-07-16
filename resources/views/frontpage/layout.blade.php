@@ -19,12 +19,12 @@
             --primary-bg: #0A0714;
             --secondary-bg: #0D091C;
             --card-bg: #1A1428;
-            --accent-color: #00FF99;
-            --accent-hover: rgba(0, 255, 153, 0.8);
-            --accent-light: rgba(0, 255, 153, 0.1);
+            --accent-color: #3B82F6;
+            --accent-hover: rgba(59, 130, 246, 0.8);
+            --accent-light: rgba(59, 130, 246, 0.1);
             --text-primary: #FFFFFF;
             --text-secondary: #A0AEC0;
-            --border-color: rgba(0, 255, 153, 0.1);
+            --border-color: rgba(59, 130, 246, 0.1);
         }
 
         body {
@@ -36,7 +36,7 @@
         /* Custom Scrollbar Styling */
         * {
             scrollbar-width: thin;
-            scrollbar-color: rgba(0, 255, 153, 0.2) #1A1428;
+            scrollbar-color: rgba(59, 130, 246, 0.2) #1A1428;
         }
 
         *::-webkit-scrollbar {
@@ -49,14 +49,14 @@
         }
 
         *::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 255, 153, 0.2);
+            background-color: rgba(59, 130, 246, 0.2);
             border-radius: 10px;
             border: 2px solid transparent;
             background-clip: content-box;
         }
 
         *::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(0, 255, 153, 0.4);
+            background-color: rgba(59, 130, 246, 0.4);
         }
 
         /* Animations */
@@ -224,11 +224,11 @@
 <body>
 
     <!-- Advanced Stock Market Ticker -->
-<div class="bg-gradient-to-r from-[#0A0714] via-[#0D091C] to-[#0A0714] py-3 overflow-hidden border-b border-[#00FF99]/20 shadow-lg">
+<div class="bg-gradient-to-r from-[#0A0714] via-[#0D091C] to-[#0A0714] py-3 overflow-hidden border-b border-[#3B82F6]/20 shadow-lg">
     <div class="ticker-wrap">
         <div class="ticker" id="stock-ticker">
             <div class="ticker-item flex items-center">
-                <span class="loading-ticker text-[#00FF99] animate-pulse">
+                <span class="loading-ticker text-[#3B82F6] animate-pulse">
                     <i class="fas fa-chart-line mr-2"></i>Loading market data...
                 </span>
             </div>
@@ -476,12 +476,12 @@ class StockTicker {
                     <div class="flex items-center space-x-3">
                         <!-- Stock Symbol with Exchange -->
                         <div class="flex flex-col items-center">
-                            <div class="font-bold text-white text-sm group-hover:text-[#00FF99] transition-colors">${stock.symbol}</div>
+                            <div class="font-bold text-white text-sm group-hover:text-[#3B82F6] transition-colors">${stock.symbol}</div>
                             <div class="text-xs text-gray-500">${stock.exchange}</div>
                         </div>
 
                         <!-- Divider -->
-                        <div class="w-px h-8 bg-[#00FF99]/20"></div>
+                        <div class="w-px h-8 bg-[#3B82F6]/20"></div>
 
                         <!-- Price -->
                         <div class="text-right">
@@ -508,7 +508,7 @@ class StockTicker {
 
                         <!-- Sector Tag -->
                         <div class="hidden lg:block">
-                            <span class="px-2 py-1 bg-[#00FF99]/10 text-[#00FF99] rounded-full text-xs font-medium">
+                            <span class="px-2 py-1 bg-[#3B82F6]/10 text-[#3B82F6] rounded-full text-xs font-medium">
                                 ${stock.sector}
                             </span>
                         </div>
@@ -655,13 +655,13 @@ function updateTicker(data) {
 }
 
 /* Enhanced animations */
-.ticker-item .group-hover\:text-\[\#00FF99\]:hover {
-    text-shadow: 0 0 8px rgba(0, 255, 153, 0.5);
+.ticker-item .group-hover\:text-\[\#3B82F6\]:hover {
+    text-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
 }
 
 /* Loading animation */
 .loading-ticker {
-    background: linear-gradient(-45deg, #00FF99, #1A1428, #00FF99, #1A1428);
+    background: linear-gradient(-45deg, #3B82F6, #1A1428, #3B82F6, #1A1428);
     background-size: 400% 400%;
     animation: loadingGradient 2s ease infinite;
     background-clip: text;
@@ -720,33 +720,33 @@ function updateTicker(data) {
 }
 </style>
     <!-- Main Header -->
-    <header class="bg-[#0D091C] border-b border-[#00FF99]/10 shadow-lg sticky top-0 z-40">
+    <header class="bg-[#0D091C] border-b border-[#3B82F6]/10 shadow-lg sticky top-0 z-40">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
                     <a href="{{ route('index') }}" class="flex items-center">
-                        <h3 class="text-2xl font-bold text-[#00FF99]">{{ config('app.name') }}</h3>
+                        <h3 class="text-2xl font-bold text-[#3B82F6]">{{ config('app.name') }}</h3>
                     </a>
                     <nav class="hidden lg:flex ml-10 space-x-6">
-                        <a href="{{ route('index') }}" class="navbar-item text-white hover:text-[#00FF99] transition-colors py-2 active">Home</a>
-                        <a href="{{ route('stocks') }}" class="navbar-item text-white hover:text-[#00FF99] transition-colors py-2 flex items-center ">
+                        <a href="{{ route('index') }}" class="navbar-item text-white hover:text-[#3B82F6] transition-colors py-2 active">Home</a>
+                        <a href="{{ route('stocks') }}" class="navbar-item text-white hover:text-[#3B82F6] transition-colors py-2 flex items-center ">
                                 Markets
                             </a>
                         <div class="dropdown">
-                            <a href="#" class="navbar-item text-white hover:text-[#00FF99] transition-colors py-2 flex items-center">
+                            <a href="#" class="navbar-item text-white hover:text-[#3B82F6] transition-colors py-2 flex items-center">
                                 Trade
                                 <i class="fas fa-chevron-down text-xs ml-1"></i>
                             </a>
                             <div class="dropdown-content py-2">
-                                <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-[#1A1428] text-white hover:text-[#00FF99]">Spot</a>
-                                <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-[#1A1428] text-white hover:text-[#00FF99]">Margin</a>
-                                <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-[#1A1428] text-white hover:text-[#00FF99]">Bot Trading</a>
-                                <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-[#1A1428] text-white hover:text-[#00FF99]">Copy Trading</a>
+                                <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-[#1A1428] text-white hover:text-[#3B82F6]">Spot</a>
+                                <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-[#1A1428] text-white hover:text-[#3B82F6]">Margin</a>
+                                <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-[#1A1428] text-white hover:text-[#3B82F6]">Bot Trading</a>
+                                <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-[#1A1428] text-white hover:text-[#3B82F6]">Copy Trading</a>
 
                             </div>
                         </div>
-                        <a href="{{ route('about') }}" class="navbar-item text-white hover:text-[#00FF99] transition-colors py-2 ">About</a>
-                        <a href="{{ route('faq') }}" class="navbar-item text-white hover:text-[#00FF99] transition-colors py-2 ">FAQ</a>
+                        <a href="{{ route('about') }}" class="navbar-item text-white hover:text-[#3B82F6] transition-colors py-2 ">About</a>
+                        <a href="{{ route('faq') }}" class="navbar-item text-white hover:text-[#3B82F6] transition-colors py-2 ">FAQ</a>
                     </nav>
                 </div>
 
@@ -767,9 +767,9 @@ function updateTicker(data) {
 
     <!-- Mobile menu -->
     <div id="mobileMenu" class="mobile-nav lg:hidden">
-        <div class="flex justify-between items-center p-4 border-b border-[#00FF99]/10">
+        <div class="flex justify-between items-center p-4 border-b border-[#3B82F6]/10">
             <a href="{{ route('index') }}">
-                <span class="text-lg font-bold text-[#00FF99]">{{ config('app.name') }}</span>
+                <span class="text-lg font-bold text-[#3B82F6]">{{ config('app.name') }}</span>
             </a>
             <button id="closeMenuBtn" class="text-white focus:outline-none">
                 <i class="fas fa-times text-xl"></i>
@@ -783,7 +783,7 @@ function updateTicker(data) {
                 </div>
 
             <nav class="space-y-1">
-                <a href="{{ route('index') }}" class="block py-3 px-4 rounded-lg bg-[#1A1428] text-[#00FF99]">
+                <a href="{{ route('index') }}" class="block py-3 px-4 rounded-lg bg-[#1A1428] text-[#3B82F6]">
                     <i class="fas fa-home mr-2"></i> Home
                 </a>
                 <a href="{{ route('stocks') }}" class="block py-3 px-4 rounded-lg text-white">
@@ -812,18 +812,18 @@ function updateTicker(data) {
                 </a>
             </nav>
 
-            <div class="mt-8 pt-6 border-t border-[#00FF99]/10">
+            <div class="mt-8 pt-6 border-t border-[#3B82F6]/10">
                 <div class="flex justify-center space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-[#00FF99] transition-colors">
+                    <a href="#" class="text-gray-400 hover:text-[#3B82F6] transition-colors">
                         <i class="fab fa-twitter text-xl"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-[#00FF99] transition-colors">
+                    <a href="#" class="text-gray-400 hover:text-[#3B82F6] transition-colors">
                         <i class="fab fa-facebook text-xl"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-[#00FF99] transition-colors">
+                    <a href="#" class="text-gray-400 hover:text-[#3B82F6] transition-colors">
                         <i class="fab fa-instagram text-xl"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-[#00FF99] transition-colors">
+                    <a href="#" class="text-gray-400 hover:text-[#3B82F6] transition-colors">
                         <i class="fab fa-telegram text-xl"></i>
                     </a>
                 </div>
@@ -833,37 +833,37 @@ function updateTicker(data) {
 
   @yield('content')
 
-    <footer class="bg-[#0D091C] border-t border-[#00FF99]/10 py-10">
+    <footer class="bg-[#0D091C] border-t border-[#3B82F6]/10 py-10">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
                 <div class="lg:col-span-2">
-                    <span class="text-2xl font-bold text-[#00FF99] mb-4 block">{{ config('app.name') }}</span>
+                    <span class="text-2xl font-bold text-[#3B82F6] mb-4 block">{{ config('app.name') }}</span>
                     <p class="text-gray-400 text-sm mb-4">Advanced trading platform offering stocks, crypto, AI bots, copy trading, and professional tools for traders worldwide.</p>
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-4 text-white">Products</h3>
                     <ul class="space-y-2">
-                        <li><a href="{{ route('login') }}" class="text-gray-400 hover:text-[#00FF99] transition-colors">Spot Trading</a></li>
-                        <li><a href="{{ route('login') }}" class="text-gray-400 hover:text-[#00FF99] transition-colors">Margin Trading</a></li>
-                        <li><a href="{{ route('login') }}" class="text-gray-400 hover:text-[#00FF99] transition-colors">Bot Trading</a></li>
-                        <li><a href="{{ route('login') }}" class="text-gray-400 hover:text-[#00FF99] transition-colors">Copy Trading</a></li>
+                        <li><a href="{{ route('login') }}" class="text-gray-400 hover:text-[#3B82F6] transition-colors">Spot Trading</a></li>
+                        <li><a href="{{ route('login') }}" class="text-gray-400 hover:text-[#3B82F6] transition-colors">Margin Trading</a></li>
+                        <li><a href="{{ route('login') }}" class="text-gray-400 hover:text-[#3B82F6] transition-colors">Bot Trading</a></li>
+                        <li><a href="{{ route('login') }}" class="text-gray-400 hover:text-[#3B82F6] transition-colors">Copy Trading</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-4 text-white">Support</h3>
                     <ul class="space-y-2">
-                        <li><a href="{{ route('faq') }}" class="text-gray-400 hover:text-[#00FF99] transition-colors">FAQ</a></li>
-                        <li><a href="{{ route('about') }}" class="text-gray-400 hover:text-[#00FF99] transition-colors">About Us</a></li>
-                        <li><a href="{{ route('terms') }}" class="text-gray-400 hover:text-[#00FF99] transition-colors">Terms of Service</a></li>
-                        <li><a href="{{ route('privacy') }}" class="text-gray-400 hover:text-[#00FF99] transition-colors">Privacy Policy</a></li>
+                        <li><a href="{{ route('faq') }}" class="text-gray-400 hover:text-[#3B82F6] transition-colors">FAQ</a></li>
+                        <li><a href="{{ route('about') }}" class="text-gray-400 hover:text-[#3B82F6] transition-colors">About Us</a></li>
+                        <li><a href="{{ route('terms') }}" class="text-gray-400 hover:text-[#3B82F6] transition-colors">Terms of Service</a></li>
+                        <li><a href="{{ route('privacy') }}" class="text-gray-400 hover:text-[#3B82F6] transition-colors">Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="mt-10 pt-6 border-t border-[#00FF99]/10 flex flex-col md:flex-row justify-between items-center">
+            <div class="mt-10 pt-6 border-t border-[#3B82F6]/10 flex flex-col md:flex-row justify-between items-center">
                 <p class="text-gray-400 text-sm mb-4 md:mb-0">&copy; {{ now()->year }} {{ config('app.name') }}. All rights reserved.</p>
                 <div class="flex items-center space-x-4">
-                    <a href="{{ route('terms') }}" class="text-gray-400 hover:text-[#00FF99] text-sm transition-colors">Terms</a>
-                    <a href="{{ route('privacy') }}" class="text-gray-400 hover:text-[#00FF99] text-sm transition-colors">Privacy</a>
+                    <a href="{{ route('terms') }}" class="text-gray-400 hover:text-[#3B82F6] text-sm transition-colors">Terms</a>
+                    <a href="{{ route('privacy') }}" class="text-gray-400 hover:text-[#3B82F6] text-sm transition-colors">Privacy</a>
                 </div>
             </div>
         </div>
@@ -1165,7 +1165,7 @@ function updateTicker(data) {
         const marketCards = document.querySelector('#crypto-market-cards');
         if (marketCards) {
             marketCards.innerHTML = `
-                <div class="bg-[#1A1428] rounded-xl p-4 border border-[#00FF99]/10">
+                <div class="bg-[#1A1428] rounded-xl p-4 border border-[#3B82F6]/10">
                     <div class="flex justify-center items-center py-8 text-red-400">
                         <i class="fas fa-exclamation-circle mr-2"></i>
                         <span>Unable to load market data. Please try again later.</span>
@@ -1212,7 +1212,7 @@ function updateMarketTable(data) {
         const priceChangeBgClass = coin.price_change_percentage_24h >= 0 ? 'bg-green-500/10' : 'bg-red-500/10';
 
         tableHTML += `
-            <tr class="hover:bg-[#00FF99]/5 transition-colors">
+            <tr class="hover:bg-[#3B82F6]/5 transition-colors">
                 <td class="px-6 py-4 text-gray-400">${index + 1}</td>
                 <td class="px-6 py-4">
                     <div class="flex items-center">
@@ -1230,7 +1230,7 @@ function updateMarketTable(data) {
                 <td class="px-6 py-4 text-right text-gray-300">${formatVolume(coin.total_volume)}</td>
                 <td class="px-6 py-4 text-right text-gray-300">${formatVolume(coin.market_cap)}</td>
                 <td class="px-6 py-4 text-right">
-                    <a href="{{ route('register') }}" class="px-4 py-1 bg-[#00FF99]/10 text-[#00FF99] rounded-lg hover:bg-[#00FF99]/20 transition-colors text-sm">Trade</a>
+                    <a href="{{ route('register') }}" class="px-4 py-1 bg-[#3B82F6]/10 text-[#3B82F6] rounded-lg hover:bg-[#3B82F6]/20 transition-colors text-sm">Trade</a>
                 </td>
             </tr>
         `;
@@ -1250,7 +1250,7 @@ function updateMarketCards(data) {
         const priceChangeClass = coin.price_change_percentage_24h >= 0 ? 'text-green-500' : 'text-red-500';
 
         cardsHTML += `
-            <div class="bg-[#1A1428] rounded-xl p-4 border border-[#00FF99]/10 hover:border-[#00FF99]/30 transition-all">
+            <div class="bg-[#1A1428] rounded-xl p-4 border border-[#3B82F6]/10 hover:border-[#3B82F6]/30 transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center">
                         <div class="w-10 h-10 mr-3 flex-shrink-0">
@@ -1278,7 +1278,7 @@ function updateMarketCards(data) {
                     </div>
                 </div>
 
-                <a href="{{ route('register') }}" class="block w-full py-2 text-center bg-[#00FF99]/10 text-[#00FF99] rounded-lg hover:bg-[#00FF99]/20 transition-colors text-sm">Trade</a>
+                <a href="{{ route('register') }}" class="block w-full py-2 text-center bg-[#3B82F6]/10 text-[#3B82F6] rounded-lg hover:bg-[#3B82F6]/20 transition-colors text-sm">Trade</a>
             </div>
         `;
     });
@@ -1353,29 +1353,29 @@ function formatVolume(value) {
 /* Button Styles */
 .btn-primary {
     display: inline-block;
-    background-color: rgba(0, 255, 153, 0.1);
-    color: #00FF99;
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #3B82F6;
     border-radius: 0.5rem;
     transition: all 0.2s;
 }
 
 .btn-primary:hover {
-    background-color: rgba(0, 255, 153, 0.2);
+    background-color: rgba(59, 130, 246, 0.2);
 }
 
 .btn-secondary {
     display: inline-block;
-    background-color: rgba(0, 255, 153, 0.1);
-    color: #00FF99;
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #3B82F6;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
-    border: 1px solid rgba(0, 255, 153, 0.3);
+    border: 1px solid rgba(59, 130, 246, 0.3);
     transition: all 0.2s;
 }
 
 .btn-secondary:hover {
-    background-color: rgba(0, 255, 153, 0.2);
-    border-color: rgba(0, 255, 153, 0.5);
+    background-color: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
 }
 
 /* Animation */
