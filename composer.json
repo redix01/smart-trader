@@ -5,7 +5,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "codeat3/blade-google-material-design-icons": "^1.19",
         "laravel/framework": "^11.9",
         "laravel/telescope": "^5.2",
