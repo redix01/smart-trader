@@ -725,7 +725,7 @@ function updateTicker(data) {
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
                     <a href="{{ route('landing') }}" class="flex items-center">
-                        <h3 class="text-2xl font-bold text-[#00FF99]">{{ config('app.name') }}</h3>
+                        <img src="{{ asset('img/brand-logo.svg') }}" alt="Fortis Marketpro" style="height: 40px; width: auto;">
                     </a>
                     <nav class="hidden lg:flex ml-10 space-x-6">
                         <a href="{{ route('landing') }}" class="navbar-item text-white hover:text-[#00FF99] transition-colors py-2 active">Home</a>
@@ -769,7 +769,7 @@ function updateTicker(data) {
     <div id="mobileMenu" class="mobile-nav lg:hidden">
         <div class="flex justify-between items-center p-4 border-b border-[#00FF99]/10">
             <a href="{{ route('landing') }}">
-                <span class="text-lg font-bold text-[#00FF99]">{{ config('app.name') }}</span>
+                <img src="{{ asset('img/brand-logo.svg') }}" alt="Fortis Marketpro" style="height: 32px; width: auto;">
             </a>
             <button id="closeMenuBtn" class="text-white focus:outline-none">
                 <i class="fas fa-times text-xl"></i>
@@ -837,7 +837,7 @@ function updateTicker(data) {
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
                 <div class="lg:col-span-2">
-                    <span class="text-2xl font-bold text-[#00FF99] mb-4 block">{{ config('app.name') }}</span>
+                    <img src="{{ asset('img/brand-logo.svg') }}" alt="Fortis Marketpro" style="height: 44px; width: auto;" class="mb-4">
                     <p class="text-gray-400 text-sm mb-4">Advanced trading platform offering stocks, crypto, AI bots, copy trading, and professional tools for traders worldwide.</p>
                 </div>
                 <div>

@@ -35,14 +35,15 @@ Route::get('/language/{locale}', function (string $locale) {
 })->name('language.switch');
 
 Route::view('/', 'frontpage.index')->name('index');
-Route::view('about', 'frontpage.about')->name('about');
-Route::view('copy', 'frontpage.copy')->name('copy');
-Route::view('forex', 'frontpage.forex')->name('forex');
-Route::view('crypto', 'frontpage.crypto')->name('crypto');
-Route::view('stocks', 'frontpage.stocks')->name('stocks');
-Route::view('faqs', 'frontpage.faqs')->name('faq');
-Route::view('privacy-policy', 'frontpage.privacy-policy')->name('privacy');
-Route::view('rules', 'frontpage.rules')->name('terms');
+Route::view('/', 'frontpage.index')->name('landing');
+Route::view('about', 'frontpage.about')->name('landing.about');
+Route::view('copy', 'frontpage.copy')->name('landing.copy');
+Route::view('forex', 'frontpage.forex')->name('landing.forex');
+Route::view('crypto', 'frontpage.crypto')->name('landing.crypto');
+Route::view('stocks', 'frontpage.stocks')->name('landing.stocks');
+Route::view('faqs', 'frontpage.faqs')->name('landing.faqs');
+Route::view('privacy-policy', 'frontpage.privacy-policy')->name('landing.privacy');
+Route::view('rules', 'frontpage.rules')->name('landing.rules');
 
 // AI Trader Routes (Public)
 Route::get('ai-traders', [AiTraderController::class, 'index'])->name('ai-traders.index');
