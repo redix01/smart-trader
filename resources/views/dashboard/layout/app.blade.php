@@ -245,6 +245,18 @@
 </head>
 
 <body class="bg-gray-900 text-white min-h-screen dark">
+    @if(session()->has('impersonator_id'))
+    <div class="fixed top-0 left-0 right-0 z-[60] bg-purple-700 text-white text-sm px-4 py-2 flex items-center justify-between gap-3">
+        <span>Viewing as <strong>{{ auth()->user()->name }}</strong> ({{ auth()->user()->email }}) — admin session</span>
+        <form action="{{ route('impersonate.stop') }}" method="POST">
+            @csrf
+            <button type="submit" class="bg-white text-purple-700 font-medium px-3 py-1 rounded hover:bg-purple-100 transition-colors">
+                Return to Admin
+            </button>
+        </form>
+    </div>
+    <div class="h-9"></div>
+    @endif
     <div class="h-screen bg-gray-900">
         <!-- Sidebar Backdrop -->
         <div id="sidebarBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>

@@ -239,6 +239,18 @@
 </head>
 
 <body>
+    @if(session()->has('impersonator_id'))
+    <div class="fixed top-0 left-0 right-0 z-[60] bg-purple-700 text-white text-sm px-4 py-2 flex items-center justify-between gap-3">
+        <span>Viewing as <strong>{{ auth()->user()->name }}</strong> ({{ auth()->user()->email }}) — admin session</span>
+        <form action="{{ route('impersonate.stop') }}" method="POST">
+            @csrf
+            <button type="submit" class="bg-white text-purple-700 font-medium px-3 py-1 rounded hover:bg-purple-100 transition-colors">
+                Return to Admin
+            </button>
+        </form>
+    </div>
+    <div class="h-9"></div>
+    @endif
     <div id="pwaPrompt" class="hidden fixed inset-0 z-50 items-end justify-center">
         <div class="fixed inset-0 bg-black/50"></div>
         <div class="relative m-4 w-full max-w-sm bg-white text-gray-900 rounded-xl shadow-xl p-4">
