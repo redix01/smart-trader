@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\AiTraderPlanController;
 use App\Http\Controllers\Admin\AiTraderController;
 use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\ImpersonationController;
+use App\Http\Controllers\Admin\BackupController;
 
 Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
@@ -116,6 +117,11 @@ Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin', 'as' => 'a
     Route::post('/ai-traders-trade/{userAiTrader}/create', [AiTraderController::class, 'createTrade'])->name('ai-traders.create-trade');
     Route::get('/ai-traders-performance/{userAiTrader}/data', [AiTraderController::class, 'getPerformanceData'])->name('ai-traders.performance-data');
     
+    // Data export / backups
+    Route::get('/backup', [BackupController::class, 'index'])->name('backup.index');
+    Route::get('/backup/csv/{table}', [BackupController::class, 'exportCsv'])->name('backup.csv');
+    Route::get('/backup/sql', [BackupController::class, 'exportSql'])->name('backup.sql');
+
     // Admin Settings
     Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings/profile/update', [AdminSettingsController::class, 'updateProfile'])->name('settings.profile.update');
