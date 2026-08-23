@@ -38,7 +38,7 @@
 <link href="css/animate.css" rel="stylesheet" />
 <link rel="stylesheet" href="css/intlTelInput.css">
 
-<title>{{ config('app.name') }}</title>
+<title>QuantumExtrade</title>
 <link rel="manifest" href="js/manifest.json">
 <meta name="theme-color" content="#0C0F19">
 <meta name="msapplication-navbutton-color" content="#0C0F19">
@@ -54,12 +54,12 @@
 <link href="{{ asset("favicon.ico") }}" rel="icon" type="image/x-icon" />
 <link rel="icon" sizes="192x192" href="{{ asset("frontpage/images/logo.png") }}">
 
-<meta name="keywords" content="{{ config('app.name') }}, Options, Crypto" />
+<meta name="keywords" content="QuantumExtrade, Options, Crypto" />
 <meta property="og:image" content="images/logo.png" />
-<meta property="og:site_name" content="{{ config('app.name') }}">
-<meta property="og:title" content="Crypto Trading With {{ config('app.name') }}" />
-<meta name="description" content="Crypto Trading With {{ config('app.name') }}, is totally different from its competitors trying to achieve something special starting with the...">
-<meta property="og:description" content="Crypto Trading With {{ config('app.name') }}, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:site_name" content="QuantumExtrade">
+<meta property="og:title" content="Crypto Trading With QuantumExtrade" />
+<meta name="description" content="Crypto Trading With QuantumExtrade, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:description" content="Crypto Trading With QuantumExtrade, is totally different from its competitors trying to achieve something special starting with the...">
 <meta property="og:type" content="website" />
 
 <script src="js/bootstrap-select.js"></script>
@@ -125,11 +125,15 @@ border-color:#1d4ed8 !important;
           <div class="dropdown">
             <a href="#" class="nav-link d-flex justify-content-between" data-toggle="dropdown">Products</a>
             <div class="dropdown-menu p-3">
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Spot</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Margin</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Bot Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Copy Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">AI Traders</a>
+              <a class="dropdown-item px-2 d-flex py-3 " href="{{ url("/copy") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/magic.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Copy Trading</h5>
+                  <p class="mb-0">Experience the power of social trading</p>
+                </div>
+              </a>
             </div>
           </div>
         </li>
@@ -303,11 +307,15 @@ $(document).ready(function(){
           <div class="dropdown">
             <a href="#" class="nav-link" data-toggle="dropdown">Products</a>
             <div class="dropdown-menu dropdown-menu-right p-3">
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Spot</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Margin</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Bot Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Copy Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">AI Traders</a>
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/copy") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/magic.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Copy Trading</h5>
+                  <p class="mb-0">Experience the power of social trading</p>
+                </div>
+              </a>
             </div>
           </div>
         </li>
@@ -397,15 +405,15 @@ $(document).ready(function(){
 		<p>We help traders to develop the knowledge and skills they need to trade efficiently and responsibly.</p>
 		<h2>Introduction</h2>
 		<p>As part of our daily business operations, we collect personal information from our clients and prospective clients in order to provide them with our products and services, and ensure that we can meet their needs when providing these products and services, as well as when providing them with any respective information.</p>
-		<p>Your privacy is of utmost importance to us, and it is our policy to safeguard and respect the confidentiality of information and the privacy of individuals. This Privacy Notice sets out how {{ config('app.name') }} products and services provided in the U.S and all across the globe collects, uses and manages the personal information we receive from you, or a third party, in connection with our provision of services to you or which we collect from your use of our services and/or our website. The Privacy Notice also informs you of your rights with respect to the processing of your personal information.</p><p>Our Privacy Notice is reviewed regularly to ensure that any new obligations and technologies, as well as any changes to our business operations and practices are taken into consideration, as well as that it remains abreast of the changing regulatory environment. Any personal information we hold will be governed by our most recent Privacy Notice.</p>
+		<p>Your privacy is of utmost importance to us, and it is our policy to safeguard and respect the confidentiality of information and the privacy of individuals. This Privacy Notice sets out how QuantumExtrade products and services provided in the U.S and all across the globe collects, uses and manages the personal information we receive from you, or a third party, in connection with our provision of services to you or which we collect from your use of our services and/or our website. The Privacy Notice also informs you of your rights with respect to the processing of your personal information.</p><p>Our Privacy Notice is reviewed regularly to ensure that any new obligations and technologies, as well as any changes to our business operations and practices are taken into consideration, as well as that it remains abreast of the changing regulatory environment. Any personal information we hold will be governed by our most recent Privacy Notice.</p>
 		<p>Please note that if you are an employee of the Company, a contractor to the Company or a third-party provider, your personal information will be used in connection with your employment contract or your contractual relationship, whichever applies.</p>
-		<p>This Privacy Notice applies to the processing activities performed by {{ config('app.name') }} to the personal information of its clients and its potential clients and website visitors.</p>
+		<p>This Privacy Notice applies to the processing activities performed by QuantumExtrade to the personal information of its clients and its potential clients and website visitors.</p>
 		<p>We may amend this Privacy Notice at any time by posting the amended version on this site including the effective date of the amended version. We will announce any material changes to this Privacy Notice on our website.</p>
 		<h2>Definitions</h2>
 		<p>2.1 As used herein, the following terms are defined as follows:</p>
 		<p>2.1.1 “Digital Asset” is a digital representation of value (also referred to as “cryptocurrency,” “virtual currency,” “digital currency,” “crypto token,” “crypto asset,” or “digital commodity”), such as bitcoin, XRP or ether, which is based on the cryptographic protocol of a computer network that may be (i) centralized or decentralized, (ii) closed or open-source, and (iii) used as a medium of exchange and/or store of value.</p>
-		<p>2.1.2 “{{ config('app.name') }} Account” means a user-accessible account offered via the {{ config('app.name') }} services where Digital Assets are stored.</p>
-		<p>2.1.3 “We,” and “Us” refers to {{ config('app.name') }}.</p>
+		<p>2.1.2 “QuantumExtrade Account” means a user-accessible account offered via the QuantumExtrade services where Digital Assets are stored.</p>
+		<p>2.1.3 “We,” and “Us” refers to QuantumExtrade.</p>
 		<p>2.1.4 “Personal Information” or “Personal Data” or “your data” refers to any information relating to you, as an identified or identifiable natural person, including your name, an identification number, location data, or an online identifier or to one or more factors specific to the physical, economic, cultural or social identity of you as a natural person.</p>
 		<h2>Your Data Controller</h2>
 		<p>We are responsible for the collection, use, disclosure, retention and protection of your personal information in accordance with our global privacy standards, this Privacy Notice, as well as any applicable national laws. We use encryption to protect your information and store decryption keys in separate systems. We process and retain your personal information on our servers in multiple data center locations, including the European Union, Japan, Singapore, the United States of America and elsewhere in the world.</p>
@@ -481,41 +489,24 @@ $(document).ready(function(){
 <footer>
 	<div class="container">
     @include('frontpage.partials.logo', ['class' => 'wow slideInLeft d-inline-block', 'height' => '44px'])<br />
-    <div class="row mt-4 mb-5 wow slideInLeft">
-      <div class="col-6 col-md-3 mb-3">
-        <h5 class="font-weight-bold text-white mb-3">Products</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Spot Trading</a></li>
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Margin Trading</a></li>
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Bot Trading</a></li>
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Copy Trading</a></li>
-        </ul>
-      </div>
-      <div class="col-6 col-md-3 mb-3">
-        <h5 class="font-weight-bold text-white mb-3">Markets</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ url("/forex") }}" class="text-light">Forex</a></li>
-          <li><a href="{{ url("/crypto") }}" class="text-light">Crypto</a></li>
-          <li><a href="{{ url("/stocks") }}" class="text-light">Stocks</a></li>
-        </ul>
-      </div>
-      <div class="col-6 col-md-3 mb-3">
-        <h5 class="font-weight-bold text-white mb-3">Company</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ url("/about") }}" class="text-light">About us</a></li>
-          <li><a href="{{ url("/privacy-policy") }}" class="text-light">Privacy</a></li>
-          <li><a href="{{ url("/rules") }}" class="text-light">Terms of service</a></li>
-        </ul>
-      </div>
-    </div>
+    <p class="mt-3 mb-5 wow slideInLeft d-flex flex-wrap wow slideInLeft">
+      <a href="{{ url("/about") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">About us</a>
+      <a href="{{ url("/privacy-policy") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Privacy</a>
+      <a href="{{ url("/rules") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Terms of service</a>
+      <a href="{{ url("/forex") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Forex</a>
+      <a href="{{ url("/crypto") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Crypto</a>
+      <a href="{{ url("/stocks") }}" class="font-weight-bold col-6 pl-3 py-2 col-md mr-auto">Stocks</a>
+    </p>
    <div class='wow slideInUp'>
-    <p>Trading carries substantial risk. You may lose more than your initial investment. Before trading, please read the relevant risk disclosure statements.</p>
+    <p>The risk of loss in online trading of stocks, options, futures, currencies, foreign equities, and fixed Income can be substantial.</p>
+    <p>Before trading, clients must read the relevant risk disclosure statements on our Warnings and Disclosures page. Trading on margin is only for experienced investors with high risk tolerance. You may lose more than your initial investment. For additional information about rates on margin loans, please see Margin Loan Rates. Security futures involve a high degree of risk and are not suitable for all investors. The amount you may lose may be greater than your initial investment.</p>
+    <p>For trading security futures, read the Security Futures Risk Disclosure Statement. Structured products and fixed income products such as bonds are complex products that are more risky and are not suitable for all investors. Before trading, please read the Risk Warning and Disclosure Statement.</p>
     <hr class="my-3 my-md-5" style="border-color: rgba(255, 255, 255, 0.2) !important">
 </div>
     <div class="gtranslate_wrapper mx-auto d-flex justify-content-center"></div>
 <script>window.gtranslateSettings = {"default_language":"en","detect_browser_language":true,"wrapper_selector":".gtranslate_wrapper","flag_size":24,"switcher_horizontal_position":"inline","alt_flags":{"en":"usa"}}</script>
 <script src="https://cdn.gtranslate.net/widgets/latest/dwf.js" defer></script>
-    <p class="mb-0 mt-md-4 wow slideInLeft text-uppercase" >© 2016 - 2026 {{ config('app.name') }}. All rights reserved.</p>
+    <p class="mb-0 mt-md-4 wow slideInLeft text-uppercase" >© 2016 - 2026 QuantumExtrade. All rights reserved.</p>
   </div>
 
 </footer>

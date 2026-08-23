@@ -38,7 +38,7 @@
 <link href="css/animate.css" rel="stylesheet" />
 <link rel="stylesheet" href="css/intlTelInput.css">
 
-<title>{{ config('app.name') }}</title>
+<title>QuantumExtrade</title>
 <link rel="manifest" href="js/manifest.json">
 <meta name="theme-color" content="#0C0F19">
 <meta name="msapplication-navbutton-color" content="#0C0F19">
@@ -54,12 +54,12 @@
 <link href="{{ asset("favicon.ico") }}" rel="icon" type="image/x-icon" />
 <link rel="icon" sizes="192x192" href="{{ asset("frontpage/images/logo.png") }}">
 
-<meta name="keywords" content="{{ config('app.name') }}, Options, Crypto" />
+<meta name="keywords" content="QuantumExtrade, Options, Crypto" />
 <meta property="og:image" content="images/logo.png" />
-<meta property="og:site_name" content="{{ config('app.name') }}">
-<meta property="og:title" content="Crypto Trading With {{ config('app.name') }}" />
-<meta name="description" content="Crypto Trading With {{ config('app.name') }}, is totally different from its competitors trying to achieve something special starting with the...">
-<meta property="og:description" content="Crypto Trading With {{ config('app.name') }}, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:site_name" content="QuantumExtrade">
+<meta property="og:title" content="Crypto Trading With QuantumExtrade" />
+<meta name="description" content="Crypto Trading With QuantumExtrade, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:description" content="Crypto Trading With QuantumExtrade, is totally different from its competitors trying to achieve something special starting with the...">
 <meta property="og:type" content="website" />
 
 <script src="js/bootstrap-select.js"></script>
@@ -125,11 +125,15 @@ border-color:#1d4ed8 !important;
           <div class="dropdown">
             <a href="#" class="nav-link d-flex justify-content-between" data-toggle="dropdown">Products</a>
             <div class="dropdown-menu p-3">
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Spot</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Margin</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Bot Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Copy Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">AI Traders</a>
+              <a class="dropdown-item px-2 d-flex py-3 " href="{{ url("/copy") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/magic.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Copy Trading</h5>
+                  <p class="mb-0">Experience the power of social trading</p>
+                </div>
+              </a>
             </div>
           </div>
         </li>
@@ -303,11 +307,15 @@ $(document).ready(function(){
           <div class="dropdown">
             <a href="#" class="nav-link" data-toggle="dropdown">Products</a>
             <div class="dropdown-menu dropdown-menu-right p-3">
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Spot</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Margin</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Bot Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Copy Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">AI Traders</a>
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/copy") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/magic.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Copy Trading</h5>
+                  <p class="mb-0">Experience the power of social trading</p>
+                </div>
+              </a>
             </div>
           </div>
         </li>
@@ -393,7 +401,7 @@ $(document).ready(function(){
 <div class="container py-5 text-container">
 		<h5>Crypto Trading</h5>
 		<h1 class="mb-4 text-white">Trade cryptocurrencies on our platform</h1>
-		<p> {{ config('app.name') }} is excited to announce the launch of our new cryptocurrency trading platform. Now you can start trading Bitcoin, Ethereum and many more cryptocurrencies quickly, easily and safely from wherever you are — in just seconds. You get great margin trading leverage and short sell options with fast deposits and withdrawals. Our support team is available 24/7/365 to help get you trading on our CySEC-regulated platform with a trading volume of US $11 billion monthly.</p>
+		<p> QuantumExtrade is excited to announce the launch of our new cryptocurrency trading platform. Now you can start trading Bitcoin, Ethereum and many more cryptocurrencies quickly, easily and safely from wherever you are — in just seconds. You get great margin trading leverage and short sell options with fast deposits and withdrawals. Our support team is available 24/7/365 to help get you trading on our CySEC-regulated platform with a trading volume of US $11 billion monthly.</p>
 		<h3>What is a crypto currency</h3>
 		<p>A cryptocurrency like bitcoin is a virtual currency traded peer-to-peer on a blockchain, independent of centralized authorities like banks and governments. Cryptocurrencies are entirely virtual, so they are not backed by physical commodities and have no intrinsic value.</p>
 		<h3>How Do Cryptocurrencies Work?</h3>
@@ -404,41 +412,24 @@ $(document).ready(function(){
 <footer>
 	<div class="container">
     @include('frontpage.partials.logo', ['class' => 'wow slideInLeft d-inline-block', 'height' => '44px'])<br />
-    <div class="row mt-4 mb-5 wow slideInLeft">
-      <div class="col-6 col-md-3 mb-3">
-        <h5 class="font-weight-bold text-white mb-3">Products</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Spot Trading</a></li>
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Margin Trading</a></li>
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Bot Trading</a></li>
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Copy Trading</a></li>
-        </ul>
-      </div>
-      <div class="col-6 col-md-3 mb-3">
-        <h5 class="font-weight-bold text-white mb-3">Markets</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ url("/forex") }}" class="text-light">Forex</a></li>
-          <li><a href="{{ url("/crypto") }}" class="text-light">Crypto</a></li>
-          <li><a href="{{ url("/stocks") }}" class="text-light">Stocks</a></li>
-        </ul>
-      </div>
-      <div class="col-6 col-md-3 mb-3">
-        <h5 class="font-weight-bold text-white mb-3">Company</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ url("/about") }}" class="text-light">About us</a></li>
-          <li><a href="{{ url("/privacy-policy") }}" class="text-light">Privacy</a></li>
-          <li><a href="{{ url("/rules") }}" class="text-light">Terms of service</a></li>
-        </ul>
-      </div>
-    </div>
+    <p class="mt-3 mb-5 wow slideInLeft d-flex flex-wrap wow slideInLeft">
+      <a href="{{ url("/about") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">About us</a>
+      <a href="{{ url("/privacy-policy") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Privacy</a>
+      <a href="{{ url("/rules") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Terms of service</a>
+      <a href="{{ url("/forex") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Forex</a>
+      <a href="{{ url("/crypto") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Crypto</a>
+      <a href="{{ url("/stocks") }}" class="font-weight-bold col-6 pl-3 py-2 col-md mr-auto">Stocks</a>
+    </p>
    <div class='wow slideInUp'>
-    <p>Trading carries substantial risk. You may lose more than your initial investment. Before trading, please read the relevant risk disclosure statements.</p>
+    <p>The risk of loss in online trading of stocks, options, futures, currencies, foreign equities, and fixed Income can be substantial.</p>
+    <p>Before trading, clients must read the relevant risk disclosure statements on our Warnings and Disclosures page. Trading on margin is only for experienced investors with high risk tolerance. You may lose more than your initial investment. For additional information about rates on margin loans, please see Margin Loan Rates. Security futures involve a high degree of risk and are not suitable for all investors. The amount you may lose may be greater than your initial investment.</p>
+    <p>For trading security futures, read the Security Futures Risk Disclosure Statement. Structured products and fixed income products such as bonds are complex products that are more risky and are not suitable for all investors. Before trading, please read the Risk Warning and Disclosure Statement.</p>
     <hr class="my-3 my-md-5" style="border-color: rgba(255, 255, 255, 0.2) !important">
 </div>
     <div class="gtranslate_wrapper mx-auto d-flex justify-content-center"></div>
 <script>window.gtranslateSettings = {"default_language":"en","detect_browser_language":true,"wrapper_selector":".gtranslate_wrapper","flag_size":24,"switcher_horizontal_position":"inline","alt_flags":{"en":"usa"}}</script>
 <script src="https://cdn.gtranslate.net/widgets/latest/dwf.js" defer></script>
-    <p class="mb-0 mt-md-4 wow slideInLeft text-uppercase" >© 2016 - 2026 {{ config('app.name') }}. All rights reserved.</p>
+    <p class="mb-0 mt-md-4 wow slideInLeft text-uppercase" >© 2016 - 2026 QuantumExtrade. All rights reserved.</p>
   </div>
 
 </footer>

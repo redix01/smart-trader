@@ -38,7 +38,7 @@
 <link href="css/animate.css" rel="stylesheet" />
 <link rel="stylesheet" href="css/intlTelInput.css">
 
-<title>{{ config('app.name') }}</title>
+<title>QuantumExtrade</title>
 <link rel="manifest" href="js/manifest.json">
 <meta name="theme-color" content="#0C0F19">
 <meta name="msapplication-navbutton-color" content="#0C0F19">
@@ -54,12 +54,12 @@
 <link href="{{ asset("favicon.ico") }}" rel="icon" type="image/x-icon" />
 <link rel="icon" sizes="192x192" href="{{ asset("frontpage/images/logo.png") }}">
 
-<meta name="keywords" content="{{ config('app.name') }}, Options, Crypto" />
+<meta name="keywords" content="QuantumExtrade, Options, Crypto" />
 <meta property="og:image" content="images/logo.png" />
-<meta property="og:site_name" content="{{ config('app.name') }}">
-<meta property="og:title" content="Crypto Trading With {{ config('app.name') }}" />
-<meta name="description" content="Crypto Trading With {{ config('app.name') }}, is totally different from its competitors trying to achieve something special starting with the...">
-<meta property="og:description" content="Crypto Trading With {{ config('app.name') }}, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:site_name" content="QuantumExtrade">
+<meta property="og:title" content="Crypto Trading With QuantumExtrade" />
+<meta name="description" content="Crypto Trading With QuantumExtrade, is totally different from its competitors trying to achieve something special starting with the...">
+<meta property="og:description" content="Crypto Trading With QuantumExtrade, is totally different from its competitors trying to achieve something special starting with the...">
 <meta property="og:type" content="website" />
 
 <script src="js/bootstrap-select.js"></script>
@@ -125,11 +125,15 @@ border-color:#1d4ed8 !important;
           <div class="dropdown">
             <a href="#" class="nav-link d-flex justify-content-between" data-toggle="dropdown">Products</a>
             <div class="dropdown-menu p-3">
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Spot</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Margin</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Bot Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Copy Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">AI Traders</a>
+              <a class="dropdown-item px-2 d-flex py-3 " href="{{ url("/copy") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/magic.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Copy Trading</h5>
+                  <p class="mb-0">Experience the power of social trading</p>
+                </div>
+              </a>
             </div>
           </div>
         </li>
@@ -303,11 +307,15 @@ $(document).ready(function(){
           <div class="dropdown">
             <a href="#" class="nav-link" data-toggle="dropdown">Products</a>
             <div class="dropdown-menu dropdown-menu-right p-3">
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Spot</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Margin</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Bot Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Copy Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">AI Traders</a>
+              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/copy") }}">
+                <div class="mx-2" style="flex: 0 0 30px">
+                  <img src="images/magic.svg" alt="">
+                </div>
+                <div class="pr-2">
+                  <h5>Copy Trading</h5>
+                  <p class="mb-0">Experience the power of social trading</p>
+                </div>
+              </a>
             </div>
           </div>
         </li>
@@ -393,7 +401,7 @@ $(document).ready(function(){
 <div class="container py-5 text-container">
 		<h5>Terms of Service</h5>
 		<h1 class="mb-4 text-white">Our terms of fair usage and service</h1>
-		<p>This Agreement is entered into by and these Terms &amp; Conditions (hereinafter referred to as the “Agreement”) shall regulate the relationship between {{ config('app.name') }} LTD, (hereinafter referred to as the “Company”), and the user (a natural or legal entity) (hereinafter referred to as the “Client”) of {{ config('app.name') }} (hereinafter referred as the “Website”). The Client confirms that he/she has read, understood and accepted all information, conditions and terms set out on the Website which are open to be reviewed and can be examined by the public and which include important legal Information. By accepting this Agreement, the Client agrees and irrevocably accepts the terms and conditions contained in this Agreement, its annexes and/or appendices as well as other documentation/information published on the Website, including without limitation to the Privacy Policy, Payment Policy, Withdrawal Policy, Code of Conduct, Order Execution Policy and Anti-Money Laundering Policy. The Client accepts this Agreement by registering an Account on the Website and depositing funds. By accepting the Agreement, and subject to the Company’s final approval, the Client enters into a legal and binding agreement with the Company. The terms of this Agreement shall be considered accepted unconditionally by the Client upon the Company’s receipt of an advance payment made by the Client. As soon as the Company receives the Client's advance payment, every operation made by the Client on the Trading Platform shall be subject to the terms of this Agreement and other documentation/information on the Website. The Client hereby acknowledges that each and any Operation, activity, transaction, order and/or communication performed by him/her on the Trading Platform, including without limitation through the Account, and the Website, shall be governed by and/or must be executed in accordance with the terms and conditions of this Agreement and other documentation/information on the Website. By accepting this current agreement, the Client confirms that he/she is able to receive information, including amendments to the present Agreement either via email or through the Website. A client that is a legal entity can register with the Company not through the Website but by sending an email with its request to . All terms and and conditions contained herein, including without limitation to 1 to 5 above, shall at all times be applicable to the Legal Entity and the latter shall conform with such terms and conditions, obligations and rights at all times.</p>
+		<p>This Agreement is entered into by and these Terms &amp; Conditions (hereinafter referred to as the “Agreement”) shall regulate the relationship between QuantumExtrade LTD, (hereinafter referred to as the “Company”), and the user (a natural or legal entity) (hereinafter referred to as the “Client”) of QuantumExtrade (hereinafter referred as the “Website”). The Client confirms that he/she has read, understood and accepted all information, conditions and terms set out on the Website which are open to be reviewed and can be examined by the public and which include important legal Information. By accepting this Agreement, the Client agrees and irrevocably accepts the terms and conditions contained in this Agreement, its annexes and/or appendices as well as other documentation/information published on the Website, including without limitation to the Privacy Policy, Payment Policy, Withdrawal Policy, Code of Conduct, Order Execution Policy and Anti-Money Laundering Policy. The Client accepts this Agreement by registering an Account on the Website and depositing funds. By accepting the Agreement, and subject to the Company’s final approval, the Client enters into a legal and binding agreement with the Company. The terms of this Agreement shall be considered accepted unconditionally by the Client upon the Company’s receipt of an advance payment made by the Client. As soon as the Company receives the Client's advance payment, every operation made by the Client on the Trading Platform shall be subject to the terms of this Agreement and other documentation/information on the Website. The Client hereby acknowledges that each and any Operation, activity, transaction, order and/or communication performed by him/her on the Trading Platform, including without limitation through the Account, and the Website, shall be governed by and/or must be executed in accordance with the terms and conditions of this Agreement and other documentation/information on the Website. By accepting this current agreement, the Client confirms that he/she is able to receive information, including amendments to the present Agreement either via email or through the Website. A client that is a legal entity can register with the Company not through the Website but by sending an email with its request to . All terms and and conditions contained herein, including without limitation to 1 to 5 above, shall at all times be applicable to the Legal Entity and the latter shall conform with such terms and conditions, obligations and rights at all times.</p>
 		<h3>Terms</h3>
 		<p>Account – means a unique personified account registered in the name of the Client and which contains all of the Client’s transactions/ operations on the Trading Platform (as defined below) of the Company. Ask - means the higher price in a quote. The price the Client may buy at. Bid - means the lower price in a quote. The price the Client may sell at. CFD (contract for difference) - means a tradeable contract entered into between the Client and the Company, who exchange the difference in the value of an Instrument, as specified on the Trading Platform at the time of opening a Transaction, and the value of that Instrument at the contract’s end. Digital Option Contract - means a type of derivative instrument where the Client earns a payout if they correctly predict the price movement of the underlying asset at the time of the option’s expiry. The prediction can be made as to whether the value of the underlying asset will fall above or below the strike price at time of expiration. Should the option expire at the selected strike price, it will be considered to expire out-of-the money and will result in the loss of the invested amount. Execution - means the execution of Client order(s) by the Company acting as the Client's counterparty as per the terms of the present agreement. Financial Instruments - means the Financial Instruments as per paragraph 2.4 below that are available on the Company’s Trading Platform. KYC documents - means the documents to be provided by the Client, including without limitation to the a copy of the passport or ID and utility bill of the Client, in case it is a natural person and/or certificates showing the management and ownership going all the way up to the ultimate beneficial owner, in case it is a legal entity, and any other documents the Company may request upon its sole discretion Market - means the market on which the Financial Instruments are subject to and/or traded on, whether this market is organized / regulated or not and whether it is in St. Vincent and the Grenadines or abroad. Market Maker - means a company which provides BID and ASK prices for financial instruments. Operations – means actions performed at the Client’s Account, following an order placed by the Client,, connected with but not limited to crediting of funds, return of funds, opening and closing of trade transactions/positions and/or that relate to financial instruments. Prices - means the prices offered to the Client for each transaction which may be changed without prior notice. Where this is relevant, the “Prices” given through the Trading Platform include the Spread (see definition below). Services – means the services described in section 3 of this Agreement. Spread - means the difference between the purchase price Ask (rate) and the sale price Bid (rate) at the same moment. For avoidance of doubt, a predefined spread is for the purposes of this Agreement assimilated commission. Trading Platform - means an electronic system on the internet that consists of all programs and technology that present quotes in real-time, allow the placement/modification/deletion of orders and calculate all mutual obligations of the Client and the Company.</p>
 		<h3>Subject of the Agreement</h3>
@@ -447,41 +455,24 @@ $(document).ready(function(){
 <footer>
 	<div class="container">
     @include('frontpage.partials.logo', ['class' => 'wow slideInLeft d-inline-block', 'height' => '44px'])<br />
-    <div class="row mt-4 mb-5 wow slideInLeft">
-      <div class="col-6 col-md-3 mb-3">
-        <h5 class="font-weight-bold text-white mb-3">Products</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Spot Trading</a></li>
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Margin Trading</a></li>
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Bot Trading</a></li>
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Copy Trading</a></li>
-        </ul>
-      </div>
-      <div class="col-6 col-md-3 mb-3">
-        <h5 class="font-weight-bold text-white mb-3">Markets</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ url("/forex") }}" class="text-light">Forex</a></li>
-          <li><a href="{{ url("/crypto") }}" class="text-light">Crypto</a></li>
-          <li><a href="{{ url("/stocks") }}" class="text-light">Stocks</a></li>
-        </ul>
-      </div>
-      <div class="col-6 col-md-3 mb-3">
-        <h5 class="font-weight-bold text-white mb-3">Company</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ url("/about") }}" class="text-light">About us</a></li>
-          <li><a href="{{ url("/privacy-policy") }}" class="text-light">Privacy</a></li>
-          <li><a href="{{ url("/rules") }}" class="text-light">Terms of service</a></li>
-        </ul>
-      </div>
-    </div>
+    <p class="mt-3 mb-5 wow slideInLeft d-flex flex-wrap wow slideInLeft">
+      <a href="{{ url("/about") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">About us</a>
+      <a href="{{ url("/privacy-policy") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Privacy</a>
+      <a href="{{ url("/rules") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Terms of service</a>
+      <a href="{{ url("/forex") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Forex</a>
+      <a href="{{ url("/crypto") }}" class="font-weight-bold col-6 pl-3 py-2 col-md">Crypto</a>
+      <a href="{{ url("/stocks") }}" class="font-weight-bold col-6 pl-3 py-2 col-md mr-auto">Stocks</a>
+    </p>
    <div class='wow slideInUp'>
-    <p>Trading carries substantial risk. You may lose more than your initial investment. Before trading, please read the relevant risk disclosure statements.</p>
+    <p>The risk of loss in online trading of stocks, options, futures, currencies, foreign equities, and fixed Income can be substantial.</p>
+    <p>Before trading, clients must read the relevant risk disclosure statements on our Warnings and Disclosures page. Trading on margin is only for experienced investors with high risk tolerance. You may lose more than your initial investment. For additional information about rates on margin loans, please see Margin Loan Rates. Security futures involve a high degree of risk and are not suitable for all investors. The amount you may lose may be greater than your initial investment.</p>
+    <p>For trading security futures, read the Security Futures Risk Disclosure Statement. Structured products and fixed income products such as bonds are complex products that are more risky and are not suitable for all investors. Before trading, please read the Risk Warning and Disclosure Statement.</p>
     <hr class="my-3 my-md-5" style="border-color: rgba(255, 255, 255, 0.2) !important">
 </div>
     <div class="gtranslate_wrapper mx-auto d-flex justify-content-center"></div>
 <script>window.gtranslateSettings = {"default_language":"en","detect_browser_language":true,"wrapper_selector":".gtranslate_wrapper","flag_size":24,"switcher_horizontal_position":"inline","alt_flags":{"en":"usa"}}</script>
 <script src="https://cdn.gtranslate.net/widgets/latest/dwf.js" defer></script>
-    <p class="mb-0 mt-md-4 wow slideInLeft text-uppercase" >© 2016 - 2026 {{ config('app.name') }}. All rights reserved.</p>
+    <p class="mb-0 mt-md-4 wow slideInLeft text-uppercase" >© 2016 - 2026 QuantumExtrade. All rights reserved.</p>
   </div>
 
 </footer>
