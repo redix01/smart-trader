@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 120" role="img" aria-label="Fortis Marketpro">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 120" role="img" aria-label="Tradecora">
   <defs>
     <linearGradient id="fmp-mark-grad" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#3b82f6"/>
@@ -6,7 +6,7 @@
     </linearGradient>
   </defs>
 
-  <!-- Icon: shield (Fortis = strength) with an ascending market chevron -->
+  <!-- Icon: shield (strength) with an ascending market chevron -->
   <g transform="translate(4,4)">
     <path d="M56 2 L106 20 V56 C106 90 84 106 56 116 C28 106 6 90 6 56 V20 Z"
           fill="url(#fmp-mark-grad)"/>
@@ -19,6 +19,6 @@
 
   <!-- Wordmark -->
   <text x="132" y="72" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="800" letter-spacing="0.2">
-    <tspan fill="#ffffff">Fortis </tspan><tspan fill="#3b82f6">Marketpro</tspan>
+    <tspan fill="#ffffff">Trade</tspan><tspan fill="#3b82f6">cora</tspan>
   </text>
 </svg>

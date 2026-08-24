@@ -251,12 +251,12 @@ class NotificationController extends Controller
 
     protected function getSenderOptions(): array
     {
-        $defaultFrom = config('mail.from.address', 'support@fortismarketpro.com');
+        $defaultFrom = config('mail.from.address', 'support@tradecora.com');
         $defaultDomain = Str::after($defaultFrom, '@');
 
         if (!$defaultDomain || $defaultDomain === $defaultFrom) {
             $appHost = parse_url(config('app.url'), PHP_URL_HOST);
-            $defaultDomain = $appHost ?: 'fortismarketpro.com';
+            $defaultDomain = $appHost ?: 'tradecora.com';
         }
 
         return [
