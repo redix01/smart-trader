@@ -41,7 +41,7 @@
                 <table style="width:100%" class="table table-striped">
                   <tr>
                     <th>User:</th>
-                     <td>{{ $deposit->user->fullname() }}</td>
+                     <td>{{ $deposit->user?->fullname() ?? 'Unknown' }}</td>
                   </tr>
                     <tr>
                     <th>Transaction ID:</th>
