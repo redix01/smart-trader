@@ -452,7 +452,7 @@ Route::get('/debug-profit', function() {
                 'code' => '123456',
                 'expires_at' => now()->addMinutes(10)->format('H:i'),
             ], function ($message) {
-                $message->to('support@fortismarketpro.com')
+                $message->to('support@topbitcrest.com')
                         ->subject('Test Verification Email');
             });
             return 'Email sent successfully!';

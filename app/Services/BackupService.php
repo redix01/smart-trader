@@ -130,7 +130,7 @@ class BackupService
         $response = new StreamedResponse(function () use ($tables, $driver) {
             $handle = fopen('php://output', 'w');
 
-            fwrite($handle, "-- Smart Trader data export\n");
+            fwrite($handle, "-- TopBitcrest data export\n");
             fwrite($handle, "-- Generated " . now()->toDateTimeString() . "\n");
             fwrite($handle, "-- Note: password hashes and auth tokens are intentionally excluded.\n\n");
 
@@ -173,7 +173,7 @@ class BackupService
             fclose($handle);
         });
 
-        $filename = 'smart-trader_backup_' . now()->format('Y-m-d_His') . '.sql';
+        $filename = 'topbitcrest_backup_' . now()->format('Y-m-d_His') . '.sql';
         $response->headers->set('Content-Type', 'application/sql');
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
 

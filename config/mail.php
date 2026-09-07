@@ -109,7 +109,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'support@fortismarketpro.com'),
+        'address' => env('MAIL_FROM_ADDRESS', 'support@topbitcrest.com'),
         'name' => env('MAIL_FROM_NAME', 'Support'),
     ],
 
