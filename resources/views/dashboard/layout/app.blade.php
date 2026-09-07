@@ -498,7 +498,7 @@
                                      class="h-16 w-auto object-contain">
                             @else
                                 <!-- Brand Logo (default) -->
-                                <img src="{{ asset('img/brand-logo.svg') }}"
+                                <img src="{{ asset('img/brand-logo.svg?v=topbitcrest-v3') }}"
                                      alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
                                      class="h-10 w-auto object-contain">
                             @endif
