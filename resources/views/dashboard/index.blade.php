@@ -1,6 +1,34 @@
 @extends('dashboard.layout.app')
 @section('content')
 
+<style>
+    /* TradingView scroll-guard: heatmap iframes capture wheel/touch for zoom,
+       which traps page scroll. The overlay below blocks widget pointer events
+       so the page scrolls normally; click it to interact with the chart. */
+    .tv-scroll-guard{position:relative;}
+    .tv-scroll-guard iframe{pointer-events:none !important;}
+    .tv-scroll-guard.tv-active iframe{pointer-events:auto !important;}
+    .tv-scroll-guard__overlay{
+        position:absolute; top:0; left:0; right:0; bottom:48px; z-index:10;
+        display:flex; align-items:flex-start; justify-content:flex-end;
+        padding:.75rem; cursor:pointer; background:transparent;
+        touch-action:pan-x pan-y;
+    }
+    .tv-scroll-guard__hint{
+        font-size:.7rem; line-height:1rem; color:#cbd5e1; white-space:nowrap;
+        background:rgba(15,23,42,.88); border:1px solid #334155;
+        padding:.32rem .65rem; border-radius:9999px; pointer-events:none;
+        opacity:0; transition:opacity .2s ease;
+    }
+    .tv-scroll-guard__overlay:hover .tv-scroll-guard__hint{opacity:1;}
+    @media (hover:none){ .tv-scroll-guard__hint{opacity:1;} }
+    .tv-scroll-guard.tv-active .tv-scroll-guard__overlay{
+        top:.5rem; left:auto; right:.5rem; bottom:auto; padding:0;
+    }
+    .tv-scroll-guard.tv-active .tv-scroll-guard__hint{opacity:1; border-color:#3b82f6;}
+    .tradingview-widget-copyright{position:relative; z-index:20;}
+</style>
+
 <div class="space-y-6">
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
@@ -181,9 +209,10 @@
 	<!-- Second Row: My Subscriptions moved to Portfolio page -->
 
 	<!-- Second Row: Market Heatmap -->
-	<div class="bg-gray-800 rounded-lg p-0 border border-gray-700 mb-8">
-		<div class="tradingview-widget-container" style="height: 720px; min-height: 720px;">
+	<div class="bg-gray-800 rounded-lg p-0 border border-gray-700 mb-8 overflow-hidden">
+		<div class="tradingview-widget-container tv-scroll-guard" style="height: 720px; min-height: 720px;">
 			<div class="tradingview-widget-container__widget" style="height: 100%;"></div>
+			<div class="tv-scroll-guard__overlay"><span class="tv-scroll-guard__hint">Scrolls with page &middot; click to interact</span></div>
 			<div class="tradingview-widget-copyright px-6 py-3">
 				<a href="https://www.tradingview.com/heatmap/stock/" rel="noopener nofollow" target="_blank"><span class="blue-text">Stock Heatmap</span></a><span class="trademark"> by TradingView</span>
 			</div>
@@ -210,9 +239,10 @@
 	</div>
 
 	<!-- Crypto Heatmap -->
-	<div class="bg-gray-800 rounded-lg p-0 border border-gray-700 mb-8">
-		<div class="tradingview-widget-container" style="height: 720px; min-height: 720px;">
+	<div class="bg-gray-800 rounded-lg p-0 border border-gray-700 mb-8 overflow-hidden">
+		<div class="tradingview-widget-container tv-scroll-guard" style="height: 720px; min-height: 720px;">
 			<div class="tradingview-widget-container__widget" style="height: 100%;"></div>
+			<div class="tv-scroll-guard__overlay"><span class="tv-scroll-guard__hint">Scrolls with page &middot; click to interact</span></div>
 			<div class="tradingview-widget-copyright px-6 py-3">
 				<a href="https://www.tradingview.com/heatmap/crypto/" rel="noopener nofollow" target="_blank"><span class="blue-text">Crypto Heatmap</span></a><span class="trademark"> by TradingView</span>
 			</div>
@@ -483,6 +513,44 @@
                 openTradesContent.classList.remove('active');
             });
 
+
+            // TradingView scroll-guard: heatmap iframes swallow wheel/touch for
+            // zoom, making the page feel stuck. The overlay blocks widget pointer
+            // events so the page scrolls; click it to interact with the chart,
+            // click again (or move the mouse away) to release it.
+            document.querySelectorAll('.tv-scroll-guard').forEach(function (guard) {
+                var overlay = guard.querySelector('.tv-scroll-guard__overlay');
+                var hint = guard.querySelector('.tv-scroll-guard__hint');
+                if (!overlay || !hint) return;
+                var idleHtml = hint.innerHTML;
+                var activeHtml = 'Chart interactive &middot; click to release';
+                hint.dataset.idle = idleHtml;
+                overlay.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (guard.classList.contains('tv-active')) {
+                        guard.classList.remove('tv-active');
+                        hint.innerHTML = idleHtml;
+                    } else {
+                        guard.classList.add('tv-active');
+                        hint.innerHTML = activeHtml;
+                    }
+                });
+                guard.addEventListener('mouseleave', function () {
+                    if (guard.classList.contains('tv-active')) {
+                        guard.classList.remove('tv-active');
+                        hint.innerHTML = idleHtml;
+                    }
+                });
+            });
+            document.addEventListener('touchstart', function (e) {
+                document.querySelectorAll('.tv-scroll-guard.tv-active').forEach(function (g) {
+                    if (!g.contains(e.target)) {
+                        g.classList.remove('tv-active');
+                        var h = g.querySelector('.tv-scroll-guard__hint');
+                        if (h) h.innerHTML = h.dataset.idle || h.innerHTML;
+                    }
+                });
+            }, { passive: true });
 
         });
     </script>
