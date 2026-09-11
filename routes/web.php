@@ -452,7 +452,7 @@ Route::get('/debug-profit', function() {
                 'code' => '123456',
                 'expires_at' => now()->addMinutes(10)->format('H:i'),
             ], function ($message) {
-                $message->to('support@fortismarketpro.com')
+                $message->to('support@topbitcrest.com')
                         ->subject('Test Verification Email');
             });
             return 'Email sent successfully!';
@@ -499,6 +499,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::post('/impersonate/stop', [\App\Http\Controllers\Admin\ImpersonationController::class, 'stop'])->name('impersonate.stop');
     
     // Debug route for deposit issues (only in debug mode)
     if (config('app.debug')) {

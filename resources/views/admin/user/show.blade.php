@@ -417,7 +417,16 @@
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
                 <div class="space-y-3">
-                    <a href="{{ route('admin.transactions.deposits') }}?user={{ $user->id }}" 
+                    @if(!$user->IsAdmin())
+                    <form action="{{ route('admin.user.impersonate', $user->id) }}" method="POST" target="_blank">
+                        @csrf
+                        <button type="submit"
+                            class="block w-full text-center bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                            Login as User
+                        </button>
+                    </form>
+                    @endif
+                    <a href="{{ route('admin.transactions.deposits') }}?user={{ $user->id }}"
                         class="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
                         View Deposits
                     </a>

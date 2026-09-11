@@ -36,7 +36,7 @@ class RegistrationTest extends TestCase
             ->post('/register', [
                 'name' => 'Test User',
                 'username' => 'testuser',
-                'email' => 'test@fortismarketpro.com',
+                'email' => 'test@topbitcrest.com',
                 'phone' => '+1234567890',
                 'country' => 'United States',
                 'currency' => 'USD',

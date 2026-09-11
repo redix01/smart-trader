@@ -26,7 +26,7 @@
                      alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
                      class="h-16 w-auto object-contain mx-auto">
             @else
-                <img src="{{ asset('img/brand-logo.svg') }}"
+                <img src="{{ asset('img/brand-logo.svg?v=topbitcrest-v3') }}"
                      alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
                      class="h-14 w-auto object-contain mx-auto">
             @endif
