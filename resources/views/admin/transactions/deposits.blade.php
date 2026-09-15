@@ -377,7 +377,7 @@
             'Delete',
             'bg-red-600 hover:bg-red-700',
             () => {
-                // Create form to submit delete request
+                // Create form to submit delete request (route expects DELETE, spoof via _method)
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = `/admin/deposit/${depositId}/delete`;
@@ -387,6 +387,12 @@
                 csrfToken.name = '_token';
                 csrfToken.value = '{{ csrf_token() }}';
                 form.appendChild(csrfToken);
+
+                const methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = '_method';
+                methodInput.value = 'DELETE';
+                form.appendChild(methodInput);
                 
                 document.body.appendChild(form);
                 form.submit();
