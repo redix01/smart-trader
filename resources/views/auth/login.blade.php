@@ -23,6 +23,7 @@
     <div class="w-full max-w-md">
         <!-- Logo Section -->
         <div class="text-center mb-8">
+            <a href="{{ route('index') }}" class="inline-block" aria-label="Back to Home">
             @if(\App\Helpers\WebsiteSettingsHelper::hasTextLogo())
                 <h1 class="text-2xl font-bold text-white">{{ \App\Helpers\WebsiteSettingsHelper::getTextLogo() }}</h1>
             @elseif(\App\Helpers\WebsiteSettingsHelper::hasImageLogo())
@@ -34,6 +35,7 @@
                      alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
                      class="h-14 w-auto object-contain mx-auto">
             @endif
+            </a>
     </div>
 
         <!-- Login Form Card -->

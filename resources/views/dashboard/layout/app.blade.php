@@ -486,6 +486,7 @@
                             </svg>
                         </button>
                         <div class="flex items-center">
+                            <a href="{{ route('index') }}" class="flex items-center" aria-label="Back to Home">
                             @if(\App\Helpers\WebsiteSettingsHelper::hasTextLogo())
                                 <!-- Text Logo -->
                                 <div class="h-16 flex items-center">
@@ -502,6 +503,7 @@
                                      alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
                                      class="h-10 w-auto object-contain">
                             @endif
+                            </a>
                         </div>
                     </div>
                     
