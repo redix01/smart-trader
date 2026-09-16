@@ -37,7 +37,7 @@
                 <h2 class="text-center">Deposit Approval</h2>
             </div>
             <div class="card-body">
-                <p>Dear <strong>{{ $deposit->user->fullname() }}</strong>,</p>
+                <p>Dear <strong>{{ $deposit->user?->fullname() ?? 'Customer' }}</strong>,</p>
                     <p>We are pleased to inform you that your deposit has been successfully approved. Below are the details of your transaction:</p>
                 <table style="width:100%" class="table table-striped">
                   <tr>

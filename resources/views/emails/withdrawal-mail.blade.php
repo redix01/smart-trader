@@ -37,7 +37,7 @@
                 <h2 class="text-center">Withdrawal Request</h2>
             </div>
             <div class="card-body">
-                <p>Dear <strong>{{ $withdraw->user->fullname() }}</strong>,</p>
+                <p>Dear <strong>{{ $withdraw->user?->fullname() ?? 'Customer' }}</strong>,</p>
                 <p>A withdrawal request has been made on your account, if you're not the one who made this request please contact us immediately</p>
                 <strong class="mt-2">Withdrawal Details</strong>
                 <table style="width:100%" class="table table-striped">

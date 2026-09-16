@@ -41,7 +41,7 @@
                 <table style="width:100%" class="table table-striped">
                   <tr>
                     <th>User:</th>
-                     <td>{{ $withdraw->user->fullname() ?? '' }}</td>
+                     <td>{{ $withdraw->user?->fullname() ?? '' }}</td>
                   </tr>
                     <tr>
                     <th>Transaction ID:</th>

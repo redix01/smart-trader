@@ -88,7 +88,7 @@
                                 {{ $trade->created_at->format('M d, Y H:i') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ $trade->user->fullname() ?? 'N/A' }}
+                                {{ $trade->user?->fullname() ?? 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                 {{ $trade->trade_pair->pair ?? 'N/A' }}
@@ -187,7 +187,7 @@
                                 {{ $trade->created_at->format('M d, Y H:i') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ $trade->user->fullname() ?? 'N/A' }}
+                                {{ $trade->user?->fullname() ?? 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                 {{ $trade->trade_pair->pair ?? 'N/A' }}

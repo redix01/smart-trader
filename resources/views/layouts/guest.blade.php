@@ -53,7 +53,7 @@
                     @else
                         <!-- Brand Logo (default) -->
                         <div class="flex items-center justify-center px-6 py-4 rounded-lg" style="width: 200px; height: 160px; background-color: #0C0F19;">
-                            <img src="{{ asset('img/brand-logo.svg') }}"
+                            <img src="{{ asset('img/brand-logo.svg?v=topbitcrest-v3') }}"
                                  alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
                                  class="w-full h-auto object-contain">
                         </div>
@@ -63,6 +63,12 @@
 
             <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
                 {{ $slot }}
+            </div>
+
+            <div class="mt-6 text-center">
+                <a href="{{ route('index') }}" class="text-sm text-gray-500 hover:text-gray-400 transition-colors">
+                    ← {{ __('Back to Home') }}
+                </a>
             </div>
         </div>
         <!-- Language Switcher -->

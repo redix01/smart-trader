@@ -50,7 +50,7 @@
                         @if($item->status == 'closed')
                             <tr>
                                 <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">{{ $item->created_at ?? ''}}</td>
-                                <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">{{ $item->user->fullname() ?? '' }}</td>
+                                <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">{{ $item->user?->fullname() ?? '' }}</td>
                                 <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">{{ $item->trade_pair->pair ?? '' }}</td>
                                 <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">{{ $item->trade_pair->type ?? ''}}</td>
                                 <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">{{ $item->action_type ?? '' }}</td>

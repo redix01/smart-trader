@@ -18,7 +18,7 @@ class WebsiteSettingsHelper
         } else {
             // Default website settings
             $settings = [
-                'site_name' => config('app.name'),
+                'site_name' => config('app.name', 'TopBitcrest'),
                 'site_tagline' => 'Your trusted cryptocurrency trading platform',
                 'site_email' => config('mail.from.address', 'admin@' . str_replace(['http://', 'https://', 'www.'], '', config('app.url'))),
                 'site_logo' => null,
