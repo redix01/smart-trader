@@ -88,13 +88,13 @@
                                 {{ $trade->created_at->format('M d, Y H:i') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ $trade->user->fullname() ?? 'N/A' }}
+                                {{ $trade->user?->fullname() ?? 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ $trade->trade_pair->pair ?? 'N/A' }}
+                                {{ $trade->trade_pair?->pair ?? 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ $trade->trade_pair->type ?? 'N/A' }}
+                                {{ $trade->trade_pair?->type ?? 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $trade->action_type === 'buy' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -187,13 +187,13 @@
                                 {{ $trade->created_at->format('M d, Y H:i') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ $trade->user->fullname() ?? 'N/A' }}
+                                {{ $trade->user?->fullname() ?? 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ $trade->trade_pair->pair ?? 'N/A' }}
+                                {{ $trade->trade_pair?->pair ?? 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ $trade->trade_pair->type ?? 'N/A' }}
+                                {{ $trade->trade_pair?->type ?? 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $trade->action_type === 'buy' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
