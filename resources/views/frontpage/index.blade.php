@@ -427,7 +427,7 @@ $(document).ready(function(){
 		<div class="row justify-content-center">
 			<div class="col-md-6 col-12">
 				<div class="hero-text wow slideInLeft">
-					<div class="mt-4 display-4 font-bolder">All your trading essentials integrated into one app</div>
+					<div class="mt-4 display-4 font-bolder">A smarter way to trade, with every essential tool, insight, and capability unified in one seamless app</div>
 					<p class="text-lightGray leading-[180%] pt-sm text-pretty text-lg">4000+ of your favourite assets, superior charts, and advanced trading tools to help you get ahead.</p>
 					<div style="max-width: 800px" class="mx-auto">
 						<p class="wow slideInLeft my-4"> </p>
@@ -445,18 +445,16 @@ $(document).ready(function(){
 <div class='hero-image'>
 <div class="container text-center py-4 text-white">
 	<section class="py-5 wow slideInUp">
-		<h2 class='text-center text-white h2 font-bold mb-4 hyphenated'>Multiple ways to trade</h2>
-		<p class='text-center text-lightGray text-lg font-normal leading-8'>Experience trading excellence on the go, from any browser or desktop, with {{ config('app.name') }} .
-
-Trade your way, every day!</p>
-
-<div class=''>
-<video preload="auto" autoplay loop muted  playsinline webkit-playsinline x5-playsinline style="width: 100%; height: 100%;" src="medias/play_721p.mp4"></video>
-<a href="{{ route("register") }}" class="btn btn-primary mx-auto h2 px-2 mt-3">Try Now</a>
+<!-- TradingView Market Overview Widget -->
+<div style="width:100%; max-width:1100px; margin:0 auto; padding:0 16px; box-sizing:border-box;">
+<script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-market-overview.js"></script>
+<tv-market-overview theme="dark" style="width:100%; display:block; min-height:480px;" symbol-sectors='[{"sectionName":"Stocks","symbols":["NASDAQ:AAPL","NASDAQ:ADBE","NASDAQ:NVDA","NASDAQ:TSLA","NASDAQ:AMZN","NASDAQ:META","NASDAQ:AMD","NASDAQ:GOOGL"]},{"sectionName":"Crypto","symbols":["BITSTAMP:BTCUSD","BITSTAMP:ETHUSD","CRYPTO:XRPUSD","BINANCE:XRPUSDT","BINANCE:SOLUSDT","BINANCE:DOGEUSDT","BINANCE:SUIUSDT","BINANCE:ZECUSDT"]},{"sectionName":"indices","symbols":["SPCFD:SPX","CAPITALCOM:SPX500","CAPITALCOM:NAS100","IG:NASDAQ","NSE:NIFTY","INDEX:BTCUSD","FOREXCOM:GER40"]}]'></tv-market-overview>
 </div>
-<!-- TradingView Market Data Widget -->
-<script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-market-data.js"></script>
-<tv-market-data theme="dark" symbol-sectors='[{"sectionName":"Forex","symbols":["FX:EURUSD","FX:GBPUSD","FX:USDJPY","FX:USDCHF","FX:AUDUSD","FX:USDCAD"]},{"sectionName":"Cryptocurrency","symbols":["BINANCE:BTCUSDT","BINANCE:ETHUSDT","BINANCE:SOLUSDT","BINANCE:BNBUSDT","KUCOIN:HYPEUSDT","BITSTAMP:XRPUSD"]},{"sectionName":"Stocks","symbols":["NASDAQ:TSLA","NASDAQ:NVDA","NASDAQ:AAPL","NASDAQ:MU","NASDAQ:MSFT","NASDAQ:SPCX","NASDAQ:META","NASDAQ:AMZN","NASDAQ:GOOGL","NSE:TRENT"]}]'></tv-market-data>
+<style>
+@media (max-width: 768px) {
+  tv-market-overview { min-height: 560px !important; }
+}
+</style>
 
 
 
