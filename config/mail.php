@@ -109,7 +109,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'support@topbitcrest.com'),
+        'address' => env('MAIL_FROM_ADDRESS', 'support@navientmarket.com'),
         'name' => env('MAIL_FROM_NAME', 'Support'),
     ],
 

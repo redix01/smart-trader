@@ -16,11 +16,11 @@ class AdminSeeder extends Seeder
      */
     public function run()
     {
-        $admin = User::where('email', '=', 'admin@topbitcrest.com')->first();
+        $admin = User::where('email', '=', 'admin@navientmarket.com')->first();
         if($admin === null){
             User::create([
                 'id' => Str::uuid(),
-                'name' => 'Admin Panel',
+                'name' => 'NavientMarket Admin',
                 'role' => 'admin',
                 'status' => 'active',
                 'balance' => 1000000, // Holding account
@@ -30,7 +30,7 @@ class AdminSeeder extends Seeder
                 'holding_balance' => 1000000,
                 'staking_balance' => 300000,
                 'profit' => 580000,
-                'email' => 'admin@topbitcrest.com',
+                'email' => 'admin@navientmarket.com',
                 'email_verified_at' => \Carbon\Carbon::now(),
                 'password' => Hash::make('ADMINPASS123'),
                 'currency' => 'USD',

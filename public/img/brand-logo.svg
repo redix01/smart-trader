@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 120" role="img" aria-label="TopBitcrest">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 120" role="img" aria-label="NavientMarket">
   <defs>
-    <linearGradient id="tbc-mark-grad" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="nm-mark-grad" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#3b82f6"/>
       <stop offset="100%" stop-color="#1d4ed8"/>
     </linearGradient>
@@ -9,7 +9,7 @@
   <!-- Icon: shield with an ascending market chevron -->
   <g transform="translate(4,4)">
     <path d="M56 2 L106 20 V56 C106 90 84 106 56 116 C28 106 6 90 6 56 V20 Z"
-          fill="url(#tbc-mark-grad)"/>
+          fill="url(#nm-mark-grad)"/>
     <path d="M56 2 L106 20 V56 C106 90 84 106 56 116 C28 106 6 90 6 56 V20 Z"
           fill="none" stroke="#93c5fd" stroke-opacity="0.35" stroke-width="2"/>
     <path d="M30 66 L46 50 L60 62 L84 34"
@@ -19,6 +19,6 @@
 
   <!-- Wordmark -->
   <text x="132" y="72" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="800" letter-spacing="0.2">
-    <tspan fill="#ffffff">Top</tspan><tspan fill="#3b82f6">Bitcrest</tspan>
+    <tspan fill="#ffffff">Navient</tspan><tspan fill="#3b82f6">Market</tspan>
   </text>
 </svg>
