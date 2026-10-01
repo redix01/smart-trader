@@ -10,7 +10,7 @@ class Trade extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'trade_pair_id', 'amount', 'status', 'leverage', 'duration', 'action_type', 'stop_loss', 'take_profit'];
+    protected $fillable = ['user_id', 'trade_pair_id', 'market', 'amount', 'status', 'leverage', 'duration', 'action_type', 'stop_loss', 'take_profit', 'profit_loss'];
 
     protected $keyType = 'string';
     public $incrementing = false;

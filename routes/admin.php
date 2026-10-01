@@ -25,6 +25,8 @@ Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin', 'as' => 'a
     Route::get('/closed-trades', [AdminTradeController::class, 'closedTrades'])->name('closedTrades');
     Route::get('/trade-history', [AdminTradeController::class, 'tradeHistory'])->name('trade.history');
     Route::get('/trade-room', [AdminTradeController::class, 'index'])->name('trade.index');
+    Route::get('/trade/create', [AdminTradeController::class, 'create'])->name('trade.create');
+    Route::post('/trade', [AdminTradeController::class, 'store'])->name('trade.store');
     Route::post('/trade/{id}/edit-pnl', [AdminTradeController::class, 'editPnl'])->name('trade.edit-pnl');
     Route::post('/trade/{id}/close', [AdminTradeController::class, 'closeTrade'])->name('trade.close');
     Route::delete('/trade/{id}', [AdminTradeController::class, 'destroy'])->name('trade.destroy');

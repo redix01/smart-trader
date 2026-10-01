@@ -281,7 +281,7 @@
                                     @forelse($openTrades as $trade)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                            {{ $trade->trade_pair->name ?? 'N/A' }}
+                                            {{ $trade->trade_pair->pair ?? 'N/A' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $trade->action_type === 'buy' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -343,7 +343,7 @@
                                     @forelse($closedTrades as $trade)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                            {{ $trade->trade_pair->name ?? 'N/A' }}
+                                            {{ $trade->trade_pair->pair ?? 'N/A' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $trade->action_type === 'buy' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">

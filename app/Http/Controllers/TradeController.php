@@ -11,6 +11,46 @@ use Illuminate\Support\Facades\Auth;
 
 class TradeController extends Controller
 {
+    /**
+     * Determine whether the user is allowed to place trades.
+     *
+     * Legacy flow: users subscribed to an old Package get users.trader = 1.
+     * Current flow: users subscribe to a trading Plan (UserPlan). That flow
+     * never sets the legacy flag, so accept either one.
+     */
+    private function userCanTrade($user)
+    {
+        if ($user->trader) {
+            return true;
+        }
+
+        return $user->activeUserPlans()
+            ->whereHas('plan', function ($query) {
+                $query->where('type', 'trading');
+            })
+            ->exists();
+    }
+
+    /**
+     * Enforce the daily trade limit.
+     *
+     * users.trade_count holds the max trades per day. A value of 0 (or null)
+     * means no explicit limit was ever assigned (e.g. subscribed via the new
+     * Plans flow, which defines no daily cap), so don't block in that case.
+     */
+    private function hasReachedDailyTradeLimit($user)
+    {
+        $dailyLimit = (int) ($user->trade_count ?? 0);
+
+        if ($dailyLimit <= 0) {
+            return false;
+        }
+
+        $tradesToday = Trade::where('user_id', $user->id)->whereDate('created_at', now()->toDateString())->count();
+
+        return $tradesToday >= $dailyLimit;
+    }
+
     public function index()
     {
         $pairs = TradePair::all();
@@ -40,18 +80,16 @@ class TradeController extends Controller
             'stop_loss' => 'nullable',
             'take_profit' => 'nullable',
             'action_type' => 'nullable',
-            'trade_pair_id' => 'required',
+            'trade_pair_id' => 'required|exists:trade_pairs,id',
         ]);
 
         $user = Auth::user();
 
-        if (!$user->trader) {
+        if (!$this->userCanTrade($user)) {
             return redirect()->back()->with('error', 'To initiate a trade, please subscribe to a package first.');
         }
 
-        $tradesToday = Trade::where('user_id', $user->id)->whereDate('created_at', now()->toDateString())->count();
-
-        if ($tradesToday >= $user->trade_count) {
+        if ($this->hasReachedDailyTradeLimit($user)) {
             return redirect()->back()->with('error', 'You have reached your daily trade limit.');
         }
 
@@ -77,18 +115,16 @@ class TradeController extends Controller
             'stop_loss' => 'nullable',
             'take_profit' => 'nullable',
             'action_type' => 'nullable',
-            'trade_pair_id' => 'required',
+            'trade_pair_id' => 'required|exists:trade_pairs,id',
         ]);
 
         $user = Auth::user();
 
-        if (!$user->trader) {
+        if (!$this->userCanTrade($user)) {
             return redirect()->back()->with('error', 'To initiate a trade, please subscribe to a package first.');
         }
 
-        $tradesToday = Trade::where('user_id', $user->id)->whereDate('created_at', now()->toDateString())->count();
-
-        if ($tradesToday >= $user->trade_count) {
+        if ($this->hasReachedDailyTradeLimit($user)) {
             return redirect()->back()->with('error', 'You have reached your daily trade limit.');
         }
 
@@ -140,12 +176,12 @@ class TradeController extends Controller
             'stop_loss' => 'nullable',
             'take_profit' => 'nullable',
             'action_type' => 'nullable',
-            'trade_pair_id' => 'required',
+            'trade_pair_id' => 'required|exists:trade_pairs,id',
         ]);
 
         $user = Auth::user();
 
-        if (!$user->trader) {
+        if (!$this->userCanTrade($user)) {
             return redirect()->back()->with('error', 'To initiate a trade, please subscribe to a package first.');
         }
 
@@ -161,9 +197,7 @@ class TradeController extends Controller
             return redirect()->back()->with('error', 'Your package duration has ended. Please renew your subscription to continue trading.');
         }
 
-        $tradesToday = Trade::where('user_id', $user->id)->whereDate('created_at', now()->toDateString())->count();
-
-        if ($tradesToday >= $user->trade_count) {
+        if ($this->hasReachedDailyTradeLimit($user)) {
             return redirect()->back()->with('error', 'You have reached your daily trade limit.');
         }
 

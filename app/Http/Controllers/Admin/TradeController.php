@@ -18,27 +18,61 @@ class TradeController extends Controller
         return view('admin.trade.trade', compact('trades', 'pairs', 'users'));
     }
 
+    public function create()
+    {
+        $pairs = TradePair::all();
+        $users = User::where('role', 'user')->orderBy('name')->get();
+        return view('admin.trade.create', compact('pairs', 'users'));
+    }
+
     public function store(Request $request)
     {
-
-        $user = $request->get('user_id');
-        $amount = $request->input('amount');
-
-        $trade = Trade::create([
-            'user_id' => $user,
-            'amount' => $amount,
-            'status' => 'open',
-            'trade_pair_id' => $request->get('trade_pair_id'),
-            'leverage' => $request->get('leverage'),
-            'duration' => $request->get('duration'),
-            'action_type' => $request->get('action_type'),
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'trade_pair_id' => 'required|exists:trade_pairs,id',
+            'amount' => 'required|numeric|min:0.01',
+            'leverage' => 'required|integer|min:1|max:500',
+            'duration' => 'required|integer|min:1',
+            'action_type' => 'required|in:buy,sell',
+            'status' => 'nullable|in:open,closed',
+            'profit_loss' => 'nullable|numeric',
+            'stop_loss' => 'nullable|numeric',
+            'take_profit' => 'nullable|numeric',
         ]);
 
-        $user = User::findOrFail($user);
+        $user = User::findOrFail($validated['user_id']);
+
+        if ($validated['amount'] > $user->balance) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Insufficient user balance. Available: $' . number_format($user->balance, 2));
+        }
+
+        $trade = Trade::create([
+            'user_id' => $validated['user_id'],
+            'trade_pair_id' => $validated['trade_pair_id'],
+            'amount' => $validated['amount'],
+            'status' => $validated['status'] ?? 'open',
+            'leverage' => $validated['leverage'],
+            'duration' => $validated['duration'],
+            'action_type' => $validated['action_type'],
+            'stop_loss' => $validated['stop_loss'] ?? null,
+            'take_profit' => $validated['take_profit'] ?? null,
+            'profit_loss' => $validated['profit_loss'] ?? 0,
+        ]);
+
+        // Deduct stake from user balance
         $user->balance -= $trade->amount;
+
+        // If admin created the trade as already closed, settle PnL immediately
+        // (mirrors closeTrade(): balance += amount + profit_loss)
+        if ($trade->status === 'closed') {
+            $user->balance += $trade->amount + (float) $trade->profit_loss;
+        }
+
         $user->save();
 
-        return redirect()->route('admin.openTrades')->with('success', 'Trade placed successfully!');
+        return redirect()->route('admin.trade.history')->with('success', 'Trade created successfully for ' . $user->fullname() . '!');
     }
 
     public function openTrades(){

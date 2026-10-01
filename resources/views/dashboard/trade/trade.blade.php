@@ -385,7 +385,7 @@
                                         <div class="form-group">
                                             <label for="">Pairs</label>
                                             <select name="trade_pair_id" id="" class="form-control">
-                                                 <option value="{{ $trade_pair->pair }}">{{ $trade_pair->pair }}</option>
+                                                 <option value="{{ $trade_pair->id }}">{{ $trade_pair->pair }}</option>
                                                 @foreach($pairs as $item)
                                                     @if($item->type == 'crypto')
                                                         <option value="{{ $item->id }}">{{ $item->pair }}</option>
@@ -509,7 +509,7 @@
                                         <div class="form-group">
                                             <label for="">Pairs</label>
                                             <select name="trade_pair_id" id="" class="form-control">
-                                                <option value="{{ $trade_pair->pair }}">{{ $trade_pair->pair }}</option>
+                                                <option value="{{ $trade_pair->id }}">{{ $trade_pair->pair }}</option>
                                                 @foreach($pairs as $item)
                                                     @if($item->type == 'crypto')
                                                         <option value="{{ $item->id }}">{{ $item->pair }}</option>
