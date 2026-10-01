@@ -641,7 +641,7 @@
             <div class="flex items-start">
                 <img src="/img/100x2.png?v=2" alt="App Icon" class="w-10 h-10 mr-3 rounded">
                 <div class="flex-1">
-                    <div class="font-semibold">Add 100x to Home Screen</div>
+                    <div class="font-semibold">Add Tradecora to Home Screen</div>
                     <div id="pwaPromptText" class="text-sm text-gray-600 mt-1">Install the app for faster access and an app-like experience.</div>
                 </div>
             </div>
