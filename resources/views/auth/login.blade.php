@@ -38,6 +38,11 @@
 
         <!-- Login Form Card -->
         <div class="bg-gray-800 rounded-lg p-8 shadow-2xl border border-gray-700">
+            @if (session('status'))
+                <div class="mb-6 rounded-lg border border-green-600 bg-green-900/30 px-4 py-3 text-sm text-green-300">
+                    {{ session('status') }}
+                </div>
+            @endif
             <form method="POST" action="{{ route('login') }}" class="space-y-6">
           @csrf
                 
