@@ -9,6 +9,7 @@ use App\Models\PaymentMethod;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -80,37 +81,43 @@ class DepositController extends Controller
                 }
             }
 
-            // Create deposit record
+            // Create deposit record together with its notification atomically,
+            // so a partial write can never leave a deposit invisible (or a
+            // notification pointing at a missing deposit).
             try {
-                $deposit = Deposit::create([
-                    'user_id' => Auth::id(),
-                    'amount' => $validated['amount'],
-                    'payment_method_id' => $validated['payment_method_id'],
-                    'wallet_type' => $validated['wallet_type'],
-                    'proof' => $proofPath,
-                    'status' => 0, // Pending by default
-                ]);
-                
-                if (!$deposit) {
-                    throw new \Exception('Failed to create deposit record in database.');
-                }
+                $deposit = DB::transaction(function () use ($validated, $proofPath) {
+                    $record = Deposit::create([
+                        'user_id' => Auth::id(),
+                        'amount' => $validated['amount'],
+                        'payment_method_id' => $validated['payment_method_id'],
+                        'wallet_type' => $validated['wallet_type'],
+                        'proof' => $proofPath,
+                        'status' => 0, // Pending by default
+                    ]);
+
+                    if (!$record) {
+                        throw new \Exception('Failed to create deposit record in database.');
+                    }
+
+                    // Create notification directly
+                    auth()->user()->createNotification(
+                        'deposit_submitted',
+                        'Deposit Submitted',
+                        "Your deposit of " . auth()->user()->formatAmount($validated['amount']) . " to your " . ucfirst($validated['wallet_type']) . " wallet has been submitted and is pending approval.",
+                        [
+                            'amount' => $validated['amount'],
+                            'wallet_type' => $validated['wallet_type'],
+                            'deposit_id' => $record->id,
+                            'status' => 'pending'
+                        ]
+                    );
+
+                    return $record;
+                });
             } catch (\Exception $e) {
                 \Log::error('Deposit creation failed: ' . $e->getMessage());
                 throw new \Exception('Database error: Failed to save deposit. Please try again.');
             }
-
-            // Create notification directly
-            auth()->user()->createNotification(
-                'deposit_submitted',
-                'Deposit Submitted',
-                "Your deposit of " . auth()->user()->formatAmount($validated['amount']) . " to your " . ucfirst($validated['wallet_type']) . " wallet has been submitted and is pending approval.",
-                [
-                    'amount' => $validated['amount'],
-                    'wallet_type' => $validated['wallet_type'],
-                    'deposit_id' => $deposit->id,
-                    'status' => 'pending'
-                ]
-            );
 
             // Send email notification to admin
             try {

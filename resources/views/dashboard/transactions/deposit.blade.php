@@ -18,6 +18,38 @@
         </button>
     </div>
 
+    <!-- Page-level feedback: the deposit modal is hidden after a redirect, so
+         success/error messages must live here to be visible to the user. -->
+    <div id="deposit-page-feedback">
+    @if(session('success'))
+        <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            <ul class="list-disc list-inside">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if($wallets->isEmpty())
+        <div class="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded-lg">
+            No payment methods are available right now, so deposits cannot be submitted. Please contact support.
+        </div>
+    @endif
+    </div>
+
     <!-- Balance Overview -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
@@ -171,27 +203,6 @@
 
                 <!-- Modal Body -->
                 <form id="depositForm" action="{{ route('user.payment') }}" method="POST" enctype="multipart/form-data" class="p-4">
-                    @if(session('success'))
-                        <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-                    
-                    @if(session('error'))
-                        <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                            {{ session('error') }}
-                                    </div>
-                                @endif
-                    
-                    @if($errors->any())
-                        <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                            <ul class="list-disc list-inside">
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                        @endforeach
-                            </ul>
-                                </div>
-                    @endif
                     @csrf
                     
                     <!-- Amount Input -->
@@ -772,4 +783,13 @@
             max-height: 100%;
         }
     </style>
+
+    {{-- Reopen the form after a validation failure so the user can fix and resubmit --}}
+    @if($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('newDepositBtn')?.click();
+        });
+    </script>
+    @endif
 @endsection
