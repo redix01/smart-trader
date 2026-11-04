@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('title', 'AI Trader History - ' . $userAiTrader->aiTrader->name)
+@section('title', 'AI Trader History - ' . $userAiTrader->aiTrader?->name)
 
 @section('content')
 <div class="p-4 sm:ml-64">
@@ -9,7 +9,7 @@
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white">AI Trader History</h1>
-                <p class="text-gray-600 dark:text-gray-400">{{ $userAiTrader->aiTrader->name }} - {{ $userAiTrader->user->name }}</p>
+                <p class="text-gray-600 dark:text-gray-400">{{ $userAiTrader->aiTrader?->name }} - {{ $userAiTrader->user?->name }}</p>
             </div>
             <a href="{{ route('admin.ai-traders.management') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,13 +32,13 @@
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">User</label>
-                                    <div class="text-sm text-gray-900 dark:text-white">{{ $userAiTrader->user->name }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $userAiTrader->user->email }}</div>
+                                    <div class="text-sm text-gray-900 dark:text-white">{{ $userAiTrader->user?->name }}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $userAiTrader->user?->email }}</div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">AI Trader</label>
-                                    <div class="text-sm text-gray-900 dark:text-white">{{ $userAiTrader->aiTrader->name }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $userAiTrader->aiTrader->ai_model }} - {{ ucfirst($userAiTrader->aiTrader->trading_strategy) }}</div>
+                                    <div class="text-sm text-gray-900 dark:text-white">{{ $userAiTrader->aiTrader?->name }}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $userAiTrader->aiTrader?->ai_model }} - {{ ucfirst($userAiTrader->aiTrader?->trading_strategy ?? '') }}</div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Plan</label>
@@ -141,7 +141,7 @@
                     <button type="button" 
                             class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center create-trade-btn" 
                             data-trader-id="{{ $userAiTrader->id }}"
-                            data-trader-name="{{ $userAiTrader->aiTrader->name }}">
+                            data-trader-name="{{ $userAiTrader->aiTrader?->name }}">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>
@@ -206,7 +206,7 @@
                     <button type="button" 
                             class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center mx-auto create-trade-btn" 
                             data-trader-id="{{ $userAiTrader->id }}"
-                            data-trader-name="{{ $userAiTrader->aiTrader->name }}">
+                            data-trader-name="{{ $userAiTrader->aiTrader?->name }}">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>

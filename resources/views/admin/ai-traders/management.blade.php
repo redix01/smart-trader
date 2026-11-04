@@ -127,8 +127,8 @@
                                         </svg>
                                     </div>
                                     <div>
-                                        <div class="font-medium text-gray-900 dark:text-white">{{ $trader->user->name }}</div>
-                                        <div class="text-sm text-gray-500 dark:text-gray-400">{{ $trader->user->email }}</div>
+                                        <div class="font-medium text-gray-900 dark:text-white">{{ $trader->user?->name }}</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">{{ $trader->user?->email }}</div>
                                     </div>
                                 </div>
                             </td>
