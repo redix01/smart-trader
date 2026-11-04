@@ -165,7 +165,7 @@
                                           </div>
                                       @elseif($item->payment_method == 'bank')
                                         @php
-                                            $bank = json_decode($item->bank, true)
+                                            $bank = is_array($item->bank) ? $item->bank : (json_decode((string) $item->bank, true) ?: []);
                                         @endphp
                                         <br><br>
                                           <div>

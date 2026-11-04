@@ -217,11 +217,11 @@ class WithdrawalController extends Controller
                 $withdraw->address = $request->address;
                 $withdraw->wallet = $request->wallet;
             } elseif ($request->payment_method == 'bank') {
-                $withdraw->bank = json_encode([
+                $withdraw->bank = [
                     'bank_name' => $request->bank_name,
                     'acct_name' => $request->acct_name,
                     'acct_number' => $request->acct_number
-                ]);
+                ];
             } else {
                 $withdraw->paypal = $request->paypal;
             }
