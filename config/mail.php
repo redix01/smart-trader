@@ -109,7 +109,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'support@tradecora.com'),
+        'address' => env('MAIL_FROM_ADDRESS', 'support@nanomarketpro.net'),
         'name' => env('MAIL_FROM_NAME', 'Support'),
     ],
 

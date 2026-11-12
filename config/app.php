@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Tradecora'),
+    'name' => env('APP_NAME', 'Nano Market Pro'),
 
     /*
     |--------------------------------------------------------------------------

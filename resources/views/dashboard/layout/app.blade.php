@@ -8,13 +8,14 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }} - Dashboard</title>
   <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/x-icon">
-  <link rel="manifest" href="/manifest.webmanifest?v=2">
-  <link rel="apple-touch-icon" sizes="180x180" href="/img/100x2.png?v=2">
+  <link rel="manifest" href="/manifest.webmanifest?v=3">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/nano-icon-180.png?v=3">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#0b1020">
     
     <!-- Tailwind CSS CDN for immediate styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    @include('partials.nano-theme')
 
     <!-- Pusher JS for real-time updates -->
     <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
@@ -52,13 +53,13 @@
         
         .dark {
             /* Dark theme colors */
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-tertiary: #334155;
+            --bg-primary: #0b1020;
+            --bg-secondary: #141c33;
+            --bg-tertiary: #1d2742;
             --text-primary: #f8fafc;
             --text-secondary: #cbd5e1;
             --text-muted: #94a3b8;
-            --border-color: #475569;
+            --border-color: #2a3555;
             --border-hover: #64748b;
             --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
         }
@@ -628,6 +629,10 @@
                     @endif
 
                     @yield('content')
+                    <p class="mt-10 pt-6 border-t border-gray-700 text-xs text-gray-500 leading-relaxed">
+                        <span class="text-gray-300 font-semibold">Risk disclosure:</span> Trading forex, CFDs and crypto involves substantial risk and may result in the loss of your invested capital. Nano Market Pro does not guarantee profits. Past performance is not indicative of future results.
+                        <a href="{{ route('risk') }}" class="text-gold-400 hover:underline">Read more</a>
+                    </p>
                 </div>
             </main>
         </div>
@@ -639,9 +644,9 @@
         <div class="fixed inset-0 bg-black/50"></div>
         <div class="relative m-4 w-full max-w-sm bg-white text-gray-900 rounded-xl shadow-xl p-4">
             <div class="flex items-start">
-                <img src="/img/100x2.png?v=2" alt="App Icon" class="w-10 h-10 mr-3 rounded">
+                <img src="/img/nano-icon-180.png?v=3" alt="App Icon" class="w-10 h-10 mr-3 rounded">
                 <div class="flex-1">
-                    <div class="font-semibold">Add Tradecora to Home Screen</div>
+                    <div class="font-semibold">Add Nano Market Pro to Home Screen</div>
                     <div id="pwaPromptText" class="text-sm text-gray-600 mt-1">Install the app for faster access and an app-like experience.</div>
                 </div>
             </div>

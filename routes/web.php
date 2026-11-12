@@ -43,6 +43,7 @@ Route::view('stocks', 'frontpage.stocks')->name('stocks');
 Route::view('faqs', 'frontpage.faqs')->name('faq');
 Route::view('privacy-policy', 'frontpage.privacy-policy')->name('privacy');
 Route::view('rules', 'frontpage.rules')->name('terms');
+Route::view('risk-disclosure', 'frontpage.risk')->name('risk');
 
 // AI Trader Routes (Public)
 Route::get('ai-traders', [AiTraderController::class, 'index'])->name('ai-traders.index');
@@ -452,7 +453,7 @@ Route::get('/debug-profit', function() {
                 'code' => '123456',
                 'expires_at' => now()->addMinutes(10)->format('H:i'),
             ], function ($message) {
-                $message->to('support@tradecora.com')
+                $message->to('support@nanomarketpro.net')
                         ->subject('Test Verification Email');
             });
             return 'Email sent successfully!';

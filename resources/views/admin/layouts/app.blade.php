@@ -11,6 +11,7 @@
     
   <!-- Tailwind CSS CDN for immediate styling -->
   <script src="https://cdn.tailwindcss.com"></script>
+    @include('partials.nano-theme')
 
   <!-- Pusher JS for real-time updates -->
   <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>

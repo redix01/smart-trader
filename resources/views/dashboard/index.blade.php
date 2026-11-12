@@ -5,7 +5,8 @@
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
         <div>
-            <h1 class="text-2xl font-bold text-white">Dashboard</h1>
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Nano Market Pro</p>
+            <h1 class="text-2xl font-bold text-white mt-1">Dashboard</h1>
             <p class="text-gray-400 mt-1">Welcome back, {{ auth()->user()->name }}!</p>
         </div>
     </div>

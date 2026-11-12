@@ -16,11 +16,15 @@ class AdminSeeder extends Seeder
      */
     public function run()
     {
-        $admin = User::where('email', '=', 'admin@tradecora.com')->first();
+        // Set ADMIN_EMAIL / ADMIN_PASSWORD in .env on the server before seeding.
+        $email = env('ADMIN_EMAIL') ?: 'admin@nanomarketpro.net';
+        $password = env('ADMIN_PASSWORD') ?: 'ADMINPASS123';
+
+        $admin = User::where('email', '=', $email)->first();
         if($admin === null){
             User::create([
                 'id' => Str::uuid(),
-                'name' => 'Admin Panel',
+                'name' => 'Nano Market Pro Admin',
                 'role' => 'admin',
                 'status' => 'active',
                 'balance' => 1000000, // Holding account
@@ -30,9 +34,9 @@ class AdminSeeder extends Seeder
                 'holding_balance' => 1000000,
                 'staking_balance' => 300000,
                 'profit' => 580000,
-                'email' => 'admin@tradecora.com',
+                'email' => $email,
                 'email_verified_at' => \Carbon\Carbon::now(),
-                'password' => Hash::make('ADMINPASS123'),
+                'password' => Hash::make($password),
                 'currency' => 'USD',
             ]);
         }
