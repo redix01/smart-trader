@@ -1,9 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 120" role="img" aria-label="Nano Market Pro">
-  <!-- Mark: navy tile with gold NM monogram (matches nanomarketpro.net) -->
-  <rect x="6" y="10" width="100" height="100" rx="22" fill="#0b1020" stroke="#d8b878" stroke-opacity="0.55" stroke-width="2"/>
-  <text x="56" y="75" font-family="Georgia, 'Times New Roman', serif" font-size="40" fill="#d8b878" text-anchor="middle">NM</text>
-  <!-- Wordmark -->
-  <text x="130" y="76" font-family="Georgia, 'Times New Roman', serif" font-size="46" letter-spacing="0.2">
-    <tspan fill="#ffffff">Nano Market </tspan><tspan fill="#d8b878" font-style="italic">Pro</tspan>
-  </text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 112" role="img" aria-label="Nano Market Pro">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e6cf9f"/><stop offset="1" stop-color="#b08a3e"/></linearGradient>
+    <linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141c33"/><stop offset="1" stop-color="#0b1020"/></linearGradient>
+  </defs>
+  <g transform="translate(4 4) scale(.2031)">
+    <rect width="512" height="512" rx="112" fill="url(#b)"/>
+    <rect x="9" y="9" width="494" height="494" rx="104" fill="none" stroke="#d8b878" stroke-opacity=".45" stroke-width="3"/>
+    <rect x="136" y="128" width="52" height="256" rx="10" fill="#eef1f7"/>
+    <rect x="324" y="128" width="52" height="256" rx="10" fill="#eef1f7"/>
+    <path d="M136 128h52l188 256h-52z" fill="url(#g)"/>
+  </g>
+  <text x="124" y="70" font-family="Georgia, 'Times New Roman', serif" font-size="44" fill="#ffffff" letter-spacing="-0.4">Nano Market</text>
+  <g transform="translate(402 38)">
+    <rect width="84" height="38" rx="7" fill="none" stroke="#d8b878" stroke-opacity=".6" stroke-width="2"/>
+    <text x="42" y="26" font-family="Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#d8b878" text-anchor="middle" letter-spacing="4">PRO</text>
+  </g>
 </svg>

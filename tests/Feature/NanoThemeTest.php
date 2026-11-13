@@ -29,6 +29,7 @@ class NanoThemeTest extends TestCase
     {
         $this->get($uri)->assertOk()
             ->assertSee('nano/styles.css', false)
+            ->assertSee('nm-brand', false)
             ->assertDontSee('cdn.tailwindcss.com', false)
             ->assertDontSee('bg-gray-800', false);
     }

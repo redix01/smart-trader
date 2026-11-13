@@ -26,6 +26,7 @@ class DashboardThemeTest extends TestCase
 
         $response->assertOk()
             ->assertSee('nano/app.css', false)
+            ->assertSee('nm-brand', false)
             ->assertSee('Nano Market Pro')
             ->assertDontSee('themeToggle', false)
             ->assertDontSee('light-theme', false);
@@ -42,5 +43,14 @@ class DashboardThemeTest extends TestCase
     {
         $this->assertStringContainsString("partials.nano-theme", file_get_contents(resource_path('views/admin/layouts/app.blade.php')));
         $this->assertStringNotContainsString('nano-app-theme', file_get_contents(resource_path('views/admin/layouts/app.blade.php')));
+    }
+
+    public function test_install_prompt_stays_dismissed_for_the_session(): void
+    {
+        $html = $this->actingAs(User::factory()->create())->get('/user/dashboard')->assertOk()->getContent();
+
+        $this->assertStringContainsString("sessionStorage.setItem('pwaPromptDismissed'", $html);
+        $this->assertStringContainsString('if (!isDismissed()) setTimeout(showPrompt', $html);
+        $this->assertStringNotContainsString("localStorage.getItem('pwaPromptDismissed')", $html);
     }
 }

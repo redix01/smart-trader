@@ -940,12 +940,18 @@ function updateTicker(data) {
 
             if (!promptEl) return;
 
+            function isDismissed() { try { return sessionStorage.getItem('pwaPromptDismissed') === '1'; } catch (e) { return false; } }
+
+            function rememberDismissed() { try { sessionStorage.setItem('pwaPromptDismissed', '1'); } catch (e) {} }
+
+
             function showPrompt() {
                 promptEl.classList.remove('hidden');
                 promptEl.classList.add('flex');
             }
 
             function hidePrompt() {
+                rememberDismissed();
                 promptEl.classList.add('hidden');
                 promptEl.classList.remove('flex');
             }
@@ -959,11 +965,11 @@ function updateTicker(data) {
             window.addEventListener('beforeinstallprompt', function(e) {
                 e.preventDefault();
                 promptEvent = e;
-                setTimeout(showPrompt, 6000);
+                if (!isDismissed()) setTimeout(showPrompt, 6000);
             });
 
             // iOS: show guidance even without beforeinstallprompt
-            if (isIOS && !isStandalone && localStorage.getItem('pwaPromptDismissed') !== '1') {
+            if (isIOS && !isStandalone && !isDismissed()) {
                 if (promptText) {
                     promptText.textContent = "On iPhone/iPad: tap the Share button, then 'Add to Home Screen'.";
                 }
@@ -992,7 +998,6 @@ function updateTicker(data) {
 
             dismissBtn && dismissBtn.addEventListener('click', function() {
                 hidePrompt();
-                localStorage.setItem('pwaPromptDismissed', '1');
             });
 
             window.addEventListener('appinstalled', function() {

@@ -131,3 +131,13 @@ canvas{max-width:100%}
 .terminal .d-flex{display:flex}.terminal .text-left{text-align:left}.terminal .text-right{text-align:right}
 .terminal [class^="red-bg"]{background:rgba(163,42,42,.08)}
 .terminal .red-bg-40,.terminal .red-bg-60,.terminal .red-bg-80{background:rgba(163,42,42,.16)}
+
+/* brand logo (<x-nano-logo>) */
+.nm-brand{display:inline-flex;align-items:center;gap:11px;color:var(--ink);line-height:1;text-decoration:none}
+.nm-mark{width:36px;height:36px;flex:none;display:block;border-radius:10px}
+.nm-word{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:-.01em;white-space:nowrap}
+.nm-word small{font-family:var(--sans);font-size:9.5px;font-weight:700;letter-spacing:.2em;color:var(--gold-d);padding:3px 6px 3px 8px;border:1px solid rgba(176,138,62,.5);border-radius:5px}
+.nm-brand-dark{color:#fff}
+.nm-brand-dark .nm-word small{color:var(--gold-l);border-color:rgba(216,184,120,.55)}
+@media (max-width:380px){.nm-word small{display:none}}
+@media (max-width:600px){.nm-mark{width:32px;height:32px}.nm-word{font-size:18px}}

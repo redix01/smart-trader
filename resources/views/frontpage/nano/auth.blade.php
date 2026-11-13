@@ -7,9 +7,9 @@
 <title>@yield('title', 'Account') — Nano Market Pro</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0b1020">
-<link rel="icon" href="{{ asset('img/nano-icon.svg') }}" type="image/svg+xml">
+<link rel="icon" href="{{ asset('img/nano-icon.svg') }}?v=4" type="image/svg+xml">
 <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="32x32">
-<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/nano-icon-180.png') }}?v=3">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/nano-icon-180.png') }}?v=4">
 <link rel="manifest" href="/manifest.webmanifest?v=3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +20,7 @@
 
 <header class="auth-top">
   <div class="wrap">
-    <a href="{{ route('index') }}" class="logo"><b>NM</b>Nano Market Pro</a>
+    <a href="{{ route('index') }}" class="logo" aria-label="Nano Market Pro — home"><x-nano-logo /></a>
     <a href="{{ route('index') }}" class="small muted">← Back to home</a>
   </div>
 </header>
