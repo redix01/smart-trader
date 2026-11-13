@@ -1,7 +1,7 @@
 @extends('dashboard.layout.app')
 @section('content')
 
-    <div class="container-fluid p-0">
+    <div class="container-fluid p-0 terminal">
         <div class="row no-gutters">
             <div class="col-md-3">
                 <div class="market-pairs">
@@ -1091,3 +1091,20 @@
     </script>
 
 @endsection
+
+@push('scripts')
+<script>
+// Minimal tab switching for the Bootstrap-style pills on this page (no Bootstrap JS is loaded).
+document.querySelectorAll('[data-toggle="pill"]').forEach(function (a) {
+  a.addEventListener('click', function (e) {
+    e.preventDefault();
+    var target = document.querySelector(a.getAttribute('href'));
+    if (!target) return;
+    a.closest('.nav').querySelectorAll('.nav-link').forEach(function (x) { x.classList.remove('active'); });
+    a.classList.add('active');
+    target.parentElement.querySelectorAll(':scope > .tab-pane').forEach(function (p) { p.classList.remove('active', 'show'); });
+    target.classList.add('active', 'show');
+  });
+});
+</script>
+@endpush
