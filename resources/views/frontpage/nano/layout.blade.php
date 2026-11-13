@@ -31,7 +31,7 @@
 <nav>
   <div class="wrap">
     <a href="{{ route('index') }}" class="logo"><b>NM</b>Nano Market Pro</a>
-    <div class="links">
+    <div class="links" id="nav-links">
       <a href="{{ route('index') }}" @if(request()->routeIs('index')) aria-current="page" @endif>Home</a>
       <a href="{{ route('forex') }}">Markets</a>
       <a href="{{ route('copy') }}">Copy trading</a>
@@ -39,6 +39,14 @@
       <a href="{{ route('about') }}">About</a>
       <a href="{{ route('faq') }}">FAQ</a>
       <a href="{{ route('risk') }}" @if(request()->routeIs('risk')) aria-current="page" @endif>Risk disclosure</a>
+      <div class="links-cta">
+        @auth
+          <a href="{{ route('dashboard') }}" class="btn btn-navy btn-block">Dashboard</a>
+        @else
+          <a href="{{ route('register') }}" class="btn btn-navy btn-block">Open account</a>
+          <a href="{{ route('login') }}" class="btn btn-line btn-block">Log in</a>
+        @endauth
+      </div>
     </div>
     <div class="nav-actions">
       @auth
@@ -47,6 +55,7 @@
         <a href="{{ route('login') }}" class="nav-login">Log in</a>
         <a href="{{ route('register') }}" class="btn btn-navy nav-cta">Open account</a>
       @endauth
+      <button type="button" class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav-links"><span></span><span></span><span></span></button>
     </div>
   </div>
 </nav>
@@ -82,6 +91,16 @@
     <div class="fine"><span>© {{ date('Y') }} Nano Market Pro · nanomarketpro.net. All rights reserved.</span><span>Operating fully online · Support 24/7</span></div>
   </div>
 </footer>
+<script>
+(function () {
+  var nav = document.querySelector('nav'), btn = document.querySelector('.nav-toggle');
+  if (!nav || !btn) return;
+  function set(open) { nav.classList.toggle('open', open); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+  btn.addEventListener('click', function () { set(!nav.classList.contains('open')); });
+  document.querySelectorAll('#nav-links a').forEach(function (a) { a.addEventListener('click', function () { set(false); }); });
+  window.addEventListener('resize', function () { if (window.innerWidth > 960) set(false); });
+})();
+</script>
 @stack('scripts')
 </body>
 </html>

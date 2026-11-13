@@ -320,3 +320,35 @@ footer{background:var(--navy);color:var(--on-navy-muted);padding:44px 0 32px;fon
 .split-top{align-items:start}
 @media (max-width:1100px){.links{gap:16px}.nav-actions{gap:6px}}
 @media (max-width:600px){nav .wrap{flex-wrap:wrap}.logo{font-size:17px}.logo b{width:30px;height:30px}.nav-cta{min-height:38px;padding:8px 14px;font-size:13px}}
+
+/* mobile header: logo + actions on one row, menu collapses into a panel */
+.nav-toggle{display:none;width:44px;height:44px;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;padding:0;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.nav-toggle span{display:block;width:18px;height:2px;background:var(--ink);border-radius:2px;transition:transform .2s,opacity .2s}
+nav.open .nav-toggle span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+nav.open .nav-toggle span:nth-child(2){opacity:0}
+nav.open .nav-toggle span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+@media (max-width:960px){
+  nav .wrap{flex-wrap:wrap;padding-top:0;padding-bottom:0;min-height:64px;gap:12px}
+  .logo{margin-right:auto}
+  .nav-actions{gap:8px}
+  .nav-toggle{display:flex}
+  .links{order:3;display:none;flex-direction:column;gap:0;width:100%;overflow:visible;padding:4px 0 14px;border-top:1px solid var(--line)}
+  nav.open .links{display:flex}
+  .links a{display:block;padding:14px 4px;font-size:16px;border-bottom:1px solid var(--line);white-space:normal}
+  .links a:last-child{border-bottom:0}
+  .links a[aria-current="page"]{border-bottom:1px solid var(--line);color:var(--ink);font-weight:500}
+}
+@media (max-width:600px){
+  nav .wrap{min-height:60px}
+  .nav-login{display:none}
+  .nav-cta{display:inline-flex;min-height:40px;padding:8px 16px;font-size:13.5px}
+}
+.links-cta{display:none}
+@media (max-width:960px){
+  .links-cta{display:grid;gap:10px;padding-top:16px}
+  .links .links-cta a{border-bottom:1px solid transparent;padding:13px 22px;font-size:14px}
+  .links .links-cta .btn-line{border-color:var(--ink)}
+}
+@media (max-width:600px){
+  .nav-actions .nav-cta,.nav-actions .nav-login{display:none}
+}
