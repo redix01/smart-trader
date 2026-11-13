@@ -20,6 +20,8 @@
 
 <header class="hero">
   <div class="wrap">
+    <div class="hero-grid">
+    <div class="hero-copy">
     <p class="eyebrow">Forex · Crypto · Stocks · Copy trading</p>
     <h1>Intelligent trading. <em>Innovative</em> technology.</h1>
     <p class="lead">Nano Market Pro is a forex and CFD trading platform for retail and institutional traders. Trade the markets, follow experienced traders, or run AI-assisted strategies — on institutional-grade liquidity and low-latency execution, with disciplined risk management built in.</p>
@@ -32,6 +34,47 @@
       @endauth
     </div>
     <p class="founded">Founded by <a href="https://thomaspeggs.com/" class="text-link" rel="noopener">Thomas Peggs</a></p>
+    </div>
+
+    <aside class="tv-box" aria-label="Live market prices">
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+        {
+          "width": "100%",
+          "height": 520,
+          "symbolsGroups": [
+            {"name": "Forex", "originalName": "Forex", "symbols": [
+              {"name": "FX:EURUSD", "displayName": "EUR/USD"},
+              {"name": "FX:GBPUSD", "displayName": "GBP/USD"},
+              {"name": "FX:USDJPY", "displayName": "USD/JPY"},
+              {"name": "FX:AUDUSD", "displayName": "AUD/USD"},
+              {"name": "FX:USDCAD", "displayName": "USD/CAD"}
+            ]},
+            {"name": "Crypto", "originalName": "Crypto", "symbols": [
+              {"name": "BITSTAMP:BTCUSD", "displayName": "Bitcoin"},
+              {"name": "BITSTAMP:ETHUSD", "displayName": "Ethereum"},
+              {"name": "COINBASE:SOLUSD", "displayName": "Solana"},
+              {"name": "BITSTAMP:XRPUSD", "displayName": "XRP"}
+            ]},
+            {"name": "Stocks", "originalName": "Stocks", "symbols": [
+              {"name": "NASDAQ:AAPL", "displayName": "Apple"},
+              {"name": "NASDAQ:NVDA", "displayName": "NVIDIA"},
+              {"name": "NASDAQ:TSLA", "displayName": "Tesla"},
+              {"name": "NASDAQ:MSFT", "displayName": "Microsoft"}
+            ]}
+          ],
+          "showSymbolLogo": true,
+          "colorTheme": "light",
+          "isTransparent": true,
+          "locale": "en",
+          "backgroundColor": "#ffffff"
+        }
+        </script>
+      </div>
+      <p class="tv-credit"><a href="https://www.tradingview.com/markets/" rel="noopener nofollow" target="_blank">Market data by TradingView</a> · prices are indicative</p>
+    </aside>
+    </div>
 
     <div class="stats">
       <div class="stat"><div class="n">$15B+</div><div class="l">Monthly trading volume</div></div>
@@ -54,6 +97,60 @@
       <a class="card" href="{{ route('ai-traders.index') }}"><span class="k">04</span><h3>AI traders</h3><p>Technology that executes predefined strategies consistently, with risk controls built into the process.</p><span class="more"><span>Meet the AI traders</span> →</span></a>
       <a class="card" href="{{ route('register') }}"><span class="k">05</span><h3>Signals &amp; analysis</h3><p>Research-led signals and market commentary that help you decide with more information.</p><span class="more"><span>Get access</span> →</span></a>
       <a class="card" href="{{ route('register') }}"><span class="k">06</span><h3>Portfolio &amp; staking</h3><p>Track holdings, balances and performance from a single dashboard, and put idle assets to work.</p><span class="more"><span>Open your dashboard</span> →</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="wrap">
+    <p class="eyebrow">Markets</p>
+    <h2>Watch the markets move.</h2>
+    <p class="lead" style="margin-top:16px">Indices, forex, crypto and shares at a glance — the same instruments you can trade from your dashboard.</p>
+    <div class="tv-box tv-wide">
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+        {
+          "colorTheme": "light",
+          "dateRange": "12M",
+          "showChart": true,
+          "locale": "en",
+          "width": "100%",
+          "height": 520,
+          "isTransparent": true,
+          "showSymbolLogo": true,
+          "showFloatingTooltip": true,
+          "plotLineColorGrowing": "rgba(176, 138, 62, 1)",
+          "plotLineColorFalling": "rgba(11, 16, 32, 1)",
+          "gridLineColor": "rgba(227, 221, 207, 1)",
+          "scaleFontColor": "rgba(107, 114, 134, 1)",
+          "belowLineFillColorGrowing": "rgba(176, 138, 62, 0.12)",
+          "belowLineFillColorFalling": "rgba(11, 16, 32, 0.08)",
+          "belowLineFillColorGrowingBottom": "rgba(176, 138, 62, 0)",
+          "belowLineFillColorFallingBottom": "rgba(11, 16, 32, 0)",
+          "symbolActiveColor": "rgba(176, 138, 62, 0.12)",
+          "tabs": [
+            {"title": "Forex", "originalTitle": "Forex", "symbols": [
+              {"s": "FX:EURUSD", "d": "EUR/USD"}, {"s": "FX:GBPUSD", "d": "GBP/USD"},
+              {"s": "FX:USDJPY", "d": "USD/JPY"}, {"s": "FX:AUDUSD", "d": "AUD/USD"}, {"s": "OANDA:XAUUSD", "d": "Gold"}
+            ]},
+            {"title": "Crypto", "originalTitle": "Crypto", "symbols": [
+              {"s": "BITSTAMP:BTCUSD", "d": "Bitcoin"}, {"s": "BITSTAMP:ETHUSD", "d": "Ethereum"},
+              {"s": "COINBASE:SOLUSD", "d": "Solana"}, {"s": "BITSTAMP:XRPUSD", "d": "XRP"}
+            ]},
+            {"title": "Stocks", "originalTitle": "Stocks", "symbols": [
+              {"s": "NASDAQ:AAPL", "d": "Apple"}, {"s": "NASDAQ:NVDA", "d": "NVIDIA"},
+              {"s": "NASDAQ:TSLA", "d": "Tesla"}, {"s": "NASDAQ:MSFT", "d": "Microsoft"}
+            ]},
+            {"title": "Indices", "originalTitle": "Indices", "symbols": [
+              {"s": "FOREXCOM:SPXUSD", "d": "S&P 500"}, {"s": "FOREXCOM:NSXUSD", "d": "Nasdaq 100"},
+              {"s": "FOREXCOM:DJI", "d": "Dow 30"}, {"s": "FOREXCOM:UKXGBP", "d": "FTSE 100"}
+            ]}
+          ]
+        }
+        </script>
+      </div>
+      <p class="tv-credit"><a href="https://www.tradingview.com/markets/" rel="noopener nofollow" target="_blank">Market data by TradingView</a> · prices are indicative</p>
     </div>
   </div>
 </section>

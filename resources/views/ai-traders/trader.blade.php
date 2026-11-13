@@ -1,338 +1,148 @@
-@extends('pages.layout.app')
-
-@section('title', $trader->name . ' - AI Stock Trader Details')
+@extends('frontpage.nano.layout')
+@section('title', $trader->name . ' — AI trader — Nano Market Pro')
 
 @section('content')
-<!-- Trader Header -->
-<section class="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-16">
-    <div class="w-full px-4">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex items-center mb-4">
-                <a href="{{ route('ai-traders.plan', $trader->aiTraderPlan) }}" class="text-gray-300 hover:text-white mr-4">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </a>
-                <span class="text-gray-300">{{ $trader->aiTraderPlan ? $trader->aiTraderPlan->name : 'No Plan' }}</span>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div>
-                    <h1 class="text-4xl font-bold mb-4">{{ $trader->name }}</h1>
-                    <p class="text-xl text-gray-300 mb-6">Advanced AI-powered stock trading with {{ $trader->ai_model }}</p>
-                    
-                    <div class="flex flex-wrap gap-3 mb-6">
-                        <span class="bg-purple-600 text-white px-3 py-1 rounded-full text-sm">{{ $trader->ai_model }}</span>
-                        <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">{{ ucfirst($trader->trading_strategy) }}</span>
-                        <span class="bg-green-600 text-white px-3 py-1 rounded-full text-sm">{{ ucfirst($trader->ai_confidence) }} Confidence</span>
-                        <span class="bg-orange-600 text-white px-3 py-1 rounded-full text-sm">{{ ucfirst($trader->ai_learning_mode) }} Learning</span>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                        <div class="text-3xl font-bold {{ $trader->current_performance >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                            {{ $trader->formatted_performance }}
-                        </div>
-                        <div class="text-gray-300 text-sm">Current Performance</div>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                        <div class="text-3xl font-bold text-blue-400">{{ $trader->formatted_win_rate }}</div>
-                        <div class="text-gray-300 text-sm">Win Rate</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<header class="page-head">
+  <div class="wrap">
+    @if($trader->aiTraderPlan)
+      <a href="{{ route('ai-traders.plan', $trader->aiTraderPlan) }}" class="back">← {{ $trader->aiTraderPlan->name }}</a>
+    @else
+      <a href="{{ route('ai-traders.index') }}" class="back">← All AI traders</a>
+    @endif
+    <p class="eyebrow">AI trader</p>
+    <h1>{{ $trader->name }}</h1>
+    <p class="lead">AI-assisted stock trading with {{ $trader->ai_model }}.</p>
+    <div class="tags" style="margin-top:20px">
+      <span class="badge">{{ $trader->ai_model }}</span>
+      <span class="badge">{{ ucfirst($trader->trading_strategy) }}</span>
+      <span class="badge">{{ ucfirst($trader->ai_confidence) }} confidence</span>
+      <span class="badge">{{ ucfirst($trader->ai_learning_mode) }} learning</span>
     </div>
+    <div class="stats" style="margin-top:36px;grid-template-columns:repeat(2,1fr)">
+      <div class="stat"><div class="n {{ $trader->current_performance >= 0 ? 'pos' : 'neg' }}">{{ $trader->formatted_performance }}</div><div class="l">Current performance</div></div>
+      <div class="stat"><div class="n">{{ $trader->formatted_win_rate }}</div><div class="l">Win rate</div></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Performance</p>
+    <h2>Performance overview.</h2>
+    <div class="card" style="margin-top:32px"><div style="position:relative;height:320px"><canvas id="performanceChart"></canvas></div><p id="chartMsg" class="small muted" hidden>Performance history is not available right now.</p></div>
+  </div>
 </section>
 
-<!-- Performance Chart -->
-<section class="py-16 bg-white">
-    <div class="w-full px-4">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-3xl font-bold text-gray-900 mb-8">Performance Overview</h2>
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <canvas id="performanceChart" width="400" height="200"></canvas>
-            </div>
+<section class="tight">
+  <div class="wrap split split-top">
+    <div class="stack">
+      <div class="card">
+        <h3 style="margin-top:0">Trading configuration</h3>
+        <div>
+          <dl style="display:grid;grid-template-columns:1fr auto;gap:10px 16px;font-size:15px">
+            <dt class="muted">AI model</dt><dd>{{ $trader->ai_model }}</dd>
+            <dt class="muted">Confidence level</dt><dd>{{ ucfirst($trader->ai_confidence) }}</dd>
+            <dt class="muted">Learning mode</dt><dd>{{ ucfirst($trader->ai_learning_mode) }}</dd>
+            <dt class="muted">Strategy</dt><dd>{{ ucfirst($trader->trading_strategy) }}</dd>
+            <dt class="muted">Risk tolerance</dt><dd>{{ $trader->risk_tolerance }}</dd>
+            <dt class="muted">Max positions</dt><dd>{{ $trader->max_positions }}</dd>
+          </dl>
         </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Risk management</h3>
+        <dl class="kv" style="grid-template-columns:repeat(3,1fr)">
+          <div><dt>Stop loss</dt><dd>{{ $trader->stop_loss_percentage }}%</dd></div>
+          <div><dt>Take profit</dt><dd>{{ $trader->take_profit_percentage }}%</dd></div>
+          <div><dt>Position size</dt><dd>{{ $trader->position_size_percentage }}%</dd></div>
+        </dl>
+        @if(!empty($trader->stocks_to_trade))
+          <p class="small muted">Stocks traded</p>
+          <div class="tags" style="margin-top:8px">@foreach($trader->stocks_to_trade as $stock)<span class="badge">{{ $stock }}</span>@endforeach</div>
+        @endif
+      </div>
     </div>
+
+    <div class="stack">
+      <div class="card">
+        <h3 style="margin-top:0">Trading statistics</h3>
+        <dl style="display:grid;grid-template-columns:1fr auto;gap:10px 16px;font-size:15px">
+          <dt class="muted">Total trades</dt><dd>{{ $trader->total_trades }}</dd>
+          <dt class="muted">Winning trades</dt><dd>{{ $trader->winning_trades }}</dd>
+          <dt class="muted">Losing trades</dt><dd>{{ $trader->total_trades - $trader->winning_trades }}</dd>
+          <dt class="muted">Win rate</dt><dd>{{ $trader->formatted_win_rate }}</dd>
+          <dt class="muted">Current performance</dt><dd class="{{ $trader->current_performance >= 0 ? 'pos' : 'neg' }}">{{ $trader->formatted_performance }}</dd>
+        </dl>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Plan</h3>
+        <dl style="display:grid;grid-template-columns:1fr auto;gap:10px 16px;font-size:15px">
+          <dt class="muted">Plan</dt><dd>{{ $trader->aiTraderPlan ? $trader->aiTraderPlan->name : 'No plan' }}</dd>
+          <dt class="muted">Monthly cost</dt><dd>{{ $trader->aiTraderPlan ? $trader->aiTraderPlan->formatted_price : 'N/A' }}</dd>
+          <dt class="muted">Minimum investment</dt><dd>{{ $trader->aiTraderPlan ? '$'.number_format($trader->aiTraderPlan->investment_amount, 0) : 'N/A' }}</dd>
+        </dl>
+        <span class="more" style="display:block;margin-top:22px">
+          @auth
+            <a href="{{ route('dashboard') }}" class="btn btn-navy btn-block">Subscribe from your dashboard</a>
+          @else
+            <a href="{{ route('register') }}" class="btn btn-navy btn-block">Open an account to subscribe</a>
+          @endauth
+        </span>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- Trader Details -->
-<section class="py-16 bg-gray-50">
-    <div class="w-full px-4">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Main Details -->
-                <div class="lg:col-span-2">
-                    <div class="bg-white rounded-xl shadow-lg p-8">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Trading Configuration</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <h4 class="font-semibold text-gray-900 mb-3">AI Settings</h4>
-                                <div class="space-y-2">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">AI Model:</span>
-                                        <span class="font-medium">{{ $trader->ai_model }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Confidence Level:</span>
-                                        <span class="font-medium">{{ ucfirst($trader->ai_confidence) }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Learning Mode:</span>
-                                        <span class="font-medium">{{ ucfirst($trader->ai_learning_mode) }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <h4 class="font-semibold text-gray-900 mb-3">Trading Strategy</h4>
-                                <div class="space-y-2">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Strategy:</span>
-                                        <span class="font-medium">{{ ucfirst($trader->trading_strategy) }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Risk Tolerance:</span>
-                                        <span class="font-medium">{{ $trader->risk_tolerance }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Max Positions:</span>
-                                        <span class="font-medium">{{ $trader->max_positions }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6">
-                            <h4 class="font-semibold text-gray-900 mb-3">Stocks Trading</h4>
-                            <div class="flex flex-wrap gap-2">
-                                @foreach($trader->stocks_to_trade as $stock)
-                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">{{ $stock }}</span>
-                                @endforeach
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6">
-                            <h4 class="font-semibold text-gray-900 mb-3">Risk Management</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-                                    <div class="text-2xl font-bold text-red-600">{{ $trader->stop_loss_percentage }}%</div>
-                                    <div class="text-sm text-red-700">Stop Loss</div>
-                                </div>
-                                <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                                    <div class="text-2xl font-bold text-green-600">{{ $trader->take_profit_percentage }}%</div>
-                                    <div class="text-sm text-green-700">Take Profit</div>
-                                </div>
-                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-                                    <div class="text-2xl font-bold text-blue-600">{{ $trader->position_size_percentage }}%</div>
-                                    <div class="text-sm text-blue-700">Position Size</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Stats & Actions -->
-                <div>
-                    <!-- Trading Statistics -->
-                    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-4">Trading Statistics</h3>
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-600">Total Trades:</span>
-                                <span class="font-semibold">{{ $trader->total_trades }}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-600">Winning Trades:</span>
-                                <span class="font-semibold text-green-600">{{ $trader->winning_trades }}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-600">Losing Trades:</span>
-                                <span class="font-semibold text-red-600">{{ $trader->total_trades - $trader->winning_trades }}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-600">Win Rate:</span>
-                                <span class="font-semibold">{{ $trader->formatted_win_rate }}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-600">Current Performance:</span>
-                                <span class="font-semibold {{ $trader->current_performance >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                                    {{ $trader->formatted_performance }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Plan Info -->
-                    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-4">Plan Information</h3>
-                        <div class="space-y-3">
-                            <div>
-                                <div class="text-sm text-gray-500">Plan Name</div>
-                                <div class="font-semibold">{{ $trader->aiTraderPlan ? $trader->aiTraderPlan->name : 'No Plan' }}</div>
-                            </div>
-                            <div>
-                                <div class="text-sm text-gray-500">Monthly Cost</div>
-                                <div class="font-semibold text-2xl text-blue-600">{{ $trader->aiTraderPlan ? $trader->aiTraderPlan->formatted_price : 'N/A' }}</div>
-                            </div>
-                            <div>
-                                <div class="text-sm text-gray-500">Minimum Investment</div>
-                                <div class="font-semibold">${{ $trader->aiTraderPlan ? number_format($trader->aiTraderPlan->investment_amount, 0) : 'N/A' }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Subscribe Button -->
-                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white text-center">
-                        <h3 class="text-xl font-bold mb-2">Ready to Subscribe?</h3>
-                        <p class="text-blue-100 mb-4">Start using this AI trader to optimize your stock portfolio.</p>
-                        <button class="w-full bg-white text-blue-600 py-3 px-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-300">
-                            Subscribe to {{ $trader->aiTraderPlan ? $trader->aiTraderPlan->name : 'Plan' }}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Similar Traders -->
 @if($similarTraders->count() > 0)
-<section class="py-16 bg-white">
-    <div class="w-full px-4">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-3xl font-bold text-gray-900 mb-8">Similar AI Traders</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                @foreach($similarTraders as $similarTrader)
-                <div class="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-shadow duration-300">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-bold text-gray-900">{{ $similarTrader->name }}</h3>
-                        <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                            {{ $similarTrader->formatted_performance }}
-                        </span>
-                    </div>
-                    <div class="flex items-center text-sm text-gray-600 mb-3">
-                        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs mr-2">{{ $similarTrader->ai_model }}</span>
-                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">{{ ucfirst($similarTrader->trading_strategy) }}</span>
-                    </div>
-                    <div class="text-sm text-gray-600 mb-4">
-                        Win Rate: <span class="font-semibold">{{ $similarTrader->formatted_win_rate }}</span>
-                    </div>
-                    <a href="{{ route('ai-traders.trader', $similarTrader) }}" 
-                       class="text-blue-600 hover:text-blue-800 font-medium text-sm">
-                        View Details →
-                    </a>
-                </div>
-                @endforeach
-            </div>
+<section class="tight">
+  <div class="wrap">
+    <p class="eyebrow">Compare</p>
+    <h2>Similar AI traders.</h2>
+    <div class="grid grid-3">
+      @foreach($similarTraders as $similarTrader)
+        <div class="card">
+          <span class="k">{{ ucfirst($similarTrader->trading_strategy) }}</span>
+          <h3>{{ $similarTrader->name }}</h3>
+          <dl class="kv">
+            <div><dt>Performance</dt><dd class="{{ $similarTrader->current_performance >= 0 ? 'pos' : 'neg' }}">{{ $similarTrader->formatted_performance }}</dd></div>
+            <div><dt>Win rate</dt><dd>{{ $similarTrader->formatted_win_rate }}</dd></div>
+          </dl>
+          <span class="more"><a href="{{ route('ai-traders.trader', $similarTrader) }}" class="btn btn-line btn-block">View details</a></span>
         </div>
+      @endforeach
     </div>
+  </div>
 </section>
 @endif
+
+<section class="tight">
+  <div class="wrap"><div class="callout"><p>Displayed performance is historical and does not guarantee future results. <a href="{{ route('risk') }}" class="text-link">Read the risk disclosure</a>.</p></div></div>
+</section>
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script>
-// Performance Chart
-document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('performanceChart').getContext('2d');
-    
-    // Fetch performance data
-    fetch('{{ route("ai-traders.performance", $trader) }}')
-        .then(response => response.json())
-        .then(data => {
-            new Chart(ctx, {
-                type: 'line',
-                data: data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: '8-Week Performance History'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        }
-                    },
-                    elements: {
-                        point: {
-                            radius: 4,
-                            hoverRadius: 6
-                        }
-                    }
-                }
-            });
-        })
-        .catch(error => {
-            console.error('Error loading performance data:', error);
-            // Fallback chart with sample data
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8'],
-                    datasets: [{
-                        label: 'Performance (%)',
-                        data: [2.1, 4.3, 6.8, 8.2, 11.5, 14.7, 18.3, {{ $trader->current_performance }}],
-                        borderColor: '{{ $trader->current_performance >= 0 ? "#10B981" : "#EF4444" }}',
-                        backgroundColor: '{{ $trader->current_performance >= 0 ? "rgba(16, 185, 129, 0.1)" : "rgba(239, 68, 68, 0.1)" }}',
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: '8-Week Performance History'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        }
-                    },
-                    elements: {
-                        point: {
-                            radius: 4,
-                            hoverRadius: 6
-                        }
-                    }
-                }
-            });
-        });
+document.addEventListener('DOMContentLoaded', function () {
+  var ctx = document.getElementById('performanceChart').getContext('2d');
+  fetch('{{ route("ai-traders.performance", $trader) }}')
+    .then(function (r) { if (!r.ok) throw new Error('bad response'); return r.json(); })
+    .then(function (data) {
+      (data.datasets || []).forEach(function (d) { d.borderColor = d.borderColor || '#b08a3e'; });
+      new Chart(ctx, {
+        type: 'line', data: data,
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, title: { display: true, text: '8-week performance history' } },
+          scales: { y: { grid: { color: '#e3ddcf' } }, x: { grid: { display: false } } },
+          elements: { point: { radius: 3, hoverRadius: 5 }, line: { tension: .35 } }
+        }
+      });
+    })
+    .catch(function () {
+      document.getElementById('performanceChart').hidden = true;
+      document.getElementById('chartMsg').hidden = false;
+    });
 });
 </script>
 @endpush
