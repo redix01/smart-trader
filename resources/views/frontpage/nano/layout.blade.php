@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ asset('nano/styles.css') }}?v=1">
+<link rel="stylesheet" href="{{ asset('nano/styles.css') }}?v={{ filemtime(public_path('nano/styles.css')) }}">
 @stack('head')
 </head>
 <body>
