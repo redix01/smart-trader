@@ -131,13 +131,13 @@
 @if($widgetScript)
 {!! $widgetScript !!}
 @else
-<!-- Default JivoChat Widget (Fallback) -->
+<!-- Default JivoChat Widget (used when no custom script is configured in admin settings) -->
 <script>
 (function(d,s,id){
     var z = d.createElement(s);
     var ts = (+new Date()).toString(36);
     z.type = "text/javascript"; z.async = true; z.id = id;
-    z.src = "https://code.jivosite.com/widget/demo";
+    z.src = "https://code.jivosite.com/widget/GdsLrZG4BH";
     var f = function(){var sd = d.getElementById(id);if(!sd) return;var p = d.getElementsByTagName(s)[0];p.parentNode.insertBefore(sd,p);};
     if(d.readyState === "complete") f(); else if(d.addEventListener) d.addEventListener("DOMContentLoaded", f, false);
 })(document, "script", "jivosite-script");
@@ -189,5 +189,4 @@ document.addEventListener('DOMContentLoaded', function() {
 @endif
 @endif
 
-<script src="//code.jivosite.com/widget/GdsLrZG4BH" async></script>
 @endsection

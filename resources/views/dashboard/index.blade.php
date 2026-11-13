@@ -181,62 +181,6 @@
 
 	<!-- Second Row: My Subscriptions moved to Portfolio page -->
 
-	<!-- Second Row: Market Heatmap -->
-	<div class="bg-gray-800 rounded-lg p-0 border border-gray-700 mb-8">
-		<div class="tradingview-widget-container" style="height: 720px; min-height: 720px;">
-			<div class="tradingview-widget-container__widget" style="height: 100%;"></div>
-			<div class="tradingview-widget-copyright px-6 py-3">
-				<a href="https://www.tradingview.com/heatmap/stock/" rel="noopener nofollow" target="_blank"><span class="blue-text">Stock Heatmap</span></a><span class="trademark"> by TradingView</span>
-			</div>
-			<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js" async>
-			{
-				"dataSource": "SPX500",
-				"blockSize": "market_cap_basic",
-				"blockColor": "change",
-				"grouping": "sector",
-				"locale": "en",
-				"symbolUrl": "",
-				"colorTheme": "dark",
-				"exchanges": [],
-				"hasTopBar": false,
-				"isDataSetEnabled": false,
-				"isZoomEnabled": true,
-				"hasSymbolTooltip": true,
-				"isMonoSize": false,
-				"width": "100%",
-				"height": "720"
-			}
-			</script>
-		</div>
-	</div>
-
-	<!-- Crypto Heatmap -->
-	<div class="bg-gray-800 rounded-lg p-0 border border-gray-700 mb-8">
-		<div class="tradingview-widget-container" style="height: 720px; min-height: 720px;">
-			<div class="tradingview-widget-container__widget" style="height: 100%;"></div>
-			<div class="tradingview-widget-copyright px-6 py-3">
-				<a href="https://www.tradingview.com/heatmap/crypto/" rel="noopener nofollow" target="_blank"><span class="blue-text">Crypto Heatmap</span></a><span class="trademark"> by TradingView</span>
-			</div>
-			<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-crypto-coins-heatmap.js" async>
-			{
-				"dataSource": "Crypto",
-				"blockSize": "market_cap_calc",
-				"blockColor": "24h_close_change|5",
-				"locale": "en",
-				"symbolUrl": "",
-				"colorTheme": "dark",
-				"hasTopBar": false,
-				"isDataSetEnabled": false,
-				"isZoomEnabled": true,
-				"hasSymbolTooltip": true,
-				"isMonoSize": false,
-				"width": "100%",
-				"height": "720"
-			}
-			</script>
-		</div>
-	</div>
-
     <!-- Third Row: Trades Tabs -->
     <div class="bg-gray-800 rounded-lg border border-gray-700 mb-8">
                 <!-- Tabs Header -->
@@ -488,5 +432,4 @@
         });
     </script>
 
-<script src="//code.jivosite.com/widget/GdsLrZG4BH" async></script>
 @endsection

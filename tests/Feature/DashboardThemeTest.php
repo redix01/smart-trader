@@ -53,4 +53,12 @@ class DashboardThemeTest extends TestCase
         $this->assertStringContainsString('if (!isDismissed()) setTimeout(showPrompt', $html);
         $this->assertStringNotContainsString("localStorage.getItem('pwaPromptDismissed')", $html);
     }
+
+    public function test_livechat_widget_loads_on_the_support_page_only(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->get('/user/dashboard')->assertOk()->assertDontSee('jivosite', false)->assertDontSee('embed-widget', false);
+        $this->actingAs($user)->get('/user/support')->assertOk()->assertSee('jivosite', false);
+    }
 }
