@@ -61,4 +61,19 @@ class DashboardThemeTest extends TestCase
         $this->actingAs($user)->get('/user/dashboard')->assertOk()->assertDontSee('jivosite', false)->assertDontSee('embed-widget', false);
         $this->actingAs($user)->get('/user/support')->assertOk()->assertSee('jivosite', false);
     }
+
+    public function test_user_ai_trader_pages_use_the_current_theme(): void
+    {
+        $this->seed([\Database\Seeders\AiTraderPlanSeeder::class, \Database\Seeders\AiTraderSeeder::class]);
+        $user = User::factory()->create();
+        $plan = \App\Models\AiTraderPlan::firstOrFail();
+        $trader = \App\Models\AiTrader::firstOrFail();
+
+        foreach (['/user/ai-traders', "/user/ai-traders/plan/{$plan->id}", "/user/ai-traders/trader/{$trader->id}"] as $uri) {
+            $this->actingAs($user)->get($uri)->assertOk()
+                ->assertSee('nano/app.css', false)
+                ->assertDontSee('2FE6DE', false)
+                ->assertDontSee('0A0714', false);
+        }
+    }
 }
