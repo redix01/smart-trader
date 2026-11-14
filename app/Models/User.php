@@ -213,37 +213,37 @@ class User extends Authenticatable
      */
     public function getFormattedBalanceAttribute()
     {
-        return '$' . number_format($this->balance, 2);
+        return $this->formatAmount($this->balance);
     }
 
     public function getFormattedTradingBalanceAttribute()
     {
-        return '$' . number_format($this->trading_balance, 2);
+        return $this->formatAmount($this->trading_balance);
     }
 
     public function getFormattedMiningBalanceAttribute()
     {
-        return '$' . number_format($this->mining_balance, 2);
+        return $this->formatAmount($this->mining_balance);
     }
 
     public function getFormattedReferralBalanceAttribute()
     {
-        return '$' . number_format($this->referral_balance, 2);
+        return $this->formatAmount($this->referral_balance);
     }
 
     public function getFormattedHoldingBalanceAttribute()
     {
-        return '$' . number_format($this->holding_balance, 2);
+        return $this->formatAmount($this->holding_balance);
     }
 
     public function getFormattedStakingBalanceAttribute()
     {
-        return '$' . number_format($this->staking_balance, 2);
+        return $this->formatAmount($this->staking_balance);
     }
 
     public function getFormattedProfitAttribute()
     {
-        return '$' . number_format($this->profit, 2);
+        return $this->formatAmount($this->profit);
     }
 
     /**

@@ -138,7 +138,7 @@
                     <!-- Minimum Amount -->
                     <div class="text-center p-3 bg-gray-600 rounded-lg">
                         <div class="text-sm text-gray-400">Minimum Investment</div>
-                        <div class="text-lg font-bold text-white">${{ number_format($trader->amount, 2) }}</div>
+                        <div class="text-lg font-bold text-white">{{ money($trader->amount, 2) }}</div>
                     </div>
 
                     <!-- Copy Trade Button -->
@@ -220,7 +220,7 @@
                                 <span class="text-white">{{ $trade->copy_trader?->name ?? 'Unknown' }}</span>
                             </div>
                         </td>
-                        <td class="py-4 px-4 text-white">${{ number_format($trade->amount, 2) }}</td>
+                        <td class="py-4 px-4 text-white">{{ money($trade->amount, 2) }}</td>
                         <td class="py-4 px-4 text-white">{{ $trade->trade_count ?? 0 }}</td>
                         <td class="py-4 px-4 text-white">
                             <span class="text-green-400">{{ $trade->win ?? 0 }}</span> / 
@@ -228,7 +228,7 @@
                         </td>
                         <td class="py-4 px-4 text-white">
                             <span class="{{ ($trade->pnl ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                                ${{ number_format($trade->pnl ?? 0, 2) }}
+                                {{ money($trade->pnl ?? 0, 2) }}
                             </span>
                         </td>
                         <td class="py-4 px-4 text-gray-400">{{ date('M d, Y', strtotime($trade->created_at)) }}</td>

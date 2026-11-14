@@ -48,10 +48,10 @@ class CopyTradingController extends Controller
                 if ($request->ajax()) {
                     return response()->json([
                         'error' => true,
-                        'message' => 'Insufficient balance. You need at least $' . number_format($copyTrader->amount, 2)
+                        'message' => 'Insufficient balance. You need at least ' . money($copyTrader->amount, 2)
                     ]);
                 }
-                return redirect()->back()->with('error', 'Insufficient balance. You need at least $' . number_format($copyTrader->amount, 2));
+                return redirect()->back()->with('error', 'Insufficient balance. You need at least ' . money($copyTrader->amount, 2));
             }
 
             // Check if user has a stopped copy trade for this trader (only admin can restart)
@@ -103,7 +103,7 @@ class CopyTradingController extends Controller
             $user->createNotification(
                 'copy_trade_started',
                 'Copy Trade Started',
-                'You have successfully started copying ' . $copyTrader->name . ' with $' . number_format($request->amount, 2),
+                'You have successfully started copying ' . $copyTrader->name . ' with ' . money($request->amount, 2),
                 [
                     'trader_id' => $copyTrader->id,
                     'trader_name' => $copyTrader->name,
@@ -117,10 +117,10 @@ class CopyTradingController extends Controller
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Successfully started copying ' . $copyTrader->name . ' with $' . number_format($request->amount, 2)
+                    'message' => 'Successfully started copying ' . $copyTrader->name . ' with ' . money($request->amount, 2)
                 ]);
             }
-            return redirect()->back()->with('success', 'Successfully started copying ' . $copyTrader->name . ' with $' . number_format($request->amount, 2));
+            return redirect()->back()->with('success', 'Successfully started copying ' . $copyTrader->name . ' with ' . money($request->amount, 2));
 
         } catch (\Exception $e) {
             DB::rollback();

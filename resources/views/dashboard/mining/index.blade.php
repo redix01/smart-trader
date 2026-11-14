@@ -130,7 +130,7 @@
                                         <div class="text-3xl font-bold text-blue-400 mb-2">
                                             @php
                                                 $totalInvested = $activeMinings->sum('amount_invested') + $completedMinings->sum('amount_invested');
-                                                echo '$' . number_format($totalInvested, 2);
+                                                echo money($totalInvested, 2);
                                             @endphp
                                         </div>
                                         <div class="text-gray-400 text-sm">Total Invested</div>
@@ -139,7 +139,7 @@
                                         <div class="text-3xl font-bold text-yellow-400 mb-2">
                                             @php
                                                 $totalValue = $activeMinings->sum('current_value') + $completedMinings->sum('current_value');
-                                                echo '$' . number_format($totalValue, 2);
+                                                echo money($totalValue, 2);
                                             @endphp
                                         </div>
                                         <div class="text-gray-400 text-sm">Current Value</div>
@@ -187,13 +187,13 @@
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                                ${{ number_format($mining->amount_invested, 2) }}
+                                                {{ money($mining->amount_invested, 2) }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
                                                 {{ number_format($mining->total_mined, 8) }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                                ${{ number_format($mining->current_value, 2) }}
+                                                {{ money($mining->current_value, 2) }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                                 {{ $mining->start_date->format('M d, Y') }}
@@ -227,7 +227,7 @@
                                     <span class="text-white font-semibold">
                                         @php
                                             $totalInvested = $activeMinings->sum('amount_invested') + $completedMinings->sum('amount_invested');
-                                            echo '$' . number_format($totalInvested, 2);
+                                            echo money($totalInvested, 2);
                                         @endphp
                                     </span>
                                 </div>
@@ -245,7 +245,7 @@
                                     <span class="text-yellow-400 font-semibold">
                                         @php
                                             $totalValue = $activeMinings->sum('current_value') + $completedMinings->sum('current_value');
-                                            echo '$' . number_format($totalValue, 2);
+                                            echo money($totalValue, 2);
                                         @endphp
                                     </span>
                                 </div>
@@ -255,7 +255,7 @@
                                     <span class="font-semibold {{ ($totalValue - $totalInvested) >= 0 ? 'text-green-400' : 'text-red-400' }}">
                                         @php
                                             $totalPnL = $totalValue - $totalInvested;
-                                            echo ($totalPnL >= 0 ? '+' : '') . '$' . number_format($totalPnL, 2);
+                                            echo ($totalPnL >= 0 ? '+' : '') . money($totalPnL, 2);
                                         @endphp
                                     </span>
                                 </div>

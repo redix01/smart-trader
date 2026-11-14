@@ -46,7 +46,7 @@
                   </tr>
                   <tr>
                     <th>Amount:</th>
-                    <td>${{ number_format($withdraw->amount, 2) ?? ''}}</td>
+                    <td>{{ money($withdraw->amount, 2, $withdraw->user) }}</td>
                   </tr>
                   <tr>
                     <th>Deposit Method:</th>

@@ -75,7 +75,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-gray-400 text-sm">Total Invested</p>
-                            <p class="text-white text-2xl font-semibold">${{ number_format($totalInvested, 2) }}</p>
+                            <p class="text-white text-2xl font-semibold">{{ money($totalInvested, 2) }}</p>
                         </div>
                     </div>
                 </div>

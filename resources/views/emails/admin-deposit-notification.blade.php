@@ -151,7 +151,7 @@
                 
                 <div class="detail-row">
                     <span class="detail-label">Amount:</span>
-                    <span class="detail-value amount">${{ number_format($deposit->amount, 2) }}</span>
+                    <span class="detail-value amount">{{ money($deposit->amount, 2, $deposit->user) }}</span>
                 </div>
                 
                 <div class="detail-row">

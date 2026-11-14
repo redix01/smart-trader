@@ -10,7 +10,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-gray-700 rounded-lg p-4">
                 <div class="text-gray-400 text-sm">Total Invested</div>
-                <div class="text-white font-semibold">${{ number_format($totalInvested, 2) }}</div>
+                <div class="text-white font-semibold">{{ money($totalInvested, 2) }}</div>
             </div>
             <div class="bg-gray-700 rounded-lg p-4">
                 <div class="text-gray-400 text-sm">Active Mining</div>
@@ -18,11 +18,11 @@
             </div>
             <div class="bg-gray-700 rounded-lg p-4">
                 <div class="text-gray-400 text-sm">Total Mined</div>
-                <div class="text-blue-400 font-semibold">${{ number_format($totalMined, 2) }}</div>
+                <div class="text-blue-400 font-semibold">{{ money($totalMined, 2) }}</div>
             </div>
             <div class="bg-gray-700 rounded-lg p-4">
                 <div class="text-gray-400 text-sm">Current Value</div>
-                <div class="text-purple-400 font-semibold">${{ number_format($currentValue, 2) }}</div>
+                <div class="text-purple-400 font-semibold">{{ money($currentValue, 2) }}</div>
             </div>
         </div>
     </div>
@@ -54,7 +54,7 @@
                                 <div class="text-sm text-gray-400">{{ $mining->plan->description }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                ${{ number_format($mining->amount_invested, 2) }}
+                                {{ money($mining->amount_invested, 2) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-green-400">
                                 {{ $mining->hashrate ?? 'N/A' }}
@@ -83,10 +83,10 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-400">
-                                ${{ number_format($mining->total_mined, 2) }}
+                                {{ money($mining->total_mined, 2) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-purple-400">
-                                ${{ number_format($mining->current_value, 2) }}
+                                {{ money($mining->current_value, 2) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <a href="{{ route('user.mining.show', $mining) }}" class="text-blue-400 hover:text-blue-300">View Details</a>

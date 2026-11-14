@@ -55,7 +55,7 @@
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-400">Max Investment:</span>
-                    <span class="text-white">${{ number_format($bot->max_investment, 2) }}</span>
+                    <span class="text-white">{{ money($bot->max_investment, 2) }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-400">Trade Duration:</span>
@@ -82,7 +82,7 @@
                 @if($bot->daily_loss_limit)
                 <div class="flex justify-between">
                     <span class="text-gray-400">Daily Loss Limit:</span>
-                    <span class="text-white">${{ number_format($bot->daily_loss_limit, 2) }}</span>
+                    <span class="text-white">{{ money($bot->daily_loss_limit, 2) }}</span>
                 </div>
                 @endif
             </div>
@@ -107,12 +107,12 @@
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-400">Total Invested:</span>
-                    <span class="text-white">${{ number_format($bot->total_invested, 2) }}</span>
+                    <span class="text-white">{{ money($bot->total_invested, 2) }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-400">Total Profit:</span>
                     <span class="text-white {{ $bot->total_profit >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                        ${{ number_format($bot->total_profit, 2) }}
+                        {{ money($bot->total_profit, 2) }}
                     </span>
                 </div>
                 @if($bot->success_rate)

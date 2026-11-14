@@ -876,7 +876,7 @@
                                                         <span class="badge bg-danger text-white">sell</span>
                                                     @endif
                                                 </td>
-                                                <td>${{ number_format($item->amount, 2) ?? '' }}</td>
+                                                <td>{{ money($item->amount, 2) }}</td>
                                                 <td>{{ $item->leverage ?? ''}}x</td>
                                                 <td>{{ $item->duration ?? ''}} min</td>
                                                 <td>{{ $item->stop_loss ?? 'N/A'}}</td>
@@ -921,7 +921,7 @@
                                                         <span class="badge bg-danger text-white">sell</span>
                                                     @endif
                                                 </td>
-                                                <td>${{ number_format($item->amount, 2) ?? '' }}</td>
+                                                <td>{{ money($item->amount, 2) }}</td>
                                                 <td>{{ $item->leverage ?? ''}}x</td>
                                                 <td>{{ $item->duration ?? ''}} min</td>
                                                 <td>{{ $item->stop_loss ?? 'N/A'}}</td>

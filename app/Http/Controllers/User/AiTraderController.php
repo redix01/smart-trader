@@ -132,14 +132,14 @@ class AiTraderController extends Controller
             if ($investmentAmount < $minInvestment) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Investment amount must be at least $' . number_format($minInvestment, 2)
+                    'message' => 'Investment amount must be at least ' . money($minInvestment, 2)
                 ], 400);
             }
             
             if ($userBalance < $investmentAmount) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Insufficient trading balance. Required: $' . number_format($investmentAmount, 2) . ', Available: $' . number_format($userBalance, 2)
+                    'message' => 'Insufficient trading balance. Required: ' . money($investmentAmount, 2) . ', Available: ' . money($userBalance, 2)
                 ], 400);
             }
             
@@ -212,7 +212,7 @@ class AiTraderController extends Controller
             if ($userBalance < $monthlyFee) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Insufficient balance. Required: $' . number_format($monthlyFee, 2) . ', Available: $' . number_format($userBalance, 2)
+                    'message' => 'Insufficient balance. Required: ' . money($monthlyFee, 2) . ', Available: ' . money($userBalance, 2)
                 ], 400);
             }
             

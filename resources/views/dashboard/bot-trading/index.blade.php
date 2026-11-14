@@ -56,7 +56,7 @@
                 <div>
                     <p class="text-gray-400 text-sm">Total Profit</p>
                     <p class="text-white text-xl font-bold {{ $totalProfit >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                        ${{ number_format($totalProfit, 2) }}
+                        {{ money($totalProfit, 2) }}
                     </p>
                 </div>
                 <div class="w-10 h-10 {{ $totalProfit >= 0 ? 'bg-green-500' : 'bg-red-500' }} rounded-lg flex items-center justify-center">
@@ -141,12 +141,12 @@
                                 </div>
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-400">Investment:</span>
-                                    <span class="text-white">${{ number_format($bot->max_investment, 2) }}</span>
+                                    <span class="text-white">{{ money($bot->max_investment, 2) }}</span>
                                 </div>
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-400">Profit:</span>
                                     <span class="{{ $bot->total_profit >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                                        ${{ number_format($bot->total_profit, 2) }}
+                                        {{ money($bot->total_profit, 2) }}
                                     </span>
                                 </div>
                                 <div class="flex justify-between text-sm">

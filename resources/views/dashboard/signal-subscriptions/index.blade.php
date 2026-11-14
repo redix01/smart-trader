@@ -150,7 +150,7 @@
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-gray-300">
-                                            <div class="text-white font-medium">${{ number_format($subscription->amount_paid, 2) }}</div>
+                                            <div class="text-white font-medium">{{ money($subscription->amount_paid, 2) }}</div>
                                             <div class="text-xs text-gray-400">{{ $subscription->created_at->format('M d, Y') }}</div>
                                         </td>
                                         <td class="px-6 py-4 text-sm font-medium">

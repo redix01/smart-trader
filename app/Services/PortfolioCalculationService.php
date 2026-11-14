@@ -66,7 +66,7 @@ class PortfolioCalculationService
             
             // Check if user has enough balance (use main balance, not holding balance)
             if ($user->balance < $totalAmount) {
-                throw new \Exception('Insufficient balance. Required: $' . number_format($totalAmount, 2) . ', Available: $' . number_format($user->balance, 2));
+                throw new \Exception('Insufficient balance. Required: ' . money($totalAmount, 2) . ', Available: ' . money($user->balance, 2));
             }
             
             // Deduct from user's main balance

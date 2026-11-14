@@ -49,7 +49,7 @@
                   </tr>
                   <tr>
                     <th>Amount:</th>
-                    <td>${{ number_format($deposit->amount, 2) ?? ''}}</td>
+                    <td>{{ money($deposit->amount, 2, $deposit->user) }}</td>
                   </tr>
                   <tr>
                     <th>Deposit Method:</th>

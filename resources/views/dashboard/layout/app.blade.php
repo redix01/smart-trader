@@ -37,6 +37,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>window.CURRENCY_SYMBOL = @json(auth()->check() ? auth()->user()->currency_symbol : '$');</script>
     <link rel="stylesheet" href="{{ asset('nano/app.css') }}?v={{ filemtime(public_path('nano/app.css')) }}">
     <style>[x-cloak]{display:none!important}</style>
 
@@ -290,10 +291,11 @@
                     </div>
                     
                     <!-- Right side - Install PWA, Notification and user profile -->
-                    <div class="flex items-center space-x-1 sm:space-x-2 ml-auto -mr-2 sm:-mr-4">
+                    <div class="flex items-center space-x-1 sm:space-x-2 ml-auto min-w-0 pr-2 sm:pr-4">
                         <!-- Install PWA Button (shown when installable) -->
-                        <button id="installPwaBtn" class="hidden px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-500 transition-colors">
-                            Install App
+                        <button id="installPwaBtn" type="button" aria-label="Install app" class="hidden inline-flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap px-2.5 py-1.5 sm:px-3 sm:py-2 bg-blue-600 text-white rounded-full text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v10m0 0l-4-4m4 4l4-4M5 20h14"></path></svg>
+                            <span class="sm:hidden">Install</span><span class="hidden sm:inline">Install App</span>
                         </button>
 
                         <!-- Notifications -->

@@ -112,7 +112,7 @@ class BotTrade extends Model
     public function getFormattedProfitLossAttribute(): string
     {
         $sign = $this->profit_loss >= 0 ? '+' : '';
-        return $sign . '$' . number_format($this->profit_loss, 2);
+        return $sign . money($this->profit_loss, 2, $this->user);
     }
 
     public function getFormattedProfitLossPercentageAttribute(): string
@@ -123,7 +123,7 @@ class BotTrade extends Model
 
     public function getFormattedPriceAttribute(): string
     {
-        return '$' . number_format($this->price, 8);
+        return money($this->price, 8, $this->user);
     }
 
     public function getFormattedBaseAmountAttribute(): string
@@ -133,7 +133,7 @@ class BotTrade extends Model
 
     public function getFormattedQuoteAmountAttribute(): string
     {
-        return '$' . number_format($this->quote_amount, 2);
+        return money($this->quote_amount, 2, $this->user);
     }
 
     // Scopes

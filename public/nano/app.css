@@ -141,3 +141,9 @@ canvas{max-width:100%}
 .nm-brand-dark .nm-word small{color:var(--gold-l);border-color:rgba(216,184,120,.55)}
 @media (max-width:380px){.nm-word small{display:none}}
 @media (max-width:600px){.nm-mark{width:32px;height:32px}.nm-word{font-size:18px}}
+
+/* header on small screens: logo mark only, so the install/notification/user buttons never overflow */
+@media (max-width:520px){
+  header .nm-brand .nm-word{display:none}
+  header .flex.items-center.ml-auto{gap:2px}
+}

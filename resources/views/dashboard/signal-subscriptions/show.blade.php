@@ -91,7 +91,7 @@
                                 </div>
                                 <div>
                                     <label class="text-sm text-gray-400">Amount Paid</label>
-                                    <p class="text-white font-medium">${{ number_format($subscription->amount_paid, 2) }}</p>
+                                    <p class="text-white font-medium">{{ money($subscription->amount_paid, 2) }}</p>
                                 </div>
                             </div>
                         </div>

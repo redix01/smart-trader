@@ -81,7 +81,7 @@
                                 </div>
                             </td>
                             <td class="text-right py-4 px-4">
-                                <div class="text-white font-medium">${{ number_format($asset->current_price, 4) }}</div>
+                                <div class="text-white font-medium">{{ money($asset->current_price, 4) }}</div>
                             </td>
                             <td class="text-right py-4 px-4">
                                 <div class="text-{{ $asset->price_change_24h >= 0 ? 'green' : 'red' }}-400 font-medium">
@@ -149,7 +149,7 @@
                                 </div>
                             </td>
                             <td class="text-right py-4 px-4">
-                                <div class="text-white font-medium">${{ number_format($asset->current_price, 2) }}</div>
+                                <div class="text-white font-medium">{{ money($asset->current_price, 2) }}</div>
                             </td>
                             <td class="text-right py-4 px-4">
                                 <div class="text-{{ $asset->price_change_24h >= 0 ? 'green' : 'red' }}-400 font-medium">
@@ -213,7 +213,7 @@
                             </span>
                         </td>
                         <td class="text-right py-3 px-4">
-                            <div class="text-white font-medium">${{ number_format($trade->amount, 2) }}</div>
+                            <div class="text-white font-medium">{{ money($trade->amount, 2) }}</div>
                         </td>
                         <td class="py-3 px-4">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $trade->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : ($trade->status === 'filled' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') }}">

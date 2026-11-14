@@ -143,7 +143,7 @@ class LiveTradingController extends Controller
         if ($orderAmount > (float) $user->trading_balance) {
             return response()->json([
                 'success' => false,
-                'message' => 'Insufficient trading balance. You need at least $' . number_format($orderAmount, 2) . ' in your trading balance.'
+                'message' => 'Insufficient trading balance. You need at least ' . money($orderAmount, 2) . ' in your trading balance.'
             ], 400);
         }
 

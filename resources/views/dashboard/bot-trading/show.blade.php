@@ -139,7 +139,7 @@
                 <div class="flex justify-between">
                     <span class="text-gray-400">Total Profit:</span>
                     <span class="text-lg font-bold {{ $bot->total_profit >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                        ${{ number_format($bot->total_profit, 2) }}
+                        {{ money($bot->total_profit, 2) }}
                     </span>
                 </div>
                 @if($bot->total_invested > 0)
@@ -160,7 +160,7 @@
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-400">Current Investment:</span>
-                    <span class="text-white">${{ number_format($bot->total_invested, 2) }}</span>
+                    <span class="text-white">{{ money($bot->total_invested, 2) }}</span>
                 </div>
                 @if($bot->target_yield_percentage)
                 <div class="flex justify-between">
@@ -178,15 +178,15 @@
                 <!-- Investment Settings -->
                 <div class="flex justify-between">
                     <span class="text-gray-400">Max Investment:</span>
-                    <span class="text-white">${{ number_format($bot->max_investment, 2) }}</span>
+                    <span class="text-white">{{ money($bot->max_investment, 2) }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-400">Min Trade:</span>
-                    <span class="text-white">${{ number_format($bot->min_trade_amount, 2) }}</span>
+                    <span class="text-white">{{ money($bot->min_trade_amount, 2) }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-400">Max Trade:</span>
-                    <span class="text-white">${{ number_format($bot->max_trade_amount, 2) }}</span>
+                    <span class="text-white">{{ money($bot->max_trade_amount, 2) }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-400">Max Open Trades:</span>
@@ -249,7 +249,7 @@
                 @if($bot->daily_loss_limit)
                 <div class="flex justify-between">
                     <span class="text-gray-400">Daily Loss Limit:</span>
-                    <span class="text-red-400">${{ number_format($bot->daily_loss_limit, 2) }}</span>
+                    <span class="text-red-400">{{ money($bot->daily_loss_limit, 2) }}</span>
                 </div>
                 @endif
                 
@@ -273,7 +273,7 @@
                         $asset = \App\Models\Asset::where('symbol', $bot->base_asset)->first();
                         $currentPrice = $asset ? $asset->current_price : 0;
                     @endphp
-                    ${{ number_format($currentPrice, 2) }}
+                    {{ money($currentPrice, 2) }}
                 </span>
             </div>
             <div class="flex justify-between items-center">
@@ -331,11 +331,11 @@
                             {{ number_format($trade->base_amount, 6) }} {{ $trade->base_asset }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                            ${{ number_format($trade->price, 2) }}
+                            {{ money($trade->price, 2) }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm {{ $trade->profit_loss >= 0 ? 'text-green-400' : 'text-red-400' }}">
                             @if($trade->profit_loss !== null)
-                                ${{ number_format($trade->profit_loss, 2) }}
+                                {{ money($trade->profit_loss, 2) }}
                                 @if($trade->profit_loss_percentage)
                                     ({{ number_format($trade->profit_loss_percentage, 2) }}%)
                                 @endif

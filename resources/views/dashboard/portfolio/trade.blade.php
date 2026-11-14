@@ -10,7 +10,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-gray-700 rounded-lg p-4">
                 <div class="text-gray-400 text-sm">Total Investment</div>
-                <div class="text-white font-semibold">${{ number_format($totalTradingInvestment, 2) }}</div>
+                <div class="text-white font-semibold">{{ money($totalTradingInvestment, 2) }}</div>
             </div>
             <div class="bg-gray-700 rounded-lg p-4">
                 <div class="text-gray-400 text-sm">Active Plans</div>
@@ -77,7 +77,7 @@
                                 <div class="text-sm text-gray-400">{{ $plan->plan->description }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                ${{ number_format($plan->amount_paid, 2) }}
+                                {{ money($plan->amount_paid, 2) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($plan->status === 'active')

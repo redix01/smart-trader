@@ -196,7 +196,7 @@
             <div class="asset-info">
                 <div class="asset-symbol">{{ $transaction->asset->symbol }}</div>
                 <div class="asset-name">{{ $transaction->asset->name }}</div>
-                <div class="asset-price">${{ number_format($transaction->asset->current_price, 8) }}</div>
+                <div class="asset-price">{{ money($transaction->asset->current_price, 8, $transaction->user) }}</div>
             </div>
             
             <div class="details">
@@ -217,18 +217,18 @@
                 
                 <div class="detail-row">
                     <span class="detail-label">Price per Unit:</span>
-                    <span class="detail-value">${{ number_format($transaction->price_per_unit, 8) }}</span>
+                    <span class="detail-value">{{ money($transaction->price_per_unit, 8, $transaction->user) }}</span>
                 </div>
                 
                 <div class="detail-row">
                     <span class="detail-label">Total Amount:</span>
-                    <span class="detail-value amount">${{ number_format($transaction->total_amount, 2) }}</span>
+                    <span class="detail-value amount">{{ money($transaction->total_amount, 2, $transaction->user) }}</span>
                 </div>
                 
                 @if($transaction->fee > 0)
                 <div class="detail-row">
                     <span class="detail-label">Transaction Fee:</span>
-                    <span class="detail-value">${{ number_format($transaction->fee, 2) }}</span>
+                    <span class="detail-value">{{ money($transaction->fee, 2, $transaction->user) }}</span>
                 </div>
                 @endif
                 
@@ -247,20 +247,20 @@
                 </div>
                 <div class="portfolio-row">
                     <span>Average Buy Price:</span>
-                    <span>${{ number_format($portfolioSummary['average_buy_price'], 8) }}</span>
+                    <span>{{ money($portfolioSummary['average_buy_price'], 8, $transaction->user) }}</span>
                 </div>
                 <div class="portfolio-row">
                     <span>Total Invested:</span>
-                    <span>${{ number_format($portfolioSummary['total_invested'], 2) }}</span>
+                    <span>{{ money($portfolioSummary['total_invested'], 2, $transaction->user) }}</span>
                 </div>
                 <div class="portfolio-row">
                     <span>Current Value:</span>
-                    <span>${{ number_format($portfolioSummary['current_value'], 2) }}</span>
+                    <span>{{ money($portfolioSummary['current_value'], 2, $transaction->user) }}</span>
                 </div>
                 <div class="portfolio-row">
                     <span>Unrealized P&L:</span>
                     <span style="color: {{ $portfolioSummary['unrealized_pnl'] >= 0 ? '#38a169' : '#e53e3e' }}">
-                        {{ $portfolioSummary['unrealized_pnl'] >= 0 ? '+' : '' }}${{ number_format($portfolioSummary['unrealized_pnl'], 2) }}
+                        {{ $portfolioSummary['unrealized_pnl'] >= 0 ? '+' : '' }}{{ money($portfolioSummary['unrealized_pnl'], 2, $transaction->user) }}
                         ({{ $portfolioSummary['unrealized_pnl_percentage'] >= 0 ? '+' : '' }}{{ number_format($portfolioSummary['unrealized_pnl_percentage'], 2) }}%)
                     </span>
                 </div>

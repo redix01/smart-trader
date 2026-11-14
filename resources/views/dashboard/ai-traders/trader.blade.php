@@ -188,7 +188,7 @@
                             </div>
                             <div>
                                 <div class="text-sm text-gray-400">Minimum Investment</div>
-                                <div class="font-semibold text-white">${{ $trader->aiTraderPlan ? number_format($trader->aiTraderPlan->investment_amount, 0) : 'N/A' }}</div>
+                                <div class="font-semibold text-white">{{ currency_symbol() }}{{ $trader->aiTraderPlan ? number_format($trader->aiTraderPlan->investment_amount, 0) : 'N/A' }}</div>
                             </div>
                         </div>
                     </div>
@@ -295,11 +295,11 @@
                     <div class="text-sm text-gray-300">
                         <div class="flex justify-between">
                             <span>Minimum Investment:</span>
-                            <span class="font-semibold text-blue-400" id="minInvestment">$0</span>
+                            <span class="font-semibold text-blue-400" id="minInvestment">{{ currency_symbol() }}0</span>
                         </div>
                         <div class="flex justify-between">
                             <span>Your Trading Balance:</span>
-                            <span class="font-semibold text-green-400" id="userBalance">$0</span>
+                            <span class="font-semibold text-green-400" id="userBalance">{{ currency_symbol() }}0</span>
                         </div>
                     </div>
                 </div>
@@ -484,8 +484,8 @@ function showActivationModal(traderId, traderName, minInvestment) {
     
     // Update modal content
     document.getElementById('traderName').textContent = traderName;
-    document.getElementById('minInvestment').textContent = '$' + minInvestment.toLocaleString();
-    document.getElementById('userBalance').textContent = '$' + currentUserBalance.toLocaleString();
+    document.getElementById('minInvestment').textContent = CURRENCY_SYMBOL + minInvestment.toLocaleString();
+    document.getElementById('userBalance').textContent = CURRENCY_SYMBOL + currentUserBalance.toLocaleString();
     document.getElementById('investmentAmount').value = minInvestment;
     document.getElementById('amountError').textContent = '';
     
@@ -511,12 +511,12 @@ function validateInvestmentAmount(amount) {
     const confirmBtn = document.getElementById('confirmActivationBtn');
     
     if (amount < currentMinInvestment) {
-        errorElement.textContent = `Minimum investment required: $${currentMinInvestment.toLocaleString()}`;
+        errorElement.textContent = `Minimum investment required: ${CURRENCY_SYMBOL}${currentMinInvestment.toLocaleString()}`;
         errorElement.className = 'mt-2 text-sm text-red-400';
         confirmBtn.disabled = true;
         return false;
     } else if (amount > currentUserBalance) {
-        errorElement.textContent = `Insufficient balance. Available: $${currentUserBalance.toLocaleString()}`;
+        errorElement.textContent = `Insufficient balance. Available: ${CURRENCY_SYMBOL}${currentUserBalance.toLocaleString()}`;
         errorElement.className = 'mt-2 text-sm text-red-400';
         confirmBtn.disabled = true;
         return false;
@@ -539,7 +539,7 @@ function confirmActivation() {
     if (typeof Swal !== 'undefined') {
         Swal.fire({
             title: 'Confirm Activation',
-            text: `Are you sure you want to activate this AI Trader with $${amount.toLocaleString()}?`,
+            text: `Are you sure you want to activate this AI Trader with ${CURRENCY_SYMBOL}${amount.toLocaleString()}?`,
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#0b1020',
@@ -552,7 +552,7 @@ function confirmActivation() {
             }
         });
     } else {
-        if (confirm(`Are you sure you want to activate this AI Trader with $${amount.toLocaleString()}?`)) {
+        if (confirm(`Are you sure you want to activate this AI Trader with ${CURRENCY_SYMBOL}${amount.toLocaleString()}?`)) {
             activateTrader(currentTraderId, amount);
         }
     }

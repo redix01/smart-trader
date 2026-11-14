@@ -53,7 +53,7 @@
                             </div>
                             <div class="p-6">
                                 <div class="mb-4">
-                                    <span class="text-3xl font-bold text-white">${{ number_format($plan->price, 2) }}</span>
+                                    <span class="text-3xl font-bold text-white">{{ money($plan->price, 2) }}</span>
                                 </div>
                                 <div class="space-y-2 mb-6">
                                     <div class="flex justify-between">
@@ -141,7 +141,7 @@ function openSubscribeModal(planId, planName, amount) {
     document.getElementById('modal_plan_id').value = planId;
     document.getElementById('modal_amount').value = amount;
     document.getElementById('modal_plan_name').textContent = planName;
-    document.getElementById('modal_amount_display').textContent = '$' + amount.toFixed(2);
+    document.getElementById('modal_amount_display').textContent = CURRENCY_SYMBOL + amount.toFixed(2);
     document.getElementById('subscribeModal').classList.remove('hidden');
 }
 

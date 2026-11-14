@@ -62,7 +62,7 @@
                     </svg>
                         </div>
                     </div>
-            <div class="text-3xl font-bold text-white">${{ number_format($user->balance ?? 0, 2) }}</div>
+            <div class="text-3xl font-bold text-white">{{ money($user->balance ?? 0, 2) }}</div>
             <div class="text-sm text-gray-400 mt-1">Available for trading</div>
         </div>
 
@@ -75,7 +75,7 @@
                     </svg>
                 </div>
                         </div>
-            <div class="text-3xl font-bold text-white">${{ number_format($user->holding_balance ?? 0, 2) }}</div>
+            <div class="text-3xl font-bold text-white">{{ money($user->holding_balance ?? 0, 2) }}</div>
             <div class="text-sm text-gray-400 mt-1">Long-term holdings</div>
                                                 </div>
 
@@ -88,7 +88,7 @@
                     </svg>
                                             </div>
                                         </div>
-            <div class="text-3xl font-bold text-white">${{ number_format($user->staking_balance ?? 0, 2) }}</div>
+            <div class="text-3xl font-bold text-white">{{ money($user->staking_balance ?? 0, 2) }}</div>
             <div class="text-sm text-gray-400 mt-1">Staked assets</div>
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@
                 <tbody class="bg-gray-800 divide-y divide-gray-700">
                     @forelse($deposits as $deposit)
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-white">${{ number_format($deposit->amount, 2) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-white">{{ money($deposit->amount, 2) }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                 @if($deposit->wallet_type == 'balance')
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
