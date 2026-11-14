@@ -120,12 +120,28 @@
                         </svg>
                     </div>
                 </div>
-                <div class="mb-4">
-                    <div class="text-3xl font-bold text-purple-400">{{ number_format($user->trading_strength, 1) }}%</div>
-                    <div class="text-sm text-gray-400">{{ $user->trading_strength_label }}</div>
-                    <div class="mt-3 w-full bg-gray-700 rounded-full h-2">
-                        <div class="bg-purple-500 h-2 rounded-full transition-all duration-500" style="width: {{ min(100, max(0, $user->trading_strength)) }}%"></div>
+                @php $strength = $user->tradingStrengthSummary(); @endphp
+                <div class="mb-4" id="strengthCard" data-url="{{ route('user.tradingStrength') }}">
+                    <div class="flex items-end justify-between">
+                        <div class="text-3xl font-bold text-purple-400"><span id="strengthScore">{{ number_format($strength['score'], 1) }}</span>%</div>
+                        <span class="text-xs text-gray-400" id="strengthUpdated">Live</span>
                     </div>
+                    <div class="text-sm text-gray-400" id="strengthLabel">{{ $strength['label'] }}</div>
+                    <div class="mt-3 w-full bg-gray-700 rounded-full h-2">
+                        <div id="strengthBar" class="bg-purple-500 h-2 rounded-full transition-all duration-500" style="width: {{ min(100, max(0, $strength['score'])) }}%"></div>
+                    </div>
+                    <details class="mt-3 text-sm">
+                        <summary class="cursor-pointer text-gray-400 hover:text-white">How it's calculated</summary>
+                        <div class="mt-3 space-y-2" id="strengthBreakdown">
+                            @foreach($strength['components'] as $c)
+                                <div data-key="{{ $c['key'] }}">
+                                    <div class="flex justify-between text-xs text-gray-400"><span>{{ $c['label'] }}</span><span><span data-points>{{ number_format($c['points'], 1) }}</span> / {{ $c['max'] }}</span></div>
+                                    <div class="mt-1 w-full bg-gray-700 rounded-full h-1.5"><div data-bar class="bg-purple-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $c['max'] > 0 ? min(100, ($c['points'] / $c['max']) * 100) : 0 }}%"></div></div>
+                                </div>
+                            @endforeach
+                            <p class="text-xs text-gray-400">Capital: trading balance. Performance: win rate once you have {{ \App\Services\TradingStrengthService::MIN_CLOSED_TRADES }}+ closed trades. Activity: trades in the last 30 days. Diversification: an active plan, bot/AI trader and copy trade.</p>
+                        </div>
+                    </details>
                 </div>
                 <div class="space-y-3">
                     <div class="flex justify-between text-sm">
@@ -433,3 +449,35 @@
     </script>
 
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+  var card = document.getElementById('strengthCard');
+  if (!card) return;
+  var url = card.dataset.url;
+  function apply(d) {
+    document.getElementById('strengthScore').textContent = Number(d.score).toFixed(1);
+    document.getElementById('strengthLabel').textContent = d.label;
+    document.getElementById('strengthBar').style.width = Math.min(100, Math.max(0, d.score)) + '%';
+    d.components.forEach(function (c) {
+      var row = card.querySelector('[data-key="' + c.key + '"]');
+      if (!row) return;
+      row.querySelector('[data-points]').textContent = Number(c.points).toFixed(1);
+      row.querySelector('[data-bar]').style.width = (c.max ? Math.min(100, c.points / c.max * 100) : 0) + '%';
+    });
+    var u = document.getElementById('strengthUpdated');
+    if (u) u.textContent = 'Updated ' + new Date(d.updated_at).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+  }
+  function refresh() {
+    if (document.hidden) return;
+    fetch(url, {headers: {'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest'}, credentials: 'same-origin'})
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(apply)
+      .catch(function () {});
+  }
+  setInterval(refresh, 30000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) refresh(); });
+})();
+</script>
+@endpush

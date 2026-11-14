@@ -11,6 +11,9 @@ use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
+    /** @var array|null memoised result of tradingStrengthSummary() */
+    protected ?array $tradingStrengthSummary = null;
+
     use HasFactory, Notifiable, HasUuids;
 
     public function IsAdmin()
@@ -244,20 +247,12 @@ class User extends Authenticatable
     }
 
     /**
-     * Trading strength scales automatically with the user's trading balance.
-     *
-     * A trading balance equal to the cap returns 100% strength.
-     * The value is clamped between 0% and 100%.
+     * Live trading strength (0-100), calculated from account activity.
+     * See App\Services\TradingStrengthService for the scoring rules.
      */
     public function getTradingStrengthAttribute(): float
     {
-        $cap = 100000; // Balance amount that equals 100% strength
-
-        if ($cap <= 0) {
-            return 0.0;
-        }
-
-        return min(100.0, max(0.0, ($this->trading_balance / $cap) * 100));
+        return $this->tradingStrengthSummary()['score'];
     }
 
     /**
@@ -265,21 +260,13 @@ class User extends Authenticatable
      */
     public function getTradingStrengthLabelAttribute(): string
     {
-        $strength = $this->trading_strength;
+        return $this->tradingStrengthSummary()['label'];
+    }
 
-        if ($strength >= 75) {
-            return 'Elite Performance';
-        }
-
-        if ($strength >= 50) {
-            return 'Strong Performance';
-        }
-
-        if ($strength >= 25) {
-            return 'Good Performance';
-        }
-
-        return 'Learning Phase';
+    /** Score, label and component breakdown, computed once per request. */
+    public function tradingStrengthSummary(): array
+    {
+        return $this->tradingStrengthSummary ??= app(\App\Services\TradingStrengthService::class)->forUser($this);
     }
 
     /**
