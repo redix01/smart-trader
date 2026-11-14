@@ -39,9 +39,9 @@
                     <!-- Plan Header -->
                     <div class="text-center mb-6">
                         <h3 class="text-2xl font-bold text-white mb-2">{{ $plan->name }}</h3>
-                        <div class="text-3xl font-bold text-green-400 mb-1">{{ money($plan->price, 2) }}</div>
+                        <div class="text-3xl font-bold text-green-400 mb-1">{{ money_from($plan->price, $plan->currency, 2) }}</div>
                         @if($plan->has_discount)
-                            <div class="text-lg text-gray-400 line-through mb-1">{{ money($plan->original_price, 2) }}</div>
+                            <div class="text-lg text-gray-400 line-through mb-1">{{ money_from($plan->original_price, $plan->currency, 2) }}</div>
                         @endif
                         <div class="text-sm text-gray-400">{{ $plan->signal_quantity }} Signals</div>
                         <div class="text-sm text-gray-400">{{ $plan->signal_duration }} Days</div>

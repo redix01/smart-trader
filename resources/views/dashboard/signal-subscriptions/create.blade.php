@@ -53,7 +53,7 @@
                             </div>
                             <div class="p-6">
                                 <div class="mb-4">
-                                    <span class="text-3xl font-bold text-white">{{ money($plan->price, 2) }}</span>
+                                    <span class="text-3xl font-bold text-white">{{ money_from($plan->price, $plan->currency, 2) }}</span>
                                 </div>
                                 <div class="space-y-2 mb-6">
                                     <div class="flex justify-between">

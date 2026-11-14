@@ -45,7 +45,7 @@
                                     <option value="">Choose a mining plan</option>
                                     @foreach($miningPlans as $plan)
                                         <option value="{{ $plan->id }}" {{ request('plan') == $plan->id ? 'selected' : '' }}>
-                                            {{ $plan->name }} - {{ money($plan->price, 2) }}
+                                            {{ $plan->name }} - {{ money_from($plan->price, $plan->currency, 2) }}
                                         </option>
                                     @endforeach
                                 </select>

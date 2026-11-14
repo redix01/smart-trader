@@ -81,7 +81,7 @@
                                 </div>
                             </td>
                             <td class="text-right py-4 px-4">
-                                <div class="text-white font-medium">{{ money($asset->current_price, 4) }}</div>
+                                <div class="text-white font-medium">{{ money_from($asset->current_price, 'USD', 4) }}</div>
                             </td>
                             <td class="text-right py-4 px-4">
                                 <div class="text-{{ $asset->price_change_24h >= 0 ? 'green' : 'red' }}-400 font-medium">
@@ -149,7 +149,7 @@
                                 </div>
                             </td>
                             <td class="text-right py-4 px-4">
-                                <div class="text-white font-medium">{{ money($asset->current_price, 2) }}</div>
+                                <div class="text-white font-medium">{{ money_from($asset->current_price, 'USD', 2) }}</div>
                             </td>
                             <td class="text-right py-4 px-4">
                                 <div class="text-{{ $asset->price_change_24h >= 0 ? 'green' : 'red' }}-400 font-medium">

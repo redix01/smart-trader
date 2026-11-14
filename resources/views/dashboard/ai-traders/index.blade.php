@@ -62,7 +62,7 @@
                     <!-- Investment Amount -->
                     <div class="mb-4">
                         <div class="text-sm text-gray-400 mb-1">Minimum Investment</div>
-                        <div class="text-lg font-semibold text-white">{{ money($plan->investment_amount, 0) }}</div>
+                        <div class="text-lg font-semibold text-white">{{ money_from($plan->investment_amount, 'USD', 0) }}</div>
                     </div>
 
                     <!-- Stocks Trading -->

@@ -39,7 +39,10 @@ class PortfolioCalculationService
     public function updateHoldingValues(UserHolding $holding): void
     {
         try {
-            $currentPrice = $holding->asset->current_price;
+            // asset prices are USD; holdings are valued in the owner's wallet currency
+            $currentPrice = $holding->user
+                ? $holding->user->convertFrom($holding->asset->current_price)
+                : (float) $holding->asset->current_price;
             $currentValue = $holding->quantity * $currentPrice;
             $unrealizedPnl = $currentValue - $holding->total_invested;
             $unrealizedPnlPercentage = $holding->total_invested > 0 

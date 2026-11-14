@@ -124,8 +124,9 @@ class AiTraderController extends Controller
             }
             
             // Get investment amount from request or use minimum
-            $investmentAmount = $request->input('investment_amount', $trader->aiTraderPlan->investment_amount);
-            $minInvestment = $trader->aiTraderPlan->investment_amount;
+            // Plan prices are USD; the wallet is in the user's currency.
+            $minInvestment = round($user->convertFrom($trader->aiTraderPlan->investment_amount), 2);
+            $investmentAmount = $request->input('investment_amount', $minInvestment);
             $userBalance = $user->trading_balance;
             
             // Validate investment amount
@@ -165,7 +166,7 @@ class AiTraderController extends Controller
             $user->createNotification(
                 'ai_trader_activated',
                 'AI Trader Activated',
-                "Your AI Trader '{$trader->name}' has been successfully activated with $" . number_format($investmentAmount, 2) . " and is now trading with your account.",
+                "Your AI Trader '{$trader->name}' has been successfully activated with " . money($investmentAmount, 2, $user) . " and is now trading with your account.",
                 [
                     'ai_trader_id' => $trader->id,
                     'activation_id' => $activation->id,
@@ -175,7 +176,7 @@ class AiTraderController extends Controller
             
             return response()->json([
                 'success' => true,
-                'message' => "AI Trader '{$trader->name}' has been successfully activated with $" . number_format($investmentAmount, 2) . "! It will start trading with your account immediately.",
+                'message' => "AI Trader '{$trader->name}' has been successfully activated with " . money($investmentAmount, 2, $user) . "! It will start trading with your account immediately.",
                 'activation_id' => $activation->id
             ]);
             
@@ -206,7 +207,7 @@ class AiTraderController extends Controller
             }
             
             // Check if user has sufficient balance for the monthly fee
-            $monthlyFee = $plan->price;
+            $monthlyFee = round($user->convertFrom($plan->price), 2);
             $userBalance = $user->balance; // Use main balance for subscription fees
             
             if ($userBalance < $monthlyFee) {

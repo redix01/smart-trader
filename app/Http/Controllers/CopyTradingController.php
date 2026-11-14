@@ -44,14 +44,22 @@ class CopyTradingController extends Controller
             $user = Auth::user();
 
             // Check if user has sufficient balance
-            if ($copyTrader->amount > $user->balance) {
+            $minAmount = round($user->convertFrom($copyTrader->amount), 2); // trader minimums are USD
+            if ($minAmount > $user->balance) {
                 if ($request->ajax()) {
                     return response()->json([
                         'error' => true,
-                        'message' => 'Insufficient balance. You need at least ' . money($copyTrader->amount, 2)
+                        'message' => 'Insufficient balance. You need at least ' . money($minAmount, 2)
                     ]);
                 }
-                return redirect()->back()->with('error', 'Insufficient balance. You need at least ' . money($copyTrader->amount, 2));
+                return redirect()->back()->with('error', 'Insufficient balance. You need at least ' . money($minAmount, 2));
+            }
+
+            if ((float) $request->amount < $minAmount) {
+                $msg = 'Amount must be at least ' . money($minAmount, 2);
+                return $request->ajax()
+                    ? response()->json(['error' => true, 'message' => $msg])
+                    : redirect()->back()->withInput()->with('error', $msg);
             }
 
             // Check if user has a stopped copy trade for this trader (only admin can restart)

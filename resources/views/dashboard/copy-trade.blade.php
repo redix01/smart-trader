@@ -138,7 +138,7 @@
                     <!-- Minimum Amount -->
                     <div class="text-center p-3 bg-gray-600 rounded-lg">
                         <div class="text-sm text-gray-400">Minimum Investment</div>
-                        <div class="text-lg font-bold text-white">{{ money($trader->amount, 2) }}</div>
+                        <div class="text-lg font-bold text-white">{{ money_from($trader->amount, 'USD', 2) }}</div>
                     </div>
 
                     <!-- Copy Trade Button -->

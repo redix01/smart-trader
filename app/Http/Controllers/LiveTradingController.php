@@ -229,7 +229,7 @@ class LiveTradingController extends Controller
             if ($asset) {
                 return response()->json([
                     'success' => true,
-                    'price' => $asset->current_price,
+                    'price' => auth()->user()->convertFrom($asset->current_price),
                     'change_24h' => $asset->price_change_24h
                 ]);
             }

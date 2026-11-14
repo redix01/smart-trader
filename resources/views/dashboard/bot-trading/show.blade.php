@@ -273,7 +273,7 @@
                         $asset = \App\Models\Asset::where('symbol', $bot->base_asset)->first();
                         $currentPrice = $asset ? $asset->current_price : 0;
                     @endphp
-                    {{ money($currentPrice, 2) }}
+                    {{ money_from($currentPrice, 'USD', 2) }}
                 </span>
             </div>
             <div class="flex justify-between items-center">

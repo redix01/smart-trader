@@ -263,6 +263,12 @@ class User extends Authenticatable
         return $this->tradingStrengthSummary()['label'];
     }
 
+    /** Convert a USD (or other-currency) price into this user's wallet currency. */
+    public function convertFrom($amount, string $from = 'USD'): float
+    {
+        return to_user_currency($amount, $from, $this);
+    }
+
     /** Score, label and component breakdown, computed once per request. */
     public function tradingStrengthSummary(): array
     {

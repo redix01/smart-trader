@@ -128,7 +128,7 @@ use App\Helpers\AssetHelper;
                             {{ money($holding->average_buy_price, 8) }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                            {{ money($holding->asset->current_price, 8) }}
+                            {{ money_from($holding->asset->current_price, 'USD', 8) }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
                             {{ money($holding->current_value, 2) }}
@@ -140,7 +140,7 @@ use App\Helpers\AssetHelper;
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button class="text-blue-400 hover:text-blue-300 mr-3" onclick="openSellModal({{ $holding->id }}, '{{ $holding->asset->symbol }}', {{ $holding->quantity }}, {{ $holding->asset->current_price }})">
+                            <button class="text-blue-400 hover:text-blue-300 mr-3" onclick="openSellModal({{ $holding->id }}, '{{ $holding->asset->symbol }}', {{ $holding->quantity }}, {{ round(auth()->user()->convertFrom($holding->asset->current_price), 8) }})">
                                 Sell
                             </button>
                         </td>

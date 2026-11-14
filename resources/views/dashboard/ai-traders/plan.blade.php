@@ -30,7 +30,7 @@
                     <div class="text-gray-300 text-sm">AI Traders Available</div>
                 </div>
                 <div class="bg-blue-50 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
-                    <div class="text-2xl font-bold text-blue-400">{{ money($plan->investment_amount, 0) }}</div>
+                    <div class="text-2xl font-bold text-blue-400">{{ money_from($plan->investment_amount, 'USD', 0) }}</div>
                     <div class="text-gray-300 text-sm">Minimum Investment</div>
                 </div>
             </div>
