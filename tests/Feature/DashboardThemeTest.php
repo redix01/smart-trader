@@ -76,4 +76,12 @@ class DashboardThemeTest extends TestCase
                 ->assertDontSee('0A0714', false);
         }
     }
+
+    public function test_install_app_button_is_compact_and_cannot_overflow_the_header(): void
+    {
+        $html = $this->actingAs(User::factory()->create())->get('/user/dashboard')->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression('/id="installPwaBtn"[^>]*flex-shrink-0[^>]*whitespace-nowrap/', $html);
+        $this->assertStringContainsString('<span class="sm:hidden">Install</span>', $html);
+    }
 }
