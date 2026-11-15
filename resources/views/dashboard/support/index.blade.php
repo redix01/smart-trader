@@ -137,7 +137,7 @@
     var z = d.createElement(s);
     var ts = (+new Date()).toString(36);
     z.type = "text/javascript"; z.async = true; z.id = id;
-    z.src = "https://code.jivosite.com/widget/GdsLrZG4BH";
+    z.src = "https://code.jivosite.com/widget/opFqmnSygN";
     var f = function(){var sd = d.getElementById(id);if(!sd) return;var p = d.getElementsByTagName(s)[0];p.parentNode.insertBefore(sd,p);};
     if(d.readyState === "complete") f(); else if(d.addEventListener) d.addEventListener("DOMContentLoaded", f, false);
 })(document, "script", "jivosite-script");

@@ -59,7 +59,7 @@ class DashboardThemeTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user)->get('/user/dashboard')->assertOk()->assertDontSee('jivosite', false)->assertDontSee('embed-widget', false);
-        $this->actingAs($user)->get('/user/support')->assertOk()->assertSee('jivosite', false);
+        $this->actingAs($user)->get('/user/support')->assertOk()->assertSee('code.jivosite.com/widget/opFqmnSygN', false);
     }
 
     public function test_user_ai_trader_pages_use_the_current_theme(): void
