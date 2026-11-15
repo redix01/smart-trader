@@ -84,38 +84,17 @@
                 <h2 class="text-xl font-semibold text-white mb-4">Live Chat Support</h2>
                 <p class="text-gray-400 text-sm mb-4">Chat with our support team in real-time for immediate assistance.</p>
                 
-                <!-- Live Chat Widget Container -->
-                <div id="livechat-widget" class="min-h-[400px] bg-gray-700 rounded-lg">
-                    @php
-                        $widgetScript = $livechatService->getWidgetScript();
-                    @endphp
-                    @if($widgetScript)
-                    <!-- Livechat widget will load here -->
-                    <div class="h-full flex items-center justify-center">
-                        <div class="text-center">
-                            <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                                </svg>
-                            </div>
-                            <h3 class="text-white font-medium mb-2">Live Chat Available</h3>
-                            <p class="text-gray-400 text-sm">Chat widget is loading. Look for the chat button on the page.</p>
-                        </div>
+                <!-- Live chat launcher: the chat bubble itself is injected by the widget script below -->
+                <div id="livechat-widget" class="rounded-lg bg-gray-700 p-6 text-center">
+                    <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
                     </div>
-                    @else
-                    <!-- Default JivoChat demo -->
-                    <div class="h-full flex items-center justify-center">
-                        <div class="text-center">
-                            <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                                </svg>
-                            </div>
-                            <h3 class="text-white font-medium mb-2">Demo Live Chat</h3>
-                            <p class="text-gray-400 text-sm">Using JivoChat demo widget. Configure your own widget in admin settings.</p>
-                        </div>
-                    </div>
-                    @endif
+                    <h3 class="text-white font-medium mb-2">Talk to our team</h3>
+                    <p class="text-gray-400 text-sm mb-4">Our support team is online 24/7. Start a chat here, or use the chat button in the corner of the page.</p>
+                    <button type="button" id="openLivechat" class="btn bg-blue-600 text-white px-5 py-2.5 text-sm">Open chat</button>
+                    <p id="livechatNote" class="text-gray-400 text-xs mt-3 hidden">The chat is still loading. Please try again in a moment.</p>
                 </div>
             </div>
         </div>
@@ -131,54 +110,19 @@
 @if($widgetScript)
 {!! $widgetScript !!}
 @else
-<!-- Default JivoChat Widget (used when no custom script is configured in admin settings) -->
-<script>
-(function(d,s,id){
-    var z = d.createElement(s);
-    var ts = (+new Date()).toString(36);
-    z.type = "text/javascript"; z.async = true; z.id = id;
-    z.src = "https://code.jivosite.com/widget/opFqmnSygN";
-    var f = function(){var sd = d.getElementById(id);if(!sd) return;var p = d.getElementsByTagName(s)[0];p.parentNode.insertBefore(sd,p);};
-    if(d.readyState === "complete") f(); else if(d.addEventListener) d.addEventListener("DOMContentLoaded", f, false);
-})(document, "script", "jivosite-script");
-</script>
+<!-- Default Jivo widget (used when no custom script is saved in admin settings) -->
+<script src="//code.jivosite.com/widget/opFqmnSygN" async></script>
 @endif
 
-<!-- Hide loading message when widget loads -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Hide loading message after 3 seconds to show widget has loaded
-    setTimeout(function() {
-        var loadingDiv = document.querySelector('#livechat-widget .animate-pulse');
-        if (loadingDiv) {
-            loadingDiv.style.display = 'none';
-        }
-    }, 3000);
-    
-    // Also hide loading message when JivoChat widget appears
-    var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.addedNodes.length > 0) {
-                // Check if JivoChat widget was added
-                for (var i = 0; i < mutation.addedNodes.length; i++) {
-                    var node = mutation.addedNodes[i];
-                    if (node.nodeType === 1) { // Element node
-                        if (node.classList && (node.classList.contains('jivo-widget') || node.id === 'jivosite-script')) {
-                            var loadingDiv = document.querySelector('#livechat-widget .animate-pulse');
-                            if (loadingDiv) {
-                                loadingDiv.style.display = 'none';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    });
-    
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
+document.getElementById('openLivechat').addEventListener('click', function () {
+    var note = document.getElementById('livechatNote');
+    if (window.jivo_api && typeof window.jivo_api.open === 'function') {
+        note.classList.add('hidden');
+        window.jivo_api.open();
+    } else {
+        note.classList.remove('hidden');
+    }
 });
 </script>
 
