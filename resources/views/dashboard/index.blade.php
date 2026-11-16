@@ -1,474 +1,368 @@
 @extends('dashboard.layout.app')
 @section('content')
 
-<div class="space-y-6">
-    <!-- Page Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-        <div>
-            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Prime Digital Capital</p>
-            <h1 class="text-2xl font-bold text-white mt-1">Dashboard</h1>
-            <p class="text-gray-400 mt-1">Welcome back, {{ auth()->user()->name }}!</p>
-        </div>
-    </div>
+@php
+    $user = auth()->user()->fresh();
 
-    <!-- Markets quick access -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <a href="{{ route('user.markets.stocks') }}" class="group bg-gray-800 rounded-lg p-5 border border-gray-700 hover:border-gold-500 transition-colors">
-            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Live</p>
-            <h3 class="text-lg font-semibold text-white mt-1">Stock prices</h3>
-            <p class="text-sm text-gray-400 mt-1">Real-time quotes and charts for US equities and ETFs.</p>
-            <span class="inline-block mt-3 text-sm text-gold-400 group-hover:translate-x-1 transition-transform">View stocks →</span>
-        </a>
-        <a href="{{ route('user.markets.crypto') }}" class="group bg-gray-800 rounded-lg p-5 border border-gray-700 hover:border-gold-500 transition-colors">
-            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Live</p>
-            <h3 class="text-lg font-semibold text-white mt-1">Crypto prices</h3>
-            <p class="text-sm text-gray-400 mt-1">Tick-by-tick prices for the top coins, streamed live.</p>
-            <span class="inline-block mt-3 text-sm text-gold-400 group-hover:translate-x-1 transition-transform">View crypto →</span>
-        </a>
-        <a href="{{ route('user.liveTrading.index') }}" class="group bg-blue-600/10 rounded-lg p-5 border border-blue-500/40 hover:border-blue-400 transition-colors">
-            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Personal</p>
-            <h3 class="text-lg font-semibold text-white mt-1">Trade Room</h3>
-            <p class="text-sm text-gray-400 mt-1">Place your own crypto and stock trades and manage open positions.</p>
-            <span class="inline-block mt-3 text-sm text-gold-400 group-hover:translate-x-1 transition-transform">Start trading →</span>
-        </a>
-    </div>
+    // Balances (all shown in the user's currency via formatAmount)
+    $walletBalance = $user->balance ?? 0;
+    $tradingBalance = $user->trading_balance ?? 0;
+    $holdingsBalance = $user->holding_balance ?? 0;
+    $stakingBalance = $user->staking_balance ?? 0;
+    $profitBalance = $user->profit ?? 0;
+    $totalPortfolio = $walletBalance + $tradingBalance + $holdingsBalance + $stakingBalance + $profitBalance;
 
-        <!-- First Row: Balance & Trading Strength -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <!-- Balance Card -->
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 h-full">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-white">Wallet Overview</h3>
-                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"></path>
-                    </svg>
-                </div>
-            </div>
-            
-            @php
-                // Force refresh the user data from database
-                $user = auth()->user()->fresh();
-                $walletBalance = $user->balance ?? 0;
-                $tradingBalance = $user->trading_balance ?? 0;
-                $holdingsBalance = $user->holding_balance ?? 0;
-                $staking = $user->staking_balance ?? 0;
-                $profitBalance = $user->profit ?? 0;
-                $totalPortfolio = $walletBalance + $tradingBalance + $holdingsBalance + $staking + $profitBalance;
-                
-                // Debug: Log the profit balance
-                \Log::info('Dashboard Profit Balance Debug', [
-                    'user_id' => $user->id,
-                    'profit_balance' => $profitBalance,
-                    'raw_profit' => $user->getRawOriginal('profit'),
-                    'user_name' => $user->name
-                ]);
-            @endphp
+    $balances = [
+        ['label' => 'Wallet', 'value' => $walletBalance, 'color' => '#3b82f6', 'href' => route('user.deposit'), 'hint' => 'Available to fund'],
+        ['label' => 'Trading', 'value' => $tradingBalance, 'color' => '#7dd3fc', 'href' => route('user.liveTrading.index'), 'hint' => 'Ready in the Trade Room'],
+        ['label' => 'Holdings', 'value' => $holdingsBalance, 'color' => '#2dd4a7', 'href' => route('user.holding.index'), 'hint' => 'Assets you own'],
+        ['label' => 'Staking', 'value' => $stakingBalance, 'color' => '#f59e0b', 'href' => route('user.staking.index'), 'hint' => 'Locked and earning'],
+        ['label' => 'Profit', 'value' => $profitBalance, 'color' => '#a78bfa', 'href' => route('user.transactions.index'), 'hint' => 'Realised gains'],
+    ];
 
-            <!-- Total Balance -->
-            <div class="mb-6">
-                <div class="text-3xl font-bold text-white animate-pulse">{{ $user->formatAmount($totalPortfolio) }}</div>
-                <div class="text-sm text-gray-400">Total Portfolio Value</div>
-            </div>
+    // Greeting
+    $hour = (int) now()->format('G');
+    $greeting = $hour < 12 ? 'Good morning' : ($hour < 18 ? 'Good afternoon' : 'Good evening');
+    $firstName = \Illuminate\Support\Str::of($user->name)->trim()->explode(' ')->first() ?: 'there';
 
-            <!-- Balance Breakdown -->
-            <div class="space-y-3 mb-4">
-                <div class="flex justify-between items-center py-2 px-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                        <span class="text-sm text-gray-300">Wallet Balance</span>
-                    </div>
-                    <span class="text-sm font-semibold text-white">{{ $user->formatAmount($walletBalance) }}</span>
-                </div>
-                
-                <div class="flex justify-between items-center py-2 px-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse" style="animation-delay: 0.5s;"></div>
-                        <span class="text-sm text-gray-300">Trading Balance</span>
-                    </div>
-                    <span class="text-sm font-semibold text-white">{{ $user->formatAmount($tradingBalance) }}</span>
-                </div>
-                
-                <div class="flex justify-between items-center py-2 px-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-3 h-3 bg-yellow-500 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
-                        <span class="text-sm text-gray-300">Holdings</span>
-                    </div>
-                    <span class="text-sm font-semibold text-white">{{ $user->formatAmount($holdingsBalance) }}</span>
-                </div>
-                
-                <div class="flex justify-between items-center py-2 px-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-3 h-3 bg-purple-500 rounded-full animate-pulse" style="animation-delay: 1.5s;"></div>
-                        <span class="text-sm text-gray-300">Staking</span>
-                    </div>
-                    <span class="text-sm font-semibold text-white">{{ $user->formatAmount($staking) }}</span>
-                </div>
-                
-                <div class="flex justify-between items-center py-2 px-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" style="animation-delay: 2s;"></div>
-                        <span class="text-sm text-gray-300">Profit Balance</span>
-                    </div>
-                    <span class="text-sm font-semibold text-white">{{ $user->formatAmount($profitBalance) }}</span>
+    // Getting-started checklist
+    $steps = [
+        ['label' => 'Fund your wallet', 'done' => ($walletBalance + $tradingBalance) > 0, 'href' => route('user.deposit')],
+        ['label' => 'Place your first trade', 'done' => $totalTrades > 0, 'href' => route('user.liveTrading.index')],
+        ['label' => 'Copy an experienced trader', 'done' => $activeCopyTrades > 0, 'href' => route('user.copyTrading.index')],
+        ['label' => 'Activate a plan', 'done' => $totalPlans > 0, 'href' => route('user.plans.index')],
+    ];
+    $stepsDone = collect($steps)->where('done', true)->count();
+
+    $strength = $user->tradingStrengthSummary();
+
+    $icon = fn ($d, $cls = 'w-5 h-5') => '<svg class="'.$cls.'" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">'.$d.'</svg>';
+    $ic = [
+        'deposit' => '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
+        'withdraw' => '<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>',
+        'trade' => '<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',
+        'copy' => '<circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0114 0M16 4.5a3.5 3.5 0 010 7M22 20a7 7 0 00-4-6.3"/>',
+        'stocks' => '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+        'crypto' => '<path d="M9 8h4.5a2.5 2.5 0 010 5H9m0-5v10m0-5h5a2.5 2.5 0 010 5H9M11 5v3m0 10v1m2-14v3m0 10v1"/>',
+        'check' => '<path d="M5 12l4 4 10-10"/>',
+        'arrow' => '<path d="M5 12h14M13 6l6 6-6 6"/>',
+        'bot' => '<rect x="5" y="8" width="14" height="12" rx="2"/><path d="M12 4v4M9 14h.01M15 14h.01"/>',
+        'plan' => '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/>',
+        'clock' => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+        'wallet' => '<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 15h2"/>',
+    ];
+@endphp
+
+<div class="space-y-6 dash-home">
+
+    {{-- ===== Welcome ===== --}}
+    <section class="dash-hero relative overflow-hidden rounded-2xl border border-gray-700 bg-gray-800 p-5 sm:p-8">
+        <div class="relative grid gap-8 lg:grid-cols-5 lg:items-center">
+            <div class="lg:col-span-3">
+                <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">{{ now()->format('l, j F') }}</p>
+                <h1 class="text-2xl sm:text-3xl font-bold text-white mt-2">{{ $greeting }}, {{ $firstName }}</h1>
+                <p class="text-gray-400 mt-2 max-w-xl">Here’s where your account stands today. Fund your wallet, trade in the Trade Room, or let a copy trader or AI trader work for you.</p>
+                <div class="mt-6 grid grid-cols-2 sm:flex sm:flex-wrap gap-2.5">
+                    <a href="{{ route('user.deposit') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">{!! $icon($ic['deposit'], 'w-4 h-4') !!}Deposit</a>
+                    <a href="{{ route('user.withdrawal') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold border border-gray-600">{!! $icon($ic['withdraw'], 'w-4 h-4') !!}Withdraw</a>
+                    <a href="{{ route('user.liveTrading.index') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold border border-gray-600">{!! $icon($ic['trade'], 'w-4 h-4') !!}Trade Room</a>
+                    <a href="{{ route('user.copyTrading.index') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold border border-gray-600">{!! $icon($ic['copy'], 'w-4 h-4') !!}Copy a trader</a>
                 </div>
             </div>
 
-            <!-- Wallet Status -->
-            <div class="border-t border-gray-700 pt-3">
-                <div class="flex items-center justify-between text-xs">
-                    <span class="text-gray-400">Wallet Status</span>
-                    <span class="text-green-400 font-medium flex items-center">
-                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-1"></span>
-                        Active
-                    </span>
-                </div>
-                <div class="flex items-center justify-between text-xs mt-1">
-                    <span class="text-gray-400">Last Updated</span>
-                    <span class="text-gray-300">{{ now()->format('M d, H:i') }}</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Trading Strength Card -->
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 h-full flex flex-col">
-            <!-- Top Section: Trading Strength (Mobile: Full, Desktop: Top Half) -->
-            <div class="lg:flex-1">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-white">Trading Strength</h3>
-                    <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                </div>
-                @php $strength = $user->tradingStrengthSummary(); @endphp
-                <div class="mb-4" id="strengthCard" data-url="{{ route('user.tradingStrength') }}">
-                    <div class="flex items-end justify-between">
-                        <div class="text-3xl font-bold text-purple-400"><span id="strengthScore">{{ number_format($strength['score'], 1) }}</span>%</div>
-                        <span class="text-xs text-gray-400" id="strengthUpdated">Live</span>
-                    </div>
-                    <div class="text-sm text-gray-400" id="strengthLabel">{{ $strength['label'] }}</div>
-                    <div class="mt-3 w-full bg-gray-700 rounded-full h-2">
-                        <div id="strengthBar" class="bg-purple-500 h-2 rounded-full transition-all duration-500" style="width: {{ min(100, max(0, $strength['score'])) }}%"></div>
-                    </div>
-                    <details class="mt-3 text-sm">
-                        <summary class="cursor-pointer text-gray-400 hover:text-white">How it's calculated</summary>
-                        <div class="mt-3 space-y-2" id="strengthBreakdown">
-                            @foreach($strength['components'] as $c)
-                                <div data-key="{{ $c['key'] }}">
-                                    <div class="flex justify-between text-xs text-gray-400"><span>{{ $c['label'] }}</span><span><span data-points>{{ number_format($c['points'], 1) }}</span> / {{ $c['max'] }}</span></div>
-                                    <div class="mt-1 w-full bg-gray-700 rounded-full h-1.5"><div data-bar class="bg-purple-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $c['max'] > 0 ? min(100, ($c['points'] / $c['max']) * 100) : 0 }}%"></div></div>
-                                </div>
+            <div class="lg:col-span-2">
+                @if($stepsDone < count($steps))
+                    <div class="rounded-xl border border-gray-700 bg-gray-900/60 p-5">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-semibold text-white">Get started</h3>
+                            <span class="text-xs font-mono text-gray-400">{{ $stepsDone }} / {{ count($steps) }}</span>
+                        </div>
+                        <div class="mt-3 h-1.5 rounded-full bg-gray-700 overflow-hidden"><div class="h-full rounded-full bg-blue-500" style="width: {{ $stepsDone / count($steps) * 100 }}%"></div></div>
+                        <ul class="mt-4 space-y-1">
+                            @foreach($steps as $step)
+                                <li>
+                                    <a href="{{ $step['href'] }}" class="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-gray-700/60">
+                                        @if($step['done'])
+                                            <span class="w-6 h-6 rounded-full bg-emerald-500/15 text-emerald-400 grid place-items-center">{!! $icon($ic['check'], 'w-3.5 h-3.5') !!}</span>
+                                            <span class="text-sm text-gray-400 line-through">{{ $step['label'] }}</span>
+                                        @else
+                                            <span class="w-6 h-6 rounded-full border border-gray-600"></span>
+                                            <span class="text-sm text-white flex-1">{{ $step['label'] }}</span>
+                                            <span class="text-gray-400">{!! $icon($ic['arrow'], 'w-4 h-4') !!}</span>
+                                        @endif
+                                    </a>
+                                </li>
                             @endforeach
-                            <p class="text-xs text-gray-400">Capital: trading balance. Performance: win rate once you have {{ \App\Services\TradingStrengthService::MIN_CLOSED_TRADES }}+ closed trades. Activity: trades in the last 30 days. Diversification: an active plan, bot/AI trader and copy trade.</p>
-                        </div>
-                    </details>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-400">Win Rate</span>
-                        <span class="text-white">{{ number_format($winRate, 1) }}%</span>
+                        </ul>
                     </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-400">Total Trades</span>
-                        <span class="text-white">{{ $totalTrades }}</span>
+                @else
+                    <div class="rounded-xl border border-gray-700 bg-gray-900/60 p-5">
+                        <h3 class="text-sm font-semibold text-white">Account snapshot</h3>
+                        <dl class="mt-4 grid grid-cols-2 gap-4">
+                            <div><dt class="text-xs text-gray-400">Active plans</dt><dd class="text-xl font-semibold text-white mt-1">{{ $totalPlans }}</dd></div>
+                            <div><dt class="text-xs text-gray-400">Copy trades</dt><dd class="text-xl font-semibold text-white mt-1">{{ $activeCopyTrades }}</dd></div>
+                            <div><dt class="text-xs text-gray-400">Active bots</dt><dd class="text-xl font-semibold text-white mt-1">{{ $activeBots }}</dd></div>
+                            <div><dt class="text-xs text-gray-400">Open trades</dt><dd class="text-xl font-semibold text-white mt-1">{{ $openTrades->count() }}</dd></div>
+                        </dl>
                     </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-400">Avg. Profit</span>
-                        <span class="{{ $avgProfit >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                            {{ $avgProfit >= 0 ? '+' : '' }}{{ auth()->user()->formatAmount($avgProfit) }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Section: Subscription State (Desktop Only) -->
-            <div class="hidden lg:block lg:flex-1 lg:mt-6 lg:pt-6 lg:border-t lg:border-gray-700">
-                <div class="flex items-center justify-between mb-3">
-                    <h4 class="text-sm font-semibold text-gray-300">Subscription Status</h4>
-                    <div class="w-6 h-6 bg-blue-500 rounded-lg flex items-center justify-center">
-                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <div class="flex justify-between text-xs">
-                        <span class="text-gray-400">Active Plans</span>
-                        <span class="text-green-400 font-semibold">{{ $totalPlans }}</span>
-                    </div>
-                    <div class="flex justify-between text-xs">
-                        <span class="text-gray-400">Premium Status</span>
-                        <span class="text-blue-400 font-semibold">{{ $totalPlans > 0 ? 'Active' : 'Inactive' }}</span>
-                    </div>
-                    <div class="flex justify-between text-xs">
-                        <span class="text-gray-400">Next Renewal</span>
-                        <span class="text-white">
-                            @if($activePlans->count() > 0)
-                                {{ $activePlans->first()->end_date ? $activePlans->first()->end_date->format('M d, Y') : 'N/A' }}
-                            @else
-                                N/A
-                            @endif
-                        </span>
-                    </div>
-                </div>
+                @endif
             </div>
         </div>
-    </div>
+    </section>
 
-	<!-- Second Row: My Subscriptions moved to Portfolio page -->
+    {{-- ===== Balances ===== --}}
+    <section class="rounded-2xl border border-gray-700 bg-gray-800 p-5 sm:p-6">
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+                <p class="text-sm text-gray-400 flex items-center gap-2">{!! $icon($ic['wallet'], 'w-4 h-4') !!} Total portfolio value</p>
+                <div class="text-3xl sm:text-4xl font-bold text-white mt-1 tracking-tight">{{ $user->formatAmount($totalPortfolio) }}</div>
+                <p class="text-xs text-gray-400 mt-1">Wallet, trading, holdings, staking and profit · updated {{ now()->format('H:i') }}</p>
+            </div>
+            <a href="{{ route('user.portfolio.index') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-gold-400 hover:text-gold-300">View portfolio {!! $icon($ic['arrow'], 'w-4 h-4') !!}</a>
+        </div>
 
-    <!-- Third Row: Trades Tabs -->
-    <div class="bg-gray-800 rounded-lg border border-gray-700 mb-8">
-                <!-- Tabs Header -->
-                <div class="border-b border-gray-700">
-                    <nav class="flex space-x-8 px-6" aria-label="Tabs">
-                        <button id="openTradesTab" class="tab-button active py-4 px-1 border-b-2 border-blue-500 text-blue-400 font-medium text-sm">
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span>Open Trades</span>
+        @if($totalPortfolio > 0)
+            <div class="mt-5 flex h-2.5 rounded-full overflow-hidden bg-gray-700 gap-0.5" role="img" aria-label="Portfolio allocation">
+                @foreach($balances as $b)
+                    @if($b['value'] > 0)<span style="width: {{ $b['value'] / $totalPortfolio * 100 }}%; background: {{ $b['color'] }}"></span>@endif
+                @endforeach
+            </div>
+        @endif
+
+        <div class="mt-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            @foreach($balances as $b)
+                <a href="{{ $b['href'] }}" class="group rounded-xl border border-gray-700 bg-gray-900/50 p-4 hover:border-gold-500 transition-colors {{ $loop->last ? 'col-span-2 sm:col-span-1' : '' }}">
+                    <div class="flex items-center gap-2 text-xs text-gray-400"><span class="w-2 h-2 rounded-full" style="background: {{ $b['color'] }}"></span>{{ $b['label'] }}</div>
+                    <div class="text-lg font-semibold text-white mt-2 truncate">{{ $user->formatAmount($b['value']) }}</div>
+                    <div class="text-xs text-gray-500 mt-0.5">{{ $b['hint'] }}</div>
+                </a>
+            @endforeach
+        </div>
+    </section>
+
+    {{-- ===== Markets & Trade Room ===== --}}
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="{{ route('user.markets.stocks') }}" class="group rounded-2xl border border-gray-700 bg-gray-800 p-5 hover:border-gold-500 transition-colors flex gap-4">
+            <span class="w-11 h-11 shrink-0 rounded-xl bg-sky-500/15 text-sky-300 grid place-items-center">{!! $icon($ic['stocks']) !!}</span>
+            <span>
+                <span class="block text-base font-semibold text-white">Stock prices</span>
+                <span class="block text-sm text-gray-400 mt-1">Quotes, charts and a screener for US stocks and ETFs.</span>
+                <span class="inline-flex items-center gap-1 mt-3 text-sm font-semibold text-gold-400">View stocks {!! $icon($ic['arrow'], 'w-4 h-4 group-hover:translate-x-0.5 transition-transform') !!}</span>
+            </span>
+        </a>
+        <a href="{{ route('user.markets.crypto') }}" class="group rounded-2xl border border-gray-700 bg-gray-800 p-5 hover:border-gold-500 transition-colors flex gap-4">
+            <span class="w-11 h-11 shrink-0 rounded-xl bg-amber-500/15 text-amber-300 grid place-items-center">{!! $icon($ic['crypto']) !!}</span>
+            <span>
+                <span class="block text-base font-semibold text-white">Crypto prices</span>
+                <span class="block text-sm text-gray-400 mt-1">Bitcoin, Ethereum and the top coins with live charts.</span>
+                <span class="inline-flex items-center gap-1 mt-3 text-sm font-semibold text-gold-400">View crypto {!! $icon($ic['arrow'], 'w-4 h-4 group-hover:translate-x-0.5 transition-transform') !!}</span>
+            </span>
+        </a>
+        <a href="{{ route('user.liveTrading.index') }}" class="group rounded-2xl border border-blue-500/40 bg-blue-600/10 p-5 hover:border-blue-400 transition-colors flex gap-4">
+            <span class="w-11 h-11 shrink-0 rounded-xl bg-blue-600 text-white grid place-items-center">{!! $icon($ic['trade']) !!}</span>
+            <span>
+                <span class="block text-base font-semibold text-white">Trade Room</span>
+                <span class="block text-sm text-gray-400 mt-1">Place your own stock and crypto trades and manage positions.</span>
+                <span class="inline-flex items-center gap-1 mt-3 text-sm font-semibold text-gold-400">Start trading {!! $icon($ic['arrow'], 'w-4 h-4 group-hover:translate-x-0.5 transition-transform') !!}</span>
+            </span>
+        </a>
+    </section>
+
+    {{-- ===== Strength, performance, activity ===== --}}
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {{-- Trading Strength (live; refreshed every 30s by the script below) --}}
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-5 sm:p-6">
+            <div class="flex items-center justify-between">
+                <h3 class="text-base font-semibold text-white">Trading Strength</h3>
+                <span class="text-xs text-gray-400" id="strengthUpdated">Live</span>
+            </div>
+            <div class="mt-4" id="strengthCard" data-url="{{ route('user.tradingStrength') }}">
+                <div class="flex items-end gap-2">
+                    <div class="text-4xl font-bold text-gold-400"><span id="strengthScore">{{ number_format($strength['score'], 1) }}</span>%</div>
+                    <div class="text-sm text-gray-400 pb-1" id="strengthLabel">{{ $strength['label'] }}</div>
+                </div>
+                <div class="mt-3 w-full bg-gray-700 rounded-full h-2">
+                    <div id="strengthBar" class="bg-blue-500 h-2 rounded-full transition-all duration-500" style="width: {{ min(100, max(0, $strength['score'])) }}%"></div>
+                </div>
+                <details class="mt-4 text-sm group">
+                    <summary class="cursor-pointer text-gray-400 hover:text-white list-none flex items-center gap-1">How it's calculated {!! $icon('<path d="M6 9l6 6 6-6"/>', 'w-4 h-4 group-open:rotate-180 transition-transform') !!}</summary>
+                    <div class="mt-3 space-y-2.5" id="strengthBreakdown">
+                        @foreach($strength['components'] as $c)
+                            <div data-key="{{ $c['key'] }}">
+                                <div class="flex justify-between text-xs text-gray-400"><span>{{ $c['label'] }}</span><span><span data-points>{{ number_format($c['points'], 1) }}</span> / {{ $c['max'] }}</span></div>
+                                <div class="mt-1 w-full bg-gray-700 rounded-full h-1.5"><div data-bar class="bg-blue-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $c['max'] > 0 ? min(100, ($c['points'] / $c['max']) * 100) : 0 }}%"></div></div>
                             </div>
-                        </button>
-                        <button id="closedTradesTab" class="tab-button py-4 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-300 font-medium text-sm">
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span>Closed Trades</span>
-                            </div>
-                        </button>
-                    </nav>
-                </div>
-
-                <!-- Tab Content -->
-                <div class="p-6">
-                    <!-- Open Trades Tab -->
-                    <div id="openTradesContent" class="tab-content active">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-700">
-                                <thead class="bg-gray-700">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Pair</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Type</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Amount</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Leverage</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Entry Price</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Current P&L</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Action</th>
-                                </tr>
-                                </thead>
-                                <tbody class="bg-gray-800 divide-y divide-gray-700">
-                                    @forelse($openTrades as $trade)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                            {{ $trade->trade_pair->pair ?? 'N/A' }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $trade->action_type === 'buy' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                                {{ ucfirst($trade->action_type ?? 'N/A') }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                            {{ auth()->user()->formatAmount($trade->amount) }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                            {{ $trade->leverage ?? 'N/A' }}x
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                            {{ auth()->user()->formatAmount($trade->entry_price ?? 0, 8) }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm {{ ($trade->profit_loss ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                                            {{ ($trade->profit_loss ?? 0) >= 0 ? '+' : '' }}{{ auth()->user()->formatAmount($trade->profit_loss ?? 0) }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <button class="text-red-400 hover:text-red-300">Close</button>
-                                        </td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="7" class="px-6 py-12 text-center">
-                                            <div class="flex flex-col items-center space-y-3">
-                                                <svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                                </svg>
-                                                <div class="text-gray-400">
-                                                    <p class="text-lg font-medium">No open trades</p>
-                                                    <p class="text-sm">Start trading to see your open positions here</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
+                        @endforeach
+                        <p class="text-xs text-gray-500">Capital: trading balance. Performance: win rate once you have {{ \App\Services\TradingStrengthService::MIN_CLOSED_TRADES }}+ closed trades. Activity: trades in the last 30 days. Diversification: an active plan, bot/AI trader and copy trade.</p>
                     </div>
+                </details>
+            </div>
+        </div>
 
-                    <!-- Closed Trades Tab -->
-                    <div id="closedTradesContent" class="tab-content hidden">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-700">
-                                <thead class="bg-gray-700">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Pair</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Type</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Amount</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Entry Price</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Exit Price</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">P&L</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
-                                </tr>
-                                </thead>
-                                <tbody class="bg-gray-800 divide-y divide-gray-700">
-                                    @forelse($closedTrades as $trade)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                            {{ $trade->trade_pair->pair ?? 'N/A' }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $trade->action_type === 'buy' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                                {{ ucfirst($trade->action_type ?? 'N/A') }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                            {{ auth()->user()->formatAmount($trade->amount) }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                            {{ auth()->user()->formatAmount($trade->entry_price ?? 0, 8) }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                            {{ auth()->user()->formatAmount($trade->exit_price ?? 0, 8) }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm {{ ($trade->profit_loss ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                                            {{ ($trade->profit_loss ?? 0) >= 0 ? '+' : '' }}{{ auth()->user()->formatAmount($trade->profit_loss ?? 0) }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                            {{ $trade->updated_at ? $trade->updated_at->format('M d, Y') : 'N/A' }}
-                                        </td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="7" class="px-6 py-12 text-center">
-                                            <div class="flex flex-col items-center space-y-3">
-                                                <svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-                                                <div class="text-gray-400">
-                                                    <p class="text-lg font-medium">No closed trades</p>
-                                                    <p class="text-sm">Your completed trades will appear here</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+        {{-- Performance --}}
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-5 sm:p-6">
+            <h3 class="text-base font-semibold text-white">Performance</h3>
+            <dl class="mt-4 grid grid-cols-2 gap-3">
+                <div class="rounded-xl bg-gray-900/50 border border-gray-700 p-4"><dt class="text-xs text-gray-400">Win rate</dt><dd class="text-2xl font-semibold text-white mt-1">{{ number_format($winRate, 1) }}%</dd></div>
+                <div class="rounded-xl bg-gray-900/50 border border-gray-700 p-4"><dt class="text-xs text-gray-400">Total trades</dt><dd class="text-2xl font-semibold text-white mt-1">{{ $totalTrades }}</dd></div>
+                <div class="rounded-xl bg-gray-900/50 border border-gray-700 p-4"><dt class="text-xs text-gray-400">Winning trades</dt><dd class="text-2xl font-semibold text-white mt-1">{{ $winningTrades }}</dd></div>
+                <div class="rounded-xl bg-gray-900/50 border border-gray-700 p-4"><dt class="text-xs text-gray-400">Avg. profit</dt><dd class="text-2xl font-semibold mt-1 {{ $avgProfit > 0 ? 'text-emerald-400' : ($avgProfit < 0 ? 'text-red-400' : 'text-white') }}">{{ $avgProfit > 0 ? '+' : '' }}{{ $user->formatAmount($avgProfit) }}</dd></div>
+            </dl>
+            @if($totalTrades === 0)
+                <p class="text-sm text-gray-400 mt-4">No trades yet. <a href="{{ route('user.liveTrading.index') }}" class="text-gold-400 hover:text-gold-300 font-semibold">Place your first trade</a> to start building a track record.</p>
+            @endif
+        </div>
+
+        {{-- Account activity --}}
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-5 sm:p-6">
+            <h3 class="text-base font-semibold text-white">Account activity</h3>
+            <ul class="mt-4 divide-y divide-gray-700">
+                <li class="flex items-center gap-3 py-3">
+                    <span class="w-9 h-9 rounded-lg bg-gray-700 text-gray-300 grid place-items-center">{!! $icon($ic['plan'], 'w-4 h-4') !!}</span>
+                    <span class="flex-1"><span class="block text-sm text-white">Active plans</span><span class="block text-xs text-gray-400">{{ $tradingPlans }} trading · {{ $signalPlans }} signal · {{ $stakingPlans }} staking · {{ $miningPlans }} mining</span></span>
+                    <span class="text-lg font-semibold text-white">{{ $totalPlans }}</span>
+                </li>
+                <li class="flex items-center gap-3 py-3">
+                    <span class="w-9 h-9 rounded-lg bg-gray-700 text-gray-300 grid place-items-center">{!! $icon($ic['bot'], 'w-4 h-4') !!}</span>
+                    <span class="flex-1"><span class="block text-sm text-white">Trading bots</span><span class="block text-xs text-gray-400">Profit {{ $user->formatAmount($totalBotProfit) }}</span></span>
+                    <span class="text-lg font-semibold text-white">{{ $activeBots }}</span>
+                </li>
+                <li class="flex items-center gap-3 py-3">
+                    <span class="w-9 h-9 rounded-lg bg-gray-700 text-gray-300 grid place-items-center">{!! $icon($ic['copy'], 'w-4 h-4') !!}</span>
+                    <span class="flex-1"><span class="block text-sm text-white">Copy trades</span><span class="block text-xs text-gray-400">Traders you’re following</span></span>
+                    <span class="text-lg font-semibold text-white">{{ $activeCopyTrades }}</span>
+                </li>
+                <li class="flex items-center gap-3 py-3">
+                    <span class="w-9 h-9 rounded-lg bg-gray-700 text-gray-300 grid place-items-center">{!! $icon($ic['clock'], 'w-4 h-4') !!}</span>
+                    <span class="flex-1"><span class="block text-sm text-white">Next renewal</span><span class="block text-xs text-gray-400">Earliest active plan</span></span>
+                    <span class="text-sm font-semibold text-white">{{ optional(optional($activePlans->first())->end_date)->format('M d, Y') ?? '—' }}</span>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    {{-- ===== Trades + recent activity ===== --}}
+    <section class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div class="xl:col-span-2 rounded-2xl border border-gray-700 bg-gray-800 overflow-hidden">
+            <div class="flex items-center justify-between gap-4 px-5 sm:px-6 border-b border-gray-700">
+                <nav class="flex gap-6" aria-label="Trades">
+                    <button id="openTradesTab" class="tab-button active py-4 border-b-2 border-blue-500 text-blue-400 font-medium text-sm">Open trades <span class="ml-1 text-xs text-gray-400">{{ $openTrades->count() }}</span></button>
+                    <button id="closedTradesTab" class="tab-button py-4 border-b-2 border-transparent text-gray-400 hover:text-gray-300 font-medium text-sm">Closed trades <span class="ml-1 text-xs text-gray-400">{{ $closedTrades->count() }}</span></button>
+                </nav>
+                <a href="{{ route('user.liveTrading.history') }}" class="hidden sm:inline-flex text-sm font-semibold text-gold-400 hover:text-gold-300">History</a>
             </div>
 
-                                                </div>
-                                            </div>
+            <div id="openTradesContent" class="tab-content active">
+                @forelse($openTrades as $trade)
+                    @if($loop->first)<div class="overflow-x-auto"><table class="min-w-full text-sm"><thead><tr class="text-left">
+                        <th class="px-5 py-3">Pair</th><th class="px-5 py-3">Type</th><th class="px-5 py-3">Amount</th><th class="px-5 py-3">Leverage</th><th class="px-5 py-3">Entry</th><th class="px-5 py-3">P&amp;L</th>
+                    </tr></thead><tbody class="divide-y divide-gray-700">@endif
+                    <tr>
+                        <td class="px-5 py-3 whitespace-nowrap text-white font-medium">{{ $trade->trade_pair->pair ?? 'N/A' }}</td>
+                        <td class="px-5 py-3"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $trade->action_type === 'buy' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ ucfirst($trade->action_type ?? 'N/A') }}</span></td>
+                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $user->formatAmount($trade->amount) }}</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $trade->leverage ?? '—' }}x</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $user->formatAmount($trade->entry_price ?? 0, 8) }}</td>
+                        <td class="px-5 py-3 whitespace-nowrap font-semibold {{ ($trade->profit_loss ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ ($trade->profit_loss ?? 0) >= 0 ? '+' : '' }}{{ $user->formatAmount($trade->profit_loss ?? 0) }}</td>
+                    </tr>
+                    @if($loop->last)</tbody></table></div>@endif
+                @empty
+                    <div class="px-6 py-12 text-center">
+                        <span class="mx-auto w-12 h-12 rounded-full bg-gray-700 text-gray-300 grid place-items-center">{!! $icon($ic['trade']) !!}</span>
+                        <p class="mt-3 text-white font-medium">No open trades</p>
+                        <p class="text-sm text-gray-400 mt-1">Your open positions will show up here.</p>
+                        <a href="{{ route('user.liveTrading.index') }}" class="inline-flex mt-4 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">Open the Trade Room</a>
+                    </div>
+                @endforelse
+            </div>
 
-    <!-- Bottom spacing for fixed menu -->
-    <div class="h-20"></div>
-
-    <!-- Bottom Menu (Mobile & Desktop) -->
-    <div class="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-700 z-50">
-        <div class="flex justify-around items-center py-2 px-3">
-            <!-- Trade -->
-            <a href="{{ route('user.liveTrading.index') }}" class="flex flex-col items-center space-y-0.5 text-gray-400 hover:text-blue-400 transition-colors">
-                <div class="w-7 h-7 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
-                    <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
-                    </svg>
-                </div>
-                <span class="text-xs font-medium">Trade</span>
-            </a>
-
-            <!-- Deposit -->
-            <a href="{{ route('user.deposit') }}" class="flex flex-col items-center space-y-0.5 text-gray-400 hover:text-green-400 transition-colors">
-                <div class="w-7 h-7 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-green-600 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="w-4 h-4 text-gray-300" fill="currentColor">
-                        <path d="M17.12 9.88a2.997 2.997 0 1 0-4.24 4.24a2.997 2.997 0 1 0 4.24-4.24M7 6v12h16V6zm14 8c-.53 0-1.04.21-1.41.59c-.38.37-.59.88-.59 1.41h-8c0-.53-.21-1.04-.59-1.41c-.37-.38-.88-.59-1.41-.59v-4c.53 0 1.04-.21 1.41-.59c.38-.37.59-.88.59-1.41h8c0 .53.21 1.04.59 1.41c.37.38.88.59 1.41.59zM5 8H3c-.55 0-1-.45-1-1s.45-1 1-1h2zm0 5H2c-.55 0-1-.45-1-1s.45-1 1-1h3zm0 5H1c-.552 0-1-.45-1-1s.448-1 1-1h4z"/>
-                    </svg>
-                </div>
-                <span class="text-xs font-medium">Deposit</span>
-            </a>
-
-            <!-- Portfolio -->
-            <a href="{{ route('user.portfolio.index') }}" class="flex flex-col items-center space-y-0.5 text-gray-400 hover:text-purple-400 transition-colors">
-                <div class="w-7 h-7 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-purple-600 transition-colors">
-                    <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
-                    </svg>
-                </div>
-                <span class="text-xs font-medium">Portfolio</span>
-            </a>
-
-            <!-- Holdings -->
-            <a href="{{ route('user.holding.index') }}" class="flex flex-col items-center space-y-0.5 text-gray-400 hover:text-orange-400 transition-colors">
-                <div class="w-7 h-7 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-orange-600 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="w-4 h-4 text-gray-300" fill="currentColor">
-                        <path d="M12.753 4a.752.752 0 0 0-1.505 0v.464h-.051c-1.05 0-1.66.795-1.781 1.56c-.121.755.2 1.7 1.165 2.048l2.362.851c.082.03.113.07.129.1c.02.04.033.1.02.17a.27.27 0 0 1-.076.152c-.025.023-.069.051-.162.051h-1.657a.324.324 0 0 1-.32-.328a.752.752 0 0 0-1.504 0c0 1.006.81 1.833 1.824 1.833h.076v.599a.752.752 0 0 0 1.505 0v-.599h.076c1.964 0 2.426-2.735.599-3.394l-2.361-.85a.26.26 0 0 1-.157-.133a.44.44 0 0 1-.034-.263a.4.4 0 0 1 .107-.225c.036-.036.089-.067.189-.067h1.607c.17 0 .319.14.319.328a.752.752 0 0 0 1.505 0c0-1.006-.81-1.833-1.824-1.833h-.051zm-3.32 8.998c-.863 0-1.522.206-2.063.544c-.5.312-.865.72-1.157 1.046l-.031.035c-.316.352-.559.614-.873.806c-.292.179-.685.319-1.309.319a.75.75 0 0 0-.752.752V20c0 .416.337.752.752.752h9.502c1.744 0 3.426-.94 4.603-1.784a16 16 0 0 0 1.983-1.695l.004-.004c.364-.3.59-.688.647-1.117c.058-.436-.07-.85-.3-1.17a1.7 1.7 0 0 0-2.335-.42q-.296.21-.579.416c-.571.414-1.122.814-1.713 1.149c-.77.437-1.523.712-2.31.712H10.5c-.2 0-.283-.062-.312-.092a.2.2 0 0 1-.06-.151a.2.2 0 0 1 .06-.152c.03-.03.112-.092.312-.092h2.002c.533 0 1.006-.167 1.354-.489a1.616 1.616 0 0 0 0-2.376c-.348-.322-.821-.49-1.354-.49z"/>
-                    </svg>
-                </div>
-                <span class="text-xs font-medium">Holdings</span>
-            </a>
+            <div id="closedTradesContent" class="tab-content hidden">
+                @forelse($closedTrades as $trade)
+                    @if($loop->first)<div class="overflow-x-auto"><table class="min-w-full text-sm"><thead><tr class="text-left">
+                        <th class="px-5 py-3">Pair</th><th class="px-5 py-3">Type</th><th class="px-5 py-3">Amount</th><th class="px-5 py-3">Entry</th><th class="px-5 py-3">Exit</th><th class="px-5 py-3">P&amp;L</th><th class="px-5 py-3">Date</th>
+                    </tr></thead><tbody class="divide-y divide-gray-700">@endif
+                    <tr>
+                        <td class="px-5 py-3 whitespace-nowrap text-white font-medium">{{ $trade->trade_pair->pair ?? 'N/A' }}</td>
+                        <td class="px-5 py-3"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $trade->action_type === 'buy' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ ucfirst($trade->action_type ?? 'N/A') }}</span></td>
+                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $user->formatAmount($trade->amount) }}</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $user->formatAmount($trade->entry_price ?? 0, 8) }}</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $user->formatAmount($trade->exit_price ?? 0, 8) }}</td>
+                        <td class="px-5 py-3 whitespace-nowrap font-semibold {{ ($trade->profit_loss ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ ($trade->profit_loss ?? 0) >= 0 ? '+' : '' }}{{ $user->formatAmount($trade->profit_loss ?? 0) }}</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-gray-400">{{ optional($trade->updated_at)->format('M d, Y') ?? '—' }}</td>
+                    </tr>
+                    @if($loop->last)</tbody></table></div>@endif
+                @empty
+                    <div class="px-6 py-12 text-center">
+                        <span class="mx-auto w-12 h-12 rounded-full bg-gray-700 text-gray-300 grid place-items-center">{!! $icon($ic['check']) !!}</span>
+                        <p class="mt-3 text-white font-medium">No closed trades yet</p>
+                        <p class="text-sm text-gray-400 mt-1">Completed trades and their results will appear here.</p>
+                    </div>
+                @endforelse
+            </div>
         </div>
-    </div>
 
-
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-5 sm:p-6">
+            <div class="flex items-center justify-between">
+                <h3 class="text-base font-semibold text-white">Recent activity</h3>
+                <a href="{{ route('user.transactions.index') }}" class="text-sm font-semibold text-gold-400 hover:text-gold-300">See all</a>
+            </div>
+            @forelse($recentTransactions as $tx)
+                @if($loop->first)<ul class="mt-3 divide-y divide-gray-700">@endif
+                <li class="flex items-center gap-3 py-3">
+                    <span class="w-9 h-9 rounded-lg grid place-items-center text-xs font-bold {{ in_array($tx->type, ['buy', 'deposit']) ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ strtoupper(substr($tx->asset->symbol ?? $tx->type ?? '?', 0, 3)) }}</span>
+                    <span class="flex-1 min-w-0">
+                        <span class="block text-sm text-white truncate">{{ ucfirst($tx->type ?? 'Transaction') }} {{ $tx->asset->name ?? '' }}</span>
+                        <span class="block text-xs text-gray-400">{{ optional($tx->created_at)->diffForHumans() }}</span>
+                    </span>
+                    <span class="text-sm font-semibold text-white whitespace-nowrap">{{ $user->formatAmount($tx->total_amount ?? 0) }}</span>
+                </li>
+                @if($loop->last)</ul>@endif
+            @empty
+                <div class="py-10 text-center">
+                    <span class="mx-auto w-12 h-12 rounded-full bg-gray-700 text-gray-300 grid place-items-center">{!! $icon($ic['clock']) !!}</span>
+                    <p class="mt-3 text-white font-medium">Nothing here yet</p>
+                    <p class="text-sm text-gray-400 mt-1">Buys, sells and transfers will be listed here.</p>
+                </div>
+            @endforelse
         </div>
-    </div>
+    </section>
 
+    {{-- Spacer for the mobile bottom menu --}}
+    <div class="h-16 lg:hidden"></div>
 </div>
 
-    <script>
-        // Tab functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const openTradesTab = document.getElementById('openTradesTab');
-            const closedTradesTab = document.getElementById('closedTradesTab');
-            const openTradesContent = document.getElementById('openTradesContent');
-            const closedTradesContent = document.getElementById('closedTradesContent');
+{{-- Mobile bottom menu (the sidebar covers this on desktop) --}}
+<nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur border-t border-gray-700 z-40" aria-label="Quick menu">
+    <div class="grid grid-cols-4 py-2">
+        @foreach([
+            ['Trade', route('user.liveTrading.index'), $ic['trade']],
+            ['Deposit', route('user.deposit'), $ic['deposit']],
+            ['Portfolio', route('user.portfolio.index'), $ic['wallet']],
+            ['Copy', route('user.copyTrading.index'), $ic['copy']],
+        ] as [$label, $href, $path])
+            <a href="{{ $href }}" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white">
+                {!! $icon($path, 'w-5 h-5') !!}
+                <span class="text-[11px] font-medium">{{ $label }}</span>
+            </a>
+        @endforeach
+    </div>
+</nav>
 
-            // Open Trades Tab
-            openTradesTab.addEventListener('click', function() {
-                // Update tab buttons
-                openTradesTab.classList.add('active', 'border-blue-500', 'text-blue-400');
-                openTradesTab.classList.remove('border-transparent', 'text-gray-400');
-                closedTradesTab.classList.remove('active', 'border-blue-500', 'text-blue-400');
-                closedTradesTab.classList.add('border-transparent', 'text-gray-400');
-
-                // Update content
-                openTradesContent.classList.remove('hidden');
-                openTradesContent.classList.add('active');
-                closedTradesContent.classList.add('hidden');
-                closedTradesContent.classList.remove('active');
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tabs = [['openTradesTab', 'openTradesContent'], ['closedTradesTab', 'closedTradesContent']];
+        tabs.forEach(function (pair) {
+            document.getElementById(pair[0]).addEventListener('click', function () {
+                tabs.forEach(function (other) {
+                    var on = other === pair, btn = document.getElementById(other[0]), panel = document.getElementById(other[1]);
+                    btn.classList.toggle('border-blue-500', on); btn.classList.toggle('text-blue-400', on);
+                    btn.classList.toggle('border-transparent', !on); btn.classList.toggle('text-gray-400', !on);
+                    panel.classList.toggle('hidden', !on);
+                });
             });
-
-            // Closed Trades Tab
-            closedTradesTab.addEventListener('click', function() {
-                // Update tab buttons
-                closedTradesTab.classList.add('active', 'border-blue-500', 'text-blue-400');
-                closedTradesTab.classList.remove('border-transparent', 'text-gray-400');
-                openTradesTab.classList.remove('active', 'border-blue-500', 'text-blue-400');
-                openTradesTab.classList.add('border-transparent', 'text-gray-400');
-
-                // Update content
-                closedTradesContent.classList.remove('hidden');
-                closedTradesContent.classList.add('active');
-                openTradesContent.classList.add('hidden');
-                openTradesContent.classList.remove('active');
-            });
-
-
         });
-    </script>
+    });
+</script>
 
 @endsection
 
