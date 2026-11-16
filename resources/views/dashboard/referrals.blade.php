@@ -128,7 +128,7 @@
                                 <tr>
                                     <td class="py-4">
                                         <div class="flex items-center">
-                                            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
                                                 <span class="text-white text-sm font-semibold">{{ substr($referred->name, 0, 1) }}</span>
                                             </div>
                                             <div>

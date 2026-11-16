@@ -8,8 +8,8 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }} - Dashboard</title>
   <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/x-icon">
-  <link rel="manifest" href="/manifest.webmanifest?v=4">
-  <link rel="apple-touch-icon" sizes="180x180" href="/img/pdc-icon-180.png?v=4">
+  <link rel="manifest" href="/manifest.webmanifest?v=5">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/pdc-icon-180.png?v=5">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#0a0c14">
     
@@ -264,7 +264,7 @@
                     </button>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
                         <span class="text-white font-semibold text-lg">{{ substr(auth()->user()->name, 0, 1) }}</span>
                     </div>
                     <div>
@@ -561,7 +561,7 @@
                         <!-- User Dropdown -->
                         <div class="relative group" id="userDropdown">
                             <button class="flex items-center space-x-1 sm:space-x-2 p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
-                                <div class="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center">
                                     <span class="text-white font-semibold text-sm">{{ substr(auth()->user()->name, 0, 1) }}</span>
                                 </div>
                                 <svg class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="currentColor" viewBox="0 0 20 20">
@@ -652,7 +652,7 @@
         <div class="fixed inset-0 bg-black/50"></div>
         <div class="relative m-4 w-full max-w-sm bg-white text-gray-900 rounded-xl shadow-xl p-4">
             <div class="flex items-start">
-                <img src="/img/pdc-icon-180.png?v=4" alt="App Icon" class="w-10 h-10 mr-3 rounded">
+                <img src="/img/pdc-icon-180.png?v=5" alt="App Icon" class="w-10 h-10 mr-3 rounded">
                 <div class="flex-1">
                     <div class="font-semibold">Add Prime Digital Capital to Home Screen</div>
                     <div id="pwaPromptText" class="text-sm text-gray-600 mt-1">Install the app for faster access and an app-like experience.</div>

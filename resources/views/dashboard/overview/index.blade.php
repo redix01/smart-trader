@@ -54,7 +54,7 @@
             </div>
 
             <!-- Total Assets -->
-            <div class="bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg p-6 border border-purple-500">
+            <div class="bg-blue-700 rounded-lg p-6 border border-blue-500">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-white">Portfolio Value</h3>
                     <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">

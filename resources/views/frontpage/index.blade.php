@@ -3,6 +3,7 @@
 @section('title', 'Prime Digital Capital — Upgrade the Way You Trade')
 
 @push('head')
+<link rel="preload" as="video" href="{{ asset('prime/hero-bg.mp4') }}" type="video/mp4">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
  {"@type":"Organization","@id":"https://primedigitalcap.com/#organization","name":"Prime Digital Capital","alternateName":"PrimeDigitalCap",
@@ -13,58 +14,99 @@
 </script>
 @endpush
 
+@php
+  // Candles for the dashboard mockup chart (deterministic so the page doesn't jump between loads).
+  mt_srand(11);
+  $candles = []; $p = 150;
+  for ($i = 0; $i < 64; $i++) {
+      $o = $p; $c = $p + mt_rand(-200, 205) / 10; $c = max(30, min(235, $c));
+      $h = min($o, $c) - mt_rand(0, 110) / 10; $l = max($o, $c) + mt_rand(0, 110) / 10;
+      $candles[] = [$i * 9.2 + 6, $o, $c, $h, $l]; $p = $c;
+  }
+  $svgIcon = fn ($d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">'.$d.'</svg>';
+@endphp
+
 @section('content')
 
-{{-- ================= HERO ================= --}}
+{{-- ================= HERO (video background) ================= --}}
 <header class="hero">
-  <div class="hero-glow"></div>
-  <div class="hero-grid"></div>
+  <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="{{ asset('prime/hero-poster.jpg') }}" aria-hidden="true">
+    <source src="{{ asset('prime/hero-bg.mp4') }}" type="video/mp4">
+  </video>
+  <div class="hero-shade"></div>
   <div class="wrap">
-    <p class="eyebrow">Trading platform</p>
-    <h1>Upgrade the way <em>you trade</em></h1>
-    <p class="lead">Prime Digital Capital blends advanced power with simplicity — strong security, 24/7 support, live market prices and an intuitive trade room built for crypto, stocks and currencies.</p>
-    <div class="cta">
+    <span class="pill reveal">Trading Platform</span>
+    <h1 class="reveal">Upgrade the way you trade</h1>
+    <p class="lead reveal">Prime Digital Capital blends advanced power with simplicity, offering strong security, 24/7 support, and an intuitive trading platform.</p>
+    <div class="cta reveal">
       @auth
         <a href="{{ route('user.dashboard') }}" class="btn btn-primary">Go to your dashboard</a>
       @else
-        <a href="{{ route('register') }}" class="btn btn-primary">Get started →</a>
-        <a href="{{ route('login') }}" class="btn btn-ghost">Log in</a>
+        <a href="{{ route('register') }}" class="btn btn-primary">Get started</a>
       @endauth
     </div>
-    <div class="trust"><span>Bank-grade security</span><span>Live prices, tick by tick</span><span>24/7 live-chat support</span></div>
 
-    {{-- Platform preview (HTML mockup of the Trade Room) --}}
-    <div class="preview reveal" aria-hidden="true">
-      <div class="preview-inner">
-        <div class="pv-bar"><i></i><i></i><i></i><span>primedigitalcap.com/user/live-trading</span></div>
-        <div class="pv-body">
-          <div class="pv-side">
-            <b>Account</b>
-            <a>Dashboard</a><a>Deposit</a><a>Withdraw</a>
-            <b>Markets</b>
-            <a class="on">Trade Room</a><a>Stock prices</a><a>Crypto prices</a><a>Copy trading</a>
+    {{-- Dashboard mockup --}}
+    <div class="mock reveal" aria-hidden="true">
+      <div class="mk">
+        <div class="mk-side">
+          <span class="logo"><span class="mark">PD</span></span>
+          <a class="on">{!! $svgIcon('<path d="M3 11l9-8 9 8v10H3z"/>') !!}Dashboard</a>
+          <a>{!! $svgIcon('<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>') !!}Deposit</a>
+          <a>{!! $svgIcon('<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>') !!}Withdraw</a>
+          <a>{!! $svgIcon('<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16"/>') !!}Assets</a>
+          <a>{!! $svgIcon('<circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 3"/>') !!}Markets</a>
+          <a>{!! $svgIcon('<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>') !!}Trade Room</a>
+          <a>{!! $svgIcon('<circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0114 0"/>') !!}Copy trading</a>
+          <a>{!! $svgIcon('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-2.7 1.1V21a2 2 0 11-4 0v-.1A1.6 1.6 0 009 19.4a1.6 1.6 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1A1.6 1.6 0 003 15.2a1.6 1.6 0 00-1.5-1H1.4a2 2 0 110-4h.1A1.6 1.6 0 003 9a1.6 1.6 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1A1.6 1.6 0 007.3 4.6H7.4A1.6 1.6 0 009 3.1V3a2 2 0 114 0v.1a1.6 1.6 0 001 1.5 1.6 1.6 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 00-.3 1.8V9a1.6 1.6 0 001.5 1h.1a2 2 0 110 4h-.1a1.6 1.6 0 00-1.5 1z"/>') !!}Settings</a>
+        </div>
+        <div class="mk-main">
+          <div class="mk-top">
+            <span>Dashboard</span>
+            <span class="mk-bal"><span>14,869.63 USD <b>REAL</b></span></span>
           </div>
-          <div class="pv-main">
-            <div class="pv-head">
-              <div><div class="sym">BTC / USD</div><div class="ch" data-hero-chg>+2.12% today</div></div>
-              <div class="px" data-hero-px>$97,412.50</div>
+          <div class="mk-grid">
+            <div class="mk-pane">
+              <div class="mk-label">Total balance</div>
+              <div class="mk-big">$14,869.63</div>
+              <div class="mk-assets">
+                <div class="hd"><span>Total assets</span><a>View all assets</a></div>
+                <div class="mk-row"><span class="coin" style="background:#f7931a">₿</span><span class="nm">Bitcoin<small>BTC</small></span><span class="vl" data-live-price="BTC" data-prefix="$">—</span></div>
+                <div class="mk-row"><span class="coin" style="background:#627eea">Ξ</span><span class="nm">Ethereum<small>ETH</small></span><span class="vl" data-live-price="ETH" data-prefix="$">—</span></div>
+                <div class="mk-row"><span class="coin" style="background:#2563eb">$</span><span class="nm">US Dollar<small>USD</small></span><span class="vl">$5,269.59<small>Cash</small></span></div>
+                <div class="mk-row"><span class="coin" style="background:#e5e7eb;color:#111">A</span><span class="nm">Apple<small>AAPL</small></span><span class="vl">$1,333.80<small>7.77 AAPL</small></span></div>
+              </div>
             </div>
-            <div class="pv-chart">
+            <div class="mk-pane">
+              <div class="mk-label">Categories</div>
+              <div class="cat-bar"><i style="width:78%;background:#3b82f6"></i><i style="width:8%;background:#7dd3fc"></i><i style="width:10%;background:#2dd4a7"></i><i style="width:4%;background:#f43f5e"></i></div>
+              <div class="cat-legend">
+                <span style="--c:#3b82f6">Crypto<b>78%</b></span>
+                <span style="--c:#7dd3fc">Stocks<b>8%</b></span>
+                <span style="--c:#2dd4a7">Fiat<b>10%</b></span>
+              </div>
+              <div class="meter"><div class="row"><span>Trading progress</span><span>40%</span></div><div class="track"><i style="width:40%"></i></div></div>
+              <div class="meter"><div class="row"><span>Signal strength</span><span style="color:var(--warn)">60%</span></div>
+                <div class="segs">@for($i = 0; $i < 16; $i++)<i class="{{ $i < 10 ? 'on' : '' }}"></i>@endfor</div>
+              </div>
+            </div>
+            <div class="mk-pane mk-chart">
+              <div class="bar"><span class="tag">BTC/USD</span><span>1m</span><span style="margin-left:auto" class="mono" data-live-price="BTC" data-prefix="$">—</span><span class="mono" data-live-chg="BTC"></span></div>
               <svg viewBox="0 0 600 260" preserveAspectRatio="none">
-                <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4f8cff" stop-opacity=".45"/><stop offset="1" stop-color="#4f8cff" stop-opacity="0"/></linearGradient></defs>
-                <path d="M0 200 L40 186 L80 192 L120 160 L160 170 L200 138 L240 150 L280 112 L320 124 L360 96 L400 108 L440 74 L480 88 L520 56 L560 64 L600 40 L600 260 L0 260Z" fill="url(#g)"/>
-                <path d="M0 200 L40 186 L80 192 L120 160 L160 170 L200 138 L240 150 L280 112 L320 124 L360 96 L400 108 L440 74 L480 88 L520 56 L560 64 L600 40" fill="none" stroke="#8fbcff" stroke-width="2.5"/>
+                @foreach([52,104,156,208] as $y)<line x1="0" x2="600" y1="{{ $y }}" y2="{{ $y }}" stroke="rgba(170,190,255,.07)"/>@endforeach
+                @foreach($candles as [$x, $o, $c, $h, $l])
+                  @php $col = $c <= $o ? '#2dd4a7' : '#f43f5e'; @endphp
+                  <line x1="{{ $x }}" x2="{{ $x }}" y1="{{ $h }}" y2="{{ $l }}" stroke="{{ $col }}" stroke-width="1"/>
+                  <rect x="{{ $x - 3 }}" y="{{ min($o, $c) }}" width="6" height="{{ max(1.5, abs($c - $o)) }}" fill="{{ $col }}"/>
+                @endforeach
               </svg>
             </div>
-          </div>
-          <div class="pv-order">
-            <div class="pv-tabs"><span class="buy">Buy</span><span>Sell</span></div>
-            <div class="pv-field">Order<b>Market</b></div>
-            <div class="pv-field">Amount<b>$2,500.00</b></div>
-            <div class="pv-field">Leverage<b>10x</b></div>
-            <div class="pv-field">Take profit<b>$99,800</b></div>
-            <div class="pv-field">Stop loss<b>$95,900</b></div>
-            <div class="pv-go">Buy BTC</div>
+            <div class="mk-pane mk-order">
+              <div class="tabs"><span class="on">Buy</span><span>Sell</span><span>Convert</span></div>
+              <div class="fld"><small>Trade type</small><div><span>Crypto</span><span>▾</span></div></div>
+              <div class="fld"><small>Trade amount</small><div><span>$1,000</span><span style="color:var(--text-3)">BTC</span></div></div>
+              <div class="fld"><small>Leverage</small><div><span>10x</span><span style="color:var(--text-3)">Max 50x</span></div></div>
+            </div>
           </div>
         </div>
       </div>
@@ -81,202 +123,159 @@
 </header>
 
 {{-- ================= FEATURES ================= --}}
-<section id="features">
+<section class="sec no-line" id="features" style="padding-top:96px">
   <div class="wrap">
-    <div class="sec-head center reveal">
-      <p class="eyebrow">Features</p>
-      <h2>All the features you need to trade with confidence</h2>
-    </div>
-    <div class="features">
-      <div class="feature reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div>
-        <h3>Portfolio management</h3>
-        <p>Track balances, open positions and performance across every asset from one clear dashboard.</p>
-      </div>
-      <div class="feature reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg></div>
-        <h3>One-click copy trading</h3>
-        <p>Follow experienced traders and mirror their positions automatically, with your own limits in place.</p>
-      </div>
-      <div class="feature reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg></div>
-        <h3>Flexible leverage</h3>
-        <p>Scale your exposure with adjustable leverage and clear margin requirements on every order.</p>
-      </div>
-      <div class="feature reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-        <h3>Live market prices</h3>
-        <p>Crypto prices stream tick by tick, and stock quotes refresh in real time inside your dashboard.</p>
-      </div>
-      <div class="feature reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
-        <h3>Personal trade room</h3>
-        <p>Place market orders on crypto and stocks, set take-profit and stop-loss, and manage every position yourself.</p>
-      </div>
-      <div class="feature reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-        <h3>24/7 live-chat support</h3>
-        <p>Reach a support team any time of day, ready to help with your account, deposits or trades.</p>
-      </div>
+    <div class="fgrid reveal">
+      <div><div class="ft">{!! $svgIcon('<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>') !!}<h3>Portfolio management</h3></div><p>Effortlessly manage your portfolio with an intuitive, user-friendly dashboard.</p></div>
+      <div><div class="ft">{!! $svgIcon('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/>') !!}<h3>One-click copy trading</h3></div><p>Copy the trades of experienced traders with a single click, with your own limits in place.</p></div>
+      <div><div class="ft">{!! $svgIcon('<path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/>') !!}<h3>Up to 50x leverage</h3></div><p>Scale your trading potential with adjustable leverage and clear margin requirements.</p></div>
+      <div><div class="ft">{!! $svgIcon('<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>') !!}<h3>Personal trade room</h3></div><p>Place your own crypto and stock trades, set take-profit and stop-loss, and manage every position.</p></div>
+      <div><div class="ft">{!! $svgIcon('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>') !!}<h3>Real-time prices</h3></div><p>Crypto prices stream tick by tick and stock quotes update live inside your dashboard.</p></div>
+      <div><div class="ft">{!! $svgIcon('<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>') !!}<h3>24/7 live-chat support</h3></div><p>Access world-class support, ready to help with any question about your account or trades.</p></div>
     </div>
   </div>
 </section>
 
-{{-- ================= WHY US / MARKETS ================= --}}
-<section id="markets">
+{{-- ================= WHY US ================= --}}
+<section class="sec isolate" id="markets">
+  <div class="candles-bg"></div>
   <div class="wrap">
     <div class="sec-head reveal">
-      <p class="eyebrow">Why choose us?</p>
-      <h2>Everything you need to trade, <em>in one place</em></h2>
-      <p class="lead">Manage assets, place trades, track progress and move funds across markets, accounts and devices.</p>
+      <span class="pill">Why choose us?</span>
+      <h2>Everything you need to trade, in one place</h2>
+      <p class="lead">Manage assets, place trades, track progress, and move funds seamlessly across markets, accounts, and devices.</p>
     </div>
 
-    <div class="bento">
-      <div class="tile t-assets reveal">
+    <div class="duo">
+      <div class="reveal">
         <h3>Unified asset management</h3>
-        <p>Watch crypto, stocks and currencies side by side — prices below update live.</p>
-        <div class="markets">
-          <table>
+        <p>Manage multiple assets and accounts from a single interface.</p>
+        <div class="panel">
+          <h4>Markets <span class="mono" style="float:right;font-size:12px;color:var(--up)">● LIVE</span></h4>
+          <table class="mtable">
             <thead><tr><th>Markets</th><th>Price (USD)</th><th>24h Chg.</th></tr></thead>
-            <tbody id="live-markets">
-              <tr data-sym="BTC"><td><span class="asset"><span class="dot" style="background:#f7931a">₿</span>BTC</span></td><td data-f="p">—</td><td data-f="c">—</td></tr>
-              <tr data-sym="ETH"><td><span class="asset"><span class="dot" style="background:#627eea">Ξ</span>ETH</span></td><td data-f="p">—</td><td data-f="c">—</td></tr>
-              <tr data-sym="SOL"><td><span class="asset"><span class="dot" style="background:#9945ff">S</span>SOL</span></td><td data-f="p">—</td><td data-f="c">—</td></tr>
-              <tr data-sym="XRP"><td><span class="asset"><span class="dot" style="background:#23292f">X</span>XRP</span></td><td data-f="p">—</td><td data-f="c">—</td></tr>
-              <tr data-sym="BNB"><td><span class="asset"><span class="dot" style="background:#f0b90b">B</span>BNB</span></td><td data-f="p">—</td><td data-f="c">—</td></tr>
+            <tbody>
+              @foreach([['BTC','₿','#f7931a'],['ETH','Ξ','#627eea'],['SOL','S','#14b8a6'],['XRP','X','#334155'],['BNB','B','#d4a017'],['DOGE','Ð','#c2a633']] as [$s, $g, $c])
+              <tr><td><span class="asset"><span class="star">★</span><span class="coin" style="background:{{ $c }}">{{ $g }}</span>{{ $s }}</span></td><td data-live-price="{{ $s }}">—</td><td data-live-chg="{{ $s }}">—</td></tr>
+              @endforeach
             </tbody>
           </table>
         </div>
-        <div class="markets" style="margin-top:12px">
-          <div class="tradingview-widget-container" style="height:260px"><div class="tradingview-widget-container__widget" style="height:100%"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
-            {"width":"100%","height":"100%","symbolsGroups":[{"name":"Stocks","symbols":[{"name":"NASDAQ:AAPL","displayName":"Apple"},{"name":"NASDAQ:NVDA","displayName":"Nvidia"},{"name":"NASDAQ:NFLX","displayName":"Netflix"},{"name":"NASDAQ:ADBE","displayName":"Adobe"},{"name":"NASDAQ:TSLA","displayName":"Tesla"}]}],"showSymbolLogo":true,"isTransparent":true,"colorTheme":"dark","locale":"en","backgroundColor":"rgba(0,0,0,0)"}
-            </script>
-          </div>
-        </div>
       </div>
-
-      <div class="tile t-copy reveal">
+      <div class="reveal">
         <h3>Copy trading</h3>
-        <p>Pick a strategy provider, set how much to allocate, and mirror their trades automatically.</p>
-        <div class="trader">
-          <div class="tr-top">
-            <div class="avatar">AM</div>
-            <div class="who"><b>Strategy provider</b><span>Example profile</span></div>
-            <a href="{{ route('register') }}" class="btn btn-primary follow">Copy</a>
+        <p>Mirror experienced traders in real time, with seamless execution and tight spreads.</p>
+        <div class="panel">
+          <div class="trader-hd">
+            <div class="av">PD</div>
+            <div><b>Strategy provider</b><small>Example profile</small>
+              <div class="trader-meta"><span>360 watchers</span><span>69.6K followers</span></div>
+            </div>
+            <a href="{{ route('register') }}" class="btn btn-primary btn-sm" style="margin-left:auto">Copy</a>
           </div>
-          <div class="tr-meta"><span>360 watchers</span><span>69.6K followers</span></div>
-          <div class="tr-stats">
+          <div class="tstats">
             <div><small>Win rate</small><b class="up">54.81%</b></div>
-            <div><small>Profit share</small><b>43.3%</b></div>
-            <div><small>Trades</small><b>578</b></div>
+            <div><small>Profit share</small><b class="down">43.3%</b></div>
             <div><small>Wins</small><b>28</b></div>
             <div><small>Losses</small><b>0</b></div>
-            <div><small>Min. start</small><b>$5,000</b></div>
+            <div><small>Trades</small><b>578</b></div>
+            <div><small>Min. startup</small><b>$5,000</b></div>
           </div>
           <p class="note">Illustrative profile. Copying a trader means copying their losses as well as their gains.</p>
         </div>
       </div>
+    </div>
 
-      <div class="tile t-mini reveal">
-        <div class="mini-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></div>
-        <h3>Multi-account support</h3>
-        <p>Swap between accounts and currencies conveniently.</p>
-      </div>
-      <div class="tile t-mini reveal">
-        <div class="mini-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg></div>
-        <h3>Global market access</h3>
-        <p>Trade crypto, stocks and currencies in one unified view.</p>
-      </div>
-      <div class="tile t-mini reveal">
-        <div class="mini-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
-        <h3>Fast deposits &amp; withdrawals</h3>
-        <p>Move funds in and out quickly with supported payment methods.</p>
-      </div>
+    <div class="trio">
+      <div class="reveal"><div class="ft">{!! $svgIcon('<path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/>') !!}<h3>Multi-account support</h3></div><p>Swap between accounts and currencies conveniently.</p></div>
+      <div class="reveal"><div class="ft">{!! $svgIcon('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/>') !!}<h3>Global market access</h3></div><p>Trade assets across crypto, stocks, and currencies in one unified view.</p></div>
+      <div class="reveal"><div class="ft">{!! $svgIcon('<path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/>') !!}<h3>Fast deposits &amp; withdrawals</h3></div><p>Move funds in and out quickly with supported payment methods.</p></div>
     </div>
   </div>
 </section>
 
 {{-- ================= CRYPTO CARD ================= --}}
-<section>
-  <div class="wrap card-sec">
-    <div class="reveal">
-      <p class="eyebrow">Crypto card</p>
-      <h2>A crypto card for <em>seamless payments</em></h2>
-      <p class="lead" style="margin-top:16px">Pay for services instantly using a secure crypto card designed for simple, reliable payments.</p>
-      <div class="card-list">
-        <div><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><div><h3>Seamless payments</h3><p>Pay for signals, subscriptions and platform features directly from your account.</p></div></div>
-        <div><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><h3>Built-in security</h3><p>Protected with industry-standard encryption and advanced fraud detection.</p></div></div>
-        <div><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></div><div><h3>Physical &amp; virtual cards</h3><p>Get instant access with a virtual card, or order a physical card delivered to you.</p></div></div>
+<section class="sec">
+  <div class="wrap">
+    <div class="card-stage reveal" aria-hidden="true">
+      <div class="pcard">
+        <div class="row"><span class="logo"><span class="mark">PD</span></span><span class="chip"></span></div>
+        <div class="row"><span class="num">•••• 1234</span><span class="net">VISA</span></div>
       </div>
     </div>
-    <div class="cards-art reveal" aria-hidden="true">
-      <div class="pcard a"><div class="row"><span class="brand">Prime Digital</span><span>VIRTUAL</span></div><div class="chip"></div><div class="row"><span class="num">•••• 1234</span><span>12/29</span></div></div>
-      <div class="pcard b"><div class="row"><span class="brand">Prime Digital</span><span>PHYSICAL</span></div><div class="chip"></div><div class="row"><span class="num">•••• 8842</span><span>08/30</span></div></div>
+    <div class="sec-head reveal" style="margin-bottom:56px">
+      <span class="pill">Crypto card</span>
+      <h2>A crypto card for seamless payments</h2>
+      <p class="lead">Pay for services instantly using a secure crypto card designed for simple, reliable payments.</p>
+    </div>
+    <div class="cols3 reveal">
+      <div><div class="ft">{!! $svgIcon('<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>') !!}<h3>Seamless payments</h3></div><p>Pay for signals, subscriptions, and platform features directly from your account.</p></div>
+      <div><div class="ft">{!! $svgIcon('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>') !!}<h3>Built-in security</h3></div><p>Protected with industry-standard encryption and advanced fraud detection.</p></div>
+      <div><div class="ft">{!! $svgIcon('<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/>') !!}<h3>Physical &amp; virtual cards</h3></div><p>Get instant access with a virtual card, or order a physical card delivered to you.</p></div>
     </div>
   </div>
 </section>
 
 {{-- ================= TRADING TOOLS ================= --}}
-<section id="tools">
+<section class="sec" id="tools">
   <div class="wrap">
-    <div class="sec-head center reveal">
-      <p class="eyebrow">Trading tools</p>
+    <div class="orbs reveal" aria-hidden="true"><i></i><i class="m"></i><i class="c">{!! $svgIcon('<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>') !!}</i><i class="m"></i><i></i></div>
+    <div class="sec-head reveal">
+      <span class="pill">Trading tools</span>
       <h2>Tools that move at market speed</h2>
-      <p class="lead">Trade in real time, manage multiple assets and scale exposure confidently with tools built for fast-moving markets.</p>
+      <p class="lead">Trade in real time, manage multiple assets, and scale exposure confidently with tools built for fast-moving markets.</p>
     </div>
     <div class="tools">
-      <div class="tool reveal">
+      <div class="reveal">
         <h3>Built for speed</h3>
-        <p>Built to keep up with live markets — fast execution and fast-moving signals.</p>
-        <div class="signal-board">
-          <div><small>TRADES</small><b>203</b></div>
-          <div><small>PROFITABLE</small><b class="up">12</b></div>
-          <div><small>ACTIVE SIGNALS</small><b>20</b></div>
+        <p>Built to keep up with live markets, seamless execution and fast-moving signals.</p>
+        <div class="board">
+          <div class="leds">@for($i = 0; $i < 10; $i++)<i class="{{ $i < 7 ? 'on' : '' }}"></i>@endfor</div>
+          <div class="scale"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+          <div class="nums">
+            <div class="big" id="sig-trades">187<small>S/H</small></div>
+            <div class="kv"><div><small>TRADES</small><b id="sig-t">12</b></div><div><small>PROFITS</small><b class="up" id="sig-p">395</b></div></div>
+          </div>
+          <div class="foot2"><span>20 ACTIVE SIGNALS</span><span style="display:flex;gap:8px;align-items:center">STRENGTH <span class="str"><i></i><i></i><i></i><i></i><i class="off"></i></span></span></div>
         </div>
-        <div class="bars"><i style="height:40%"></i><i style="height:65%"></i><i style="height:52%"></i><i style="height:80%"></i><i style="height:70%"></i><i style="height:92%"></i><i style="height:60%"></i><i style="height:84%"></i><i style="height:100%"></i><i style="height:76%"></i></div>
       </div>
-      <div class="tool reveal">
-        <h3>Adjustable leverage</h3>
+      <div class="reveal">
+        <h3>Up to 50x leverage</h3>
         <p>Fine-tune exposure with responsive controls and clear risk boundaries.</p>
-        <div class="lev">
-          <div class="lev-track"><div class="lev-fill"></div><div class="lev-knob"></div></div>
-          <div class="lev-scale"><span>1x</span><span>10x</span><span>25x</span><span>50x</span></div>
+        <div class="levpanel">
+          <div class="fld"><small>Trade amount</small><div><span>$1,000</span><span style="color:var(--text-3)">USD</span></div></div>
+          <div class="fld"><small>Position size</small><div><span id="lev-size">$25,000</span><span style="color:var(--text-3)" id="lev-x">25x</span></div></div>
+          <div class="fld"><small>Leverage</small></div>
+          <div class="lev-steps" id="lev-steps"><span data-x="1">1x</span><span data-x="5">5x</span><span data-x="10">10x</span><span data-x="25" class="on">25x</span><span data-x="50">50x</span></div>
+          <div class="lev-track"><i id="lev-fill" style="width:50%"></i></div>
+          <p class="note">Leverage magnifies losses as well as gains.</p>
         </div>
-        <p class="note" style="margin-top:22px">Leverage magnifies losses as well as gains.</p>
       </div>
-    </div>
-
-    <div class="stats" style="margin-top:16px">
-      <div class="stat reveal"><div class="n">100+</div><div class="l">Crypto, stock &amp; FX markets</div></div>
-      <div class="stat reveal"><div class="n">24/7</div><div class="l">Crypto trading &amp; support</div></div>
-      <div class="stat reveal"><div class="n">Live</div><div class="l">Tick-by-tick crypto prices</div></div>
-      <div class="stat reveal"><div class="n">3 min</div><div class="l">To open an account</div></div>
     </div>
   </div>
 </section>
 
-{{-- ================= HOW IT WORKS ================= --}}
-<section>
+{{-- ================= GET STARTED ================= --}}
+<section class="sec">
   <div class="wrap">
-    <div class="sec-head center reveal">
-      <p class="eyebrow">Get started</p>
+    <div class="sec-head reveal">
+      <span class="pill">Get started</span>
       <h2>Start trading in three steps</h2>
       <p class="lead">From sign-up to your first trade in a few minutes.</p>
     </div>
-    <div class="quotes">
-      <div class="quote reveal"><span class="eyebrow" style="margin:0;align-self:flex-start">Step 01</span><h3>Create your account</h3><p>Sign up with your email and verify your identity to secure your account.</p></div>
-      <div class="quote reveal"><span class="eyebrow" style="margin:0;align-self:flex-start">Step 02</span><h3>Fund your wallet</h3><p>Deposit with a supported payment method and see your balance on the dashboard.</p></div>
-      <div class="quote reveal"><span class="eyebrow" style="margin:0;align-self:flex-start">Step 03</span><h3>Trade or copy</h3><p>Open the Trade Room to place your own trades, or copy an experienced trader.</p></div>
+    <div class="steps">
+      <div class="step reveal"><span class="n">01</span><h3>Create your account</h3><p>Sign up with your email and verify your identity to secure your account.</p></div>
+      <div class="step reveal"><span class="n">02</span><h3>Fund your wallet</h3><p>Deposit with a supported payment method and see your balance on the dashboard.</p></div>
+      <div class="step reveal"><span class="n">03</span><h3>Trade or copy</h3><p>Open the Trade Room to place your own trades, or copy an experienced trader.</p></div>
     </div>
   </div>
 </section>
 
 {{-- ================= FAQ ================= --}}
-<section>
+<section class="sec">
   <div class="wrap">
-    <div class="sec-head center reveal">
-      <p class="eyebrow">FAQ</p>
+    <div class="sec-head reveal">
+      <span class="pill">FAQ</span>
       <h2>Questions, answered</h2>
     </div>
     <div class="faq reveal">
@@ -289,70 +288,34 @@
   </div>
 </section>
 
-{{-- ================= CTA ================= --}}
-<section style="padding-top:0">
-  <div class="wrap">
-    <div class="cta-band reveal">
-      <h2>Start trading with <em>Prime Digital Capital</em></h2>
-      <p class="lead">Open an account in minutes and get live prices, a personal trade room and copy trading in one place.</p>
-      <div class="cta">
-        @auth
-          <a href="{{ route('user.dashboard') }}" class="btn btn-primary">Go to your dashboard</a>
-        @else
-          <a href="{{ route('register') }}" class="btn btn-primary">Get started →</a>
-          <a href="{{ route('login') }}" class="btn btn-ghost">Log in</a>
-        @endauth
-      </div>
-    </div>
-  </div>
-</section>
+@include('frontpage.prime.cta')
 
 @endsection
+
+@include('frontpage.prime.live-crypto')
 
 @push('scripts')
 <script>
 (function () {
-  var rows = document.getElementById('live-markets');
-  var heroPx = document.querySelector('[data-hero-px]'), heroChg = document.querySelector('[data-hero-chg]');
-  var last = {};
-  function fmt(p) { return p >= 1 ? p.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : p.toLocaleString('en-US', {maximumSignificantDigits: 4}); }
-  function update(sym, price, chg) {
-    if (!isFinite(price)) return;
-    var r = rows.querySelector('tr[data-sym="' + sym + '"]');
-    if (r) {
-      var p = r.querySelector('[data-f="p"]'), c = r.querySelector('[data-f="c"]');
-      p.textContent = fmt(price);
-      if (last[sym] !== undefined && last[sym] !== price) { p.className = price > last[sym] ? 'flash-up' : 'flash-down'; void p.offsetWidth; }
-      c.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%';
-      c.className = chg >= 0 ? 'up' : 'down';
-    }
-    if (sym === 'BTC' && heroPx) {
-      heroPx.textContent = '$' + fmt(price);
-      heroChg.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '% today';
-      heroChg.style.color = chg >= 0 ? 'var(--up)' : 'var(--down)';
-    }
-    last[sym] = price;
-  }
-  var GECKO = {BTC: 'bitcoin', ETH: 'ethereum', SOL: 'solana', XRP: 'ripple', BNB: 'binancecoin'};
-  var polling = false;
-  function poll() {
-    if (polling) return; polling = true;
-    var run = function () {
-      fetch('https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&include_24hr_change=true&ids=' + Object.values(GECKO).join(','))
-        .then(function (r) { return r.json(); })
-        .then(function (d) { Object.keys(GECKO).forEach(function (s) { var x = d[GECKO[s]]; if (x) update(s, x.usd, x.usd_24h_change || 0); }); })
-        .catch(function () {});
-    };
-    run(); setInterval(run, 30000);
-  }
-  var opened = false;
-  try {
-    var ws = new WebSocket('wss://data-stream.binance.vision/stream?streams=' + Object.keys(GECKO).map(function (s) { return s.toLowerCase() + 'usdt@ticker'; }).join('/'));
-    ws.onopen = function () { opened = true; };
-    ws.onmessage = function (e) { var d = JSON.parse(e.data).data; if (d) update(d.s.replace(/USDT$/, ''), +d.c, +d.P); };
-    ws.onerror = ws.onclose = function () { poll(); };
-    setTimeout(function () { if (!opened) poll(); }, 5000);
-  } catch (e) { poll(); }
+  // Leverage selector
+  var steps = document.getElementById('lev-steps');
+  if (steps) steps.addEventListener('click', function (e) {
+    var s = e.target.closest('[data-x]'); if (!s) return;
+    steps.querySelectorAll('span').forEach(function (x) { x.classList.toggle('on', x === s); });
+    var x = +s.dataset.x;
+    document.getElementById('lev-size').textContent = '$' + (1000 * x).toLocaleString('en-US');
+    document.getElementById('lev-x').textContent = x + 'x';
+    document.getElementById('lev-fill').style.width = (x / 50 * 100) + '%';
+  });
+  // Signal board ticks
+  var t = 12, p = 395, leds = document.querySelectorAll('.board .leds i');
+  setInterval(function () {
+    t += Math.random() < .5 ? 1 : 0; p += Math.floor(Math.random() * 4);
+    document.getElementById('sig-t').textContent = t;
+    document.getElementById('sig-p').textContent = p;
+    var on = 5 + Math.floor(Math.random() * 5);
+    leds.forEach(function (l, i) { l.classList.toggle('on', i < on); });
+  }, 1600);
 })();
 </script>
 @endpush

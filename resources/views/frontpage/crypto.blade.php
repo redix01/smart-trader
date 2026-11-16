@@ -1,492 +1,63 @@
+@extends('frontpage.prime.layout')
+@section('title', 'Trade Crypto — Prime Digital Capital')
+@section('description', 'Trade Bitcoin, Ethereum and other leading cryptocurrencies with live tick-by-tick prices, adjustable leverage and 24/7 support.')
 
+@section('content')
+@include('frontpage.prime.page-hero', ['pill' => 'Crypto trading', 'title' => 'Trade cryptocurrencies around the clock', 'lead' => 'Buy and sell Bitcoin, Ethereum and other leading coins from your personal Trade Room — with live prices, adjustable leverage and fast deposits and withdrawals.', 'ctaRoute' => 'user.liveTrading.index', 'ctaAuth' => 'Open the Trade Room'])
 
-<!doctype html>
-<html class="no-js" lang="en-US">
-
-<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<base href="{{ asset("frontpage") }}/">
-<link href="{{ asset("favicon.ico") }}" rel="icon" type="image/x-icon" />
-<!-- Add icon library -->
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
- <!--[if lt IE 9]>
-  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="css/bootstrap.min.css">
-<link rel="icon" type="image/png" href="images/logo.png">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.css" integrity="sha512-kJlvECunwXftkPwyvHbclArO8wszgBGisiLeuDFwNM8ws+wKIw0sv1os3ClWZOcrEB2eRXULYUsm8OVRGJKwGA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" type="text/css" href="slick/slick.css">
-<link rel="stylesheet" type="text/css" href="slick/slick-theme.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" integrity="sha512-dPXYcDub/aeb08c63jRq/k6GaKccl256JQy/AnOq7CAnEZ9FzSL9wSbcZkMp4R26vBsMLFYH4kQ67/bbV8XaCQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<!-- jQuery library -->
-<script src="js/jquery.min.js"></script>
-<!-- Popper JS -->
-<script src="js/popper.min.js"></script>
-<!-- Latest compiled JavaScript -->
-<script src="js/bootstrap.min.js"></script>
-<script src="js/jquery.form.js"></script>
-
-<script src="js/moment.js"></script>
-<script src="js/livestamp.min.js"></script>
-<script src="js/imagesloaded.pkgd.min.js"></script>
-
-<link href="css/main8dcd.css?r=165" rel="stylesheet"/>
-<link href="css/twf9ef.css?r=123" rel="stylesheet"/>
-<link href="css/animate.css" rel="stylesheet" />
-<link rel="stylesheet" href="css/intlTelInput.css">
-
-<title>{{ config('app.name') }}</title>
-<link rel="manifest" href="js/manifest.json">
-<meta name="theme-color" content="#0C0F19">
-<meta name="msapplication-navbutton-color" content="#0C0F19">
-<!-- iOS Safari -->
-<meta name="apple-mobile-web-app-status-bar-style" content="#0C0F19">
-
-
-<meta name="theme-color" content="#0C0F19">
-<meta name="msapplication-navbutton-color" content="#0C0F19">
-<!-- iOS Safari -->
-<meta name="apple-mobile-web-app-status-bar-style" content="#0C0F19">
-
-<link href="{{ asset("favicon.ico") }}" rel="icon" type="image/x-icon" />
-<link rel="icon" sizes="192x192" href="{{ asset("frontpage/images/logo.png") }}">
-
-<meta name="keywords" content="{{ config('app.name') }}, Options, Crypto" />
-<meta property="og:image" content="images/logo.png" />
-<meta property="og:site_name" content="{{ config('app.name') }}">
-<meta property="og:title" content="Crypto Trading With {{ config('app.name') }}" />
-<meta name="description" content="Crypto Trading With {{ config('app.name') }}, is totally different from its competitors trying to achieve something special starting with the...">
-<meta property="og:description" content="Crypto Trading With {{ config('app.name') }}, is totally different from its competitors trying to achieve something special starting with the...">
-<meta property="og:type" content="website" />
-
-<script src="js/bootstrap-select.js"></script>
-<script src="js/src/jquery.waypoints.min.js"></script>
-<link rel="stylesheet" type="text/css" href="css/bootstrap-select.css">
-
-
-<script src="js/countUp.min.js"></script>
-<script src="js/jquery.marquee.min.js"></script>
-<script src="js/jquery.easing.1.3.js"></script>
-
-<script>
-$(document).ready(function(){
-  var options = {
-    useEasing: true,
-    useGrouping: true,
-    separator: ",",
-    decimal: "."
-  };
-  var counter = $(".counter");
-  $('#waypoint').waypoint(function(direction) {
-    counter.each(function(index) {
-        var value = $(counter[index])();
-        var counterAnimation = new CountUp(counter[index], 0, value, 0, 3, options);
-        counterAnimation.start();
-    });
-  }, {
-    offset: '50%'
-  });
-});
-</script>
-<style>
-.navbar.bg-dark {
-background:#000 !important;
-}
-.btn-primary,
-.bg-primary {
-background:#2563eb !important;
-border-color:#2563eb !important;
-}
-.btn-primary:hover,
-.btn-primary:focus,
-.btn-primary:active {
-background:#1d4ed8 !important;
-border-color:#1d4ed8 !important;
-}
-</style>
-</head>
-<body>
-<div class="overlay closeMenu"></div>
-<div class="account-sidebar udex-collapse shadow-lg p-0" id="mySidebar">
-  <div class="account-header px-3 py-3">
-      <div class="d-flex  justify-content-between">
-      <a class="navbar-brand mr-3 p-0" href="{{ url("/") }}">
-      @include('frontpage.partials.logo', ['class' => 'wow slideInLeft d-inline-block', 'height' => '55px'])
-    </a>
-        <button class="navbar-toggler btn btn-link text-dark"><i class="fas fa-times text-white"></i></button>
-      </div>
-  </div>
-  <div style="height: calc(100% - 64px); overflow:auto" class='mx-auto'>
-  <ul class="navbar-nav wow slideInLeft ">
-        <li class="nav-item text-center">
-          <div class="dropdown">
-            <a href="#" class="nav-link d-flex justify-content-between" data-toggle="dropdown">Products</a>
-            <div class="dropdown-menu p-3">
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Spot</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Margin</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Bot Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Copy Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">AI Traders</a>
-            </div>
-          </div>
-        </li>
-        <li class="nav-item text-center">
-          <div class="dropdown">
-            <a href="#" class="nav-link d-flex justify-content-between" data-toggle="dropdown">Company</a>
-            <div class="dropdown-menu p-3">
-              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/about") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/flag.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>About us</h5>
-                  <p class="mb-0">Learn more about our mission</p>
-                </div>
-              </a>
-              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/privacy-policy") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/smile.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>Privacy Policy</h5>
-                  <p class="mb-0">Learn we handle your data</p>
-                </div>
-              </a>
-            </div>
-          </div>
-        </li>
-        <li class="nav-item text-center">
-          <div class="dropdown">
-            <a href="#" class="nav-link d-flex justify-content-between" data-toggle="dropdown">Resources</a>
-            <div class="dropdown-menu p-3">
-              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/faqs") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/book.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>FAQ</h5>
-                  <p class="mb-0">Questions we get asked most</p>
-                </div>
-              </a>
-              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/stocks") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/dollar.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>Stock Trading</h5>
-                  <p class="mb-0">Trading the stock markets</p>
-                </div>
-              </a>
-              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/forex") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/bank.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>Forex Trading</h5>
-                  <p class="mb-0">Trading foreign exchange</p>
-                </div>
-              </a>
-              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/crypto") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/eth.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>Crypto Trading</h5>
-                  <p class="mb-0">Trading cryptocurrencies</p>
-                </div>
-              </a>
-            </div>
-          </div>
-        </li>
-      </ul>
-    <div class="p-3 d-flex wow slideInLeft">
-      
-        <a href="{{ route("login") }}" class="btn btn-dark rounded-md my-2 btn-block">LOGIN</a>
-        <a href="{{ route("register") }}" class="btn btn-primary rounded-md my-2 btn-block">SIGNUP</a>    </div>
-  </div>
-</div>
-<script>
-$(document).ready(function(){
-  $(".navbar-toggler").click( function(){
-    $("#mySidebar").toggle({ direction: "left" }, 1000);
-    $(".closeMenu").fadeToggle();
-  });
-  $(".closeMenu").click( function(){
-    $("#mySidebar").toggle({ direction: "left" }, 1000);
-    $(".closeMenu").fadeToggle();
-  });
-  $('#mySidebar a[href!="#"]').click(function(){
-    $("#mySidebar").toggle({ direction: "left" }, 1000);
-    $(".closeMenu").fadeToggle();
-  });
-});
-</script>
-<style>
-  .cg-container {
-    border: 0 !important;
-  }
-  .skiptranslate {
-    display: none !important;
-  }
-  body {
-    top: 0 !important;
-  }
-</style>
-<style>
-.slick-dots{bottom: 10px !important; right: 10px !important;}
-.slick-dots li button:hover:before,.slick-dots li button:focus:before{color:#05ae5a;}
-.slick-dots li button:before{font-size: 12px;}
-.slick-dots li.slick-active button:before{color:#05ae5a; font-size: 20px;}
-.slick-dots li.slick-active button:before{opacity: 1;}
-.slick-dotted.slick-slider{ margin-bottom: 0px;}
-</style>
-
-<script>
-$(document).ready(function(){
-  var nav = $('header');
-  nav.removeClass('shadow-sm');
-  /*--window Scroll functions--*/
-  $(window).on('scroll', function () {
-    /*--show and hide scroll to top --*/
-    if ($(window).scrollTop() > 100) {
-      nav.addClass('shadow-sm');
-      nav.addClass('fixed-top');
-      nav.addClass('bg-white');
-      nav.children('nav').removeClass('navbar-dark').addClass('navbar-light');
-      nav.find('.btn-light').removeClass('btn-light').addClass('btn-primary');
-    } else {
-      nav.removeClass('shadow-sm');
-      nav.removeClass('fixed-top');
-      nav.removeClass('bg-white');
-      nav.children('nav').addClass('navbar-dark').removeClass('navbar-light');
-      nav.find('.btn-primary').addClass('btn-light').removeClass('btn-primary');
-    }
-  });
-});
-</script>
-<script>
-  function functionConfirm(msg, myYes, myNo) {
-    var confirmBox = $("#confirm");
-    confirmBox.find(".message").text(msg);
-    confirmBox.find(".yes,.no").unbind().click(function() {
-      confirmBox.fadeOut();
-    });
-    confirmBox.find(".yes").click(myYes);
-    confirmBox.find(".no").click(myNo);
-    confirmBox.fadeIn();
-  }
-</script>
-<div id="confirm">
-  <div class="shadow rounded container border">
-      <div class="message p-3"></div>
-      <div class="text-right border-top p-3 bg-light">
-        <button aria-label="Yes" class="btn btn-primary yes">Yes</button>
-        <button aria-label="No" class="btn btn-primary no">No</button>
-      </div>
-  </div>
-</div>
-<nav class="navbar navbar-expand-md navbar-dark bg-dark text-light py-0">
-
-    <!-- Brand -->
-    <a class="navbar-brand mr-3 p-0 wow slideInLeft" href="{{ url("/") }}">
-      @include('frontpage.partials.logo', ['class' => 'wow slideInLeft d-inline-block', 'height' => '55px'])
-    </a>
-  
-
-    <!-- Navbar links -->
-    <div class="collapse navbar-collapse" id="collapsibleNavbar">
-      <ul class="navbar-nav wow slideInLeft">
-        <li class="nav-item">
-          <div class="dropdown">
-            <a href="#" class="nav-link" data-toggle="dropdown">Products</a>
-            <div class="dropdown-menu dropdown-menu-right p-3">
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Spot</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Margin</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Bot Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">Copy Trading</a>
-              <a class="dropdown-item py-2" href="{{ route('user.dashboard') }}">AI Traders</a>
-            </div>
-          </div>
-        </li>
-        <li class="nav-item">
-          <div class="dropdown">
-            <a href="#" class="nav-link" data-toggle="dropdown">Company</a>
-            <div class="dropdown-menu dropdown-menu-right p-3">
-              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/about") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/flag.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>About us</h5>
-                  <p class="mb-0">Learn more about our mission</p>
-                </div>
-              </a>
-              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/privacy-policy") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/smile.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>Privacy Policy</h5>
-                  <p class="mb-0">Learn we handle your data</p>
-                </div>
-              </a>
-            </div>
-          </div>
-        </li>
-        <li class="nav-item">
-          <div class="dropdown">
-            <a href="#" class="nav-link" data-toggle="dropdown">Resources</a>
-            <div class="dropdown-menu dropdown-menu-right p-3">
-            <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/faqs") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/book.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>FAQ</h5>
-                  <p class="mb-0">Questions we get asked most</p>
-                </div>
-              </a>
-              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/stocks") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/dollar.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>Stock Trading</h5>
-                  <p class="mb-0">Trading the stock markets</p>
-                </div>
-              </a>
-              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/forex") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/bank.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>Forex Trading</h5>
-                  <p class="mb-0">Trading foreign exchange</p>
-                </div>
-              </a>
-              <a class="dropdown-item px-2 d-flex py-3" href="{{ url("/crypto") }}">
-                <div class="mx-2" style="flex: 0 0 30px">
-                  <img src="images/eth.svg" alt="">
-                </div>
-                <div class="pr-2">
-                  <h5>Crypto Trading</h5>
-                  <p class="mb-0">Trading cryptocurrencies</p>
-                </div>
-              </a>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <form class="form-inline my-2 ml-auto my-lg-0 wow slideInLeft">
-        
-          <a href="{{ route("login") }}" class="btn btn-link rounded-md my-2 mx-3">Login</a>
-          <a href="{{ route("register") }}" class="btn btn-primary rounded-md my-2">Get started</a>      </form>
-    </div>
-    <!-- Toggler/collapsibe Button -->
-    <button class="navbar-toggler py-4" type="button">
-    <i class="ri-menu-3-line text-white"></i>
-    </button>
-</nav><section class="bg-dark text-light">
-<div class="container py-5 text-container">
-		<h5>Crypto Trading</h5>
-		<h1 class="mb-4 text-white">Trade cryptocurrencies on our platform</h1>
-		<p> {{ config('app.name') }} is excited to announce the launch of our new cryptocurrency trading platform. Now you can start trading Bitcoin, Ethereum and many more cryptocurrencies quickly, easily and safely from wherever you are — in just seconds. You get great margin trading leverage and short sell options with fast deposits and withdrawals. Our support team is available 24/7/365 to help get you trading on our CySEC-regulated platform with a trading volume of US $11 billion monthly.</p>
-		<h3>What is a crypto currency</h3>
-		<p>A cryptocurrency like bitcoin is a virtual currency traded peer-to-peer on a blockchain, independent of centralized authorities like banks and governments. Cryptocurrencies are entirely virtual, so they are not backed by physical commodities and have no intrinsic value.</p>
-		<h3>How Do Cryptocurrencies Work?</h3>
-		<p>Primarily, cryptocurrencies rely on blockchain technology to complete a transaction via an intricate P2P network. Once a transfer request is entered into the network, it is validated by the network and added to a pool of other transactions to create a block of data for the ledger, which is then entered into the existing blockchain. Once the block is successfully added to the chain, the transaction is approved and completed.</p>
-		<h3>Are There Investment Opportunities with Cryptocurrencies?</h3>
-		<p>Absolutely. Cryptocurrencies have become established investment commodities among major financial institutions and have even been adopted by countries such as Australia and Japan. As with any investment though, there are risks linked to market movements, high volatility and economics.</p>
-	</div></section>
-<footer>
-	<div class="container">
-    @include('frontpage.partials.logo', ['class' => 'wow slideInLeft d-inline-block', 'height' => '44px'])<br />
-    <div class="row mt-4 mb-5 wow slideInLeft">
-      <div class="col-6 col-md-3 mb-3">
-        <h5 class="font-weight-bold text-white mb-3">Products</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Spot Trading</a></li>
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Margin Trading</a></li>
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Bot Trading</a></li>
-          <li><a href="{{ route('user.dashboard') }}" class="text-light">Copy Trading</a></li>
+<section class="sec no-line" style="padding-top:80px">
+  <div class="wrap">
+    <div class="split">
+      <div class="reveal">
+        <span class="pill">Live market</span>
+        <h2>Prices that move with the market</h2>
+        <p>Crypto prices on Prime Digital Capital stream tick by tick, so what you see is what the market is doing right now.</p>
+        <ul class="checks">
+          <li>Trade 24 hours a day, 7 days a week</li>
+          <li>Go long or short with adjustable leverage</li>
+          <li>Set take-profit and stop-loss on every position</li>
         </ul>
       </div>
-      <div class="col-6 col-md-3 mb-3">
-        <h5 class="font-weight-bold text-white mb-3">Markets</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ url("/forex") }}" class="text-light">Forex</a></li>
-          <li><a href="{{ url("/crypto") }}" class="text-light">Crypto</a></li>
-          <li><a href="{{ url("/stocks") }}" class="text-light">Stocks</a></li>
-        </ul>
-      </div>
-      <div class="col-6 col-md-3 mb-3">
-        <h5 class="font-weight-bold text-white mb-3">Company</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ url("/about") }}" class="text-light">About us</a></li>
-          <li><a href="{{ url("/privacy-policy") }}" class="text-light">Privacy</a></li>
-          <li><a href="{{ url("/rules") }}" class="text-light">Terms of service</a></li>
-        </ul>
+      <div class="panel reveal" style="margin-top:0">
+        <h4>Markets <span class="mono" style="float:right;font-size:12px;color:var(--up)">● LIVE</span></h4>
+        <table class="mtable">
+          <thead><tr><th>Asset</th><th>Price (USD)</th><th>24h</th><th>Volume</th></tr></thead>
+          <tbody>
+          @foreach([['BTC','Bitcoin','₿','#f7931a'],['ETH','Ethereum','Ξ','#627eea'],['SOL','Solana','S','#14b8a6'],['BNB','BNB','B','#d4a017'],['XRP','XRP','X','#334155'],['DOGE','Dogecoin','Ð','#c2a633'],['ADA','Cardano','A','#2563eb'],['LINK','Chainlink','L','#2a5ada']] as [$s,$n,$g,$c])
+            <tr><td><span class="asset"><span class="coin" style="background:{{ $c }}">{{ $g }}</span>{{ $s }}</span></td><td data-live-price="{{ $s }}">—</td><td data-live-chg="{{ $s }}">—</td><td data-live-vol="{{ $s }}" style="color:var(--text-3)">—</td></tr>
+          @endforeach
+          </tbody>
+        </table>
       </div>
     </div>
-   <div class='wow slideInUp'>
-    <p>Trading carries substantial risk. You may lose more than your initial investment. Before trading, please read the relevant risk disclosure statements.</p>
-    <hr class="my-3 my-md-5" style="border-color: rgba(255, 255, 255, 0.2) !important">
-</div>
-    <div class="gtranslate_wrapper mx-auto d-flex justify-content-center"></div>
-<script>window.gtranslateSettings = {"default_language":"en","detect_browser_language":true,"wrapper_selector":".gtranslate_wrapper","flag_size":24,"switcher_horizontal_position":"inline","alt_flags":{"en":"usa"}}</script>
-<script src="https://cdn.gtranslate.net/widgets/latest/dwf.js" defer></script>
-    <p class="mb-0 mt-md-4 wow slideInLeft text-uppercase" >© 2016 - 2026 {{ config('app.name') }}. All rights reserved.</p>
   </div>
+</section>
 
-</footer>
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="pill">Chart</span><h2>Analyse before you trade</h2><p class="lead">Full charting with indicators and drawing tools, built into the platform.</p></div>
+    <div class="widget reveal" style="height:560px">
+      <div class="tradingview-widget-container" style="height:100%"><div class="tradingview-widget-container__widget" style="height:100%"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+        {"autosize":true,"symbol":"BINANCE:BTCUSDT","interval":"60","timezone":"Etc/UTC","theme":"dark","style":"1","locale":"en","allow_symbol_change":true,"backgroundColor":"rgba(11,19,48,1)","gridColor":"rgba(170,190,255,0.06)","support_host":"https://www.tradingview.com"}
+        </script>
+      </div>
+    </div>
+  </div>
+</section>
 
-<div id="google_translate_element" style="display:none"></div>
-<script type="text/javascript">
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="pill">Learn</span><h2>Crypto, explained</h2></div>
+    <div class="cols3 reveal">
+      <div><h3>What is a cryptocurrency?</h3><p>A cryptocurrency like Bitcoin is a digital currency traded peer-to-peer on a blockchain, independent of central authorities such as banks and governments. It is not backed by a physical commodity.</p></div>
+      <div><h3>How do cryptocurrencies work?</h3><p>A transfer request is validated by the network, grouped with other transactions into a block, and added to the blockchain. Once the block is added, the transaction is confirmed.</p></div>
+      <div><h3>Is crypto an investment opportunity?</h3><p>Crypto is now traded by major financial institutions. Like any market it carries risk — prices can be highly volatile and move sharply in either direction.</p></div>
+    </div>
+  </div>
+</section>
 
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({pageLanguage: "en"}, 'google_translate_element');
-}
+@include('frontpage.prime.cta', ['pill' => 'Crypto', 'title' => 'Start trading crypto today', 'lead' => 'Open an account, fund your wallet and place your first trade in minutes.'])
+@endsection
 
-function changeLanguageByButtonClick() {
-  var language = document.getElementById("language").value;
-  var selectField = document.querySelector("#google_translate_element select");
-  for(var i=0; i < selectField.children.length; i++){
-    var option = selectField.children[i];
-    // find desired langauge and change the former language of the hidden selection-field 
-    if(option.value==language){
-       selectField.selectedIndex = i;
-       // trigger change event afterwards to make google-lib translate this side
-       selectField.dispatchEvent(new Event('change'));
-       break;
-    }
-  }
-}
-
-function changeLanguageByButtonClick2() {
-  var language = document.getElementById("language2").value;
-  var selectField = document.querySelector("#google_translate_element select");
-  for(var i=0; i < selectField.children.length; i++){
-    var option = selectField.children[i];
-    // find desired langauge and change the former language of the hidden selection-field 
-    if(option.value==language){
-       selectField.selectedIndex = i;
-       // trigger change event afterwards to make google-lib translate this side
-       selectField.dispatchEvent(new Event('change'));
-       break;
-    }
-  }
-}
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.js" integrity="sha512-Rd5Gf5A6chsunOJte+gKWyECMqkG8MgBYD1u80LOOJBfl6ka9CtatRrD4P0P5Q5V/z/ecvOCSYC8tLoWNrCpPg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script>
-$( document ).ready(function() { 
-  new WOW().init();
-});
-</script>
-
-</body>
-
-</html>
+@include('frontpage.prime.live-crypto')

@@ -6,8 +6,8 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
-        <link rel="manifest" href="/manifest.webmanifest?v=4">
-        <link rel="apple-touch-icon" sizes="180x180" href="/img/pdc-icon-180.png?v=4">
+        <link rel="manifest" href="/manifest.webmanifest?v=5">
+        <link rel="apple-touch-icon" sizes="180x180" href="/img/pdc-icon-180.png?v=5">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="theme-color" content="#0a0c14">
 
@@ -24,7 +24,7 @@
             <div class="fixed inset-0 bg-black/50"></div>
             <div class="relative m-4 w-full max-w-sm bg-white text-gray-900 rounded-xl shadow-xl p-4">
                 <div class="flex items-start">
-                    <img src="/img/pdc-icon-180.png?v=4" alt="App Icon" class="w-10 h-10 mr-3 rounded">
+                    <img src="/img/pdc-icon-180.png?v=5" alt="App Icon" class="w-10 h-10 mr-3 rounded">
                     <div class="flex-1">
                         <div class="font-semibold">Add Prime Digital Capital to Home Screen</div>
                         <div id="pwaPromptText" class="text-sm text-gray-600 mt-1">Install the app for faster access and an app-like experience.</div>
@@ -41,7 +41,7 @@
                 <a href="{{ route('index') }}">
                     @if(\App\Helpers\WebsiteSettingsHelper::hasTextLogo())
                         <!-- Text Logo -->
-                        <div class="flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg" style="width: 200px; height: 160px;">
+                        <div class="flex items-center justify-center px-6 py-4 bg-blue-600 rounded-lg" style="width: 200px; height: 160px;">
                             <span class="text-white font-bold text-3xl">{{ \App\Helpers\WebsiteSettingsHelper::getTextLogo() }}</span>
                         </div>
                     @elseif(\App\Helpers\WebsiteSettingsHelper::hasImageLogo())

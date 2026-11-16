@@ -5,10 +5,10 @@
 
 @section('content')
 
-<header class="page-head">
+<header class="page-hero isolate"><div class="candles-bg"></div>
   <div class="wrap">
-    <p class="eyebrow">Risk disclosure</p>
-    <h1>Understand the <em>risks</em> before you trade.</h1>
+    <span class="pill">Risk disclosure</span>
+    <h1>Understand the risks before you trade.</h1>
     <p class="lead">Forex and CFD trading involve substantial risk and may result in the loss of your invested capital. Please read this disclosure carefully before using any Prime Digital Capital service.</p>
   </div>
 </header>
