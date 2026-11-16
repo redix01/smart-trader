@@ -71,36 +71,36 @@ class LiveTradingController extends Controller
             ['symbol' => 'GBP/CHF', 'name' => 'British Pound / Swiss Franc'],
         ]);
         
+        // Market to open on: ?asset_type=&symbol= (also used by the old /trade deep link), else the first crypto.
+        $requestedType = in_array(request('asset_type'), ['crypto', 'stock'], true) ? request('asset_type') : null;
+        $selected = $requestedType
+            ? Asset::where('type', $requestedType)->where('symbol', request('symbol'))->first()
+            : null;
+        $selected = $selected ?? $cryptoAssets->first() ?? $stockAssets->first();
+
+        $openOrders = $liveTrades->where('status', 'pending')->values();
+        $orderHistory = $liveTrades->whereIn('status', ['filled', 'cancelled'])->take(20)->values();
+        $inOpenOrders = $openOrders->sum('amount');
+
         return view('dashboard.live-trading.index', compact(
             'liveTrades',
             'cryptoAssets',
             'stockAssets',
-            'forexAssets'
+            'forexAssets',
+            'selected',
+            'openOrders',
+            'orderHistory',
+            'inOpenOrders'
         ));
     }
 
+    /** Old per-market page: open the Trade Room terminal on that market instead. */
     public function trade(Request $request)
     {
-        $assetType = $request->get('asset_type');
-        $symbol = $request->get('symbol');
-        
-        // Get asset details
-        if ($assetType === 'crypto' || $assetType === 'stock') {
-            $asset = Asset::where('symbol', $symbol)->first();
-            if (!$asset) {
-                abort(404, 'Asset not found');
-            }
-        } else {
-            // For forex, create a mock asset
-            $asset = [
-                'symbol' => $symbol,
-                'name' => $symbol,
-                'current_price' => rand(100, 200) / 100,
-                'price_change_24h' => rand(-50, 50) / 10
-            ];
-        }
-        
-        return view('dashboard.live-trading.trade', compact('asset', 'assetType'));
+        return redirect()->route('user.liveTrading.index', array_filter([
+            'asset_type' => $request->get('asset_type'),
+            'symbol' => $request->get('symbol'),
+        ]));
     }
 
     public function store(Request $request)
