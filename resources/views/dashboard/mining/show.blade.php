@@ -9,7 +9,8 @@
         'suspended' => 'bg-amber-500/15 text-amber-300',
         default => 'bg-gray-700 text-gray-300',
     };
-    $canWithdraw = $mining->isActive() && $mining->total_mined > 0;
+    $unpaidMined = app(\App\Services\EarnService::class)->unpaidMined($mining);
+    $canWithdraw = $unpaidMined > 0;
     $canCancel = $mining->isActive() && $mining->canBeCancelled();
     $row = 'flex justify-between gap-4 py-2.5';
 @endphp
@@ -77,6 +78,7 @@
                     <div class="divide-y divide-gray-700 border-t border-gray-700 md:border-t-0">
                         <div class="{{ $row }}"><dt class="text-gray-400">Amount invested</dt><dd class="text-white font-mono text-right">{{ $mining->formatted_amount_invested }}</dd></div>
                         <div class="{{ $row }}"><dt class="text-gray-400">Total mined</dt><dd class="text-emerald-400 font-mono text-right">{{ $mining->formatted_total_mined }}</dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">Ready to withdraw</dt><dd class="text-white font-mono text-right">{{ money_from($unpaidMined, $mining->currency ?: 'USD') }}</dd></div>
                         <div class="{{ $row }}"><dt class="text-gray-400">ROI</dt><dd class="text-white font-mono text-right">{{ $mining->roi_percentage }}%</dd></div>
                         <div class="{{ $row }}"><dt class="text-gray-400">Started</dt><dd class="text-white text-right">{{ $mining->start_date->format('M d, Y') }}</dd></div>
                     </div>

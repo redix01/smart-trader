@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Plan;
 use App\Models\UserStaking;
 use Illuminate\Http\Request;
+use App\Services\EarnService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
@@ -90,44 +92,14 @@ class UserStakingController extends Controller
                 ->withInput();
         }
 
-        // Check if user has sufficient balance (you can implement this based on your balance system)
-        // For now, we'll assume the user has sufficient balance
-
-        DB::beginTransaction();
         try {
-            // Calculate end date based on staking duration
-            $endDate = null;
-            if ($plan->staking_duration) {
-                $endDate = now()->addDays($plan->staking_duration);
-            }
-
-            // Create the staking subscription
-            $staking = UserStaking::create([
-                'user_id' => $user->id,
-                'plan_id' => $plan->id,
-                'amount_staked' => $request->amount_staked,
-                'currency' => $plan->staking_currency,
-                'apy_rate' => $plan->apy_rate,
-                'start_date' => now(),
-                'end_date' => $endDate,
-                'status' => UserStaking::STATUS_ACTIVE,
-                'notes' => $request->notes,
-            ]);
-
-            // Here you would typically deduct the amount from user's balance
-            // For now, we'll just create the staking record
-
-            DB::commit();
-
-            return redirect()->route('user.staking.show', $staking)
-                ->with('success', 'Staking subscription created successfully!');
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Failed to create staking subscription. Error: ' . $e->getMessage())
-                ->withInput();
+            $staking = app(EarnService::class)->stake($user, $plan, (float) $request->amount_staked, $request->notes);
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->with('error', collect($e->errors())->flatten()->first())->withInput();
         }
+
+        return redirect()->route('user.staking.show', $staking)
+            ->with('success', 'Staking started. '.money_from($staking->amount_staked, $staking->currency ?: 'USD').' was moved from your staking balance.');
     }
 
     /**
@@ -174,21 +146,14 @@ class UserStakingController extends Controller
         }
 
         try {
-            $staking->update([
-                'status' => UserStaking::STATUS_CANCELLED,
-                'end_date' => now(),
-            ]);
-
-            // Here you would typically return the staked amount to user's balance
-            // For now, we'll just update the status
-
-            return redirect()->route('user.staking.index')
-                ->with('success', 'Staking subscription cancelled successfully!');
-
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Failed to cancel staking subscription. Error: ' . $e->getMessage());
+            $paid = app(EarnService::class)->cancelStake($staking);
+        } catch (ValidationException $e) {
+            return redirect()->back()->with('error', collect($e->errors())->flatten()->first());
         }
+
+        return redirect()->route('user.staking.index')
+            ->with('success', 'Staking ended. '.money($paid['principal'] + $paid['rewards']).' was returned to your main balance'
+                .($paid['rewards'] > 0 ? ' (including '.money($paid['rewards']).' of rewards).' : '.'));
     }
 
     /**
@@ -203,38 +168,14 @@ class UserStakingController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        if (!$staking->isActive()) {
-            return redirect()->back()
-                ->with('error', 'This staking subscription is not active.');
-        }
-
-        // Calculate current rewards
-        $currentValue = $staking->calculateCurrentValue();
-        $rewards = $currentValue - $staking->amount_staked;
-
-        if ($rewards <= 0) {
-            return redirect()->back()
-                ->with('error', 'No rewards available for withdrawal.');
-        }
-
         try {
-            // Update total rewards and last reward date
-            $staking->update([
-                'total_rewards' => $staking->total_rewards + $rewards,
-                'last_reward_date' => now(),
-                'current_value' => $currentValue,
-            ]);
-
-            // Here you would typically add the rewards to user's balance
-            // For now, we'll just update the staking record
-
-            return redirect()->back()
-                ->with('success', 'Rewards withdrawn successfully! Amount: ' . number_format($rewards, 8) . ' ' . $staking->currency);
-
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Failed to withdraw rewards. Error: ' . $e->getMessage());
+            $paid = app(EarnService::class)->withdrawStakingRewards($staking);
+        } catch (ValidationException $e) {
+            return redirect()->back()->with('error', collect($e->errors())->flatten()->first());
         }
+
+        return redirect()->back()
+            ->with('success', money($paid).' of rewards was added to your main balance.');
     }
 
     /**

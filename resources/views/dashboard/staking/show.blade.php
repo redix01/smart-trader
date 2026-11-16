@@ -10,6 +10,7 @@
     };
     $card = 'rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6';
     $row = 'flex justify-between gap-4 py-2.5';
+    $unpaidRewards = app(\App\Services\EarnService::class)->unpaidRewards($staking);
 @endphp
 <div class="space-y-4 sm:space-y-6">
     <!-- Page Header -->
@@ -48,7 +49,7 @@
             <div class="text-xl font-semibold text-white font-mono mt-1 break-words">{{ $staking->formatted_current_value }}</div>
         </div>
         <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
-            <div class="text-xs text-gray-400">Total rewards · {{ $staking->formatted_apy_rate }} APY</div>
+            <div class="text-xs text-gray-400">Rewards paid out · {{ $staking->formatted_apy_rate }} APY</div>
             <div class="text-xl font-semibold text-emerald-400 font-mono mt-1 break-words">{{ $staking->formatted_total_rewards }}</div>
         </div>
     </div>
@@ -65,7 +66,8 @@
                     <div class="{{ $row }}"><dt class="text-gray-400">APY</dt><dd class="text-emerald-400 font-semibold font-mono text-right">{{ $staking->formatted_apy_rate }}</dd></div>
                     <div class="{{ $row }}"><dt class="text-gray-400">Amount staked</dt><dd class="text-white font-mono text-right">{{ $staking->formatted_amount_staked }}</dd></div>
                     <div class="{{ $row }}"><dt class="text-gray-400">Current value</dt><dd class="text-white font-mono text-right">{{ $staking->formatted_current_value }}</dd></div>
-                    <div class="{{ $row }}"><dt class="text-gray-400">Total rewards</dt><dd class="text-emerald-400 font-mono text-right">{{ $staking->formatted_total_rewards }}</dd></div>
+                    <div class="{{ $row }}"><dt class="text-gray-400">Ready to withdraw</dt><dd class="text-white font-mono text-right">{{ money_from($unpaidRewards, $staking->currency ?: 'USD') }}</dd></div>
+                    <div class="{{ $row }}"><dt class="text-gray-400">Rewards paid out</dt><dd class="text-emerald-400 font-mono text-right">{{ $staking->formatted_total_rewards }}</dd></div>
                     @if($staking->last_reward_date)
                         <div class="{{ $row }}"><dt class="text-gray-400">Last reward</dt><dd class="text-white text-right">{{ $staking->last_reward_date->format('M d, Y H:i') }}</dd></div>
                     @endif
@@ -84,7 +86,7 @@
                             </button>
                         </form>
 
-                        <form method="POST" action="{{ route('user.staking.cancel', $staking) }}" data-confirm="Are you sure you want to cancel this staking? This action cannot be undone." data-confirm-tone="danger">
+                        <form method="POST" action="{{ route('user.staking.cancel', $staking) }}" data-confirm="End this stake? Your principal and any unpaid rewards go back to your main balance." data-confirm-tone="danger">
                             @csrf
                             <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-red-500/40 text-red-400 hover:bg-red-500/10 text-sm font-semibold">
                                 Cancel staking

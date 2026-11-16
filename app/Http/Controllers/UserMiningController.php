@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Plan;
 use App\Models\UserMining;
 use Illuminate\Http\Request;
+use App\Services\EarnService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -97,47 +99,14 @@ class UserMiningController extends Controller
                 ->withInput();
         }
 
-        // Check if user has sufficient balance (you can implement this based on your balance system)
-        // For now, we'll assume the user has sufficient balance
-
-        DB::beginTransaction();
         try {
-            // Calculate end date based on mining duration
-            $endDate = null;
-            if ($plan->mining_duration) {
-                $endDate = now()->addDays($plan->mining_duration);
-            }
-
-            // Create the mining subscription
-            $mining = UserMining::create([
-                'user_id' => $user->id,
-                'plan_id' => $plan->id,
-                'amount_invested' => $request->amount_invested,
-                'currency' => $plan->currency,
-                'hashrate' => $plan->hashrate,
-                'equipment' => $plan->equipment,
-                'downtime' => $plan->downtime,
-                'electricity_costs' => $plan->electricity_costs,
-                'start_date' => now(),
-                'end_date' => $endDate,
-                'status' => UserMining::STATUS_ACTIVE,
-                'notes' => $request->notes,
-            ]);
-
-            // Here you would typically deduct the amount from user's balance
-            // For now, we'll just create the mining record
-
-            DB::commit();
-
-            return redirect()->route('user.mining.show', $mining)
-                ->with('success', 'Mining subscription created successfully!');
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Failed to create mining subscription. Error: ' . $e->getMessage())
-                ->withInput();
+            $mining = app(EarnService::class)->startMining($user, $plan, (float) $request->amount_invested, $request->notes);
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->with('error', collect($e->errors())->flatten()->first())->withInput();
         }
+
+        return redirect()->route('user.mining.show', $mining)
+            ->with('success', 'Mining contract started. '.money_from($mining->amount_invested, $mining->currency ?: 'USD').' was moved from your mining balance.');
     }
 
     /**
@@ -277,34 +246,14 @@ class UserMiningController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        if (!$mining->isActive() && !$mining->isCompleted()) {
-            return redirect()->back()
-                ->with('error', 'Mining subscription must be active or completed to withdraw.');
-        }
-
-        if ($mining->total_mined <= 0) {
-            return redirect()->back()
-                ->with('error', 'No mined cryptocurrency available for withdrawal.');
-        }
-
-        DB::beginTransaction();
         try {
-            // Here you would typically process the withdrawal
-            // For now, we'll just update the last mining date
-            $mining->update([
-                'last_mining_date' => now(),
-            ]);
-
-            DB::commit();
-
-            return redirect()->back()
-                ->with('success', 'Withdrawal request submitted successfully. You will receive ' . $mining->formatted_total_mined . ' within 24-48 hours.');
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Failed to process withdrawal. Error: ' . $e->getMessage());
+            $paid = app(EarnService::class)->withdrawMined($mining);
+        } catch (ValidationException $e) {
+            return redirect()->back()->with('error', collect($e->errors())->flatten()->first());
         }
+
+        return redirect()->back()
+            ->with('success', money($paid).' of mined earnings was added to your main balance.');
     }
 
     /**

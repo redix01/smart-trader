@@ -24,6 +24,7 @@ class UserMining extends Model
         'end_date',
         'status',
         'total_mined',
+        'total_withdrawn',
         'last_mining_date',
         'current_value',
         'notes',
@@ -32,6 +33,7 @@ class UserMining extends Model
     protected $casts = [
         'amount_invested' => 'decimal:8',
         'total_mined' => 'decimal:8',
+        'total_withdrawn' => 'decimal:8',
         'current_value' => 'decimal:8',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
