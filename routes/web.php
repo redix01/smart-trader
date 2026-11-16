@@ -415,7 +415,11 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::post('ai-traders/trader/{trader}/activate', [\App\Http\Controllers\User\AiTraderController::class, 'activateTrader'])->name('aiTraders.activate');
     Route::post('ai-traders/plan/{plan}/subscribe', [\App\Http\Controllers\User\AiTraderController::class, 'subscribeToPlan'])->name('aiTraders.subscribe');
 
-    // Live Trading Routes
+    // Live market prices
+    Route::view('markets/stocks', 'dashboard.markets.stocks')->name('markets.stocks');
+    Route::view('markets/crypto', 'dashboard.markets.crypto')->name('markets.crypto');
+
+    // Live Trading Routes (Trade Room)
     Route::get("live-trading", [LiveTradingController::class, "index"])->name("liveTrading.index");
     Route::get("live-trading/trade", [LiveTradingController::class, "trade"])->name("liveTrading.trade");
     Route::post("live-trading", [LiveTradingController::class, "store"])->name("liveTrading.store");
@@ -453,7 +457,7 @@ Route::get('/debug-profit', function() {
                 'code' => '123456',
                 'expires_at' => now()->addMinutes(10)->format('H:i'),
             ], function ($message) {
-                $message->to('support@nanomarketpro.net')
+                $message->to('support@primedigitalcap.com')
                         ->subject('Test Verification Email');
             });
             return 'Email sent successfully!';

@@ -1,9 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 120" role="img" aria-label="Nano Market Pro">
-  <!-- Mark: navy tile with gold NM monogram (matches nanomarketpro.net) -->
-  <rect x="6" y="10" width="100" height="100" rx="22" fill="#0b1020" stroke="#d8b878" stroke-opacity="0.55" stroke-width="2"/>
-  <text x="56" y="75" font-family="Georgia, 'Times New Roman', serif" font-size="40" fill="#d8b878" text-anchor="middle">NM</text>
-  <!-- Wordmark -->
-  <text x="130" y="76" font-family="Georgia, 'Times New Roman', serif" font-size="46" letter-spacing="0.2">
-    <tspan fill="#ffffff">Nano Market </tspan><tspan fill="#d8b878" font-style="italic">Pro</tspan>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 120" role="img" aria-label="Prime Digital Capital">
+  <defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f8cff"/><stop offset="1" stop-color="#6c3cf0"/></linearGradient></defs>
+  <rect x="6" y="10" width="100" height="100" rx="24" fill="url(#pg)"/>
+  <text x="56" y="74" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="40" fill="#ffffff" text-anchor="middle">PD</text>
+  <text x="130" y="76" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="44" letter-spacing="-0.5">
+    <tspan fill="#ffffff">Prime Digital </tspan><tspan fill="#8fbcff">Capital</tspan>
   </text>
 </svg>

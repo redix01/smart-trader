@@ -5,10 +5,41 @@
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
         <div>
-            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Nano Market Pro</p>
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Prime Digital Capital</p>
             <h1 class="text-2xl font-bold text-white mt-1">Dashboard</h1>
             <p class="text-gray-400 mt-1">Welcome back, {{ auth()->user()->name }}!</p>
         </div>
+    </div>
+
+    <!-- Live market ticker -->
+    <div class="rounded-lg overflow-hidden border border-gray-700 bg-gray-800">
+        <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+            {"symbols":[{"proName":"BINANCE:BTCUSDT","title":"BTC"},{"proName":"BINANCE:ETHUSDT","title":"ETH"},{"proName":"BINANCE:SOLUSDT","title":"SOL"},{"proName":"NASDAQ:AAPL","title":"Apple"},{"proName":"NASDAQ:NVDA","title":"Nvidia"},{"proName":"NASDAQ:TSLA","title":"Tesla"},{"proName":"FOREXCOM:SPXUSD","title":"S&P 500"}],"showSymbolLogo":true,"isTransparent":true,"displayMode":"adaptive","colorTheme":"dark","locale":"en"}
+            </script>
+        </div>
+    </div>
+
+    <!-- Markets quick access -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="{{ route('user.markets.stocks') }}" class="group bg-gray-800 rounded-lg p-5 border border-gray-700 hover:border-gold-500 transition-colors">
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Live</p>
+            <h3 class="text-lg font-semibold text-white mt-1">Stock prices</h3>
+            <p class="text-sm text-gray-400 mt-1">Real-time quotes and charts for US equities and ETFs.</p>
+            <span class="inline-block mt-3 text-sm text-gold-400 group-hover:translate-x-1 transition-transform">View stocks →</span>
+        </a>
+        <a href="{{ route('user.markets.crypto') }}" class="group bg-gray-800 rounded-lg p-5 border border-gray-700 hover:border-gold-500 transition-colors">
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Live</p>
+            <h3 class="text-lg font-semibold text-white mt-1">Crypto prices</h3>
+            <p class="text-sm text-gray-400 mt-1">Tick-by-tick prices for the top coins, streamed live.</p>
+            <span class="inline-block mt-3 text-sm text-gold-400 group-hover:translate-x-1 transition-transform">View crypto →</span>
+        </a>
+        <a href="{{ route('user.liveTrading.index') }}" class="group bg-blue-600/10 rounded-lg p-5 border border-blue-500/40 hover:border-blue-400 transition-colors">
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Personal</p>
+            <h3 class="text-lg font-semibold text-white mt-1">Trade Room</h3>
+            <p class="text-sm text-gray-400 mt-1">Place your own crypto and stock trades and manage open positions.</p>
+            <span class="inline-block mt-3 text-sm text-gold-400 group-hover:translate-x-1 transition-transform">Start trading →</span>
+        </a>
     </div>
 
         <!-- First Row: Balance & Trading Strength -->

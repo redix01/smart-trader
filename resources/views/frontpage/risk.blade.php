@@ -1,7 +1,7 @@
-@extends('frontpage.nano.layout')
+@extends('frontpage.prime.layout')
 
-@section('title', 'Risk Disclosure — Nano Market Pro')
-@section('description', 'Forex and CFD trading involve substantial risk. Read the Nano Market Pro risk disclosure before using any service.')
+@section('title', 'Risk Disclosure — Prime Digital Capital')
+@section('description', 'Forex and CFD trading involve substantial risk. Read the Prime Digital Capital risk disclosure before using any service.')
 
 @section('content')
 
@@ -9,14 +9,14 @@
   <div class="wrap">
     <p class="eyebrow">Risk disclosure</p>
     <h1>Understand the <em>risks</em> before you trade.</h1>
-    <p class="lead">Forex and CFD trading involve substantial risk and may result in the loss of your invested capital. Please read this disclosure carefully before using any Nano Market Pro service.</p>
+    <p class="lead">Forex and CFD trading involve substantial risk and may result in the loss of your invested capital. Please read this disclosure carefully before using any Prime Digital Capital service.</p>
   </div>
 </header>
 
 <section>
   <div class="wrap risk-doc">
     <h2>No guaranteed results</h2>
-    <p>Nano Market Pro does not guarantee profits or any specific trading result. Past performance — including back-tested, simulated or live results, the results of traders you copy, and the results of AI traders — is not indicative of future results.</p>
+    <p>Prime Digital Capital does not guarantee profits or any specific trading result. Past performance — including back-tested, simulated or live results, the results of traders you copy, and the results of AI traders — is not indicative of future results.</p>
 
     <h2>Market and leverage risk</h2>
     <p>Currency, crypto, stock and CFD prices can move quickly and unpredictably. Leveraged products magnify both gains and losses, so a small market movement can lead to a large loss relative to the capital you commit.</p>
@@ -40,7 +40,7 @@
     </ul>
 
     <div class="callout">
-      <p>Forex and CFD trading involve substantial risk and may result in the loss of your invested capital. Nano Market Pro does not guarantee profits or specific trading results. Past performance is not indicative of future results. Please trade responsibly and ensure you understand the risks involved.</p>
+      <p>Forex and CFD trading involve substantial risk and may result in the loss of your invested capital. Prime Digital Capital does not guarantee profits or specific trading results. Past performance is not indicative of future results. Please trade responsibly and ensure you understand the risks involved.</p>
     </div>
   </div>
 </section>

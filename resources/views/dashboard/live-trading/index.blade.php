@@ -5,8 +5,8 @@
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-white">Live Trading</h1>
-            <p class="text-gray-400 mt-1">Trade crypto and stocks in real-time</p>
+            <h1 class="text-2xl font-bold text-white">Trade Room</h1>
+            <p class="text-gray-400 mt-1">Your personal trading desk — trade crypto and stocks in real time</p>
         </div>
     </div>
 

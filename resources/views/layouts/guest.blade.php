@@ -6,10 +6,10 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
-        <link rel="manifest" href="/manifest.webmanifest?v=3">
-        <link rel="apple-touch-icon" sizes="180x180" href="/img/nano-icon-180.png?v=3">
+        <link rel="manifest" href="/manifest.webmanifest?v=4">
+        <link rel="apple-touch-icon" sizes="180x180" href="/img/pdc-icon-180.png?v=4">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="theme-color" content="#0b1020">
+        <meta name="theme-color" content="#0a0c14">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -24,9 +24,9 @@
             <div class="fixed inset-0 bg-black/50"></div>
             <div class="relative m-4 w-full max-w-sm bg-white text-gray-900 rounded-xl shadow-xl p-4">
                 <div class="flex items-start">
-                    <img src="/img/nano-icon-180.png?v=3" alt="App Icon" class="w-10 h-10 mr-3 rounded">
+                    <img src="/img/pdc-icon-180.png?v=4" alt="App Icon" class="w-10 h-10 mr-3 rounded">
                     <div class="flex-1">
-                        <div class="font-semibold">Add Nano Market Pro to Home Screen</div>
+                        <div class="font-semibold">Add Prime Digital Capital to Home Screen</div>
                         <div id="pwaPromptText" class="text-sm text-gray-600 mt-1">Install the app for faster access and an app-like experience.</div>
                     </div>
                 </div>

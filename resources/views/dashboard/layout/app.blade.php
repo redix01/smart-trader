@@ -8,14 +8,14 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }} - Dashboard</title>
   <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/x-icon">
-  <link rel="manifest" href="/manifest.webmanifest?v=3">
-  <link rel="apple-touch-icon" sizes="180x180" href="/img/nano-icon-180.png?v=3">
+  <link rel="manifest" href="/manifest.webmanifest?v=4">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/pdc-icon-180.png?v=4">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#0b1020">
+  <meta name="theme-color" content="#0a0c14">
     
     <!-- Tailwind CSS CDN for immediate styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    @include('partials.nano-theme')
+    @include('partials.brand-theme')
 
     <!-- Pusher JS for real-time updates -->
     <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
@@ -53,7 +53,7 @@
         
         .dark {
             /* Dark theme colors */
-            --bg-primary: #0b1020;
+            --bg-primary: #0a0c14;
             --bg-secondary: #141c33;
             --bg-tertiary: #1d2742;
             --text-primary: #f8fafc;
@@ -392,18 +392,26 @@
                         Trading
                     </div>
                     <div class="space-y-0.5">
+                        <a href="{{ route('user.liveTrading.index') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.liveTrading.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+                            </svg>
+                            <span>Trade Room</span>
+                        </a>
+                        <a href="{{ route('user.markets.stocks') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.markets.stocks') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg>
+                            <span>Stock Prices</span>
+                        </a>
+                        <a href="{{ route('user.markets.crypto') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.markets.crypto') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 8h4.5a2.5 2.5 0 010 5H9m0-5v10m0-5h5a2.5 2.5 0 010 5H9M11 5v3m0 10v1m2-14v3m0 10v1"/></svg>
+                            <span>Crypto Prices</span>
+                        </a>
                         <a href="{{ route("user.overview.index") }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs("user.overview.*") ? "bg-blue-600 text-white" : "text-gray-300 hover:bg-gray-700" }}">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
                                 <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
                             </svg>
                             <span>Overview</span>
-                        </a>
-                        <a href="{{ route('user.liveTrading.index') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.trade.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
-                            </svg>
-                            <span>Live Trading</span>
                         </a>
                         <a href="{{ route('user.copyTrading.index') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.copyTrading.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
@@ -630,7 +638,7 @@
 
                     @yield('content')
                     <p class="mt-10 pt-6 border-t border-gray-700 text-xs text-gray-500 leading-relaxed">
-                        <span class="text-gray-300 font-semibold">Risk disclosure:</span> Trading forex, CFDs and crypto involves substantial risk and may result in the loss of your invested capital. Nano Market Pro does not guarantee profits. Past performance is not indicative of future results.
+                        <span class="text-gray-300 font-semibold">Risk disclosure:</span> Trading forex, CFDs and crypto involves substantial risk and may result in the loss of your invested capital. Prime Digital Capital does not guarantee profits. Past performance is not indicative of future results.
                         <a href="{{ route('risk') }}" class="text-gold-400 hover:underline">Read more</a>
                     </p>
                 </div>
@@ -644,9 +652,9 @@
         <div class="fixed inset-0 bg-black/50"></div>
         <div class="relative m-4 w-full max-w-sm bg-white text-gray-900 rounded-xl shadow-xl p-4">
             <div class="flex items-start">
-                <img src="/img/nano-icon-180.png?v=3" alt="App Icon" class="w-10 h-10 mr-3 rounded">
+                <img src="/img/pdc-icon-180.png?v=4" alt="App Icon" class="w-10 h-10 mr-3 rounded">
                 <div class="flex-1">
-                    <div class="font-semibold">Add Nano Market Pro to Home Screen</div>
+                    <div class="font-semibold">Add Prime Digital Capital to Home Screen</div>
                     <div id="pwaPromptText" class="text-sm text-gray-600 mt-1">Install the app for faster access and an app-like experience.</div>
                 </div>
             </div>

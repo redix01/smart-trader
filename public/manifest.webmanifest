@@ -1,14 +1,14 @@
 {
-  "name": "Nano Market Pro",
-  "short_name": "NanoMarket",
+  "name": "Prime Digital Capital",
+  "short_name": "PrimeCap",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0b1020",
-  "theme_color": "#0b1020",
+  "background_color": "#0a0c14",
+  "theme_color": "#0a0c14",
   "icons": [
-    { "src": "/img/nano-icon-512.png?v=3", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/img/nano-icon-512.png?v=3", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-    { "src": "/img/nano-icon-192.png?v=3", "sizes": "192x192", "type": "image/png", "purpose": "any" }
+    { "src": "/img/pdc-icon-512.png?v=4", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/img/pdc-icon-512.png?v=4", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/img/pdc-icon-192.png?v=4", "sizes": "192x192", "type": "image/png", "purpose": "any" }
   ]
 }

@@ -251,12 +251,12 @@ class NotificationController extends Controller
 
     protected function getSenderOptions(): array
     {
-        $defaultFrom = config('mail.from.address', 'support@nanomarketpro.net');
+        $defaultFrom = config('mail.from.address', 'support@primedigitalcap.com');
         $defaultDomain = Str::after($defaultFrom, '@');
 
         if (!$defaultDomain || $defaultDomain === $defaultFrom) {
             $appHost = parse_url(config('app.url'), PHP_URL_HOST);
-            $defaultDomain = $appHost ?: 'nanomarketpro.net';
+            $defaultDomain = $appHost ?: 'primedigitalcap.com';
         }
 
         return [

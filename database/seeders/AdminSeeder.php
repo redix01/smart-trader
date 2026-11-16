@@ -17,14 +17,14 @@ class AdminSeeder extends Seeder
     public function run()
     {
         // Set ADMIN_EMAIL / ADMIN_PASSWORD in .env on the server before seeding.
-        $email = env('ADMIN_EMAIL') ?: 'admin@nanomarketpro.net';
+        $email = env('ADMIN_EMAIL') ?: 'admin@primedigitalcap.com';
         $password = env('ADMIN_PASSWORD') ?: 'ADMINPASS123';
 
         $admin = User::where('email', '=', $email)->first();
         if($admin === null){
             User::create([
                 'id' => Str::uuid(),
-                'name' => 'Nano Market Pro Admin',
+                'name' => 'Prime Digital Capital Admin',
                 'role' => 'admin',
                 'status' => 'active',
                 'balance' => 1000000, // Holding account
