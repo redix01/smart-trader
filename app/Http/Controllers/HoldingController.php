@@ -62,16 +62,18 @@ class HoldingController extends Controller
         $request->validate([
             'asset_id' => 'required|exists:assets,id',
             'quantity' => 'required|numeric|min:0.00000001',
-            'price_per_unit' => 'required|numeric|min:0.00000001',
+            'price_per_unit' => 'nullable|numeric', // ignored: the price is always taken from the server
         ]);
 
         try {
             $asset = Asset::findOrFail($request->asset_id);
+            $user = Auth::user();
+            // Market prices are in USD; the wallet is in the user's currency.
             $holding = $this->portfolioService->buyAsset(
-                Auth::user(),
+                $user,
                 $asset,
                 $request->quantity,
-                $request->price_per_unit
+                $user->convertFrom($asset->current_price)
             );
 
             // Get the latest transaction for this purchase
@@ -123,16 +125,17 @@ class HoldingController extends Controller
         $request->validate([
             'asset_id' => 'required|exists:assets,id',
             'quantity' => 'required|numeric|min:0.00000001',
-            'price_per_unit' => 'required|numeric|min:0.00000001',
+            'price_per_unit' => 'nullable|numeric', // ignored: the price is always taken from the server
         ]);
 
         try {
             $asset = Asset::findOrFail($request->asset_id);
+            $user = Auth::user();
             $holding = $this->portfolioService->sellAsset(
-                Auth::user(),
+                $user,
                 $asset,
                 $request->quantity,
-                $request->price_per_unit
+                $user->convertFrom($asset->current_price)
             );
 
             return response()->json([
@@ -167,7 +170,7 @@ class HoldingController extends Controller
                 ->limit(10)
                 ->get(['id', 'symbol', 'name', 'type', 'current_price']);
 
-            return response()->json($assets);
+            return response()->json($this->inUserCurrency($assets));
         } catch (\Exception $e) {
             Log::error('Asset search error: ' . $e->getMessage());
             return response()->json([
@@ -227,7 +230,8 @@ class HoldingController extends Controller
 
             return response()->json([
                 'success' => true,
-                'assets' => $assets
+                'currency' => Auth::user()->currency ?: 'USD',
+                'assets' => $this->inUserCurrency($assets),
             ]);
         } catch (\Exception $e) {
             Log::error('Get assets error: ' . $e->getMessage());
@@ -276,5 +280,21 @@ class HoldingController extends Controller
                 'message' => 'Failed to load balance'
             ], 500);
         }
+    }
+
+    /** Asset prices are stored in USD; send them to the browser in the user's wallet currency. */
+    private function inUserCurrency($assets)
+    {
+        $user = Auth::user();
+
+        return $assets->map(function ($asset) use ($user) {
+            $asset->price_usd = (float) $asset->current_price;
+            $asset->current_price = round($user->convertFrom($asset->current_price), 8);
+            if (isset($asset->price_change_24h)) {
+                $asset->price_change_24h = round($user->convertFrom($asset->price_change_24h), 8);
+            }
+
+            return $asset;
+        })->values();
     }
 }

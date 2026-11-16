@@ -89,8 +89,8 @@
                     <div class="cad">
                         <div class=" m-3">
                             <h3>
-                                <strong class="text-primary">${{ $item->min_amount }}</strong>/<small>Min</small>
-                                <strong class="text-primary ml-5">${{ $item->max_amount }}</strong>/ <small>Max</small>
+                                <strong class="text-primary">{{ currency_symbol() }}{{ $item->min_amount }}</strong>/<small>Min</small>
+                                <strong class="text-primary ml-5">{{ currency_symbol() }}{{ $item->max_amount }}</strong>/ <small>Max</small>
                             </h3>
                         </div>
                         <div  class="card-body">
@@ -139,7 +139,7 @@
                                 @foreach($subscription as $index => $item)
                                     <div class="payment-grid-row">
                                         <div>{{ date('d M, Y', strtotime($item->created_at)) }}</div>
-{{--                                        <div>${{ number_format($item->amount, 2) ?? '' }}</div>--}}
+{{--                                        <div>{{ money($item->amount, 2) }}</div>--}}
                                         <div>{{ $item->package->name ?? '' }}</div>
                                         <div>
                                             @if($item->status == 0)

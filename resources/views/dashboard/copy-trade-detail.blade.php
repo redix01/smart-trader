@@ -90,7 +90,7 @@
                 </div>
                 <div>
                     <div class="text-sm text-gray-400">Investment</div>
-                    <div class="text-xl font-bold text-white">${{ number_format($copiedTrade->amount, 2) }}</div>
+                    <div class="text-xl font-bold text-white">{{ money($copiedTrade->amount, 2) }}</div>
                 </div>
             </div>
         </div>
@@ -120,7 +120,7 @@
                 </div>
                 <div>
                     <div class="text-sm text-gray-400">Profit/Loss</div>
-                    <div class="text-xl font-bold {{ $pnl >= 0 ? 'text-green-400' : 'text-red-400' }}">${{ number_format($pnl, 2) }}</div>
+                    <div class="text-xl font-bold {{ $pnl >= 0 ? 'text-green-400' : 'text-red-400' }}">{{ money($pnl, 2) }}</div>
                 </div>
             </div>
         </div>

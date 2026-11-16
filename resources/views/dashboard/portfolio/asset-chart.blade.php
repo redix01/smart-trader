@@ -16,7 +16,7 @@
                 </div>
                 <div class="text-right">
                     <div class="text-sm text-gray-400">Current Price</div>
-                    <div class="text-lg font-bold text-white">${{ number_format($asset->current_price, 8) }}</div>
+                    <div class="text-lg font-bold text-white">{{ money_from($asset->current_price, 'USD', 8) }}</div>
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
                         </div>
                         <div class="text-right">
                             <div class="text-sm text-gray-400">Market Cap</div>
-                            <div class="text-sm font-medium text-white">${{ number_format($asset->market_cap) }}</div>
+                            <div class="text-sm font-medium text-white">{{ money($asset->market_cap, 2) }}</div>
                         </div>
                     </div>
                 </div>

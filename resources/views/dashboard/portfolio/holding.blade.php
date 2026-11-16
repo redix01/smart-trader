@@ -32,7 +32,7 @@ use App\Helpers\AssetHelper;
                     </svg>
                 </div>
             </div>
-            <div class="text-3xl font-bold text-white">${{ number_format($total_value ?? 0, 2) }}</div>
+            <div class="text-3xl font-bold text-white">{{ money($total_value ?? 0, 2) }}</div>
             <div class="text-sm text-gray-400 mt-1">Current portfolio value</div>
         </div>
 
@@ -45,7 +45,7 @@ use App\Helpers\AssetHelper;
                     </svg>
                 </div>
             </div>
-            <div class="text-3xl font-bold text-white">${{ number_format($total_invested ?? 0, 2) }}</div>
+            <div class="text-3xl font-bold text-white">{{ money($total_invested ?? 0, 2) }}</div>
             <div class="text-sm text-gray-400 mt-1">Total amount invested</div>
         </div>
 
@@ -59,7 +59,7 @@ use App\Helpers\AssetHelper;
                 </div>
             </div>
             <div class="text-3xl font-bold {{ ($total_pnl ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                ${{ number_format($total_pnl ?? 0, 2) }}
+                {{ money($total_pnl ?? 0, 2) }}
             </div>
             <div class="text-sm text-gray-400 mt-1">Unrealized profit/loss</div>
         </div>
@@ -125,22 +125,22 @@ use App\Helpers\AssetHelper;
                             {{ number_format($holding->quantity, 8) }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                            ${{ number_format($holding->average_buy_price, 8) }}
+                            {{ money($holding->average_buy_price, 8) }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                            ${{ number_format($holding->asset->current_price, 8) }}
+                            {{ money_from($holding->asset->current_price, 'USD', 8) }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                            ${{ number_format($holding->current_value, 2) }}
+                            {{ money($holding->current_value, 2) }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm {{ $holding->unrealized_pnl >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                                ${{ number_format($holding->unrealized_pnl, 2) }}
+                                {{ money($holding->unrealized_pnl, 2) }}
                                 <span class="text-xs">({{ number_format($holding->unrealized_pnl_percentage, 2) }}%)</span>
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button class="text-blue-400 hover:text-blue-300 mr-3" onclick="openSellModal({{ $holding->id }}, '{{ $holding->asset->symbol }}', {{ $holding->quantity }}, {{ $holding->asset->current_price }})">
+                            <button class="text-blue-400 hover:text-blue-300 mr-3" onclick="openSellModal({{ $holding->id }}, '{{ $holding->asset->symbol }}', {{ $holding->quantity }}, {{ round(auth()->user()->convertFrom($holding->asset->current_price), 8) }})">
                                 Sell
                             </button>
                         </td>
@@ -218,7 +218,7 @@ use App\Helpers\AssetHelper;
                     <div class="bg-gray-700 rounded-lg p-4">
                         <div class="flex justify-between items-center">
                             <span class="text-gray-400">Total Value:</span>
-                            <span class="text-white font-medium" id="sellTotalValue">$0.00</span>
+                            <span class="text-white font-medium" id="sellTotalValue">{{ currency_symbol() }}0.00</span>
                         </div>
                     </div>
                 </div>
@@ -292,14 +292,14 @@ function openSellModal(holdingId, symbol, quantity, currentPrice) {
     document.getElementById('sellHoldingId').value = holdingId;
     document.getElementById('sellSymbol').textContent = symbol;
     document.getElementById('sellQuantity').textContent = quantity;
-    document.getElementById('sellCurrentPrice').textContent = '$' + parseFloat(currentPrice).toFixed(8);
+    document.getElementById('sellCurrentPrice').textContent = CURRENCY_SYMBOL + parseFloat(currentPrice).toFixed(8);
     document.getElementById('sellQuantityInput').value = quantity;
     document.getElementById('sellPriceInput').value = currentPrice;
     document.getElementById('sellMaxQuantity').textContent = quantity;
     
     // Calculate total value
     const totalValue = quantity * currentPrice;
-    document.getElementById('sellTotalValue').textContent = '$' + totalValue.toFixed(2);
+    document.getElementById('sellTotalValue').textContent = CURRENCY_SYMBOL + totalValue.toFixed(2);
     
     // Show modal
     document.getElementById('sellModal').classList.remove('hidden');
@@ -321,7 +321,7 @@ function updateSellTotal() {
     }
     
     const total = quantity * price;
-    document.getElementById('sellTotalValue').textContent = '$' + total.toFixed(2);
+    document.getElementById('sellTotalValue').textContent = CURRENCY_SYMBOL + total.toFixed(2);
 }
 
 function setMaxQuantity() {

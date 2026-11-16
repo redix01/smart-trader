@@ -103,7 +103,7 @@ class UserAiTrader extends Model
      */
     public function getFormattedInvestmentAmountAttribute()
     {
-        return '$' . number_format($this->investment_amount, 2);
+        return money($this->investment_amount, 2, $this->user);
     }
 
     /**
@@ -111,7 +111,7 @@ class UserAiTrader extends Model
      */
     public function getFormattedCurrentBalanceAttribute()
     {
-        return '$' . number_format($this->current_balance ?? $this->investment_amount, 2);
+        return money($this->current_balance ?? $this->investment_amount, 2, $this->user);
     }
 
     /**
@@ -121,7 +121,7 @@ class UserAiTrader extends Model
     {
         $profitLoss = $this->total_profit_loss ?? 0;
         $sign = $profitLoss >= 0 ? '+' : '';
-        return $sign . '$' . number_format($profitLoss, 2);
+        return $sign . money($profitLoss, 2, $this->user);
     }
 
     /**

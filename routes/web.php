@@ -231,6 +231,7 @@ Route::get('debug-notifications', function () {
 
 Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], function(){
     Route::get('dashboard', [UserController::class, 'dashboard'])->name('dashboard');
+    Route::get('trading-strength', [UserController::class, 'tradingStrength'])->name('tradingStrength');
     Route::get('profile', [UserController::class, 'profile'])->name('profile');
     Route::get('referrals', [UserController::class, 'referrals'])->name('referrals');
     Route::post('update/profile/{id}', [UserController::class, 'updateProfile'])->name('updateProfile');

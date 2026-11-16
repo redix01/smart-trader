@@ -7,7 +7,7 @@
         <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 border border-blue-500 shadow-lg">
             <div class="text-center">
                 <h3 class="text-lg font-semibold text-white mb-2">Your Trading Balance</h3>
-                <div class="text-3xl font-bold text-white mb-1">${{ number_format($user->trading_balance ?? 0, 2) }}</div>
+                <div class="text-3xl font-bold text-white mb-1">{{ money($user->trading_balance ?? 0, 2) }}</div>
                 <p class="text-blue-100 text-sm">Available for trading</p>
             </div>
         </div>
@@ -237,7 +237,7 @@
                         <div class="p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
                             <div class="text-sm text-red-400 mb-3">
                                 <strong>Insufficient Trading Balance</strong><br>
-                                Your current trading balance: <strong>${{ number_format($user->trading_balance ?? 0, 2) }}</strong><br>
+                                Your current trading balance: <strong>{{ money($user->trading_balance ?? 0, 2) }}</strong><br>
                                 Amount needed: <strong>$<span id="amountNeeded"></span></strong>
                             </div>
                             <button type="button" onclick="openFundAccountModal()" class="w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm">
@@ -296,7 +296,7 @@
             
                             <div class="mb-4 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
                 <div class="text-sm text-blue-300">
-                    <strong>Current Trading Balance:</strong> ${{ number_format($user->trading_balance ?? 0, 2) }}<br>
+                    <strong>Current Trading Balance:</strong> {{ money($user->trading_balance ?? 0, 2) }}<br>
                     <strong>Amount to Deposit:</strong> $<span id="fundAmountDisplay"></span>
                 </div>
             </div>

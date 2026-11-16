@@ -252,7 +252,7 @@
                                     {{ $transfer->created_at->format('M d, Y H:i') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                    ${{ number_format($transfer->amount, 2) }}
+                                    {{ money($transfer->amount, 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
                                     {{ ucfirst(str_replace('_', ' ', $transfer->from_account ?? 'N/A')) }}
@@ -317,10 +317,10 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                    ${{ number_format($trade->amount, 2) }}
+                                    {{ money($trade->amount, 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm {{ ($trade->profit_loss ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                                    {{ ($trade->profit_loss ?? 0) >= 0 ? '+' : '' }}${{ number_format($trade->profit_loss ?? 0, 2) }}
+                                    {{ ($trade->profit_loss ?? 0) >= 0 ? '+' : '' }}{{ money($trade->profit_loss ?? 0, 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -381,10 +381,10 @@
                                     {{ number_format($transaction->quantity, 8) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                    ${{ number_format($transaction->price_per_unit, 8) }}
+                                    {{ money($transaction->price_per_unit, 8) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                    ${{ number_format($transaction->total_amount, 2) }}
+                                    {{ money($transaction->total_amount, 2) }}
                                 </td>
                             </tr>
                             @empty

@@ -42,3 +42,6 @@ Schedule::command('bot-trading:simulate')->everyMinute();
 
 // Trade Market Simulation
 Schedule::command('trade:simulate-market')->everyFiveMinutes();
+
+// Exchange rates (USD base) for showing prices in each user's currency
+Schedule::command('fx:refresh')->everySixHours()->withoutOverlapping();

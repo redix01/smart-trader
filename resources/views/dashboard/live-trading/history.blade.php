@@ -64,7 +64,7 @@
                                 </td>
                                 <td class="py-4 px-4">{{ ucfirst($trade->order_type) }}</td>
                                 <td class="py-4 px-4">{{ ucfirst($trade->side) }}</td>
-                                <td class="text-right py-4 px-4">${{ number_format((float) $trade->amount, 2) }}</td>
+                                <td class="text-right py-4 px-4">{{ money((float) $trade->amount, 2) }}</td>
                                 <td class="text-right py-4 px-4">{{ rtrim(rtrim(number_format((float) $trade->leverage, 2, '.', ''), '0'), '.') }}x</td>
                                 <td class="py-4 px-4">{{ $trade->created_at?->diffForHumans() }}</td>
                                 <td class="text-center py-4 px-4">

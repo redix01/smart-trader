@@ -45,7 +45,7 @@
                                     <option value="">Choose a mining plan</option>
                                     @foreach($miningPlans as $plan)
                                         <option value="{{ $plan->id }}" {{ request('plan') == $plan->id ? 'selected' : '' }}>
-                                            {{ $plan->name }} - ${{ number_format($plan->price, 2) }}
+                                            {{ $plan->name }} - {{ money_from($plan->price, $plan->currency, 2) }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-400">Price:</span>
-                        <span class="text-white">$${parseFloat(plan.price).toFixed(2)}</span>
+                        <span class="text-white">${CURRENCY_SYMBOL}${parseFloat(plan.price).toFixed(2)}</span>
                     </div>
                     ${plan.hashrate ? `
                     <div class="flex justify-between">
@@ -244,13 +244,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     ${plan.min_funding ? `
                     <div class="flex justify-between">
                         <span class="text-gray-400">Min Investment:</span>
-                        <span class="text-white">$${parseFloat(plan.min_funding).toFixed(2)}</span>
+                        <span class="text-white">${CURRENCY_SYMBOL}${parseFloat(plan.min_funding).toFixed(2)}</span>
                     </div>
                     ` : ''}
                     ${plan.max_funding ? `
                     <div class="flex justify-between">
                         <span class="text-gray-400">Max Investment:</span>
-                        <span class="text-white">$${parseFloat(plan.max_funding).toFixed(2)}</span>
+                        <span class="text-white">${CURRENCY_SYMBOL}${parseFloat(plan.max_funding).toFixed(2)}</span>
                     </div>
                     ` : ''}
                 </div>

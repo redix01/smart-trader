@@ -35,7 +35,7 @@ class AiTraderPlan extends Model
 
     public function getFormattedPriceAttribute()
     {
-        return '$' . number_format($this->price, 2);
+        return money_from($this->price, 'USD', 2);
     }
 
     public function getStocksTradingListAttribute()

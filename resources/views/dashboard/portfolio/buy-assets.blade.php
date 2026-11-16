@@ -487,7 +487,7 @@
                             <div class="bg-gray-700 rounded-lg p-4">
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-300">Current Price:</span>
-                                    <span class="text-xl font-bold text-white" id="currentPrice">$0.00</span>
+                                    <span class="text-xl font-bold text-white" id="currentPrice">{{ currency_symbol() }}0.00</span>
                                 </div>
                                 <div class="flex justify-between items-center mt-2">
                                     <span class="text-gray-300">24h Change:</span>
@@ -518,7 +518,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Total Amount</label>
                                 <div class="bg-gray-700 rounded-lg p-4">
-                                    <div class="text-2xl font-bold text-white" id="totalAmount">$0.00</div>
+                                    <div class="text-2xl font-bold text-white" id="totalAmount">{{ currency_symbol() }}0.00</div>
                                 </div>
                             </div>
 
@@ -711,7 +711,7 @@ function createAssetCard(asset, type) {
                 </div>
             </div>
             <div class="text-right">
-                <div class="text-white font-medium asset-price">$${formattedPrice}</div>
+                <div class="text-white font-medium asset-price">${CURRENCY_SYMBOL}${formattedPrice}</div>
                 <div class="text-sm ${priceChangeClass} flex items-center asset-change">
                     <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${priceChangeIcon}"></path>
@@ -975,7 +975,7 @@ function openBuyModal(assetId, symbol, name, currentPrice, priceChange, assetTyp
     document.getElementById('modalAssetName').textContent = name;
     document.getElementById('modalAssetSymbol').textContent = symbol;
     const formattedPrice = formatAssetPrice(currentPrice);
-    document.getElementById('currentPrice').textContent = `$${formattedPrice}`;
+    document.getElementById('currentPrice').textContent = `${CURRENCY_SYMBOL}${formattedPrice}`;
     document.getElementById('priceChange').textContent = `${priceChange >= 0 ? '+' : ''}${priceChange.toFixed(2)}%`;
     document.getElementById('priceChange').className = priceChange >= 0 ? 'text-sm text-green-400' : 'text-sm text-red-400';
     document.getElementById('buyPrice').value = currentPrice;
@@ -1296,7 +1296,7 @@ function calculateTotal() {
     const quantity = parseFloat(document.getElementById('buyQuantity').value) || 0;
     const price = parseFloat(document.getElementById('buyPrice').value) || 0;
     const total = quantity * price;
-    document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
+    document.getElementById('totalAmount').textContent = `${CURRENCY_SYMBOL}${total.toFixed(2)}`;
 }
 
 // Event listeners
@@ -1497,7 +1497,7 @@ function updateAssetPrice(data) {
     console.log('Found price elements:', priceElements.length);
     
     priceElements.forEach(element => {
-        const oldPrice = parseFloat(element.textContent.replace('$', '').replace(',', ''));
+        const oldPrice = parseFloat(element.textContent.replace(/[^0-9.\-]/g, ''));
         console.log('Old price from element:', oldPrice);
         const formattedPrice = formatAssetPrice(newPrice);
         
@@ -1506,8 +1506,8 @@ function updateAssetPrice(data) {
         
         // Update the price with a slight delay for better visibility
         setTimeout(() => {
-            element.textContent = `$${formattedPrice}`;
-            console.log('Updated element text to:', `$${formattedPrice}`);
+            element.textContent = `${CURRENCY_SYMBOL}${formattedPrice}`;
+            console.log('Updated element text to:', `${CURRENCY_SYMBOL}${formattedPrice}`);
             
             // Add visual feedback for price changes
             if (newPrice > oldPrice) {
@@ -1540,7 +1540,7 @@ function updateAssetPrice(data) {
     if (selectedAsset && selectedAsset.id == assetId) {
         console.log('Updating modal for selected asset');
         const formattedPrice = formatAssetPrice(newPrice);
-        document.getElementById('currentPrice').textContent = `$${formattedPrice}`;
+        document.getElementById('currentPrice').textContent = `${CURRENCY_SYMBOL}${formattedPrice}`;
         document.getElementById('priceChange').textContent = `${priceChange >= 0 ? '+' : ''}${parseFloat(priceChange).toFixed(2)}%`;
         document.getElementById('priceChange').className = priceChange >= 0 ? 'text-sm text-green-400' : 'text-sm text-red-400';
         document.getElementById('buyPrice').value = newPrice;

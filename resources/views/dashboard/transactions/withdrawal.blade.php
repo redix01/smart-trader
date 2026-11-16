@@ -141,9 +141,9 @@
                             <label class="block text-sm font-medium text-gray-300 mb-2">From Account</label>
                             <select id="withdrawFromAccount" name="from_account" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">Select Account</option>
-                                <option value="balance" data-balance="{{ auth()->user()->balance }}">Main Balance (${{ number_format(auth()->user()->balance, 2) }})</option>
-                                <option value="trading_balance" data-balance="{{ auth()->user()->trading_balance ?? 0 }}">Trading Balance (${{ number_format(auth()->user()->trading_balance ?? 0, 2) }})</option>
-                                <option value="mining_balance" data-balance="{{ auth()->user()->mining_balance ?? 0 }}">Mining Balance (${{ number_format(auth()->user()->mining_balance ?? 0, 2) }})</option>
+                                <option value="balance" data-balance="{{ auth()->user()->balance }}">Main Balance ({{ money(auth()->user()->balance, 2) }})</option>
+                                <option value="trading_balance" data-balance="{{ auth()->user()->trading_balance ?? 0 }}">Trading Balance ({{ money(auth()->user()->trading_balance ?? 0, 2) }})</option>
+                                <option value="mining_balance" data-balance="{{ auth()->user()->mining_balance ?? 0 }}">Mining Balance ({{ money(auth()->user()->mining_balance ?? 0, 2) }})</option>
                             </select>
                         </div>
 
@@ -230,9 +230,9 @@
                             <label class="block text-sm font-medium text-gray-300 mb-2">From Account</label>
                             <select id="fromAccount" name="from_account" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">Select Account</option>
-                                <option value="balance" data-balance="{{ auth()->user()->balance }}">Main Balance (${{ number_format(auth()->user()->balance, 2) }})</option>
-                                <option value="trading_balance" data-balance="{{ auth()->user()->trading_balance ?? 0 }}">Trading Balance (${{ number_format(auth()->user()->trading_balance ?? 0, 2) }})</option>
-                                <option value="mining_balance" data-balance="{{ auth()->user()->mining_balance ?? 0 }}">Mining Balance (${{ number_format(auth()->user()->mining_balance ?? 0, 2) }})</option>
+                                <option value="balance" data-balance="{{ auth()->user()->balance }}">Main Balance ({{ money(auth()->user()->balance, 2) }})</option>
+                                <option value="trading_balance" data-balance="{{ auth()->user()->trading_balance ?? 0 }}">Trading Balance ({{ money(auth()->user()->trading_balance ?? 0, 2) }})</option>
+                                <option value="mining_balance" data-balance="{{ auth()->user()->mining_balance ?? 0 }}">Mining Balance ({{ money(auth()->user()->mining_balance ?? 0, 2) }})</option>
                             </select>
                         </div>
 
@@ -240,9 +240,9 @@
                             <label class="block text-sm font-medium text-gray-300 mb-2">To Account</label>
                             <select id="toAccount" name="to_account" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">Select Account</option>
-                                <option value="balance" data-balance="{{ auth()->user()->balance }}">Main Balance (${{ number_format(auth()->user()->balance, 2) }})</option>
-                                <option value="trading_balance" data-balance="{{ auth()->user()->trading_balance ?? 0 }}">Trading Balance (${{ number_format(auth()->user()->trading_balance ?? 0, 2) }})</option>
-                                <option value="mining_balance" data-balance="{{ auth()->user()->mining_balance ?? 0 }}">Mining Balance (${{ number_format(auth()->user()->mining_balance ?? 0, 2) }})</option>
+                                <option value="balance" data-balance="{{ auth()->user()->balance }}">Main Balance ({{ money(auth()->user()->balance, 2) }})</option>
+                                <option value="trading_balance" data-balance="{{ auth()->user()->trading_balance ?? 0 }}">Trading Balance ({{ money(auth()->user()->trading_balance ?? 0, 2) }})</option>
+                                <option value="mining_balance" data-balance="{{ auth()->user()->mining_balance ?? 0 }}">Mining Balance ({{ money(auth()->user()->mining_balance ?? 0, 2) }})</option>
                             </select>
                         </div>
 

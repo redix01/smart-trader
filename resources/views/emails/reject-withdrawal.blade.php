@@ -6,7 +6,7 @@ Dear {{ $withdrawal->user->name }},
 We regret to inform you that your withdrawal request has been declined.
 
 **Withdrawal Details:**
-- Amount: ${{ number_format($withdrawal->amount, 2) }}
+- Amount: {{ money($withdrawal->amount, 2, $withdrawal->user) }}
 - Request Date: {{ $withdrawal->created_at->format('M d, Y H:i') }}
 - Payment Method: {{ ucfirst($withdrawal->payment_method) }}
 

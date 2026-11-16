@@ -1,0 +1,92 @@
+/* Prime Digital Capital — user dashboard skin (dark navy + blue).
+   Loaded after the Tailwind CDN; the palette is remapped in partials/brand-theme.blade.php.
+   Carries over the layout fixes from the nano branch (trade terminal, header, nav) in Prime colours. */
+:root{
+  --bg:#050a1e;--surface:#0b1330;--surface-2:#111b3e;--ink:#eef2ff;--soft:#c3cbe3;--muted:#8e9ac0;--line:rgba(170,190,255,.12);
+  --accent:#3b82f6;--accent-hi:#60a5fa;--up:#2dd4a7;--down:#f43f5e;
+  --display:"Manrope",Inter,system-ui,sans-serif;--sans:"Inter",system-ui,-apple-system,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace;--r:14px;
+}
+html,body{background:var(--bg)!important;font-family:var(--sans);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.02em}
+
+/* cards and borders */
+.bg-gray-800{border-color:var(--line)}
+.bg-gray-800.rounded-lg,.bg-gray-800.rounded-xl,.bg-gray-800.rounded-2xl{border-radius:var(--r)}
+.border-gray-700,.border-gray-600,.divide-gray-700>*+*{border-color:var(--line)!important}
+
+/* shell */
+#sidebar{border-color:var(--line)!important}
+#sidebar nav a{border-radius:10px;font-size:14.5px}
+#sidebar nav a.bg-blue-600{background:var(--accent)!important;color:#fff!important}
+#sidebar nav .uppercase{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--accent-hi)!important;font-weight:500}
+header.bg-gray-800{border-color:var(--line)!important}
+.nm-avatar{display:grid;place-items:center;border-radius:999px;background:var(--accent);color:#fff!important}
+
+/* form controls */
+input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden]),select,textarea{border-radius:10px!important}
+input:focus,select:focus,textarea:focus{outline:none!important;border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(59,130,246,.22)!important}
+input[type=checkbox],input[type=radio]{accent-color:var(--accent)}
+[class*="from-blue"][class*="to-"],[class*="from-purple"][class*="to-"]{background-image:none!important;background-color:var(--accent)!important}
+
+/* tables */
+th{font-family:var(--mono);font-size:11.5px!important;letter-spacing:.08em;text-transform:uppercase;font-weight:500!important;color:var(--muted)!important}
+
+/* modals and widgets */
+#notificationDropdownMenu,.swal2-popup{background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:var(--r)!important;color:var(--ink)!important}
+.swal2-title{font-family:var(--display)!important;color:var(--ink)!important}
+.swal2-html-container{color:var(--soft)!important}
+.swal2-confirm{background:var(--accent)!important}
+.tradingview-widget-container{border-radius:var(--r);overflow:hidden}
+canvas{max-width:100%}
+::selection{background:var(--accent);color:#fff}
+
+/* ---- trade terminal (Bootstrap-style markup, no Bootstrap loaded) ---- */
+.terminal{padding:16px}
+.terminal .row{display:flex;flex-wrap:wrap;margin:0 -8px}
+.terminal [class*="col"]{padding:8px;flex:1 1 100%;max-width:100%;min-width:0}
+.terminal .col-6{flex:0 0 50%;max-width:50%}
+@media (min-width:1024px){
+  .terminal .col-md-3{flex:0 0 25%;max-width:25%}
+  .terminal .col-md-6{flex:0 0 50%;max-width:50%}
+  .terminal .col-lg-6{flex:0 0 50%;max-width:50%}
+}
+.terminal .market-pairs,.terminal .main-chart,.terminal .market-trade,.terminal .order-book,.terminal .market-history{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:16px}
+.terminal .market-pairs{max-height:640px;overflow:auto}
+.terminal .table{width:100%;font-size:13px;color:var(--soft)}
+.terminal .table th,.terminal .table td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--line)}
+.terminal .table-responsive{overflow-x:auto}
+.terminal .red{color:var(--down)}.terminal .green{color:var(--up)}
+.terminal .icon{display:none}
+.terminal .tab-pane:not(.active){display:none}
+.terminal .nav{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0 0 12px}
+.terminal .nav-link{display:inline-block;padding:6px 14px;border-radius:999px;border:1px solid var(--line);font-size:13px;color:var(--soft)}
+.terminal .nav-link.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.terminal .form-group{margin-bottom:12px}
+.terminal .input-group{display:flex;align-items:stretch}
+.terminal .input-group>input,.terminal .input-group>select{flex:1;min-width:0;border-radius:10px 0 0 10px!important}
+.terminal .input-group-append{display:flex}
+.terminal .input-group-text{display:grid;place-items:center;padding:0 12px;border:1px solid var(--line);border-left:0;background:var(--surface-2);border-radius:0 10px 10px 0;font-size:13px;color:var(--soft)}
+.terminal .form-control,.terminal .custom-select{width:100%;min-height:44px;padding:0 12px;background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+.terminal .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 22px;border:0;border-radius:10px;width:100%;font-weight:600;cursor:pointer;color:#fff}
+.terminal .btn.buy{background:#13805f}
+.terminal .btn.sell{background:#be123c}
+.terminal .btn-danger{background:#be123c;width:auto;min-height:0;padding:6px 14px;font-size:13px}
+.terminal .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px}
+.terminal .badge.bg-primary{background:var(--accent);color:#fff!important}
+.terminal .badge.bg-danger{background:#be123c;color:#fff!important}
+.terminal .d-flex{display:flex}.terminal .text-left{text-align:left}.terminal .text-right{text-align:right}
+.terminal [class^="red-bg"]{background:rgba(244,63,94,.08)}
+.terminal .red-bg-40,.terminal .red-bg-60,.terminal .red-bg-80{background:rgba(244,63,94,.16)}
+
+/* brand logo (<x-brand-logo>) */
+.brand-lockup{display:inline-flex;align-items:center;gap:11px;color:var(--ink);line-height:1}
+.brand-lockup svg{flex:none}
+.brand-lockup .wm{display:flex;flex-direction:column;line-height:1}
+.brand-lockup .wm b{font:800 18px var(--display);letter-spacing:.06em;color:var(--ink)}
+.brand-lockup .wm small{font:600 9px var(--sans);letter-spacing:.32em;color:var(--muted);margin-top:5px}
+
+/* header on small screens: logo mark only, so the install/notification/user buttons never overflow */
+@media (max-width:520px){
+  header .brand-lockup .wm{display:none}
+  header .flex.items-center.ml-auto{gap:2px}
+}

@@ -45,7 +45,7 @@ class TradeController extends Controller
         if ($validated['amount'] > $user->balance) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Insufficient user balance. Available: $' . number_format($user->balance, 2));
+                ->with('error', 'Insufficient user balance. Available: ' . money($user->balance, 2, $user));
         }
 
         $trade = Trade::create([

@@ -51,7 +51,7 @@
                 <!-- Current Price Display -->
                 <div class="mb-6 p-4 bg-gray-700 rounded-lg">
                     <div class="text-center">
-                        <div class="text-2xl font-bold text-white">${{ number_format($asset['current_price'] ?? $asset->current_price, 4) }}</div>
+                        <div class="text-2xl font-bold text-white">{{ money_from($asset['current_price'] ?? $asset->current_price, 'USD', 4) }}</div>
                         <div class="text-sm text-gray-400 mt-1">
                             @php
                                 $change = $asset['price_change_24h'] ?? $asset->price_change_24h;

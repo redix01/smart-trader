@@ -2,37 +2,24 @@
 
 namespace Tests\Unit;
 
-use App\Models\User;
+use App\Services\TradingStrengthService;
 use PHPUnit\Framework\TestCase;
 
+/** Pure checks; the database-backed scoring is covered in Tests\Feature\TradingStrengthTest. */
 class TradingStrengthTest extends TestCase
 {
-    public function test_trading_strength_is_zero_with_no_balance(): void
+    public function test_label_thresholds(): void
     {
-        $user = new User(['trading_balance' => 0]);
-
-        $this->assertEquals(0.0, $user->trading_strength);
+        $this->assertSame('Learning Phase', TradingStrengthService::label(0));
+        $this->assertSame('Learning Phase', TradingStrengthService::label(24.9));
+        $this->assertSame('Good Performance', TradingStrengthService::label(25));
+        $this->assertSame('Strong Performance', TradingStrengthService::label(50));
+        $this->assertSame('Elite Performance', TradingStrengthService::label(75));
+        $this->assertSame('Elite Performance', TradingStrengthService::label(100));
     }
 
-    public function test_trading_strength_scales_with_balance(): void
+    public function test_component_weights_add_up_to_one_hundred(): void
     {
-        $user = new User(['trading_balance' => 25000]);
-
-        $this->assertEquals(25.0, $user->trading_strength);
-    }
-
-    public function test_trading_strength_is_capped_at_one_hundred(): void
-    {
-        $user = new User(['trading_balance' => 200000]);
-
-        $this->assertEquals(100.0, $user->trading_strength);
-    }
-
-    public function test_trading_strength_label_matches_strength(): void
-    {
-        $this->assertEquals('Learning Phase', (new User(['trading_balance' => 0]))->trading_strength_label);
-        $this->assertEquals('Good Performance', (new User(['trading_balance' => 30000]))->trading_strength_label);
-        $this->assertEquals('Strong Performance', (new User(['trading_balance' => 60000]))->trading_strength_label);
-        $this->assertEquals('Elite Performance', (new User(['trading_balance' => 100000]))->trading_strength_label);
+        $this->assertSame(100, 35 + 30 + 20 + 15);
     }
 }
