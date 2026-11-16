@@ -38,7 +38,11 @@ class TradeRoomTest extends TestCase
             ->assertSee('id="orderForm"', false)
             ->assertSee('No open orders')
             ->assertSee('id="openMarkets"', false)
-            ->assertSee('id="marketsBackdrop"', false);
+            ->assertSee('id="marketsBackdrop"', false)
+            ->assertSee('id="ticketPanel"', false)
+            ->assertSee('data-open-ticket="buy"', false)
+            ->assertSee('data-open-ticket="sell"', false)
+            ->assertSee('data-interval="60"', false);
     }
 
     public function test_old_trade_link_opens_the_terminal_on_that_market(): void
@@ -69,9 +73,9 @@ class TradeRoomTest extends TestCase
         $html = $this->actingAs($user)->get(route('user.liveTrading.index'))->getContent();
         $this->assertStringContainsString('data-cancel-id="'.$order->id.'"', $html);
         // Regression: only the Cancel buttons may carry the cancel hook, otherwise every click on the page asked "Cancel this order?".
-        $this->assertSame(1, substr_count($html, 'data-cancel-id='));
+        $this->assertSame(2, substr_count($html, 'data-cancel-id="'.$order->id.'"')); // phone card + desktop table
         $this->assertStringNotContainsString('data-cancel=', $html);
-        $this->assertStringContainsString("querySelectorAll('button[data-cancel-id]')", $html);
+        $this->assertStringContainsString("all('button[data-cancel-id]')", $html);
 
         $this->actingAs($user)->postJson("/user/live-trading/{$order->id}/cancel")->assertOk()->assertJson(['success' => true]);
         $this->assertEquals(1000, (float) $user->fresh()->trading_balance);
