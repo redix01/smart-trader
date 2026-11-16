@@ -3,294 +3,212 @@
 @section('title', $plan->name . ' - AI Stock Traders')
 
 @section('content')
-<!-- Plan Header -->
-<section class="bg-gray-800 border border-gray-700 rounded-2xl text-white py-16 relative overflow-hidden">
-        
-    <div class="w-full px-4 relative z-10">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex items-center mb-4">
-                <a href="{{ route('user.aiTraders.index') }}" class="text-gray-300 hover:text-blue-300 mr-4">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </a>
-                <span class="text-gray-300">Back to AI Traders</span>
-            </div>
-            
-            <h1 class="text-4xl font-bold mb-4">{{ $plan->name }}</h1>
-            <p class="text-xl text-gray-300 mb-6">{{ $plan->description }}</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-blue-50 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
-                    <div class="text-2xl font-bold text-blue-400">{{ $plan->formatted_price }}</div>
-                    <div class="text-gray-300 text-sm">Monthly Subscription</div>
-                </div>
-                <div class="bg-blue-50 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
-                    <div class="text-2xl font-bold text-blue-400">{{ $plan->number_of_traders }}</div>
-                    <div class="text-gray-300 text-sm">AI Traders Available</div>
-                </div>
-                <div class="bg-blue-50 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
-                    <div class="text-2xl font-bold text-blue-400">{{ money_from($plan->investment_amount, 'USD', 0) }}</div>
-                    <div class="text-gray-300 text-sm">Minimum Investment</div>
-                </div>
-            </div>
+@php
+    $isSubscribed = auth()->user()->hasActiveAiTraderSubscription($plan->id);
+@endphp
+<div class="space-y-4 sm:space-y-6">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">AI traders</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-white mt-1">{{ $plan->name }}</h1>
+            <p class="text-sm text-gray-400 mt-0.5">{{ $plan->description ?: 'Subscribe to this plan, then activate the AI traders you want.' }}</p>
+        </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+            <a href="{{ route('user.aiTraders.index') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                All plans
+            </a>
         </div>
     </div>
-</section>
 
-<!-- Subscription Section -->
-<section class="py-8 bg-gray-800 border-b border-gray-700">
-    <div class="w-full px-4">
-        <div class="max-w-6xl mx-auto">
-            @if(auth()->user()->hasActiveAiTraderSubscription($plan->id))
-                <div class="bg-gradient-to-r from-green-600/20 to-green-500/20 border border-green-500/30 rounded-xl p-6 text-center">
-                    <div class="flex items-center justify-center mb-4">
-                        <i class="fas fa-check-circle text-green-500 text-3xl mr-3"></i>
-                        <h3 class="text-2xl font-bold text-green-400">Plan Subscribed</h3>
-                    </div>
-                    <p class="text-gray-300 mb-4">You have an active subscription to the {{ $plan->name }} plan. You can now activate AI Traders from this plan.</p>
-                    <div class="text-sm text-gray-400">
-                        <i class="fas fa-calendar-alt mr-2"></i>
-                        Expires: {{ auth()->user()->activeAiTraderSubscriptions()->where('ai_trader_plan_id', $plan->id)->first()->expires_at->format('M d, Y') }}
-                    </div>
-                </div>
-            @else
-                <div class="bg-blue-50 border border-gray-700 rounded-xl p-6 text-center">
-                    <div class="flex items-center justify-center mb-4">
-                        <i class="fas fa-robot text-blue-400 text-3xl mr-3"></i>
-                        <h3 class="text-2xl font-bold text-white">Subscribe to {{ $plan->name }}</h3>
-                    </div>
-                    <p class="text-gray-300 mb-6">Subscribe to this plan to unlock access to all AI Traders and start automated trading.</p>
-                    <button onclick="subscribeToPlan({{ $plan->id }})" 
-                            class="bg-blue-600 text-white py-3 px-8 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-300 text-lg">
-                        <i class="fas fa-credit-card mr-2"></i>Subscribe for {{ $plan->formatted_price }}/month
-                    </button>
-                </div>
-            @endif
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
+            <div class="text-xs text-gray-400">Monthly subscription</div>
+            <div class="text-xl sm:text-2xl font-semibold text-white mt-1 truncate">{{ $plan->formatted_price }}</div>
+        </div>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
+            <div class="text-xs text-gray-400">AI traders</div>
+            <div class="text-xl sm:text-2xl font-semibold text-white mt-1">{{ $plan->number_of_traders }}</div>
+        </div>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 col-span-2 sm:col-span-1">
+            <div class="text-xs text-gray-400">Minimum investment</div>
+            <div class="text-xl sm:text-2xl font-semibold text-white mt-1 font-mono truncate">{{ money_from($plan->investment_amount, 'USD', 0) }}</div>
         </div>
     </div>
-</section>
 
-<!-- AI Traders Grid -->
-<section class="py-16 bg-gray-800">
-    <div class="w-full px-4">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold text-white mb-4">Available AI Traders</h2>
-            <p class="text-lg text-gray-300">Choose from our carefully selected AI traders, each with unique strategies and performance records.</p>
+    <!-- Subscription -->
+    @if($isSubscribed)
+        @php $activeSub = auth()->user()->activeAiTraderSubscriptions()->where('ai_trader_plan_id', $plan->id)->first(); @endphp
+        <section class="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 sm:p-5 flex items-start gap-3">
+            <span class="w-10 h-10 shrink-0 rounded-full bg-emerald-500/15 text-emerald-400 grid place-items-center"><i class="fas fa-check"></i></span>
+            <div>
+                <h2 class="text-base font-semibold text-white">You're subscribed</h2>
+                <p class="text-sm text-gray-300 mt-0.5">Activate any AI trader below to start automated trading.@if(optional($activeSub)->expires_at) Renews or expires {{ $activeSub->expires_at->format('M d, Y') }}.@endif</p>
+            </div>
+        </section>
+    @else
+        <section class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h2 class="text-base font-semibold text-white">Subscribe to {{ $plan->name }}</h2>
+                <p class="text-sm text-gray-400 mt-0.5">Unlock every AI trader in this plan and start automated trading.</p>
+            </div>
+            <button onclick="subscribeToPlan({{ $plan->id }})"
+                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                Subscribe for {{ $plan->formatted_price }}/month
+            </button>
+        </section>
+    @endif
+
+    <!-- AI Traders -->
+    <section id="traders" class="space-y-3">
+        <div>
+            <h2 class="text-base font-semibold text-white">Available AI traders</h2>
+            <p class="text-sm text-gray-400 mt-0.5">Each trader has its own strategy, stock list and risk limits.</p>
         </div>
 
         @if($traders->count() > 0)
-        <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             @foreach($traders as $trader)
-            <div class="bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-700 hover:border-blue-300">
-                <!-- Trader Header -->
-                <div class="bg-blue-600 text-white p-6 relative">
-                    @if(auth()->user()->hasActivatedAiTrader($trader->id))
-                        <div class="absolute top-3 right-3 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
-                            <i class="fas fa-check-circle mr-1"></i>Active
+            @php $activated = auth()->user()->hasActivatedAiTrader($trader->id); @endphp
+            <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5 flex flex-col hover:border-gold-500 transition-colors">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <h3 class="text-base font-semibold text-white truncate">{{ $trader->name }}</h3>
+                        <div class="mt-1 flex flex-wrap gap-1.5">
+                            <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">{{ ucfirst($trader->trading_strategy) }}</span>
+                            <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">{{ $trader->ai_model }}</span>
+                            <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">{{ $trader->ai_confidence }}</span>
                         </div>
-                    @endif
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-xl font-bold">{{ $trader->name }}</h3>
-                        <span class="bg-gray-800 text-blue-400 text-xs px-2 py-1 rounded-full border border-gray-700">
-                            {{ ucfirst($trader->trading_strategy) }}
-                        </span>
                     </div>
-                    <div class="flex items-center text-sm text-white/80">
-                        <span class="bg-white/20 text-white px-2 py-1 rounded text-xs mr-2 border border-white/30">{{ $trader->ai_model }}</span>
-                        <span class="bg-white/20 text-white px-2 py-1 rounded text-xs border border-white/30">{{ $trader->ai_confidence }}</span>
+                    @if($activated)
+                        <span class="shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold bg-emerald-500/15 text-emerald-400">Active</span>
+                    @endif
+                </div>
+
+                <div class="mt-4 grid grid-cols-2 gap-2">
+                    <div class="rounded-xl border border-gray-700 bg-gray-900/50 p-3">
+                        <div class="text-xs text-gray-400">Performance</div>
+                        <div class="text-lg font-semibold mt-0.5 {{ $trader->current_performance >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ $trader->formatted_performance }}</div>
+                    </div>
+                    <div class="rounded-xl border border-gray-700 bg-gray-900/50 p-3">
+                        <div class="text-xs text-gray-400">Win rate</div>
+                        <div class="text-lg font-semibold text-white mt-0.5">{{ $trader->formatted_win_rate }}</div>
                     </div>
                 </div>
 
-                <!-- Performance Metrics -->
-                <div class="p-6">
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div class="text-center">
-                            <div class="text-2xl font-bold {{ $trader->current_performance >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                                {{ $trader->formatted_performance }}
-                            </div>
-                            <div class="text-sm text-gray-500">Performance</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-blue-600">{{ $trader->formatted_win_rate }}</div>
-                            <div class="text-sm text-gray-500">Win Rate</div>
-                        </div>
-                    </div>
+                <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div class="flex justify-between gap-2"><dt class="text-gray-400">Trades</dt><dd class="text-white font-medium">{{ $trader->total_trades }}</dd></div>
+                    <div class="flex justify-between gap-2"><dt class="text-gray-400">Wins</dt><dd class="text-white font-medium">{{ $trader->winning_trades }}</dd></div>
+                    <div class="flex justify-between gap-2"><dt class="text-gray-400">Max pos.</dt><dd class="text-white font-medium">{{ $trader->max_positions }}</dd></div>
+                    <div class="flex justify-between gap-2"><dt class="text-gray-400">Size</dt><dd class="text-white font-medium">{{ $trader->position_size_percentage }}%</dd></div>
+                    <div class="flex justify-between gap-2"><dt class="text-gray-400">Stop loss</dt><dd class="text-red-400 font-medium">{{ $trader->stop_loss_percentage }}%</dd></div>
+                    <div class="flex justify-between gap-2"><dt class="text-gray-400">Take profit</dt><dd class="text-emerald-400 font-medium">{{ $trader->take_profit_percentage }}%</dd></div>
+                </dl>
 
-                    <!-- Trading Stats -->
-                    <div class="space-y-2 mb-4">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-400">Total Trades:</span>
-                            <span class="font-medium text-white">{{ $trader->total_trades }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-400">Winning Trades:</span>
-                            <span class="font-medium text-blue-400">{{ $trader->winning_trades }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-400">Max Positions:</span>
-                            <span class="font-medium text-white">{{ $trader->max_positions }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-400">Position Size:</span>
-                            <span class="font-medium text-white">{{ $trader->position_size_percentage }}%</span>
-                        </div>
-                    </div>
+                <div class="mt-4 flex flex-wrap gap-1.5">
+                    @foreach($trader->stocks_to_trade as $stock)
+                    <span class="px-2 py-0.5 rounded-md text-xs font-semibold font-mono bg-gray-700 text-gray-300">{{ $stock }}</span>
+                    @endforeach
+                </div>
 
-                    <!-- Stocks Trading -->
-                    <div class="mb-4">
-                        <div class="text-sm text-gray-400 mb-2">Stocks Trading:</div>
-                        <div class="flex flex-wrap gap-1">
-                            @foreach($trader->stocks_to_trade as $stock)
-                            <span class="bg-blue-50 text-blue-400 text-xs px-2 py-1 rounded border border-gray-700">{{ $stock }}</span>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <!-- Risk Management -->
-                    <div class="mb-6">
-                        <div class="text-sm text-gray-400 mb-2">Risk Management:</div>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div class="bg-red-500/20 text-red-400 px-2 py-1 rounded text-center border border-red-500/30">
-                                Stop Loss: {{ $trader->stop_loss_percentage }}%
-                            </div>
-                            <div class="bg-green-500/20 text-green-400 px-2 py-1 rounded text-center border border-green-500/30">
-                                Take Profit: {{ $trader->take_profit_percentage }}%
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="flex gap-2">
-                        @if(auth()->user()->hasActivatedAiTrader($trader->id))
-                            <div class="flex-1 bg-gradient-to-r from-green-600/20 to-green-500/20 text-green-400 py-3 px-4 rounded-lg text-center border border-green-500/30">
-                                <i class="fas fa-check-circle mr-2"></i>Activated
-                            </div>
-                        @elseif(auth()->user()->hasActiveAiTraderSubscription($plan->id))
-                            <button onclick="showActivationModal({{ $trader->id }}, '{{ $trader->name }}', {{ $trader->aiTraderPlan ? $trader->aiTraderPlan->investment_amount : 0 }})" 
-                                    class="flex-1 bg-gradient-to-r from-green-600 to-green-500 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-700 hover:to-green-600 transition-all duration-300 text-center">
-                                <i class="fas fa-play mr-2"></i>Activate
-                            </button>
-                        @else
-                            <div class="flex-1 bg-gray-600/50 text-gray-400 py-3 px-4 rounded-lg text-center border border-gray-500/30">
-                                <i class="fas fa-lock mr-2"></i>Subscribe to Activate
-                            </div>
-                        @endif
-                        <a href="{{ route('user.aiTraders.trader', $trader) }}" 
-                           class="bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-300 text-center flex items-center justify-center">
-                            <i class="fas fa-eye"></i>
-                        </a>
-                    </div>
+                <div class="mt-auto pt-5 grid grid-cols-2 gap-2">
+                    @if($activated)
+                        <span class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-500/15 text-emerald-400 text-sm font-semibold">
+                            <i class="fas fa-check-circle"></i>Activated
+                        </span>
+                    @elseif($isSubscribed)
+                        <button onclick="showActivationModal({{ $trader->id }}, '{{ $trader->name }}', {{ $trader->aiTraderPlan ? $trader->aiTraderPlan->investment_amount : 0 }})"
+                                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                            <i class="fas fa-play"></i>Activate
+                        </button>
+                    @else
+                        <span class="inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-gray-700/60 text-gray-400 text-sm font-semibold" title="Subscribe to this plan to activate">
+                            <i class="fas fa-lock"></i>Locked
+                        </span>
+                    @endif
+                    <a href="{{ route('user.aiTraders.trader', $trader) }}"
+                       class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
+                        Details
+                    </a>
                 </div>
             </div>
             @endforeach
-            </div>
         </div>
         @else
-        <div class="text-center py-12">
-            <div class="text-6xl mb-4">🤖</div>
-            <h3 class="text-xl font-semibold text-white mb-2">No AI Traders Available</h3>
-            <p class="text-gray-300">This plan doesn't have any active AI traders at the moment.</p>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 px-4 py-12 text-center">
+            <div class="w-12 h-12 mx-auto rounded-full bg-gray-700 grid place-items-center text-gray-300"><i class="fas fa-robot"></i></div>
+            <h3 class="text-white font-medium mt-3">No AI traders in this plan yet</h3>
+            <p class="text-sm text-gray-400 mt-1">Check back soon, or look at the other plans.</p>
+            <a href="{{ route('user.aiTraders.index') }}" class="mt-4 inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">See all plans</a>
         </div>
         @endif
-    </div>
-</section>
+    </section>
 
-<!-- Plan Features -->
-@if($plan->features)
-<section class="py-16 bg-gray-900">
-    <div class="w-full px-4">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-3xl font-bold text-white text-center mb-12">Plan Features</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                @foreach($plan->features as $feature)
-                <div class="flex items-start">
-                    <div class="bg-blue-50 w-8 h-8 rounded-full flex items-center justify-center mr-4 flex-shrink-0 border border-gray-700">
-                        <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-white mb-1">{{ $feature }}</h3>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-</section>
-@endif
-
-<!-- CTA Section -->
-<section class="py-16 bg-blue-600 text-white relative overflow-hidden">
-        <div class="absolute top-10 right-10 w-32 h-32 bg-gray-900 rounded-full filter blur-2xl"></div>
-    <div class="absolute bottom-10 left-10 w-40 h-40 bg-gray-900 rounded-full filter blur-2xl"></div>
-    
-    <div class="w-full px-4 text-center relative z-10">
-        <h2 class="text-3xl font-bold mb-4">Ready to Start with {{ $plan->name }}?</h2>
-        <p class="text-xl mb-8 text-white/80">Join thousands of investors using AI to optimize their stock portfolios.</p>
-        <a href="#traders" class="bg-gray-800 text-blue-400 px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300 border border-gray-700 hover:border-blue-300">
-            Choose Your AI Trader
-        </a>
-    </div>
-</section>
+    @if($plan->features)
+    <section class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6">
+        <h2 class="text-base font-semibold text-white">Plan features</h2>
+        <ul class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+            @foreach($plan->features as $feature)
+            <li class="flex items-start gap-2 text-sm text-gray-300">
+                <svg class="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                {{ $feature }}
+            </li>
+            @endforeach
+        </ul>
+    </section>
+    @endif
+</div>
 
 <!-- Activation Modal -->
-<div id="activationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-gray-800 rounded-xl shadow-2xl max-w-md w-full border border-gray-700">
-        <div class="p-6">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-2xl font-bold text-white">Activate AI Trader</h3>
-                <button onclick="closeActivationModal()" class="text-gray-400 hover:text-white transition-colors">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            
-            <div class="mb-6">
-                <div class="bg-blue-50 border border-gray-700 rounded-lg p-4 mb-4">
-                    <div class="flex items-center mb-2">
-                        <i class="fas fa-robot text-blue-400 mr-3"></i>
-                        <span class="font-semibold text-white" id="traderName">Trader Name</span>
+<div id="activationModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 flex items-end sm:items-center justify-center sm:p-4">
+    <div class="w-full max-w-md rounded-t-2xl sm:rounded-2xl bg-gray-800 border border-gray-700 max-h-[92vh] overflow-y-auto">
+        <div class="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-gray-700">
+            <h3 class="text-base font-semibold text-white">Activate AI trader</h3>
+            <button onclick="closeActivationModal()" class="w-10 h-10 -mr-2 grid place-items-center rounded-lg text-gray-400 hover:text-white hover:bg-gray-700" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="p-4 sm:p-6 space-y-4">
+            <div class="rounded-xl border border-gray-700 bg-gray-900/50 p-4">
+                <div class="font-semibold text-white" id="traderName">Trader Name</div>
+                <div class="mt-2 space-y-1 text-sm">
+                    <div class="flex justify-between gap-3">
+                        <span class="text-gray-400">Minimum investment</span>
+                        <span class="font-semibold text-white" id="minInvestment">{{ currency_symbol() }}0</span>
                     </div>
-                    <div class="text-sm text-gray-300">
-                        <div class="flex justify-between">
-                            <span>Minimum Investment:</span>
-                            <span class="font-semibold text-blue-400" id="minInvestment">{{ currency_symbol() }}0</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>Your Trading Balance:</span>
-                            <span class="font-semibold text-green-400" id="userBalance">{{ currency_symbol() }}0</span>
-                        </div>
+                    <div class="flex justify-between gap-3">
+                        <span class="text-gray-400">Your trading balance</span>
+                        <span class="font-semibold text-emerald-400" id="userBalance">{{ currency_symbol() }}0</span>
                     </div>
                 </div>
-                
-                <div>
-                    <label for="investmentAmount" class="block text-sm font-medium text-gray-300 mb-2">
-                        Investment Amount
-                    </label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">$</span>
-                        <input type="number" 
-                               id="investmentAmount" 
-                               class="w-full pl-8 pr-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-300 focus:ring-1 focus:ring-blue-300 transition-colors"
-                               placeholder="Enter amount"
-                               min="0"
-                               step="0.01">
-                    </div>
-                    <div class="mt-2 text-sm text-gray-400" id="amountError"></div>
-                </div>
             </div>
-            
-            <div class="flex gap-3">
-                <button onclick="closeActivationModal()" 
-                        class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors">
+
+            <div>
+                <label for="investmentAmount" class="block text-sm font-medium text-gray-300 mb-1.5">Investment amount</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">{{ currency_symbol() }}</span>
+                    <input type="number"
+                           id="investmentAmount"
+                           inputmode="decimal"
+                           class="w-full pl-9 pr-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Enter amount"
+                           min="0"
+                           step="0.01">
+                </div>
+                <div class="mt-2 text-sm text-gray-400" id="amountError"></div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="closeActivationModal()"
+                        class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
                     Cancel
                 </button>
-                <button onclick="confirmActivation()" 
+                <button onclick="confirmActivation()"
                         id="confirmActivationBtn"
-                        class="flex-1 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <i class="fas fa-play mr-2"></i>Activate Trader
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-play"></i>Activate
                 </button>
             </div>
         </div>

@@ -5,230 +5,213 @@ use App\Helpers\AssetHelper;
 @endphp
 
 @section('content')
-<div class="space-y-6">
-    <!-- Page Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+@php
+    $holdingsList = $holdings ?? collect();
+    $pnlClass = fn ($v) => $v >= 0 ? 'text-emerald-400' : 'text-red-400';
+@endphp
+<div class="space-y-4 sm:space-y-6">
+    <div class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-white">Holding Overview</h1>
-            <p class="text-gray-400 mt-1">Manage your crypto and stock portfolio</p>
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Portfolio</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-white mt-1">Holdings</h1>
+            <p class="text-sm text-gray-400 mt-0.5">The crypto and stocks you own, what they are worth now and your profit or loss.</p>
         </div>
-        <button id="buyAssetBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center sm:justify-start space-x-2 w-full sm:w-auto mt-4 sm:mt-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            <span>Buy Asset</span>
+        <button id="buyAssetBtn" type="button" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+            <span>Buy asset</span>
         </button>
     </div>
 
-    <!-- Portfolio Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-white">Total Value</h3>
-                <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"></path>
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-            </div>
-            <div class="text-3xl font-bold text-white">{{ money($total_value ?? 0, 2) }}</div>
-            <div class="text-sm text-gray-400 mt-1">Current portfolio value</div>
-        </div>
+    @include('dashboard.portfolio.partials.footer-menu')
 
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-white">Total Invested</h3>
-                <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-            </div>
-            <div class="text-3xl font-bold text-white">{{ money($total_invested ?? 0, 2) }}</div>
-            <div class="text-sm text-gray-400 mt-1">Total amount invested</div>
+    <!-- Portfolio summary -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
+            <div class="text-xs text-gray-400">Current value</div>
+            <div class="mt-1 text-lg sm:text-2xl font-semibold text-white font-mono break-all">{{ money($total_value ?? 0, 2) }}</div>
         </div>
-
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-white">Total P&L</h3>
-                <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-            </div>
-            <div class="text-3xl font-bold {{ ($total_pnl ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                {{ money($total_pnl ?? 0, 2) }}
-            </div>
-            <div class="text-sm text-gray-400 mt-1">Unrealized profit/loss</div>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
+            <div class="text-xs text-gray-400">Total invested</div>
+            <div class="mt-1 text-lg sm:text-2xl font-semibold text-white font-mono break-all">{{ money($total_invested ?? 0, 2) }}</div>
         </div>
-
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-white">P&L %</h3>
-                <div class="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-            </div>
-            <div class="text-3xl font-bold {{ ($total_pnl_percentage ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                {{ number_format($total_pnl_percentage ?? 0, 2) }}%
-            </div>
-            <div class="text-sm text-gray-400 mt-1">Percentage return</div>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
+            <div class="text-xs text-gray-400">Unrealised P&amp;L</div>
+            <div class="mt-1 text-lg sm:text-2xl font-semibold font-mono break-all {{ $pnlClass($total_pnl ?? 0) }}">{{ money($total_pnl ?? 0, 2) }}</div>
+        </div>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
+            <div class="text-xs text-gray-400">Return</div>
+            <div class="mt-1 text-lg sm:text-2xl font-semibold font-mono {{ $pnlClass($total_pnl_percentage ?? 0) }}">{{ number_format($total_pnl_percentage ?? 0, 2) }}%</div>
         </div>
     </div>
 
-    <!-- Holdings Table -->
-    <div class="bg-gray-800 rounded-lg border border-gray-700">
-        <div class="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
-            <h2 class="text-xl font-semibold text-white">Your Holdings</h2>
-            <button id="refreshHoldingsBtn" class="text-blue-400 hover:text-blue-300 text-sm flex items-center space-x-1">
+    <!-- Holdings -->
+    <div class="rounded-2xl border border-gray-700 bg-gray-800 overflow-hidden">
+        <div class="px-4 sm:px-6 py-3 border-b border-gray-700 flex items-center justify-between gap-3">
+            <h2 class="text-base font-semibold text-white">Your holdings</h2>
+            <button id="refreshHoldingsBtn" type="button" class="inline-flex items-center gap-1.5 min-h-[40px] px-2 text-sm font-semibold text-gold-400 hover:text-gold-300">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                 </svg>
                 <span>Refresh</span>
             </button>
         </div>
-        
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-700">
-                <thead class="bg-gray-700">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Asset</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Quantity</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Avg Buy Price</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Current Price</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Total Value</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">P&L</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="holdingsTableBody" class="bg-gray-800 divide-y divide-gray-700">
-                    @forelse($holdings ?? [] as $holding)
-                    <tr data-holding-id="{{ $holding->id }}" data-asset-id="{{ $holding->asset->id }}">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full flex items-center justify-center {{ AssetHelper::getAssetIconClass($holding->asset->symbol) }}">
+
+        @if(count($holdingsList))
+            {{-- Phones: cards --}}
+            <ul class="md:hidden divide-y divide-gray-700">
+                @foreach($holdingsList as $holding)
+                    <li class="p-4" data-holding-id="{{ $holding->id }}" data-asset-id="{{ $holding->asset->id }}">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 shrink-0 rounded-full flex items-center justify-center {{ AssetHelper::getAssetIconClass($holding->asset->symbol) }}">
+                                <span class="text-sm font-bold text-white">{{ AssetHelper::getAssetInitial($holding->asset->symbol) }}</span>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-sm font-semibold text-white truncate">{{ $holding->asset->name }}</div>
+                                <div class="text-xs text-gray-400 font-mono truncate">{{ number_format($holding->quantity, 8) }} {{ $holding->asset->symbol }}</div>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <div class="text-sm font-semibold text-white font-mono">{{ money($holding->current_value, 2) }}</div>
+                                <div class="text-xs font-mono {{ $pnlClass($holding->unrealized_pnl) }}">{{ money($holding->unrealized_pnl, 2) }} ({{ number_format($holding->unrealized_pnl_percentage, 2) }}%)</div>
+                            </div>
+                        </div>
+                        <dl class="mt-3 grid grid-cols-2 gap-2 text-xs">
+                            <div class="rounded-lg bg-gray-900/50 px-3 py-2 min-w-0"><dt class="text-gray-400">Avg buy price</dt><dd class="mt-0.5 font-mono text-white break-all">{{ money($holding->average_buy_price, 8) }}</dd></div>
+                            <div class="rounded-lg bg-gray-900/50 px-3 py-2 min-w-0"><dt class="text-gray-400">Current price</dt><dd class="mt-0.5 font-mono text-white break-all">{{ money_from($holding->asset->current_price, 'USD', 8) }}</dd></div>
+                        </dl>
+                        <div class="mt-3 grid grid-cols-2 gap-2">
+                            <a href="{{ route('user.holding.asset-chart', $holding->asset->symbol) }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">Chart</a>
+                            <button type="button" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-red-500/40 text-red-400 hover:bg-red-500/10 text-sm font-semibold" onclick="openSellModal({{ $holding->id }}, '{{ $holding->asset->symbol }}', {{ $holding->quantity }}, {{ round(auth()->user()->convertFrom($holding->asset->current_price), 8) }})">Sell</button>
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+
+            {{-- md+: table --}}
+            <div class="hidden md:block overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-gray-900/50">
+                        <tr class="text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th class="px-6 py-3">Asset</th>
+                            <th class="px-6 py-3">Quantity</th>
+                            <th class="px-6 py-3">Avg buy price</th>
+                            <th class="px-6 py-3">Current price</th>
+                            <th class="px-6 py-3">Value</th>
+                            <th class="px-6 py-3">P&amp;L</th>
+                            <th class="px-6 py-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="holdingsTableBody" class="divide-y divide-gray-700">
+                        @foreach($holdingsList as $holding)
+                        <tr class="hover:bg-gray-700/40" data-holding-id="{{ $holding->id }}" data-asset-id="{{ $holding->asset->id }}">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-10 w-10 shrink-0 rounded-full flex items-center justify-center {{ AssetHelper::getAssetIconClass($holding->asset->symbol) }}">
                                         <span class="text-sm font-bold text-white">{{ AssetHelper::getAssetInitial($holding->asset->symbol) }}</span>
                                     </div>
+                                    <div>
+                                        <div class="font-medium text-white">{{ $holding->asset->name }}</div>
+                                        <div class="text-xs text-gray-400">{{ $holding->asset->symbol }}</div>
+                                    </div>
                                 </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-white">{{ $holding->asset->name }}</div>
-                                    <div class="text-sm text-gray-400">{{ $holding->asset->symbol }}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                            {{ number_format($holding->quantity, 8) }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                            {{ money($holding->average_buy_price, 8) }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                            {{ money_from($holding->asset->current_price, 'USD', 8) }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                            {{ money($holding->current_value, 2) }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm {{ $holding->unrealized_pnl >= 0 ? 'text-green-400' : 'text-red-400' }}">
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-white font-mono">{{ number_format($holding->quantity, 8) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-white font-mono">{{ money($holding->average_buy_price, 8) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-white font-mono">{{ money_from($holding->asset->current_price, 'USD', 8) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-white font-mono">{{ money($holding->current_value, 2) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap font-mono {{ $pnlClass($holding->unrealized_pnl) }}">
                                 {{ money($holding->unrealized_pnl, 2) }}
                                 <span class="text-xs">({{ number_format($holding->unrealized_pnl_percentage, 2) }}%)</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button class="text-blue-400 hover:text-blue-300 mr-3" onclick="openSellModal({{ $holding->id }}, '{{ $holding->asset->symbol }}', {{ $holding->quantity }}, {{ round(auth()->user()->convertFrom($holding->asset->current_price), 8) }})">
-                                Sell
-                            </button>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="px-6 py-12 text-center text-gray-400">
-                            <div class="flex flex-col items-center">
-                                <svg class="w-12 h-12 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                <p class="text-lg font-medium">No holdings found</p>
-                                <p class="text-sm">Start by buying your first asset</p>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right">
+                                <a href="{{ route('user.holding.asset-chart', $holding->asset->symbol) }}" class="font-semibold text-gold-400 hover:text-gold-300 mr-4">Chart</a>
+                                <button type="button" class="font-semibold text-red-400 hover:text-red-300" onclick="openSellModal({{ $holding->id }}, '{{ $holding->asset->symbol }}', {{ $holding->quantity }}, {{ round(auth()->user()->convertFrom($holding->asset->current_price), 8) }})">Sell</button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="px-4 py-12 text-center">
+                <div class="mx-auto w-12 h-12 rounded-full bg-gray-700 grid place-items-center text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg>
+                </div>
+                <div class="mt-3 text-white font-medium">No holdings yet</div>
+                <p class="mt-1 text-sm text-gray-400">Buy your first crypto or stock and it will show up here.</p>
+                <a href="{{ route('user.holding.buy-assets') }}" class="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">Buy an asset</a>
+            </div>
+        @endif
     </div>
 </div>
 
 <!-- Sell Modal -->
-<div id="sellModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-gray-800 rounded-lg shadow-xl max-w-md w-full border border-gray-700">
-            <div class="p-6">
+<div id="sellModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden" role="dialog" aria-modal="true" aria-labelledby="sellModalTitle">
+    <div class="flex items-end sm:items-center justify-center min-h-full sm:p-4">
+        <div class="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-gray-800 border border-gray-700 max-h-[92vh] overflow-y-auto">
+            <div class="p-4 sm:p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-medium text-white">Sell Asset</h3>
-                    <button onclick="closeSellModal()" class="text-gray-400 hover:text-white">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <h3 id="sellModalTitle" class="text-lg font-semibold text-white">Sell asset</h3>
+                    <button type="button" onclick="closeSellModal()" class="w-10 h-10 -mr-2 grid place-items-center rounded-lg text-gray-400 hover:text-white hover:bg-gray-700" aria-label="Close">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
-                
+
                 <div class="space-y-4">
                     <input type="hidden" id="sellHoldingId">
-                    <div class="bg-gray-700 rounded-lg p-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-gray-400">Asset:</span>
-                            <span class="text-white font-medium" id="sellSymbol"></span>
+                    <div class="rounded-xl border border-gray-700 bg-gray-900/50 p-4 space-y-2 text-sm">
+                        <div class="flex justify-between items-center gap-3">
+                            <span class="text-gray-400">Asset</span>
+                            <span class="text-white font-semibold" id="sellSymbol"></span>
                         </div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-gray-400">Available:</span>
-                            <span class="text-white" id="sellQuantity"></span>
+                        <div class="flex justify-between items-center gap-3">
+                            <span class="text-gray-400">Available</span>
+                            <span class="text-white font-mono break-all text-right" id="sellQuantity"></span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-400">Current Price:</span>
-                            <span class="text-white" id="sellCurrentPrice"></span>
+                        <div class="flex justify-between items-center gap-3">
+                            <span class="text-gray-400">Current price</span>
+                            <span class="text-white font-mono break-all text-right" id="sellCurrentPrice"></span>
                         </div>
                     </div>
-                    
+
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Quantity to Sell</label>
-                        <div class="flex space-x-2">
-                            <input type="number" id="sellQuantityInput" step="0.00000001" min="0.00000001" 
-                                   class="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                        <label for="sellQuantityInput" class="block text-sm font-medium text-gray-300 mb-1.5">Quantity to sell</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="sellQuantityInput" step="0.00000001" min="0.00000001" inputmode="decimal"
+                                   class="min-w-0 flex-1 px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    oninput="updateSellTotal()">
-                            <button onclick="setMaxQuantity()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+                            <button type="button" onclick="setMaxQuantity()" class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
                                 Max
                             </button>
                         </div>
-                        <p class="text-xs text-gray-400 mt-1">Max: <span id="sellMaxQuantity"></span></p>
+                        <p class="text-xs text-gray-500 mt-1">Max: <span id="sellMaxQuantity"></span></p>
                     </div>
-                    
+
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Price per Unit</label>
-                        <input type="number" id="sellPriceInput" step="0.00000001" min="0.00000001" 
-                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
-                               oninput="updateSellTotal()">
+                        <label for="sellPriceInput" class="block text-sm font-medium text-gray-300 mb-1.5">Price per unit</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 text-sm pointer-events-none">{{ currency_symbol() }}</span>
+                            <input type="number" id="sellPriceInput" step="0.00000001" min="0.00000001" inputmode="decimal"
+                                   class="w-full pl-8 pr-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   oninput="updateSellTotal()">
+                        </div>
                     </div>
-                    
-                    <div class="bg-gray-700 rounded-lg p-4">
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-400">Total Value:</span>
-                            <span class="text-white font-medium" id="sellTotalValue">{{ currency_symbol() }}0.00</span>
+
+                    <div class="rounded-xl border border-gray-700 bg-gray-900/50 p-4">
+                        <div class="flex justify-between items-center gap-3">
+                            <span class="text-sm text-gray-400">You receive</span>
+                            <span class="text-white font-semibold font-mono break-all text-right" id="sellTotalValue">{{ currency_symbol() }}0.00</span>
                         </div>
                     </div>
                 </div>
-                
-                <div class="flex space-x-3 mt-6">
-                    <button onclick="closeSellModal()" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 rounded-lg font-medium transition-colors">
+
+                <div class="grid grid-cols-2 gap-3 mt-6">
+                    <button type="button" onclick="closeSellModal()" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
                         Cancel
                     </button>
-                    <button id="sellAssetBtn" onclick="sellAsset()" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition-colors">
-                        Sell Asset
+                    <button type="button" id="sellAssetBtn" onclick="sellAsset()" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-semibold">
+                        Sell asset
                     </button>
                 </div>
             </div>
@@ -237,18 +220,18 @@ use App\Helpers\AssetHelper;
 </div>
 
 <!-- Success Modal -->
-<div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-gray-800 rounded-lg shadow-xl max-w-md w-full border border-gray-700">
+<div id="successModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden" role="dialog" aria-modal="true">
+    <div class="flex items-end sm:items-center justify-center min-h-full sm:p-4">
+        <div class="w-full max-w-md rounded-t-2xl sm:rounded-2xl bg-gray-800 border border-gray-700 max-h-[92vh] overflow-y-auto">
             <div class="p-6 text-center">
-                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <div class="w-12 h-12 rounded-full bg-emerald-500/15 text-emerald-400 grid place-items-center mx-auto mb-4">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <h3 class="text-lg font-medium text-white mb-2" id="successTitle">Success!</h3>
-                <p class="text-gray-400 mb-6" id="successMessage">Operation completed successfully.</p>
-                <button onclick="document.getElementById('successModal').classList.add('hidden')" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-colors">
+                <h3 class="text-lg font-semibold text-white mb-2" id="successTitle">Success!</h3>
+                <p class="text-sm text-gray-400 mb-6" id="successMessage">Operation completed successfully.</p>
+                <button type="button" onclick="document.getElementById('successModal').classList.add('hidden')" class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
                     Close
                 </button>
             </div>
@@ -257,18 +240,18 @@ use App\Helpers\AssetHelper;
 </div>
 
 <!-- Error Modal -->
-<div id="errorModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-gray-800 rounded-lg shadow-xl max-w-md w-full border border-gray-700">
+<div id="errorModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden" role="dialog" aria-modal="true">
+    <div class="flex items-end sm:items-center justify-center min-h-full sm:p-4">
+        <div class="w-full max-w-md rounded-t-2xl sm:rounded-2xl bg-gray-800 border border-gray-700 max-h-[92vh] overflow-y-auto">
             <div class="p-6 text-center">
-                <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <div class="w-12 h-12 rounded-full bg-red-500/15 text-red-400 grid place-items-center mx-auto mb-4">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <h3 class="text-lg font-medium text-white mb-2" id="errorTitle">Error!</h3>
-                <p class="text-gray-400 mb-6" id="errorMessage">An error occurred. Please try again.</p>
-                <button onclick="document.getElementById('errorModal').classList.add('hidden')" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition-colors">
+                <h3 class="text-lg font-semibold text-white mb-2" id="errorTitle">Error!</h3>
+                <p class="text-sm text-gray-400 mb-6" id="errorMessage">An error occurred. Please try again.</p>
+                <button type="button" onclick="document.getElementById('errorModal').classList.add('hidden')" class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
                     Close
                 </button>
             </div>
@@ -403,5 +386,4 @@ function showErrorModal(title, message) {
 }
 </script>
 
-@include('dashboard.portfolio.partials.footer-menu')
 @endsection

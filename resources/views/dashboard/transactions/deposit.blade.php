@@ -1,41 +1,46 @@
 @extends('dashboard.layout.app')
 
-
-
 @section('content')
-
-    <!-- Page Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 space-y-4 sm:space-y-0">
+@php
+    $walletBadge = [
+        'balance' => ['Main balance', 'bg-gray-700 text-gray-300'],
+        'trading' => ['Trading balance', 'bg-blue-500/15 text-blue-300'],
+        'holding' => ['Holding balance', 'bg-emerald-500/15 text-emerald-400'],
+        'staking' => ['Staking balance', 'bg-sky-500/15 text-sky-300'],
+    ];
+    $statusBadge = fn ($s) => $s == 0 ? ['Pending', 'bg-amber-500/15 text-amber-300'] : ($s == 1 ? ['Approved', 'bg-emerald-500/15 text-emerald-400'] : ['Rejected', 'bg-red-500/15 text-red-400']);
+@endphp
+<div class="space-y-4 sm:space-y-6">
+    <div class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-white">Fund Account</h1>
-            <p class="text-gray-400 mt-1">Manage your deposits and account funding</p>
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Wallet</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-white mt-1">Deposit</h1>
+            <p class="text-sm text-gray-400 mt-0.5">Send crypto to our wallet, upload your proof of payment and we credit your account once it is confirmed.</p>
         </div>
-        <button id="newDepositBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center sm:justify-start space-x-2 w-full sm:w-auto">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            <span>New Deposit</span>
+        <button type="button" id="newDepositBtn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+            <span>New deposit</span>
         </button>
     </div>
 
     <!-- Page-level feedback: the deposit modal is hidden after a redirect, so
          success/error messages must live here to be visible to the user. -->
-    <div id="deposit-page-feedback">
+    <div id="deposit-page-feedback" class="space-y-3 empty:hidden">
     @if(session('success'))
-        <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+        <div class="p-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-sm text-emerald-300">
             {{ session('success') }}
         </div>
     @endif
 
     @if(session('error'))
-        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+        <div class="p-4 rounded-xl border border-red-500/40 bg-red-500/10 text-sm text-red-300">
             {{ session('error') }}
         </div>
     @endif
 
     @if($errors->any())
-        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-            <ul class="list-disc list-inside">
+        <div class="p-4 rounded-xl border border-red-500/40 bg-red-500/10 text-sm text-red-300">
+            <ul class="list-disc list-inside space-y-0.5">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -44,214 +49,176 @@
     @endif
 
     @if($wallets->isEmpty())
-        <div class="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded-lg">
+        <div class="p-4 rounded-xl border border-amber-500/40 bg-amber-500/10 text-sm text-amber-300">
             No payment methods are available right now, so deposits cannot be submitted. Please contact support.
         </div>
     @endif
     </div>
 
-    <!-- Balance Overview -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-white">Trading Balance</h3>
-                <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"></path>
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path>
-                    </svg>
-                        </div>
-                    </div>
-            <div class="text-3xl font-bold text-white">{{ money($user->balance ?? 0, 2) }}</div>
-            <div class="text-sm text-gray-400 mt-1">Available for trading</div>
+    <!-- Balances -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
+            <div class="text-xs text-gray-400">Main balance</div>
+            <div class="mt-1 text-xl sm:text-2xl font-semibold text-white font-mono break-all">{{ money($user->balance ?? 0, 2) }}</div>
+            <div class="text-xs text-gray-500 mt-0.5">Available to trade or move</div>
         </div>
-
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-white">Holding Balance</h3>
-                <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-                        </div>
-            <div class="text-3xl font-bold text-white">{{ money($user->holding_balance ?? 0, 2) }}</div>
-            <div class="text-sm text-gray-400 mt-1">Long-term holdings</div>
-                                                </div>
-
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-white">Staking Balance</h3>
-                <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path>
-                    </svg>
-                                            </div>
-                                        </div>
-            <div class="text-3xl font-bold text-white">{{ money($user->staking_balance ?? 0, 2) }}</div>
-            <div class="text-sm text-gray-400 mt-1">Staked assets</div>
-                                    </div>
-                                </div>
-
-    <!-- Deposit History Table -->
-    <div class="bg-gray-800 rounded-lg border border-gray-700">
-        <div class="px-6 py-4 border-b border-gray-700">
-            <h2 class="text-xl font-semibold text-white">Deposit History</h2>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
+            <div class="text-xs text-gray-400">Holding balance</div>
+            <div class="mt-1 text-xl sm:text-2xl font-semibold text-white font-mono break-all">{{ money($user->holding_balance ?? 0, 2) }}</div>
+            <div class="text-xs text-gray-500 mt-0.5">For buying crypto and stocks</div>
         </div>
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-700">
-                <thead class="bg-gray-700">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Amount</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Wallet</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Payment Method</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-gray-800 divide-y divide-gray-700">
-                    @forelse($deposits as $deposit)
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-white">{{ money($deposit->amount, 2) }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                @if($deposit->wallet_type == 'balance')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                        Main Balance
-                                    </span>
-                                @elseif($deposit->wallet_type == 'trading')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        Trading Balance
-                                    </span>
-                                @elseif($deposit->wallet_type == 'holding')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Holding Balance
-                                    </span>
-                                @elseif($deposit->wallet_type == 'staking')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                        Staking Balance
-                                    </span>
-                                @else
-                                    <span class="text-gray-400">N/A</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                {{ optional($deposit->payment_method)->crypto_display_name ?? 'N/A' }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @if($deposit->status == 0)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        Pending
-                                    </span>
-                                @elseif($deposit->status == 1)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Approved
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        Rejected
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                {{ $deposit->created_at ? $deposit->created_at->format('M d, Y H:i') : 'N/A' }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
+            <div class="text-xs text-gray-400">Staking balance</div>
+            <div class="mt-1 text-xl sm:text-2xl font-semibold text-white font-mono break-all">{{ money($user->staking_balance ?? 0, 2) }}</div>
+            <div class="text-xs text-gray-500 mt-0.5">Locked in staking pools</div>
+        </div>
+    </div>
+
+    <!-- Deposit history -->
+    <div class="rounded-2xl border border-gray-700 bg-gray-800 overflow-hidden">
+        <div class="px-4 sm:px-6 py-4 border-b border-gray-700">
+            <h2 class="text-base font-semibold text-white">Deposit history</h2>
+        </div>
+        @if($deposits->count())
+            <ul class="md:hidden divide-y divide-gray-700">
+                @foreach($deposits as $deposit)
+                    @php [$sLabel, $sClass] = $statusBadge($deposit->status); $w = $walletBadge[$deposit->wallet_type] ?? null; @endphp
+                    <li class="p-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="text-sm font-semibold text-white font-mono">{{ money($deposit->amount, 2) }}</div>
+                                <div class="mt-0.5 text-xs text-gray-400 truncate">{{ optional($deposit->payment_method)->crypto_display_name ?? 'N/A' }} &middot; {{ $deposit->created_at ? $deposit->created_at->format('M d, Y H:i') : 'N/A' }}</div>
+                            </div>
+                            <span class="shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold {{ $sClass }}">{{ $sLabel }}</span>
+                        </div>
+                        <div class="mt-2 flex flex-wrap items-center justify-between gap-2">
+                            @if($w)<span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $w[1] }}">{{ $w[0] }}</span>@else<span class="text-xs text-gray-500">N/A</span>@endif
+                            <div class="flex items-center gap-4">
                                 @if($deposit->proof)
-                                    <button class="text-blue-400 hover:text-blue-300 mr-3" onclick="viewProof('{{ $deposit->id }}')">
-                                        View Proof
-                                    </button>
+                                    <button type="button" class="min-h-[40px] text-sm font-semibold text-gold-400 hover:text-gold-300" onclick="viewProof('{{ $deposit->id }}')">View proof</button>
                                 @endif
                                 @if($deposit->status == 0)
-                                    <button class="text-red-400 hover:text-red-300" onclick="cancelDeposit('{{ $deposit->id }}')">
-                                        Cancel
-                                    </button>
+                                    <button type="button" class="min-h-[40px] text-sm font-semibold text-red-400 hover:text-red-300" onclick="cancelDeposit('{{ $deposit->id }}')">Cancel</button>
                                 @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="px-6 py-12 text-center text-gray-400">
-                                <div class="flex flex-col items-center">
-                                    <svg class="w-12 h-12 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                    </svg>
-                                    <p class="text-lg font-medium">No deposits found</p>
-                                    <p class="text-sm">Start by creating your first deposit</p>
-                                </div>
-                            </td>
-                        </tr>
-                            @endforelse
-                </tbody>
-            </table>
+                            </div>
                         </div>
-                    </div>
+                    </li>
+                @endforeach
+            </ul>
+
+            <div class="hidden md:block overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-gray-900/50">
+                        <tr class="text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th class="px-6 py-3">Amount</th>
+                            <th class="px-6 py-3">Wallet</th>
+                            <th class="px-6 py-3">Payment method</th>
+                            <th class="px-6 py-3">Status</th>
+                            <th class="px-6 py-3">Date</th>
+                            <th class="px-6 py-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-700">
+                        @foreach($deposits as $deposit)
+                            @php [$sLabel, $sClass] = $statusBadge($deposit->status); $w = $walletBadge[$deposit->wallet_type] ?? null; @endphp
+                            <tr class="hover:bg-gray-700/40">
+                                <td class="px-6 py-4 whitespace-nowrap text-white font-mono">{{ money($deposit->amount, 2) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">@if($w)<span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $w[1] }}">{{ $w[0] }}</span>@else<span class="text-gray-500">N/A</span>@endif</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-300">{{ optional($deposit->payment_method)->crypto_display_name ?? 'N/A' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $sClass }}">{{ $sLabel }}</span></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-300">{{ $deposit->created_at ? $deposit->created_at->format('M d, Y H:i') : 'N/A' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right">
+                                    @if($deposit->proof)
+                                        <button type="button" class="font-semibold text-gold-400 hover:text-gold-300 mr-4" onclick="viewProof('{{ $deposit->id }}')">View proof</button>
+                                    @endif
+                                    @if($deposit->status == 0)
+                                        <button type="button" class="font-semibold text-red-400 hover:text-red-300" onclick="cancelDeposit('{{ $deposit->id }}')">Cancel</button>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="px-4 py-12 text-center">
+                <div class="mx-auto w-12 h-12 rounded-full bg-gray-700 grid place-items-center text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+                </div>
+                <div class="mt-3 text-white font-medium">No deposits yet</div>
+                <p class="mt-1 text-sm text-gray-400">Make your first deposit to start trading.</p>
+                <button type="button" onclick="document.getElementById('newDepositBtn').click()" class="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">New deposit</button>
+            </div>
+        @endif
+    </div>
+</div>
 
     <!-- New Deposit Modal -->
-    <div id="depositModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-gray-800 rounded-lg shadow-xl max-w-md w-full border border-gray-700 max-h-[90vh] overflow-y-auto">
+    <div id="depositModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="depositModalTitle">
+        <div class="flex items-end sm:items-center justify-center min-h-full sm:p-4">
+            <div class="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-gray-800 border border-gray-700 max-h-[92vh] overflow-y-auto">
                 <!-- Modal Header -->
-                <div class="flex items-center justify-between p-4 border-b border-gray-700">
-                    <h3 class="text-lg font-semibold text-white">New Deposit</h3>
-                    <button id="closeModal" class="text-gray-400 hover:text-white transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-gray-700">
+                    <h3 id="depositModalTitle" class="text-lg font-semibold text-white">New deposit</h3>
+                    <button type="button" id="closeModal" class="w-10 h-10 -mr-2 grid place-items-center rounded-lg text-gray-400 hover:text-white hover:bg-gray-700" aria-label="Close">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
 
                 <!-- Modal Body -->
-                <form id="depositForm" action="{{ route('user.payment') }}" method="POST" enctype="multipart/form-data" class="p-4">
+                <form id="depositForm" action="{{ route('user.payment') }}" method="POST" enctype="multipart/form-data" class="p-4 sm:p-6 space-y-4">
                     @csrf
-                    
+
                     <!-- Amount Input -->
-                    <div class="mb-4">
-                        <label for="amount" class="block text-sm font-medium text-gray-300 mb-2">Amount</label>
+                    <div>
+                        <label for="amount" class="block text-sm font-medium text-gray-300 mb-1.5">Amount</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="text-gray-400 sm:text-sm">$</span>
-                                </div>
-                            <input type="number" 
-                                   id="amount" 
-                                   name="amount" 
-                                   step="0.01" 
-                                   min="0" 
+                                <span class="text-gray-400 text-sm">{{ currency_symbol() }}</span>
+                            </div>
+                            <input type="number"
+                                   id="amount"
+                                   name="amount"
+                                   step="0.01"
+                                   min="0"
                                    required
+                                   inputmode="decimal"
                                    value="{{ old('amount') }}"
-                                   class="block w-full pl-7 pr-12 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                   class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 pl-8 pr-14"
                                    placeholder="0.00">
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                <span class="text-gray-400 sm:text-sm">{{ auth()->user()->currency ?? 'USD' }}</span>
-                                </div>
+                                <span class="text-gray-400 text-sm">{{ auth()->user()->currency ?? 'USD' }}</span>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Wallet Selection -->
-                    <div class="mb-4">
-                        <label for="wallet_type" class="block text-sm font-medium text-gray-300 mb-2">Select Wallet</label>
-                        <select id="wallet_type" 
-                                name="wallet_type" 
+                    <div>
+                        <label for="wallet_type" class="block text-sm font-medium text-gray-300 mb-1.5">Credit to</label>
+                        <select id="wallet_type"
+                                name="wallet_type"
                                 required
-                                class="block w-full py-3 px-3 border border-gray-600 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="">Choose a wallet</option>
                             <option value="balance" {{ old('wallet_type') == 'balance' ? 'selected' : '' }}>Main Balance</option>
                             <option value="trading" {{ old('wallet_type') == 'trading' ? 'selected' : '' }}>Trading Balance</option>
                             <option value="holding" {{ old('wallet_type') == 'holding' ? 'selected' : '' }}>Holding Balance</option>
                             <option value="staking" {{ old('wallet_type') == 'staking' ? 'selected' : '' }}>Staking Balance</option>
                         </select>
-                </div>
+                    </div>
 
                     <!-- Payment Method -->
-                    <div class="mb-4">
-                        <label for="payment_method_id" class="block text-sm font-medium text-gray-300 mb-2">Payment Method</label>
-                        <select id="payment_method_id" 
-                                name="payment_method_id" 
+                    <div>
+                        <label for="payment_method_id" class="block text-sm font-medium text-gray-300 mb-1.5">Payment method</label>
+                        <select id="payment_method_id"
+                                name="payment_method_id"
                                 required
-                                class="block w-full py-3 px-3 border border-gray-600 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="">Select payment method</option>
                             @foreach($wallets as $wallet)
-                                <option value="{{ $wallet->id }}" 
+                                <option value="{{ $wallet->id }}"
                                         data-address="{{ $wallet->address ?? '' }}"
                                         {{ old('payment_method_id') == $wallet->id ? 'selected' : '' }}>{{ $wallet->crypto_display_name }}</option>
                             @endforeach
@@ -259,35 +226,32 @@
                     </div>
 
                     <!-- Wallet Address Display -->
-                    <div id="walletAddressSection" class="mb-4 hidden">
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Wallet Address</label>
-                        <div class="bg-gray-700 border border-gray-600 rounded-lg p-3">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-sm text-gray-400">Send payment to:</span>
-                                <button type="button" id="copyAddressBtn" class="text-blue-400 hover:text-blue-300 text-sm px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded transition-colors">
-                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                                    </svg>
-                                    Copy Address
-                                </button>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <div class="flex-1">
-                                    <input type="text" id="walletAddress" readonly class="w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded text-white text-sm font-mono" />
-                                </div>
-                                <div id="qrCode" class="w-16 h-16 bg-white rounded p-1 flex items-center justify-center">
+                    <div id="walletAddressSection" class="hidden">
+                        <label class="block text-sm font-medium text-gray-300 mb-1.5">Send payment to</label>
+                        <div class="rounded-xl border border-gray-700 bg-gray-900/50 p-3 sm:p-4">
+                            <div class="flex items-start gap-3">
+                                <div id="qrCode" class="w-20 h-20 shrink-0 bg-white rounded-lg p-1 flex items-center justify-center">
                                     <div id="qrCodeDiv" class="w-full h-full flex items-center justify-center"></div>
                                 </div>
+                                <div class="min-w-0 flex-1 space-y-2">
+                                    <input type="text" id="walletAddress" readonly class="w-full px-3 py-2 rounded-lg bg-gray-900/60 border border-gray-600 text-white text-xs sm:text-sm font-mono truncate" />
+                                    <button type="button" id="copyAddressBtn" class="w-full inline-flex items-center justify-center gap-1 px-3 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-blue-400 hover:text-blue-300 text-sm font-semibold">
+                                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                        </svg>
+                                        Copy Address
+                                    </button>
+                                </div>
                             </div>
-                            
+
                             <!-- Countdown Timer -->
-                            <div class="mt-3 pt-3 border-t border-gray-600">
-                                <div class="flex items-center justify-center space-x-2">
-                                    <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="mt-3 pt-3 border-t border-gray-700">
+                                <div class="flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
-                                    <span class="text-sm text-gray-300">Payment expires in:</span>
-                                    <div id="countdownTimer" class="text-sm font-mono font-bold text-yellow-400">
+                                    <span class="text-sm text-gray-300">Payment expires in</span>
+                                    <div id="countdownTimer" class="text-sm font-mono font-bold text-amber-300">
                                         <span id="minutes">15</span>:<span id="seconds">00</span>
                                     </div>
                                 </div>
@@ -296,46 +260,39 @@
                     </div>
 
                     <!-- Payment Proof -->
-                    <div class="mb-4">
-                        <label for="proof" class="block text-sm font-medium text-gray-300 mb-2">Payment Proof</label>
-                        <div class="mt-1 flex justify-center px-3 pt-3 pb-3 border-2 border-gray-600 border-dashed rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors">
-                            <div class="space-y-1 text-center">
-                                <svg class="mx-auto h-6 w-6 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                                <div class="flex text-sm text-gray-400">
-                                    <label for="proof" class="relative cursor-pointer bg-gray-700 rounded-md font-medium text-blue-400 hover:text-blue-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                        <span>Upload a file</span>
-                                        <input id="proof" name="proof" type="file" class="sr-only" required>
-                                    </label>
-                                    <p class="pl-1">or drag and drop</p>
-                                </div>
-                                <p class="text-xs text-gray-500">PNG, JPG, PDF up to 10MB</p>
-                            </div>
-                        </div>
-                        <div id="filePreview" class="mt-2 text-sm text-gray-400 hidden"></div>
+                    <div>
+                        <label for="proof" class="block text-sm font-medium text-gray-300 mb-1.5">Proof of payment</label>
+                        <label for="proof" class="flex flex-col items-center justify-center gap-1 px-3 py-4 border-2 border-gray-600 border-dashed rounded-xl bg-gray-900/40 hover:bg-gray-900/70 cursor-pointer transition-colors text-center">
+                            <svg class="h-6 w-6 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <span class="text-sm font-semibold text-gold-400">Tap to upload a screenshot or receipt</span>
+                            <span class="text-xs text-gray-500">PNG, JPG, PDF up to 10MB</span>
+                            <input id="proof" name="proof" type="file" class="sr-only" required>
+                        </label>
+                        <div id="filePreview" class="mt-2 text-sm text-gray-400 break-all hidden"></div>
                     </div>
 
                     <!-- Submit Button -->
-                    <div class="flex space-x-3">
-                        <button type="button" 
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <button type="button"
                                 id="cancelBtn"
-                                class="flex-1 px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
+                                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
                             Cancel
                         </button>
-                        <button type="submit" 
+                        <button type="submit"
                                 id="depositSubmitBtn"
-                                class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
-                            <span id="depositBtnText">Submit Deposit</span>
+                                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                            <span id="depositBtnText">Submit deposit</span>
                             <span id="depositBtnSpinner" class="hidden">
-                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                                 Processing...
                             </span>
                         </button>
-                </div>
+                    </div>
                 </form>
             </div>
         </div>

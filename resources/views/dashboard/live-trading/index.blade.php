@@ -49,11 +49,11 @@
         </div>
     @else
     {{-- ===== Terminal ===== --}}
-    <div class="grid gap-4 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[280px_minmax(0,1fr)_340px] 2xl:h-[680px]">
+    <div class="grid gap-4 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[280px_minmax(0,1fr)_340px] items-stretch">
 
         {{-- Markets: fixed column from 2xl, side drawer / bottom sheet below --}}
         <div id="marketsBackdrop" class="tr-backdrop" hidden></div>
-        <aside id="marketsPanel" class="tr-panel tr-markets 2xl:order-1 flex flex-col min-h-0 overflow-hidden" aria-label="Markets">
+        <aside id="marketsPanel" class="tr-panel tr-markets 2xl:order-1 2xl:h-0 2xl:min-h-full flex flex-col min-h-0 overflow-hidden" aria-label="Markets">
             <div class="tr-sheet-head 2xl:hidden">
                 <span class="tr-grab" aria-hidden="true"></span>
                 <div class="flex items-center justify-between px-4 pt-1 pb-2">
@@ -242,52 +242,50 @@
                                 $size = (float) $o->quantity;
                                 $liq = $isPos ? $o->liquidationPrice() : null;
                             @endphp
-                            <li class="tr-order p-4 md:px-5"
+                            <li class="tr-order"
                                 @if($isPos) data-pos data-type="{{ $o->asset_type }}" data-symbol="{{ $o->symbol }}" data-side="{{ $o->side }}" data-entry="{{ (float) $o->entry_price }}" data-qty="{{ $size }}" data-margin="{{ (float) $o->amount }}" @endif>
-                                <div class="flex items-start gap-3">
+                                <div class="tr-c-market">
                                     <span class="w-10 h-10 shrink-0 rounded-lg grid place-items-center text-[10px] font-bold {{ $o->side === 'buy' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ $o->side === 'buy' ? 'LONG' : 'SHORT' }}</span>
-                                    <div class="min-w-0 flex-1">
-                                        <div class="text-white font-semibold">{{ $o->symbol }} <span class="text-xs font-normal text-gray-500">{{ ucfirst($o->asset_type) }} · {{ ucfirst($o->order_type) }} · {{ $qty($o->leverage) }}x</span></div>
-                                        <div class="text-xs text-gray-400">{{ ($o->closed_at ?? $o->filled_at ?? $o->created_at)->format('M d, H:i') }}</div>
-                                    </div>
-                                    <div class="text-right">
-                                        @if($isPos)
-                                            <div class="font-mono font-semibold" data-pnl>—</div>
-                                            <div class="font-mono text-xs" data-pnl-pct></div>
-                                        @elseif($pane === 'ordersPane')
-                                            <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-amber-500/15 text-amber-300">Waiting</span>
-                                        @else
-                                            @if($o->status === 'cancelled')
-                                                <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">Cancelled</span>
-                                            @else
-                                                <div class="font-mono font-semibold {{ $pnlCls((float) $o->realized_pnl) }}">{{ $signed((float) $o->realized_pnl) }}</div>
-                                                <div class="text-xs {{ $o->status === 'liquidated' ? 'text-red-400' : 'text-gray-400' }}">{{ $reasonLabel[$o->close_reason] ?? ucfirst($o->status) }}</div>
-                                            @endif
-                                        @endif
+                                    <div class="min-w-0">
+                                        <div class="text-white font-semibold">{{ $o->symbol }} <span class="text-xs font-normal text-gray-500">{{ $qty($o->leverage) }}x</span></div>
+                                        <div class="text-xs text-gray-400 truncate">{{ ucfirst($o->order_type) }} · {{ ($o->closed_at ?? $o->filled_at ?? $o->created_at)->format('M d, H:i') }}</div>
                                     </div>
                                 </div>
-                                <dl class="grid grid-cols-3 md:grid-cols-6 gap-x-3 gap-y-2 mt-3 text-xs">
-                                    <div><dt class="text-gray-500">Size</dt><dd class="font-mono text-gray-200 mt-0.5">{{ $qty($size) }}</dd></div>
-                                    <div><dt class="text-gray-500">Margin</dt><dd class="font-mono text-gray-200 mt-0.5">{{ money($o->amount) }}</dd></div>
+                                <dl class="tr-c-cells">
+                                    <div><dt>Size</dt><dd>{{ $qty($size) }}</dd></div>
+                                    <div><dt>Margin</dt><dd>{{ money($o->amount) }}</dd></div>
                                     @if($pane === 'ordersPane')
-                                        <div><dt class="text-gray-500">Limit price</dt><dd class="font-mono text-gray-200 mt-0.5">{{ money($o->price) }}</dd></div>
+                                        <div><dt>Limit price</dt><dd>{{ money($o->price) }}</dd></div>
                                     @else
-                                        <div><dt class="text-gray-500">Entry</dt><dd class="font-mono text-gray-200 mt-0.5">{{ $o->entry_price ? money($o->entry_price) : '—' }}</dd></div>
+                                        <div><dt>Entry</dt><dd>{{ $o->entry_price ? money($o->entry_price) : '—' }}</dd></div>
                                     @endif
                                     @if($isPos)
-                                        <div><dt class="text-gray-500">Mark</dt><dd class="font-mono text-gray-200 mt-0.5" data-mark>—</dd></div>
-                                        <div><dt class="text-gray-500">Liq. price</dt><dd class="font-mono text-amber-300 mt-0.5">{{ $liq !== null ? money($liq) : '—' }}</dd></div>
-                                    @elseif($pane === 'historyPane' && $o->exit_price)
-                                        <div><dt class="text-gray-500">Exit</dt><dd class="font-mono text-gray-200 mt-0.5">{{ money($o->exit_price) }}</dd></div>
+                                        <div><dt>Mark</dt><dd data-mark>—</dd></div>
+                                        <div><dt>Liq. price</dt><dd class="text-amber-300">{{ $liq !== null ? money($liq) : '—' }}</dd></div>
+                                    @elseif($pane === 'historyPane')
+                                        <div><dt>Exit</dt><dd>{{ $o->exit_price ? money($o->exit_price) : '—' }}</dd></div>
                                     @endif
                                     @if($o->take_profit || $o->stop_loss)
-                                        <div><dt class="text-gray-500">TP / SL</dt><dd class="font-mono text-gray-200 mt-0.5">{{ $o->take_profit ? money($o->take_profit) : '—' }} / {{ $o->stop_loss ? money($o->stop_loss) : '—' }}</dd></div>
+                                        <div><dt>TP / SL</dt><dd>{{ $o->take_profit ? money($o->take_profit) : '—' }} / {{ $o->stop_loss ? money($o->stop_loss) : '—' }}</dd></div>
                                     @endif
                                 </dl>
+                                <div class="tr-c-pnl">
+                                    @if($isPos)
+                                        <div class="font-mono font-semibold" data-pnl>—</div>
+                                        <div class="font-mono text-xs" data-pnl-pct></div>
+                                    @elseif($pane === 'ordersPane')
+                                        <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-amber-500/15 text-amber-300">Waiting</span>
+                                    @elseif($o->status === 'cancelled')
+                                        <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">Cancelled</span>
+                                    @else
+                                        <div class="font-mono font-semibold {{ $pnlCls((float) $o->realized_pnl) }}">{{ $signed((float) $o->realized_pnl) }}</div>
+                                        <div class="text-xs {{ $o->status === 'liquidated' ? 'text-red-400' : 'text-gray-400' }}">{{ $reasonLabel[$o->close_reason] ?? ucfirst($o->status) }}</div>
+                                    @endif
+                                </div>
                                 @if($isPos)
-                                    <button type="button" class="tr-row-btn" data-close-id="{{ $o->id }}" data-label="{{ $o->symbol }} {{ $o->side === 'buy' ? 'long' : 'short' }}">Close position</button>
+                                    <div class="tr-c-act"><button type="button" class="tr-row-btn" data-close-id="{{ $o->id }}" data-label="{{ $o->symbol }} {{ $o->side === 'buy' ? 'long' : 'short' }}">Close</button></div>
                                 @elseif($pane === 'ordersPane')
-                                    <button type="button" class="tr-row-btn is-danger" data-cancel-id="{{ $o->id }}">Cancel order</button>
+                                    <div class="tr-c-act"><button type="button" class="tr-row-btn is-danger" data-cancel-id="{{ $o->id }}">Cancel</button></div>
                                 @endif
                             </li>
                         @endforeach

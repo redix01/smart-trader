@@ -1,254 +1,162 @@
 @extends('dashboard.layout.app')
 
 @section('content')
-<div class="space-y-8">
-    <!-- Trading Balance Card -->
-    <div class="max-w-md mx-auto">
-        <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 border border-blue-500 shadow-lg">
-            <div class="text-center">
-                <h3 class="text-lg font-semibold text-white mb-2">Your Trading Balance</h3>
-                <div class="text-3xl font-bold text-white mb-1">{{ money($user->trading_balance ?? 0, 2) }}</div>
-                <p class="text-blue-100 text-sm">Available for trading</p>
-            </div>
-        </div>
-    </div>
-
+@php
+    $check = '<svg class="w-4 h-4 text-gold-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>';
+    $inputCls = 'w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500';
+@endphp
+<div class="space-y-4 sm:space-y-6">
     <!-- Page Header -->
-    <div class="text-center">
-        <h1 class="text-4xl font-bold text-white mb-2">Trading Plans</h1>
-        <p class="text-xl text-gray-400">Choose your preferred trading plan</p>
+    <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Plans</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-white mt-1">Trading plans</h1>
+            <p class="text-sm text-gray-400 mt-0.5">Pick a plan that matches how much you want to trade with.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="px-3 py-2 rounded-lg border border-gray-700 bg-gray-800">
+                <div class="text-[10px] uppercase tracking-wider text-gray-400">Trading balance</div>
+                <div class="font-mono text-sm font-semibold text-white">{{ money($user->trading_balance ?? 0, 2) }}</div>
+            </div>
+        </div>
     </div>
-
-    <!-- Success/Error Messages -->
-    @if(session('success'))
-        <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                </svg>
-                {{ session('success') }}
-            </div>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                </svg>
-                {{ session('error') }}
-            </div>
-        </div>
-    @endif
 
     <!-- Trading Plans Grid -->
     @if($tradingPlans->count() > 0)
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             @foreach($tradingPlans as $plan)
-                
-                <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300 transform hover:scale-105">
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold text-white mb-2">{{ $plan->name }}</h3>
-                        <div class="text-3xl font-bold text-blue-400 mb-1">{{ $plan->currency }} {{ number_format($plan->min_funding, 2) }}</div>
-                        @if($plan->hasUnlimitedFunding())
-                            <div class="text-sm text-gray-400">- Unlimited</div>
-                        @elseif($plan->max_funding && $plan->max_funding > $plan->min_funding)
-                            <div class="text-sm text-gray-400">- {{ $plan->currency }} {{ number_format($plan->max_funding, 2) }}</div>
-                        @endif
+                <div class="flex flex-col rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6 hover:border-blue-500/60 transition-colors">
+                    <div class="flex items-start justify-between gap-3">
+                        <h3 class="text-base font-semibold text-white">{{ $plan->name }}</h3>
                         @if($plan->duration)
-                            <div class="text-sm text-gray-400 mt-1">{{ $plan->duration }} days</div>
+                            <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300 whitespace-nowrap">{{ $plan->duration }} days</span>
                         @endif
                     </div>
-                    
-                    <div class="space-y-4 mb-8">
+                    <div class="mt-3">
+                        <div class="text-xs text-gray-400">Funding from</div>
+                        <div class="text-2xl sm:text-3xl font-bold text-white font-mono">{{ $plan->currency }} {{ number_format($plan->min_funding, 2) }}</div>
+                        <div class="text-sm text-gray-400 mt-0.5">
+                            @if($plan->hasUnlimitedFunding())
+                                Up to unlimited
+                            @elseif($plan->max_funding && $plan->max_funding > $plan->min_funding)
+                                Up to {{ $plan->currency }} {{ number_format($plan->max_funding, 2) }}
+                            @endif
+                        </div>
+                    </div>
+
+                    <ul class="space-y-2 mt-4 mb-5 text-sm text-gray-300">
                         @if($plan->pairs)
-                            <div class="flex items-center space-x-3">
-                                <svg class="w-5 h-5 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="text-gray-300">{{ $plan->pairs }} Pairs</span>
-                            </div>
+                            <li class="flex items-start gap-2">{!! $check !!}<span>{{ \Illuminate\Support\Str::contains(strtolower($plan->pairs), 'pair') ? $plan->pairs : $plan->pairs.' pairs' }}</span></li>
                         @endif
-                        
                         @if($plan->leverage)
-                            <div class="flex items-center space-x-3">
-                                <svg class="w-5 h-5 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="text-gray-300">Leverage up to 1:{{ number_format($plan->leverage) }}</span>
-                            </div>
+                            <li class="flex items-start gap-2">{!! $check !!}<span>Leverage up to 1:{{ number_format($plan->leverage) }}</span></li>
                         @endif
-                        
                         @if($plan->spreads)
-                            <div class="flex items-center space-x-3">
-                                <svg class="w-5 h-5 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="text-gray-300">Spreads from {{ $plan->spreads }} pips</span>
-                            </div>
+                            <li class="flex items-start gap-2">{!! $check !!}<span>Spreads from {{ $plan->spreads }} pips</span></li>
                         @endif
-                        
                         @if($plan->swap_fees)
-                            <div class="flex items-center space-x-3">
-                                <svg class="w-5 h-5 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="text-gray-300">Swap Fees: {{ $plan->swap_fees }}%</span>
-                            </div>
+                            <li class="flex items-start gap-2">{!! $check !!}<span>Swap fees: {{ $plan->swap_fees }}%</span></li>
                         @endif
-                        
-                        
-                        
                         @if($plan->max_lot_size)
-                            <div class="flex items-center space-x-3">
-                                <svg class="w-5 h-5 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="text-gray-300">Max Lot Size: {{ $plan->max_lot_size }}</span>
-                            </div>
+                            <li class="flex items-start gap-2">{!! $check !!}<span>Max lot size: {{ $plan->max_lot_size }}</span></li>
                         @endif
-                        
                         @if($plan->features)
-                            <div class="flex items-center space-x-3">
-                                <svg class="w-5 h-5 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="text-gray-300">{{ $plan->features }}</span>
-                            </div>
+                            <li class="flex items-start gap-2">{!! $check !!}<span>{{ $plan->features }}</span></li>
                         @endif
-                    </div>
-                    
-                    <button 
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 transform hover:scale-105"
-                        onclick="subscribeToPlan({{ $plan->id }}, '{{ $plan->name }}', {{ $plan->min_funding }}, '{{ $plan->currency }}')"
+                    </ul>
+
+                    <button type="button"
+                        class="mt-auto w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold"
+                        onclick="subscribeToPlan({{ $plan->id }}, @js($plan->name), {{ $plan->min_funding }}, @js($plan->currency))"
                     >
-                        SUBSCRIBE NOW
+                        Subscribe
                     </button>
                 </div>
             @endforeach
         </div>
     @else
         <!-- No Plans Available -->
-        <div class="max-w-2xl mx-auto text-center">
-            <div class="bg-gray-800 rounded-xl p-8 border border-gray-700">
-                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                <h3 class="text-xl font-semibold text-white mb-2">No Trading Plans Available</h3>
-                <p class="text-gray-400">Currently there are no active trading plans. Please check back later or contact support for more information.</p>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-8 text-center">
+            <div class="w-12 h-12 rounded-full bg-gray-700 grid place-items-center mx-auto">
+                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg>
             </div>
+            <h3 class="text-white font-medium mt-3">No trading plans available</h3>
+            <p class="text-sm text-gray-400 mt-1">There are no active trading plans right now. Check back later or contact support.</p>
         </div>
     @endif
 
     <!-- Additional Information -->
-    <div class="max-w-4xl mx-auto mt-12">
-        <div class="bg-gray-800 rounded-xl p-8 border border-gray-700">
-            <h2 class="text-2xl font-bold text-white mb-6 text-center">Trading Plan Benefits</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-4">
-                    <div class="flex items-start space-x-3">
-                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-white">Professional Trading Tools</h3>
-                            <p class="text-gray-400">Access to advanced charting, technical analysis, and real-time market data.</p>
-                        </div>
+    <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6">
+        <h2 class="text-base font-semibold text-white">Included with every plan</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4">
+            @foreach([
+                ['Professional trading tools', 'Advanced charting, technical analysis and real-time market data.'],
+                ['Risk management', 'Built-in stop-loss, take-profit and position sizing to protect your capital.'],
+                ['24/7 support', 'Round-the-clock help with any trading question.'],
+                ['Educational resources', 'Trading guides, webinars and market analysis to build your skills.'],
+            ] as [$title, $text])
+                <div class="flex items-start gap-3 rounded-xl border border-gray-700 bg-gray-900/50 p-4">
+                    <div class="w-8 h-8 rounded-full bg-blue-600/15 text-gold-400 grid place-items-center shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>
                     </div>
-                    <div class="flex items-start space-x-3">
-                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-white">Risk Management</h3>
-                            <p class="text-gray-400">Built-in stop-loss, take-profit, and position sizing tools to protect your capital.</p>
-                        </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-white">{{ $title }}</h3>
+                        <p class="text-sm text-gray-400 mt-0.5">{{ $text }}</p>
                     </div>
                 </div>
-                <div class="space-y-4">
-                    <div class="flex items-start space-x-3">
-                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-white">24/7 Support</h3>
-                            <p class="text-gray-400">Round-the-clock customer support to help you with any trading questions.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-3">
-                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-white">Educational Resources</h3>
-                            <p class="text-gray-400">Comprehensive trading guides, webinars, and market analysis to improve your skills.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </div>
 
 <!-- Subscribe Modal -->
-<div id="subscribeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md border border-gray-700">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-white">Subscribe to Plan</h3>
-                <button onclick="closeSubscribeModal()" class="text-gray-400 hover:text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
+<div id="subscribeModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50">
+    <div class="flex items-end sm:items-center justify-center min-h-full sm:p-4" onclick="if (event.target === this) closeSubscribeModal()">
+        <div class="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-gray-800 border border-gray-700 max-h-[92vh] overflow-y-auto">
+            <div class="flex justify-between items-center px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-700">
+                <h3 class="text-lg font-semibold text-white">Subscribe to plan</h3>
+                <button type="button" onclick="closeSubscribeModal()" class="w-10 h-10 -mr-2 grid place-items-center text-gray-400 hover:text-white" aria-label="Close">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            
-            <form id="subscribeForm" method="POST" action="">
+
+            <form id="subscribeForm" method="POST" action="" class="p-4 sm:p-6">
                 @csrf
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Plan Name</label>
-                        <input type="text" id="planName" readonly class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white">
+                        <label for="planName" class="block text-sm font-medium text-gray-300 mb-1.5">Plan</label>
+                        <input type="text" id="planName" readonly class="{{ $inputCls }} text-gray-300">
                     </div>
-                    
-                    <div id="planFundingRange" class="p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg hidden">
-                        <div class="text-sm text-blue-300">
-                            <strong>Funding Range:</strong> <span id="fundingRangeText"></span>
+
+                    <div id="planFundingRange" class="px-4 py-3 rounded-xl border border-gray-700 bg-gray-900/50 hidden">
+                        <div class="text-sm text-gray-300">
+                            <span class="text-gray-400">Funding range:</span> <span id="fundingRangeText" class="font-mono text-white"></span>
                         </div>
                     </div>
-                    
+
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Amount to Pay</label>
-                        <input type="number" id="amountPaid" name="amount_paid" step="0.01" required class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500" oninput="checkBalance()" onchange="checkBalance()" placeholder="Enter amount within plan limits">
-                        <p class="text-xs text-gray-400 mt-1">Amount must be within the plan's funding range</p>
+                        <label for="amountPaid" class="block text-sm font-medium text-gray-300 mb-1.5">Amount to pay</label>
+                        <input type="number" id="amountPaid" name="amount_paid" step="0.01" required inputmode="decimal" class="{{ $inputCls }} font-mono" oninput="checkBalance()" onchange="checkBalance()" placeholder="Enter amount within plan limits">
+                        <p class="text-xs text-gray-500 mt-1">Must be within the plan's funding range.</p>
                     </div>
-                    
+
                     <!-- Balance Check Section -->
                     <div id="balanceCheckSection" class="hidden">
-                        <div class="p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
+                        <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/30">
                             <div class="text-sm text-red-400 mb-3">
-                                <strong>Insufficient Trading Balance</strong><br>
-                                Your current trading balance: <strong>{{ money($user->trading_balance ?? 0, 2) }}</strong><br>
-                                Amount needed: <strong>$<span id="amountNeeded"></span></strong>
+                                <strong>Insufficient trading balance</strong><br>
+                                Your trading balance: <strong>{{ money($user->trading_balance ?? 0, 2) }}</strong><br>
+                                Amount needed: <strong>{{ currency_symbol() }}<span id="amountNeeded"></span></strong>
                             </div>
-                            <button type="button" onclick="openFundAccountModal()" class="w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm">
-                                Fund Your Trading Account
+                            <button type="button" onclick="openFundAccountModal()" class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                                Fund your trading account
                             </button>
                         </div>
                     </div>
-                    
+
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Currency</label>
-                        <select name="currency" id="currency" required class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                        <label for="currency" class="block text-sm font-medium text-gray-300 mb-1.5">Currency</label>
+                        <select name="currency" id="currency" required class="{{ $inputCls }}">
                             <option value="USD">USD</option>
                             <option value="EUR">EUR</option>
                             <option value="GBP">GBP</option>
@@ -261,18 +169,18 @@
                             <option value="BRL">BRL</option>
                         </select>
                     </div>
-                    
+
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Notes (Optional)</label>
-                        <textarea name="notes" rows="3" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Any additional notes..."></textarea>
+                        <label for="subscribeNotes" class="block text-sm font-medium text-gray-300 mb-1.5">Notes <span class="text-gray-500">(optional)</span></label>
+                        <textarea id="subscribeNotes" name="notes" rows="3" class="{{ $inputCls }}" placeholder="Any additional notes..."></textarea>
                     </div>
                 </div>
-                
-                <div class="flex space-x-3 mt-6">
-                    <button type="button" onclick="closeSubscribeModal()" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+
+                <div class="flex gap-3 mt-6">
+                    <button type="button" onclick="closeSubscribeModal()" class="flex-1 inline-flex items-center justify-center px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
                         Cancel
                     </button>
-                    <button type="submit" id="subscribeButton" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button type="submit" id="subscribeButton" class="flex-[2] inline-flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
                         Subscribe
                     </button>
                 </div>
@@ -282,67 +190,74 @@
 </div>
 
 <!-- Fund Trading Modal -->
-<div id="fundTradingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md border border-gray-700">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-white">Fund Your Trading Account</h3>
-                <button onclick="closeFundTradingModal()" class="text-gray-400 hover:text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
+<div id="fundTradingModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50">
+    <div class="flex items-end sm:items-center justify-center min-h-full sm:p-4" onclick="if (event.target === this) closeFundTradingModal()">
+        <div class="w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-gray-800 border border-gray-700 max-h-[92vh] overflow-y-auto">
+            <div class="flex justify-between items-center px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-700">
+                <h3 class="text-lg font-semibold text-white">Fund your trading account</h3>
+                <button type="button" onclick="closeFundTradingModal()" class="w-10 h-10 -mr-2 grid place-items-center text-gray-400 hover:text-white" aria-label="Close">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            
-                            <div class="mb-4 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
-                <div class="text-sm text-blue-300">
-                    <strong>Current Trading Balance:</strong> {{ money($user->trading_balance ?? 0, 2) }}<br>
-                    <strong>Amount to Deposit:</strong> $<span id="fundAmountDisplay"></span>
+
+            <div class="p-4 sm:p-6">
+                <div class="mb-4 grid grid-cols-2 gap-2">
+                    <div class="rounded-xl border border-gray-700 bg-gray-900/50 px-3 py-2.5">
+                        <div class="text-xs text-gray-400">Trading balance</div>
+                        <div class="text-sm font-semibold text-white font-mono">{{ money($user->trading_balance ?? 0, 2) }}</div>
+                    </div>
+                    <div class="rounded-xl border border-gray-700 bg-gray-900/50 px-3 py-2.5">
+                        <div class="text-xs text-gray-400">To deposit</div>
+                        <div class="text-sm font-semibold text-white font-mono">{{ currency_symbol() }}<span id="fundAmountDisplay"></span></div>
+                    </div>
                 </div>
+
+                <form id="fundTradingForm" method="POST" action="{{ route('user.payment') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="space-y-4">
+                        <div>
+                            <label for="fundAmount" class="block text-sm font-medium text-gray-300 mb-1.5">Deposit amount</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-mono">{{ currency_symbol() }}</span>
+                                <input type="number" id="fundAmount" name="amount" step="0.01" required inputmode="decimal" class="{{ $inputCls }} pl-8 font-mono" placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="fundWalletType" class="block text-sm font-medium text-gray-300 mb-1.5">Wallet</label>
+                            <select id="fundWalletType" name="wallet_type" required class="{{ $inputCls }}">
+                                <option value="trading">Trading Balance</option>
+                                <option value="holding">Holding Balance</option>
+                                <option value="staking">Staking Balance</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="fundPaymentMethod" class="block text-sm font-medium text-gray-300 mb-1.5">Payment method</label>
+                            <select id="fundPaymentMethod" name="payment_method_id" required class="{{ $inputCls }}">
+                                @foreach(\App\Models\PaymentMethod::where('is_active', true)->get() as $method)
+                                    <option value="{{ $method->id }}">{{ $method->crypto_display_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="fundProof" class="block text-sm font-medium text-gray-300 mb-1.5">Proof of payment</label>
+                            <input type="file" id="fundProof" name="proof" required accept="image/*,.pdf" class="{{ $inputCls }} text-sm file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-gray-700 file:text-white">
+                            <p class="text-xs text-gray-500 mt-1">Upload a screenshot or PDF of your payment.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 mt-6">
+                        <button type="button" onclick="closeFundTradingModal()" class="flex-1 inline-flex items-center justify-center px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
+                            Cancel
+                        </button>
+                        <button type="submit" class="flex-[2] inline-flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                            Submit deposit
+                        </button>
+                    </div>
+                </form>
             </div>
-            
-            <form id="fundTradingForm" method="POST" action="{{ route('user.payment') }}" enctype="multipart/form-data">
-                @csrf
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Deposit Amount</label>
-                        <input type="number" id="fundAmount" name="amount" step="0.01" required class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Enter amount to deposit">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Wallet Type</label>
-                        <select name="wallet_type" required class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                            <option value="trading">Trading Balance</option>
-                            <option value="holding">Holding Balance</option>
-                            <option value="staking">Staking Balance</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Payment Method</label>
-                        <select name="payment_method_id" required class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                            @foreach(\App\Models\PaymentMethod::where('is_active', true)->get() as $method)
-                                <option value="{{ $method->id }}">{{ $method->crypto_display_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Proof of Payment</label>
-                        <input type="file" name="proof" required accept="image/*,.pdf" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                        <p class="text-xs text-gray-400 mt-1">Upload screenshot or PDF of your payment</p>
-                    </div>
-                </div>
-                
-                <div class="flex space-x-3 mt-6">
-                    <button type="button" onclick="closeFundTradingModal()" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
-                        Cancel
-                    </button>
-                    <button type="submit" class="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
-                        Submit Deposit
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 </div>

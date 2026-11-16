@@ -162,7 +162,7 @@ canvas{max-width:100%}
 .tr-seg button.is-on{background:var(--surface-2);color:#fff}
 .tr-chart{height:clamp(300px,52vh,460px)}
 @media (min-width:768px){.tr-chart{height:480px}}
-@media (min-width:1536px){.tr-chart{height:auto}}
+@media (min-width:1536px){.tr-chart{height:auto;min-height:560px}}
 .tr-stat b{font-size:14px}
 @media (max-width:639px){.tr-stat{min-width:0;padding:8px 12px}.tr-stat span{font-size:10px}}
 
@@ -197,3 +197,18 @@ canvas{max-width:100%}
 .tr-targets summary::-webkit-details-marker{display:none}
 .tr-targets summary::before{content:"+";display:inline-block;width:14px;color:var(--accent-hi)}
 .tr-targets[open] summary::before{content:"−"}
+
+/* Trade Room rows: card on phones, one aligned row from md */
+.tr-order{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"market pnl" "cells cells" "act act";gap:12px;padding:16px}
+.tr-c-market{grid-area:market;display:flex;align-items:center;gap:12px;min-width:0}
+.tr-c-pnl{grid-area:pnl;text-align:right;align-self:center}
+.tr-c-cells{grid-area:cells;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 12px;margin:0}
+.tr-c-cells dt{font-size:11px;color:var(--muted)}
+.tr-c-cells dd{margin:2px 0 0;font:500 12.5px var(--mono);color:#dbe3f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr-c-act{grid-area:act}
+.tr-c-act .tr-row-btn{margin-top:0}
+@media (min-width:768px){
+  .tr-order{grid-template-columns:minmax(150px,1.1fr) minmax(0,4fr) minmax(110px,auto) 96px;grid-template-areas:"market cells pnl act";align-items:center;padding:12px 20px}
+  .tr-c-cells{grid-template-columns:repeat(auto-fit,minmax(88px,1fr))}
+  .tr-c-act .tr-row-btn{width:100%;padding:7px 0}
+}

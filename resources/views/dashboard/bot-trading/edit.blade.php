@@ -1,86 +1,79 @@
 @extends('dashboard.layout.app')
 
 @section('content')
-<div class="p-6">
-    <!-- Page Header -->
-    <div class="mb-6">
-        <div class="flex flex-col gap-4">
-            <!-- Title Section -->
-            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-white">Edit Bot: {{ $bot->name }}</h1>
-                    <p class="text-gray-400">{{ $bot->base_asset }}/{{ $bot->quote_asset }} • {{ ucfirst($bot->strategy) }} Strategy</p>
-                </div>
-            </div>
-            
-            <!-- Buttons Section -->
-            <div class="flex flex-col sm:flex-row sm:justify-end gap-3">
-                <a href="{{ route('user.botTrading.show', $bot) }}" class="w-full sm:w-auto px-4 py-3 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors text-center flex items-center justify-center space-x-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                    <span>Back to Bot</span>
-                </a>
-                <button id="editBotBtn" class="w-full sm:w-auto px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors text-center">
-                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                    </svg>
-                    Edit Bot Settings
-                </button>
-            </div>
+<div class="space-y-4 sm:space-y-6">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+        <div class="min-w-0">
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Bot trading</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-white mt-1 break-words">Edit {{ $bot->name }}</h1>
+            <p class="text-sm text-gray-400 mt-0.5"><span class="font-mono">{{ $bot->base_asset }}/{{ $bot->quote_asset }}</span> · {{ ucfirst(str_replace('_', ' ', $bot->strategy)) }} strategy. Review the current settings, then edit them.</p>
+        </div>
+        <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
+            <a href="{{ route('user.botTrading.show', $bot) }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                <span>Back</span>
+            </a>
+            <button id="editBotBtn" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                Edit settings
+            </button>
         </div>
     </div>
 
     <!-- Bot Information Cards -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <!-- Current Settings -->
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h3 class="text-lg font-medium text-white mb-4">Current Settings</h3>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6">
+            <h3 class="text-base font-semibold text-white mb-4">Current Settings</h3>
             <div class="space-y-3">
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Bot Name:</span>
                     <span class="text-white">{{ $bot->name }}</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Trading Pair:</span>
                     <span class="text-white">{{ $bot->base_asset }}/{{ $bot->quote_asset }}</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Strategy:</span>
                     <span class="text-white">{{ ucfirst(str_replace('_', ' ', $bot->strategy)) }}</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Leverage:</span>
                     <span class="text-white">{{ $bot->leverage }}x</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Max Investment:</span>
                     <span class="text-white">{{ money($bot->max_investment, 2) }}</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Trade Duration:</span>
                     <span class="text-white">{{ $bot->trade_duration }}</span>
                 </div>
                 @if($bot->target_yield_percentage)
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Target Yield:</span>
                     <span class="text-white">{{ $bot->target_yield_percentage }}%</span>
                 </div>
                 @endif
                 @if($bot->stop_loss_percentage)
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Stop Loss:</span>
                     <span class="text-white">{{ $bot->stop_loss_percentage }}%</span>
                 </div>
                 @endif
                 @if($bot->take_profit_percentage)
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Take Profit:</span>
                     <span class="text-white">{{ $bot->take_profit_percentage }}%</span>
                 </div>
                 @endif
                 @if($bot->daily_loss_limit)
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Daily Loss Limit:</span>
                     <span class="text-white">{{ money($bot->daily_loss_limit, 2) }}</span>
                 </div>
@@ -89,46 +82,46 @@
         </div>
 
         <!-- Performance Summary -->
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h3 class="text-lg font-medium text-white mb-4">Performance Summary</h3>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6">
+            <h3 class="text-base font-semibold text-white mb-4">Performance Summary</h3>
             <div class="space-y-3">
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Status:</span>
                     <span class="px-2 py-1 rounded text-sm font-medium 
-                        @if($bot->status === 'active') bg-green-900 text-green-300
-                        @elseif($bot->status === 'paused') bg-yellow-900 text-yellow-300
-                        @else bg-red-900 text-red-300 @endif">
+                        @if($bot->status === 'active') bg-emerald-500/15 text-emerald-400
+                        @elseif($bot->status === 'paused') bg-amber-500/15 text-amber-300
+                        @else bg-red-500/15 text-red-400 @endif">
                         {{ ucfirst($bot->status) }}
                     </span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Total Trades:</span>
                     <span class="text-white">{{ $bot->total_trades }}</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Total Invested:</span>
                     <span class="text-white">{{ money($bot->total_invested, 2) }}</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Total Profit:</span>
-                    <span class="text-white {{ $bot->total_profit >= 0 ? 'text-green-400' : 'text-red-400' }}">
+                    <span class="text-white {{ $bot->total_profit >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
                         {{ money($bot->total_profit, 2) }}
                     </span>
                 </div>
                 @if($bot->success_rate)
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Success Rate:</span>
                     <span class="text-white">{{ number_format($bot->success_rate, 1) }}%</span>
                 </div>
                 @endif
                 @if($bot->started_at)
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Started:</span>
                     <span class="text-white">{{ $bot->started_at->format('M d, Y H:i') }}</span>
                 </div>
                 @endif
                 @if($bot->last_trade_at)
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-3 text-sm">
                     <span class="text-gray-400">Last Trade:</span>
                     <span class="text-white">{{ $bot->last_trade_at->format('M d, Y H:i') }}</span>
                 </div>
@@ -138,14 +131,14 @@
     </div>
 
     <!-- Important Notice -->
-    <div class="bg-blue-900/20 border border-blue-700 rounded-lg p-4 mb-6">
-        <div class="flex items-start space-x-3">
+    <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
+        <div class="flex items-start gap-3">
             <svg class="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
             </svg>
             <div>
-                <h4 class="text-blue-400 font-medium mb-1">Editing Restrictions</h4>
-                <p class="text-blue-300 text-sm">
+                <h4 class="text-white font-medium mb-1">What you can change</h4>
+                <p class="text-gray-400 text-sm">
                     For security and consistency reasons, some bot settings cannot be modified after creation. 
                     You can edit the bot name, investment amounts, risk management settings, and trading parameters, 
                     but the trading pair, strategy type, and leverage cannot be changed.
@@ -156,39 +149,39 @@
 </div>
 
 <!-- Edit Bot Modal -->
-<div id="editBotModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full border border-gray-700 max-h-[90vh] overflow-hidden flex flex-col">
+<div id="editBotModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden overflow-y-auto">
+    <div class="flex items-end sm:items-center justify-center min-h-full sm:p-4">
+        <div class="w-full max-w-2xl rounded-t-2xl sm:rounded-2xl bg-gray-800 border border-gray-700 max-h-[92vh] overflow-hidden flex flex-col">
             <!-- Modal Header -->
-            <div class="flex items-center justify-between p-6 border-b border-gray-700">
+            <div class="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-gray-700">
                 <div>
-                    <h3 class="text-xl font-semibold text-white">Edit Bot Settings</h3>
+                    <h3 class="text-base font-semibold text-white">Edit bot settings</h3>
                     <p class="text-gray-400 text-sm mt-1">Update your bot configuration</p>
                 </div>
-                <button id="closeEditModal" class="text-gray-400 hover:text-white transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button id="closeEditModal" class="w-10 h-10 -mr-2 shrink-0 grid place-items-center rounded-lg text-gray-400 hover:text-white hover:bg-gray-700" aria-label="Close">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
 
             <!-- Modal Body -->
-            <div class="p-6 overflow-y-auto flex-1">
+            <div class="p-4 sm:p-6 overflow-y-auto flex-1">
                 <form id="editBotForm" class="space-y-6">
                     @csrf
                     @method('PUT')
                     
                     <!-- Basic Information -->
                     <div>
-                        <h4 class="text-lg font-medium text-white mb-4">Basic Information</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h4 class="text-base font-semibold text-white mb-3">Basic Information</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Bot Name</label>
-                                <input type="text" name="name" value="{{ $bot->name }}" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="My BTC Bot">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Bot Name</label>
+                                <input type="text" name="name" value="{{ $bot->name }}" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="My BTC Bot">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Trading Pair</label>
-                                <input type="text" value="{{ $bot->base_asset }}/{{ $bot->quote_asset }}" class="w-full px-3 py-2 bg-gray-600 border border-gray-600 rounded text-gray-400 cursor-not-allowed" disabled>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Trading Pair</label>
+                                <input type="text" value="{{ $bot->base_asset }}/{{ $bot->quote_asset }}" class="w-full px-3 py-2.5 rounded-lg bg-gray-700/60 border border-gray-600 text-gray-400 cursor-not-allowed" disabled>
                                 <div class="mt-1 text-xs text-gray-500">Cannot be changed after creation</div>
                             </div>
                         </div>
@@ -196,15 +189,15 @@
 
                     <!-- Investment Settings -->
                     <div>
-                        <h4 class="text-lg font-medium text-white mb-4">Investment Settings</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h4 class="text-base font-semibold text-white mb-3">Investment Settings</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Max Investment ({{ auth()->user()->currency ?? 'USD' }})</label>
-                                <input type="number" name="max_investment" value="{{ $bot->max_investment }}" step="0.01" min="10" max="1000000" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="1000.00">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Max Investment ({{ auth()->user()->currency ?? 'USD' }})</label>
+                                <input type="number" name="max_investment" value="{{ $bot->max_investment }}" step="0.01" min="10" max="1000000" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="1000.00">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Leverage</label>
-                                <input type="text" value="{{ $bot->leverage }}x" class="w-full px-3 py-2 bg-gray-600 border border-gray-600 rounded text-gray-400 cursor-not-allowed" disabled>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Leverage</label>
+                                <input type="text" value="{{ $bot->leverage }}x" class="w-full px-3 py-2.5 rounded-lg bg-gray-700/60 border border-gray-600 text-gray-400 cursor-not-allowed" disabled>
                                 <div class="mt-1 text-xs text-gray-500">Cannot be changed after creation</div>
                             </div>
                         </div>
@@ -212,11 +205,11 @@
 
                     <!-- Trading Parameters -->
                     <div>
-                        <h4 class="text-lg font-medium text-white mb-4">Trading Parameters</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h4 class="text-base font-semibold text-white mb-3">Trading Parameters</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Trade Duration</label>
-                                <select name="trade_duration" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Trade Duration</label>
+                                <select name="trade_duration" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     <option value="1h" {{ $bot->trade_duration === '1h' ? 'selected' : '' }}>1 Hour</option>
                                     <option value="4h" {{ $bot->trade_duration === '4h' ? 'selected' : '' }}>4 Hours</option>
                                     <option value="24h" {{ $bot->trade_duration === '24h' ? 'selected' : '' }}>24 Hours</option>
@@ -225,53 +218,53 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Target Yield (%)</label>
-                                <input type="number" name="target_yield_percentage" value="{{ $bot->target_yield_percentage }}" step="0.1" min="0.1" max="100" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="5.0">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Target Yield (%)</label>
+                                <input type="number" name="target_yield_percentage" value="{{ $bot->target_yield_percentage }}" step="0.1" min="0.1" max="100" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="5.0">
                             </div>
                         </div>
                     </div>
 
                     <!-- Risk Management -->
                     <div>
-                        <h4 class="text-lg font-medium text-white mb-4">Risk Management</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h4 class="text-base font-semibold text-white mb-3">Risk Management</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Stop Loss (%)</label>
-                                <input type="number" name="stop_loss_percentage" value="{{ $bot->stop_loss_percentage }}" step="0.1" min="0.1" max="50" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10.0">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Stop Loss (%)</label>
+                                <input type="number" name="stop_loss_percentage" value="{{ $bot->stop_loss_percentage }}" step="0.1" min="0.1" max="50" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10.0">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Take Profit (%)</label>
-                                <input type="number" name="take_profit_percentage" value="{{ $bot->take_profit_percentage }}" step="0.1" min="0.1" max="1000" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="20.0">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Take Profit (%)</label>
+                                <input type="number" name="take_profit_percentage" value="{{ $bot->take_profit_percentage }}" step="0.1" min="0.1" max="1000" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="20.0">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Daily Loss Limit ({{ auth()->user()->currency ?? 'USD' }})</label>
-                                <input type="number" name="daily_loss_limit" value="{{ $bot->daily_loss_limit }}" step="0.01" min="1" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="100.00">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Daily Loss Limit ({{ auth()->user()->currency ?? 'USD' }})</label>
+                                <input type="number" name="daily_loss_limit" value="{{ $bot->daily_loss_limit }}" step="0.01" min="1" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="100.00">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Max Open Trades</label>
-                                <input type="number" name="max_open_trades" value="{{ $bot->max_open_trades }}" min="1" max="50" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="5">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Max Open Trades</label>
+                                <input type="number" name="max_open_trades" value="{{ $bot->max_open_trades }}" min="1" max="50" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="5">
                             </div>
                         </div>
                     </div>
 
                     <!-- Trade Amounts -->
                     <div>
-                        <h4 class="text-lg font-medium text-white mb-4">Trade Amounts</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h4 class="text-base font-semibold text-white mb-3">Trade Amounts</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Min Trade Amount ({{ auth()->user()->currency ?? 'USD' }})</label>
-                                <input type="number" name="min_trade_amount" value="{{ $bot->min_trade_amount }}" step="0.01" min="1" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10.00">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Min Trade Amount ({{ auth()->user()->currency ?? 'USD' }})</label>
+                                <input type="number" name="min_trade_amount" value="{{ $bot->min_trade_amount }}" step="0.01" min="1" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10.00">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Max Trade Amount ({{ auth()->user()->currency ?? 'USD' }})</label>
-                                <input type="number" name="max_trade_amount" value="{{ $bot->max_trade_amount }}" step="0.01" min="1" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="100.00">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Max Trade Amount ({{ auth()->user()->currency ?? 'USD' }})</label>
+                                <input type="number" name="max_trade_amount" value="{{ $bot->max_trade_amount }}" step="0.01" min="1" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="100.00">
                             </div>
                         </div>
                     </div>
 
                     <!-- Auto Settings -->
                     <div>
-                        <h4 class="text-lg font-medium text-white mb-4">Auto Settings</h4>
+                        <h4 class="text-base font-semibold text-white mb-3">Auto Settings</h4>
                         <div class="space-y-3">
                             <div class="flex items-center">
                                 <input type="checkbox" name="auto_close" {{ $bot->auto_close ? 'checked' : '' }} class="text-blue-600 bg-gray-700 border-gray-600 rounded">
@@ -291,11 +284,11 @@
             </div>
 
             <!-- Modal Footer -->
-            <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-700">
-                <button id="cancelEditBtn" class="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
+            <div class="grid grid-cols-2 sm:flex sm:justify-end gap-3 px-4 sm:px-6 py-4 border-t border-gray-700">
+                <button id="cancelEditBtn" class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
                     Cancel
                 </button>
-                <button id="submitEditBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                <button id="submitEditBtn" class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
                     Update Bot
                 </button>
             </div>
@@ -304,18 +297,18 @@
 </div>
 
 <!-- Success/Error Modals -->
-<div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-gray-800 rounded-lg shadow-xl max-w-md w-full border border-gray-700">
+<div id="successModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden">
+    <div class="flex items-end sm:items-center justify-center min-h-full sm:p-4">
+        <div class="w-full max-w-md rounded-t-2xl sm:rounded-2xl bg-gray-800 border border-gray-700 max-h-[92vh] overflow-y-auto">
             <div class="p-6 text-center">
-                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <div class="w-12 h-12 bg-emerald-500/15 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-6 h-6 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                     </svg>
                 </div>
                 <h3 class="text-lg font-medium text-white mb-2" id="successTitle">Success!</h3>
                 <p class="text-gray-400 mb-6" id="successMessage">Bot updated successfully.</p>
-                <button id="closeSuccessModal" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-colors">
+                <button id="closeSuccessModal" class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
                     Close
                 </button>
             </div>
@@ -323,18 +316,18 @@
     </div>
 </div>
 
-<div id="errorModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-gray-800 rounded-lg shadow-xl max-w-md w-full border border-gray-700">
+<div id="errorModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden">
+    <div class="flex items-end sm:items-center justify-center min-h-full sm:p-4">
+        <div class="w-full max-w-md rounded-t-2xl sm:rounded-2xl bg-gray-800 border border-gray-700 max-h-[92vh] overflow-y-auto">
             <div class="p-6 text-center">
-                <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <div class="w-12 h-12 bg-red-500/15 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-6 h-6 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                     </svg>
                 </div>
                 <h3 class="text-lg font-medium text-white mb-2" id="errorTitle">Error!</h3>
                 <p class="text-gray-400 mb-6" id="errorMessage">An error occurred. Please try again.</p>
-                <button id="closeErrorModal" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition-colors">
+                <button id="closeErrorModal" class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
                     Close
                 </button>
             </div>

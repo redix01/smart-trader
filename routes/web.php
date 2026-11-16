@@ -330,41 +330,43 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
 
     // Signal Routes
     Route::get('signals', [UserSignalController::class, 'index'])->name('signals.index');
+    // Fixed paths must come before the {signal} wildcard or they resolve as a signal id (404).
+    Route::get('signals/statistics', [UserSignalController::class, 'statistics'])->name('signals.statistics');
     Route::get('signals/{signal}', [UserSignalController::class, 'show'])->name('signals.show');
     Route::post('signals/{signal}/copy', [UserSignalController::class, 'copySignal'])->name('signals.copy');
-    Route::get('signals/statistics', [UserSignalController::class, 'statistics'])->name('signals.statistics');
 
     // Signal Subscription Routes
     Route::get('signal-subscriptions', [SignalSubscriptionController::class, 'index'])->name('signal-subscriptions.index');
     Route::get('signal-subscriptions/create', [SignalSubscriptionController::class, 'create'])->name('signal-subscriptions.create');
     Route::post('signal-subscriptions', [SignalSubscriptionController::class, 'store'])->name('signal-subscriptions.store');
+    // These had no views; the index lists active and past subscriptions. Declared before the {subscription} wildcard.
+    Route::redirect('signal-subscriptions/active', '/user/signal-subscriptions')->name('signal-subscriptions.active');
+    Route::redirect('signal-subscriptions/history', '/user/signal-subscriptions')->name('signal-subscriptions.history');
     Route::get('signal-subscriptions/{subscription}', [SignalSubscriptionController::class, 'show'])->name('signal-subscriptions.show');
     Route::get('signal-subscriptions/{subscription}/edit', [SignalSubscriptionController::class, 'edit'])->name('signal-subscriptions.edit');
     Route::put('signal-subscriptions/{subscription}', [SignalSubscriptionController::class, 'update'])->name('signal-subscriptions.update');
     Route::delete('signal-subscriptions/{subscription}', [SignalSubscriptionController::class, 'cancel'])->name('signal-subscriptions.cancel');
     Route::post('signal-subscriptions/{subscription}/renew', [SignalSubscriptionController::class, 'renew'])->name('signal-subscriptions.renew');
-    Route::get('signal-subscriptions/active', [SignalSubscriptionController::class, 'active'])->name('signal-subscriptions.active');
-    Route::get('signal-subscriptions/history', [SignalSubscriptionController::class, 'history'])->name('signal-subscriptions.history');
 
     // Staking Routes
     Route::get('staking', [UserStakingController::class, 'index'])->name('staking.index');
     Route::get('staking/create', [UserStakingController::class, 'create'])->name('staking.create');
     Route::post('staking', [UserStakingController::class, 'store'])->name('staking.store');
+    Route::get('staking/statistics', [UserStakingController::class, 'statistics'])->name('staking.statistics');
     Route::get('staking/{staking}', [UserStakingController::class, 'show'])->name('staking.show');
     Route::post('staking/{staking}/cancel', [UserStakingController::class, 'cancel'])->name('staking.cancel');
     Route::post('staking/{staking}/withdraw', [UserStakingController::class, 'withdraw'])->name('staking.withdraw');
-    Route::get('staking/statistics', [UserStakingController::class, 'statistics'])->name('staking.statistics');
 
     // Mining Routes
     Route::get('mining', [UserMiningController::class, 'index'])->name('mining.index');
     Route::get('mining/create', [UserMiningController::class, 'create'])->name('mining.create');
     Route::post('mining', [UserMiningController::class, 'store'])->name('mining.store');
+    Route::get('mining/statistics', [UserMiningController::class, 'statistics'])->name('mining.statistics');
     Route::get('mining/{mining}', [UserMiningController::class, 'show'])->name('mining.show');
     Route::post('mining/{mining}/cancel', [UserMiningController::class, 'cancel'])->name('mining.cancel');
     Route::post('mining/{mining}/suspend', [UserMiningController::class, 'suspend'])->name('mining.suspend');
     Route::post('mining/{mining}/resume', [UserMiningController::class, 'resume'])->name('mining.resume');
     Route::post('mining/{mining}/withdraw', [UserMiningController::class, 'withdraw'])->name('mining.withdraw');
-    Route::get('mining/statistics', [UserMiningController::class, 'statistics'])->name('mining.statistics');
 
     // Portfolio Routes
     Route::get('portfolio', [PortfolioController::class, 'index'])->name('portfolio.index');

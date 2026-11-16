@@ -1,146 +1,93 @@
 @extends('dashboard.layout.app')
 
 @section('content')
-<div class="space-y-6">
-    <!-- Page Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+@php
+    $u = auth()->user();
+    $badge = 'px-2 py-0.5 rounded-md text-xs font-semibold ';
+    // Withdrawal: 1 = successful, 2 = declined, else pending. Transfer: string status.
+    $wdStatus = fn ($s) => $s == 1 ? ['Successful', 'bg-emerald-500/15 text-emerald-400'] : ($s == 2 ? ['Declined', 'bg-red-500/15 text-red-400'] : ['Pending', 'bg-amber-500/15 text-amber-300']);
+    $trStatus = fn ($s) => match ($s) {
+        'completed' => ['Completed', 'bg-emerald-500/15 text-emerald-400'],
+        'pending' => ['Pending', 'bg-amber-500/15 text-amber-300'],
+        'failed' => ['Failed', 'bg-red-500/15 text-red-400'],
+        default => ['Unknown', 'bg-gray-700 text-gray-300'],
+    };
+@endphp
+<div class="space-y-4 sm:space-y-6">
+    <div class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-white">Withdrawals & Transfers</h1>
-            <p class="text-gray-400 mt-1">Manage your withdrawals and transfer funds between accounts</p>
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Wallet</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-white mt-1">Withdraw &amp; transfer</h1>
+            <p class="text-sm text-gray-400 mt-0.5">Cash out to crypto, bank or PayPal, or move funds between your balances.</p>
         </div>
     </div>
 
-    <!-- Error Messages -->
     @if(session('error'))
-        <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-                </svg>
-                <span class="text-red-400">{{ session('error') }}</span>
-            </div>
+        <div class="flex items-start gap-2 p-4 rounded-xl border border-red-500/40 bg-red-500/10 text-sm text-red-300">
+            <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+            <span>{{ session('error') }}</span>
         </div>
     @endif
 
     @if(session('success'))
-        <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-4 mb-6">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                </svg>
-                <span class="text-green-400">{{ session('success') }}</span>
-            </div>
+        <div class="flex items-start gap-2 p-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-sm text-emerald-300">
+            <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            <span>{{ session('success') }}</span>
         </div>
     @endif
 
-    <!-- Balance Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Main Balance -->
-        <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-400 text-sm">Main Balance</p>
-                    <p class="text-white text-xl font-bold">{{ auth()->user()->formatAmount(auth()->user()->balance) }}</p>
-                </div>
-                <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"></path>
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-            </div>
+    <!-- Balances -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
+            <div class="text-xs text-gray-400">Main balance</div>
+            <div class="mt-1 text-lg sm:text-xl font-semibold text-white font-mono break-all">{{ $u->formatAmount($u->balance) }}</div>
         </div>
-
-        <!-- Trading Balance -->
-        <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-400 text-sm">Trading Balance</p>
-                    <p class="text-white text-xl font-bold">{{ auth()->user()->formatAmount(auth()->user()->trading_balance ?? 0) }}</p>
-                </div>
-                <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
-                    </svg>
-                </div>
-            </div>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
+            <div class="text-xs text-gray-400">Trading balance</div>
+            <div class="mt-1 text-lg sm:text-xl font-semibold text-white font-mono break-all">{{ $u->formatAmount($u->trading_balance ?? 0) }}</div>
         </div>
-
-        <!-- Holding Balance -->
-        <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-400 text-sm">Holding Balance</p>
-                    <p class="text-white text-xl font-bold">{{ auth()->user()->formatAmount(auth()->user()->holding_balance ?? 0) }}</p>
-                    <p class="text-xs text-gray-500 mt-1">Portfolio value (not available for withdrawal)</p>
-                </div>
-                <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
-                    </svg>
-                </div>
-            </div>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
+            <div class="text-xs text-gray-400">Holding balance</div>
+            <div class="mt-1 text-lg sm:text-xl font-semibold text-white font-mono break-all">{{ $u->formatAmount($u->holding_balance ?? 0) }}</div>
+            <div class="text-xs text-gray-500 mt-0.5">Not withdrawable</div>
         </div>
-
-        <!-- Mining Balance -->
-        <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-400 text-sm">Mining Balance</p>
-                    <p class="text-white text-xl font-bold">{{ auth()->user()->formatAmount(auth()->user()->mining_balance ?? 0) }}</p>
-                </div>
-                <div class="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-            </div>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
+            <div class="text-xs text-gray-400">Mining balance</div>
+            <div class="mt-1 text-lg sm:text-xl font-semibold text-white font-mono break-all">{{ $u->formatAmount($u->mining_balance ?? 0) }}</div>
         </div>
     </div>
 
     <!-- Tabs -->
-    <div class="bg-gray-800 rounded-lg border border-gray-700">
+    <div class="rounded-2xl border border-gray-700 bg-gray-800 overflow-hidden">
         <div class="border-b border-gray-700">
-            <nav class="-mb-px flex space-x-2 sm:space-x-4 md:space-x-8 px-4 sm:px-6 overflow-x-auto" aria-label="Tabs">
-                <button id="withdrawTab" class="tab-button border-b-2 border-blue-500 py-3 sm:py-4 px-2 sm:px-1 text-xs sm:text-sm font-medium text-blue-400 whitespace-nowrap">
-                    <div class="flex items-center space-x-1 sm:space-x-2">
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span>Withdraw</span>
-                    </div>
+            <nav class="-mb-px grid grid-cols-3 sm:flex sm:gap-8 px-2 sm:px-6" aria-label="Tabs">
+                <button type="button" id="withdrawTab" class="tab-button inline-flex items-center justify-center gap-2 border-b-2 border-blue-500 text-blue-400 py-3 sm:py-4 px-1 text-sm font-semibold whitespace-nowrap min-h-[44px]">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+                    <span>Withdraw</span>
                 </button>
-                <button id="transferTab" class="tab-button border-b-2 border-transparent py-3 sm:py-4 px-2 sm:px-1 text-xs sm:text-sm font-medium text-gray-400 hover:text-gray-300 whitespace-nowrap">
-                    <div class="flex items-center space-x-1 sm:space-x-2">
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span>Transfer</span>
-                    </div>
+                <button type="button" id="transferTab" class="tab-button inline-flex items-center justify-center gap-2 border-b-2 border-transparent text-gray-400 hover:text-gray-300 py-3 sm:py-4 px-1 text-sm font-semibold whitespace-nowrap min-h-[44px]">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M7 7h13l-4-4M17 17H4l4 4"/></svg>
+                    <span>Transfer</span>
                 </button>
-                <button id="historyTab" class="tab-button border-b-2 border-transparent py-3 sm:py-4 px-2 sm:px-1 text-xs sm:text-sm font-medium text-gray-400 hover:text-gray-300 whitespace-nowrap">
-                    <div class="flex items-center space-x-1 sm:space-x-2">
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span>History</span>
-                    </div>
+                <button type="button" id="historyTab" class="tab-button inline-flex items-center justify-center gap-2 border-b-2 border-transparent text-gray-400 hover:text-gray-300 py-3 sm:py-4 px-1 text-sm font-semibold whitespace-nowrap min-h-[44px]">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                    <span>History</span>
                 </button>
             </nav>
         </div>
 
-        <!-- Tab Content -->
-        <div class="p-6">
+        <div class="p-4 sm:p-6">
             <!-- Withdraw Tab -->
             <div id="withdrawContent" class="tab-content">
-                <div class="max-w-md mx-auto">
-                    <h3 class="text-lg font-medium text-white mb-4">Withdraw Funds</h3>
+                <div class="max-w-lg mx-auto">
+                    <h3 class="text-base font-semibold text-white">Withdraw funds</h3>
+                    <p class="text-sm text-gray-400 mt-0.5 mb-4">Requests are reviewed by our team before they are paid out.</p>
                     <form action="{{ route('user.withdrawalStore') }}" method="POST" class="space-y-4">
                         @csrf
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">From Account</label>
-                            <select id="withdrawFromAccount" name="from_account" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Select Account</option>
+                            <label for="withdrawFromAccount" class="block text-sm font-medium text-gray-300 mb-1.5">From account</label>
+                            <select id="withdrawFromAccount" name="from_account" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select account</option>
                                 <option value="balance" data-balance="{{ auth()->user()->balance }}">Main Balance ({{ money(auth()->user()->balance, 2) }})</option>
                                 <option value="trading_balance" data-balance="{{ auth()->user()->trading_balance ?? 0 }}">Trading Balance ({{ money(auth()->user()->trading_balance ?? 0, 2) }})</option>
                                 <option value="mining_balance" data-balance="{{ auth()->user()->mining_balance ?? 0 }}">Mining Balance ({{ money(auth()->user()->mining_balance ?? 0, 2) }})</option>
@@ -148,9 +95,9 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Payment Method</label>
-                            <select id="withdrawalMethod" name="payment_method" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Select Payment Method</option>
+                            <label for="withdrawalMethod" class="block text-sm font-medium text-gray-300 mb-1.5">Payment method</label>
+                            <select id="withdrawalMethod" name="payment_method" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select payment method</option>
                                 <option value="crypto">Cryptocurrency</option>
                                 <option value="bank">Bank Transfer</option>
                                 <option value="paypal">PayPal</option>
@@ -160,8 +107,8 @@
                         <!-- Crypto Fields -->
                         <div id="cryptoFields" class="space-y-4 hidden">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Cryptocurrency</label>
-                                <select name="wallet" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Cryptocurrency</label>
+                                <select name="wallet" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     <option value="BTC">Bitcoin (BTC)</option>
                                     <option value="ETH">Ethereum (ETH)</option>
                                     <option value="SOL">Solana (SOL)</option>
@@ -170,45 +117,51 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Wallet Address</label>
-                                <input type="text" name="address" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter wallet address">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Wallet address</label>
+                                <input type="text" name="address" autocomplete="off" spellcheck="false" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm" placeholder="Paste your wallet address">
+                                <p class="text-xs text-gray-500 mt-1">Double-check the address and network. Crypto sent to a wrong address cannot be recovered.</p>
                             </div>
                         </div>
 
                         <!-- Bank Fields -->
                         <div id="bankFields" class="space-y-4 hidden">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Bank Name</label>
-                                <input type="text" name="bank_name" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., Chase Bank">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Bank name</label>
+                                <input type="text" name="bank_name" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., Chase Bank">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Account Name</label>
-                                <input type="text" name="acct_name" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Account holder name">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Account Number</label>
-                                <input type="text" name="acct_number" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Account number">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1.5">Account name</label>
+                                    <input type="text" name="acct_name" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Account holder name">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1.5">Account number</label>
+                                    <input type="text" name="acct_number" inputmode="numeric" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Account number">
+                                </div>
                             </div>
                         </div>
 
                         <!-- PayPal Fields -->
                         <div id="paypalFields" class="space-y-4 hidden">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">PayPal Email</label>
-                                <input type="email" name="paypal" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="your@email.com">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">PayPal email</label>
+                                <input type="email" name="paypal" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="your@email.com">
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Amount</label>
-                            <input type="number" id="withdrawAmount" name="amount" step="0.01" min="0.01" 
-                                   class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="0.00">
-                            <p class="text-xs text-gray-400 mt-1">Available: $<span id="withdrawAvailableAmount">0.00</span></p>
+                            <label for="withdrawAmount" class="block text-sm font-medium text-gray-300 mb-1.5">Amount</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 text-sm pointer-events-none">{{ currency_symbol() }}</span>
+                                <input type="number" id="withdrawAmount" name="amount" step="0.01" min="0.01" inputmode="decimal"
+                                       class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 pl-8"
+                                       placeholder="0.00">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Available: {{ currency_symbol() }}<span id="withdrawAvailableAmount">0.00</span></p>
                         </div>
 
-                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
-                            Request Withdrawal
+                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                            Request withdrawal
                         </button>
                     </form>
                 </div>
@@ -216,48 +169,54 @@
 
             <!-- Transfer Funds Tab -->
             <div id="transferContent" class="tab-content hidden">
-                <div class="max-w-md mx-auto">
-                    <h3 class="text-lg font-medium text-white mb-4">Transfer Between Accounts</h3>
-                    <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-3 mb-4">
-                        <p class="text-sm text-blue-300">
-                            <strong>Note:</strong> Holding balance represents your portfolio value and cannot be transferred or withdrawn. 
+                <div class="max-w-lg mx-auto">
+                    <h3 class="text-base font-semibold text-white">Transfer between accounts</h3>
+                    <p class="text-sm text-gray-400 mt-0.5 mb-4">Move money between your own balances.</p>
+                    <div class="rounded-xl border border-blue-500/30 bg-blue-500/10 p-3 mb-4">
+                        <p class="text-sm text-blue-200">
+                            <strong>Note:</strong> Holding balance represents your portfolio value and cannot be transferred or withdrawn.
                             To access these funds, you must sell your assets first.
                         </p>
                     </div>
                     <form id="transferForm" class="space-y-4">
                         @csrf
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">From Account</label>
-                            <select id="fromAccount" name="from_account" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Select Account</option>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="fromAccount" class="block text-sm font-medium text-gray-300 mb-1.5">From</label>
+                                <select id="fromAccount" name="from_account" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Select account</option>
                                 <option value="balance" data-balance="{{ auth()->user()->balance }}">Main Balance ({{ money(auth()->user()->balance, 2) }})</option>
                                 <option value="trading_balance" data-balance="{{ auth()->user()->trading_balance ?? 0 }}">Trading Balance ({{ money(auth()->user()->trading_balance ?? 0, 2) }})</option>
                                 <option value="mining_balance" data-balance="{{ auth()->user()->mining_balance ?? 0 }}">Mining Balance ({{ money(auth()->user()->mining_balance ?? 0, 2) }})</option>
-                            </select>
-                        </div>
+                                </select>
+                            </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">To Account</label>
-                            <select id="toAccount" name="to_account" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Select Account</option>
+                            <div>
+                                <label for="toAccount" class="block text-sm font-medium text-gray-300 mb-1.5">To</label>
+                                <select id="toAccount" name="to_account" class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Select account</option>
                                 <option value="balance" data-balance="{{ auth()->user()->balance }}">Main Balance ({{ money(auth()->user()->balance, 2) }})</option>
                                 <option value="trading_balance" data-balance="{{ auth()->user()->trading_balance ?? 0 }}">Trading Balance ({{ money(auth()->user()->trading_balance ?? 0, 2) }})</option>
                                 <option value="mining_balance" data-balance="{{ auth()->user()->mining_balance ?? 0 }}">Mining Balance ({{ money(auth()->user()->mining_balance ?? 0, 2) }})</option>
-                            </select>
+                                </select>
+                            </div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Amount</label>
-                            <input type="number" id="transferAmount" name="amount" step="0.01" min="0.01" 
-                                   class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="0.00">
-                            <p class="text-xs text-gray-400 mt-1">Available: $<span id="availableAmount">0.00</span></p>
+                            <label for="transferAmount" class="block text-sm font-medium text-gray-300 mb-1.5">Amount</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 text-sm pointer-events-none">{{ currency_symbol() }}</span>
+                                <input type="number" id="transferAmount" name="amount" step="0.01" min="0.01" inputmode="decimal"
+                                       class="w-full px-3 py-2.5 rounded-lg bg-gray-900/60 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 pl-8"
+                                       placeholder="0.00">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Available: {{ currency_symbol() }}<span id="availableAmount">0.00</span></p>
                         </div>
 
-                        <button type="submit" id="transferSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
-                            <span id="transferBtnText">Transfer Funds</span>
+                        <button type="submit" id="transferSubmitBtn" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                            <span id="transferBtnText">Transfer funds</span>
                             <span id="transferBtnSpinner" class="hidden">
-                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
@@ -268,119 +227,117 @@
                 </div>
             </div>
 
-
-
             <!-- History Tab -->
             <div id="historyContent" class="tab-content hidden">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-700">
-                        <thead class="bg-gray-700">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">#</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Type</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Amount</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Method/Details</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-gray-800 divide-y divide-gray-700">
-                            @php
-                                $allTransactions = collect();
-                                
-                                // Add withdrawals with type identifier
-                                foreach ($withdrawals as $withdrawal) {
-                                    $withdrawal->transaction_type = 'withdrawal';
-                                    $allTransactions->push($withdrawal);
-                                }
-                                
-                                // Add transfers with type identifier
-                                foreach ($transfers as $transfer) {
-                                    $transfer->transaction_type = 'transfer';
-                                    $allTransactions->push($transfer);
-                                }
-                                
-                                // Sort by created_at descending (most recent first)
-                                $allTransactions = $allTransactions->sortByDesc('created_at');
-                            @endphp
-                            
-                            @forelse ($allTransactions as $index => $transaction)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ $index + 1 }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($transaction->transaction_type === 'withdrawal')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
-                                            Withdrawal
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                                            Transfer
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-white font-medium">{{ auth()->user()->formatAmount($transaction->amount) }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                    @if($transaction->transaction_type === 'withdrawal')
-                                        {{ ucfirst($transaction->payment_method) }}
-                                        @switch($transaction->payment_method)
-                                            @case('crypto')
-                                                - {{ $transaction->wallet ?? '—' }}
-                                                @break
-                                            @case('bank')
-                                                @php($bank = json_decode($transaction->bank, true))
-                                                - {{ $bank['bank_name'] ?? '' }}
-                                                @break
-                                            @case('paypal')
-                                                - {{ $transaction->paypal ?? '—' }}
-                                                @break
-                                            @default
-                                                - {{ $transaction->address ?? '—' }}
-                                        @endswitch
-                                    @else
-                                        {{ str_replace('_', ' ', ucfirst($transaction->from_account)) }} → {{ str_replace('_', ' ', ucfirst($transaction->to_account)) }}
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($transaction->transaction_type === 'withdrawal')
-                                        {!! $transaction->status_badge !!}
-                                    @else
-                                        {!! $transaction->status_badge !!}
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ $transaction->created_at->format('M d, Y') }}</td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-400">No transaction history found.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                @php
+                    $allTransactions = collect();
+                    foreach ($withdrawals as $withdrawal) {
+                        $withdrawal->transaction_type = 'withdrawal';
+                        $allTransactions->push($withdrawal);
+                    }
+                    foreach ($transfers as $transfer) {
+                        $transfer->transaction_type = 'transfer';
+                        $allTransactions->push($transfer);
+                    }
+                    $allTransactions = $allTransactions->sortByDesc('created_at')->values();
+
+                    $detailFor = function ($t) {
+                        if ($t->transaction_type !== 'withdrawal') {
+                            return str_replace('_', ' ', ucfirst($t->from_account)).' → '.str_replace('_', ' ', ucfirst($t->to_account));
+                        }
+                        $extra = match ($t->payment_method) {
+                            'crypto' => $t->wallet ?? '—',
+                            'bank' => (json_decode($t->bank, true)['bank_name'] ?? ''),
+                            'paypal' => $t->paypal ?? '—',
+                            default => $t->address ?? '—',
+                        };
+                        return ucfirst($t->payment_method).' - '.$extra;
+                    };
+                    $statusFor = fn ($t) => $t->transaction_type === 'withdrawal' ? $wdStatus($t->status) : $trStatus($t->status);
+                @endphp
+
+                @if($allTransactions->count())
+                    <ul class="md:hidden -mx-4 -my-4 divide-y divide-gray-700">
+                        @foreach($allTransactions as $transaction)
+                            @php [$sl, $sc] = $statusFor($transaction); @endphp
+                            <li class="p-4">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2">
+                                            <span class="{{ $badge }} {{ $transaction->transaction_type === 'withdrawal' ? 'bg-red-500/15 text-red-400' : 'bg-blue-500/15 text-blue-300' }}">{{ $transaction->transaction_type === 'withdrawal' ? 'Withdrawal' : 'Transfer' }}</span>
+                                            <span class="text-xs text-gray-400">{{ $transaction->created_at->format('M d, Y') }}</span>
+                                        </div>
+                                        <div class="mt-1 text-xs text-gray-300 break-all">{{ $detailFor($transaction) }}</div>
+                                    </div>
+                                    <div class="text-right shrink-0">
+                                        <div class="text-sm font-semibold text-white font-mono">{{ $u->formatAmount($transaction->amount) }}</div>
+                                        <span class="mt-1 inline-block {{ $badge }} {{ $sc }}">{{ $sl }}</span>
+                                    </div>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+
+                    <div class="hidden md:block overflow-x-auto -mx-6 -my-6">
+                        <table class="min-w-full text-sm">
+                            <thead class="bg-gray-900/50">
+                                <tr class="text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                    <th class="px-6 py-3">#</th>
+                                    <th class="px-6 py-3">Type</th>
+                                    <th class="px-6 py-3">Amount</th>
+                                    <th class="px-6 py-3">Method / details</th>
+                                    <th class="px-6 py-3">Status</th>
+                                    <th class="px-6 py-3">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-700">
+                                @foreach($allTransactions as $index => $transaction)
+                                    @php [$sl, $sc] = $statusFor($transaction); @endphp
+                                    <tr class="hover:bg-gray-700/40">
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-400">{{ $index + 1 }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap"><span class="{{ $badge }} {{ $transaction->transaction_type === 'withdrawal' ? 'bg-red-500/15 text-red-400' : 'bg-blue-500/15 text-blue-300' }}">{{ $transaction->transaction_type === 'withdrawal' ? 'Withdrawal' : 'Transfer' }}</span></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-white font-mono">{{ $u->formatAmount($transaction->amount) }}</td>
+                                        <td class="px-6 py-4 text-gray-300 max-w-xs truncate">{{ $detailFor($transaction) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap"><span class="{{ $badge }} {{ $sc }}">{{ $sl }}</span></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-300">{{ $transaction->created_at->format('M d, Y') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="py-8 text-center">
+                        <div class="mx-auto w-12 h-12 rounded-full bg-gray-700 grid place-items-center text-gray-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                        </div>
+                        <div class="mt-3 text-white font-medium">No withdrawals or transfers yet</div>
+                        <p class="mt-1 text-sm text-gray-400">Requests you make from the Withdraw or Transfer tab will be listed here.</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
 </div>
 
 <!-- Custom Modal -->
-<div id="customModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-    <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 border border-gray-700">
-        <div class="flex items-center justify-between mb-4">
-            <h3 id="modalTitle" class="text-lg font-medium text-white">Notice</h3>
-            <button id="closeModal" class="text-gray-400 hover:text-white">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div id="customModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center sm:p-4" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="w-full max-w-md rounded-t-2xl sm:rounded-2xl bg-gray-800 border border-gray-700 p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-3">
+            <h3 id="modalTitle" class="text-lg font-semibold text-white">Notice</h3>
+            <button type="button" id="closeModal" class="w-10 h-10 -mr-2 grid place-items-center rounded-lg text-gray-400 hover:text-white hover:bg-gray-700" aria-label="Close">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
         <div class="mb-6">
-            <p id="modalMessage" class="text-gray-300"></p>
+            <p id="modalMessage" class="text-sm text-gray-300"></p>
         </div>
-        <div class="flex justify-end space-x-3">
-            <button id="modalCancelBtn" class="px-4 py-2 text-gray-400 hover:text-white transition-colors">
+        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3">
+            <button type="button" id="modalCancelBtn" class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
                 Cancel
             </button>
-            <button id="modalConfirmBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+            <button type="button" id="modalConfirmBtn" class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
                 OK
             </button>
         </div>
@@ -572,7 +529,8 @@ function checkAuthentication() {
 }
 
 // Withdrawal form submission
-document.getElementById('withdrawForm').addEventListener('submit', function(e) {
+// The page's form has no #withdrawForm (it posts normally); guard so the rest of this script still runs.
+document.getElementById('withdrawForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     
     // Set button to processing state
@@ -691,9 +649,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const withdrawForm = document.querySelector('form[action*="withdrawalStore"]');
     if (withdrawForm) {
         withdrawForm.addEventListener('submit', function(e) {
-            const fromAccount = this.querySelector('[name="from_account"]').value;
-            const paymentMethod = this.querySelector('[name="payment_method"]:checked')?.value;
-            const amount = this.querySelector('[name="amount"]').value;
+            const val = (name) => (this.querySelector('[name="' + name + '"]') || {}).value || '';
+            const fromAccount = val('from_account');
+            // payment_method is a <select> here (radio buttons on older markup): support both.
+            const pmField = this.querySelector('[name="payment_method"]');
+            const paymentMethod = pmField && pmField.type === 'radio'
+                ? (this.querySelector('[name="payment_method"]:checked') || {}).value
+                : val('payment_method');
+            const amount = val('amount');
             
             if (!fromAccount) {
                 uiAlert('Please select an account to withdraw from', { title: 'Check your details' });
@@ -715,24 +678,24 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Additional validation based on payment method
             if (paymentMethod === 'crypto') {
-                const wallet = this.querySelector('[name="wallet"]').value;
-                const address = this.querySelector('[name="address"]').value;
+                const wallet = val('wallet');
+                const address = val('address');
                 if (!wallet || !address) {
                     uiAlert('Please fill in wallet type and address for crypto withdrawal', { title: 'Check your details' });
                     e.preventDefault();
                     return;
                 }
             } else if (paymentMethod === 'bank') {
-                const bankName = this.querySelector('[name="bank_name"]').value;
-                const acctName = this.querySelector('[name="acct_name"]').value;
-                const acctNumber = this.querySelector('[name="acct_number"]').value;
+                const bankName = val('bank_name');
+                const acctName = val('acct_name');
+                const acctNumber = val('acct_number');
                 if (!bankName || !acctName || !acctNumber) {
                     uiAlert('Please fill in all bank details', { title: 'Check your details' });
                     e.preventDefault();
                     return;
                 }
             } else if (paymentMethod === 'paypal') {
-                const paypal = this.querySelector('[name="paypal"]').value;
+                const paypal = val('paypal');
                 if (!paypal || !paypal.includes('@')) {
                     uiAlert('Please enter a valid PayPal email address', { title: 'Check your details' });
                     e.preventDefault();

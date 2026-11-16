@@ -1,58 +1,39 @@
 @extends('dashboard.layout.app')
 
 @section('content')
-<div class="min-h-screen bg-gray-900">
-    <!-- Header -->
-    <div class="bg-gray-800 border-b border-gray-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <button onclick="history.back()" class="text-gray-400 hover:text-white mr-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                        </svg>
-                    </button>
-                    <h1 class="text-xl font-semibold text-white">{{ $asset->name }} ({{ $asset->symbol }}) Chart</h1>
-                </div>
-                <div class="text-right">
-                    <div class="text-sm text-gray-400">Current Price</div>
-                    <div class="text-lg font-bold text-white">{{ money_from($asset->current_price, 'USD', 8) }}</div>
-                </div>
-            </div>
+<div class="space-y-4 sm:space-y-6">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+        <div class="min-w-0">
+            <a href="{{ route('user.holding.index') }}" onclick="if (history.length > 1) { event.preventDefault(); history.back(); }" class="inline-flex items-center gap-1 min-h-[32px] text-sm font-semibold text-gray-400 hover:text-white">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                Back
+            </a>
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400 mt-1">Portfolio &middot; Chart</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-white mt-1 truncate">{{ $asset->name }} <span class="text-gray-400 font-semibold">{{ $asset->symbol }}</span></h1>
+            <p class="text-sm text-gray-400 mt-0.5">Live price chart with RSI, MACD and volume.</p>
         </div>
     </div>
 
-    <!-- Chart Container -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700">
-            <!-- Chart Header -->
-            <div class="p-4 border-b border-gray-700">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-lg font-medium text-white">{{ $asset->name }} Price Chart</h2>
-                        <p class="text-gray-400 text-sm">Real-time price analysis and technical indicators</p>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="text-right">
-                            <div class="text-sm text-gray-400">24h Change</div>
-                            <div class="text-sm font-medium {{ $asset->price_change_24h >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                                {{ $asset->price_change_24h >= 0 ? '+' : '' }}{{ number_format($asset->price_change_24h, 2) }}%
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-sm text-gray-400">Market Cap</div>
-                            <div class="text-sm font-medium text-white">{{ money($asset->market_cap, 2) }}</div>
-                        </div>
-                    </div>
-                </div>
+    <div class="grid grid-cols-3 gap-3 sm:gap-4">
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-3 sm:p-4 min-w-0">
+            <div class="text-xs text-gray-400">Price</div>
+            <div class="mt-1 text-sm sm:text-xl font-semibold text-white font-mono break-all">{{ money_from($asset->current_price, 'USD', 8) }}</div>
+        </div>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-3 sm:p-4 min-w-0">
+            <div class="text-xs text-gray-400">24h change</div>
+            <div class="mt-1 text-sm sm:text-xl font-semibold font-mono {{ $asset->price_change_24h >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
+                {{ $asset->price_change_24h >= 0 ? '+' : '' }}{{ number_format($asset->price_change_24h, 2) }}%
             </div>
+        </div>
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-3 sm:p-4 min-w-0">
+            <div class="text-xs text-gray-400">Market cap</div>
+            <div class="mt-1 text-sm sm:text-xl font-semibold text-white font-mono break-all">{{ money($asset->market_cap, 2) }}</div>
+        </div>
+    </div>
 
-            <!-- TradingView Chart -->
-            <div class="p-4">
-                <div class="bg-gray-700 rounded-lg overflow-hidden" style="height: 600px;">
-                    <div id="tradingViewChart" class="w-full h-full"></div>
-                </div>
-            </div>
+    <div class="rounded-2xl border border-gray-700 bg-gray-800 p-2 sm:p-4">
+        <div class="rounded-xl overflow-hidden bg-gray-900/50 h-[460px] sm:h-[600px]">
+            <div id="tradingViewChart" class="w-full h-full"></div>
         </div>
     </div>
 </div>
