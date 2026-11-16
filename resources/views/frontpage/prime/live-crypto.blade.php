@@ -19,9 +19,8 @@
     document.querySelectorAll('[data-live-price="' + s + '"]').forEach(function (el) {
       el.textContent = fmt(price, el.dataset.prefix);
       if (last[s] !== undefined && last[s] !== price) {
-        var row = el.closest('tr') || el;
-        row.classList.remove('flash-up', 'flash-down'); void row.offsetWidth;
-        row.classList.add(price > last[s] ? 'flash-up' : 'flash-down');
+        el.classList.remove('flash-up', 'flash-down'); void el.offsetWidth;
+        el.classList.add(price > last[s] ? 'flash-up' : 'flash-down');
       }
     });
     document.querySelectorAll('[data-live-chg="' + s + '"]').forEach(function (el) {

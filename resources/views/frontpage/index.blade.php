@@ -168,12 +168,12 @@
         <h3>Crypto, tick by tick</h3>
         <p>Every price change streams straight to the page — no refresh needed.</p>
         <div class="panel">
-          <h4>Top coins <span class="mono" style="float:right;font-size:12px;color:var(--up)">● LIVE</span></h4>
+          <h4>Top coins <span id="crypto-status" class="mono" style="float:right;font-size:12px;color:var(--up)">● LIVE</span></h4>
           <table class="mtable">
             <thead><tr><th>Asset</th><th>Price (USD)</th><th>24h</th></tr></thead>
             <tbody>
               @foreach([['BTC','₿','#f7931a'],['ETH','Ξ','#627eea'],['SOL','S','#14b8a6'],['XRP','X','#334155'],['BNB','B','#d4a017'],['DOGE','Ð','#c2a633']] as [$s, $g, $c])
-              <tr><td><span class="asset"><span class="coin" style="background:{{ $c }}">{{ $g }}</span>{{ $s }}</span></td><td data-live-price="{{ $s }}">—</td><td data-live-chg="{{ $s }}">—</td></tr>
+              <tr><td><span class="asset"><span class="coin" style="background:{{ $c }}">{{ $g }}</span><span>{{ $s }}<small class="nm2">{{ ['BTC'=>'Bitcoin','ETH'=>'Ethereum','SOL'=>'Solana','XRP'=>'XRP','BNB'=>'BNB','DOGE'=>'Dogecoin'][$s] }}</small></span></span></td><td data-live-price="{{ $s }}">—</td><td data-live-chg="{{ $s }}">—</td></tr>
               @endforeach
             </tbody>
           </table>
@@ -181,13 +181,26 @@
       </div>
       <div class="reveal">
         <h3>US stocks and ETFs</h3>
-        <p>Quotes for the companies people trade most, plus the major index funds.</p>
-        <div class="panel" style="padding:8px">
-          <div class="tradingview-widget-container" style="height:420px"><div class="tradingview-widget-container__widget" style="height:100%"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
-            {"width":"100%","height":"100%","symbolsGroups":[{"name":"Stocks","symbols":[{"name":"NASDAQ:AAPL","displayName":"Apple"},{"name":"NASDAQ:NVDA","displayName":"Nvidia"},{"name":"NASDAQ:MSFT","displayName":"Microsoft"},{"name":"NASDAQ:TSLA","displayName":"Tesla"},{"name":"NASDAQ:AMZN","displayName":"Amazon"},{"name":"AMEX:SPY","displayName":"S&P 500 ETF"}]}],"showSymbolLogo":true,"isTransparent":true,"colorTheme":"dark","locale":"en","backgroundColor":"rgba(0,0,0,0)"}
-            </script>
-          </div>
+        <p>The most-traded US companies plus the S&amp;P 500 ETF, refreshed every 30 seconds.</p>
+        @php
+          $stockQuotes = collect($safe(fn () => app(\App\Services\StockQuotes::class)->cached(), []))->keyBy('symbol');
+          $stockColors = ['AAPL' => '#e5e7eb', 'NVDA' => '#16a34a', 'MSFT' => '#0ea5e9', 'TSLA' => '#dc2626', 'AMZN' => '#f59e0b', 'SPY' => '#6366f1'];
+        @endphp
+        <div class="panel">
+          <h4>Top stocks <span class="mono" style="float:right;font-size:12px;color:var(--text-3)" id="stock-status">● DELAYED</span></h4>
+          <table class="mtable" id="stock-table" data-src="{{ route('market.stocks') }}">
+            <thead><tr><th>Asset</th><th>Price (USD)</th><th>Today</th></tr></thead>
+            <tbody>
+              @foreach(\App\Services\StockQuotes::SYMBOLS as $sym => $name)
+                @php $q = $stockQuotes->get($sym); @endphp
+                <tr data-sym="{{ $sym }}">
+                  <td><span class="asset"><span class="coin" style="background:{{ $stockColors[$sym] }};{{ $sym === 'AAPL' ? 'color:#111' : '' }}">{{ $sym[0] }}</span><span>{{ $sym }}<small class="nm2">{{ $name }}</small></span></span></td>
+                  <td data-f="price">{{ $q ? number_format($q['price'], 2) : '—' }}</td>
+                  <td data-f="chg" class="{{ $q ? ($q['change_pct'] >= 0 ? 'up' : 'down') : '' }}">{{ $q ? sprintf('%+.2f%%', $q['change_pct']) : '—' }}</td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -371,6 +384,24 @@
     var on = 5 + Math.floor(Math.random() * 5);
     leds.forEach(function (l, i) { l.classList.toggle('on', i < on); });
   }, 1600);
+  // Stock table: poll our cached endpoint every 30s.
+  var st = document.getElementById('stock-table');
+  if (st) {
+    var load = function () {
+      fetch(st.dataset.src, {headers: {Accept: 'application/json'}}).then(function (r) { return r.json(); }).then(function (d) {
+        (d.quotes || []).forEach(function (q) {
+          var row = st.querySelector('tr[data-sym="' + q.symbol + '"]'); if (!row) return;
+          var p = row.querySelector('[data-f="price"]'), c = row.querySelector('[data-f="chg"]');
+          var txt = q.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          if (p.textContent !== txt && p.textContent !== '—') { p.classList.remove('flash-up', 'flash-down'); void p.offsetWidth; p.classList.add(q.price >= parseFloat(p.textContent.replace(/,/g, '')) ? 'flash-up' : 'flash-down'); }
+          p.textContent = txt;
+          c.textContent = (q.change_pct >= 0 ? '+' : '') + q.change_pct.toFixed(2) + '%';
+          c.className = q.change_pct >= 0 ? 'up' : 'down';
+        });
+      }).catch(function () {});
+    };
+    load(); setInterval(load, 30000);
+  }
   // Signal plan selector
   document.querySelectorAll('.levpanel .lev-steps').forEach(function (g) {
     g.addEventListener('click', function (e) {

@@ -35,6 +35,8 @@ Route::get('/language/{locale}', function (string $locale) {
 })->name('language.switch');
 
 Route::view('/', 'frontpage.index')->name('index');
+Route::get('market/stocks.json', fn (\App\Services\StockQuotes $quotes) => response()->json(['quotes' => $quotes->get()]))
+    ->middleware('throttle:60,1')->name('market.stocks');
 Route::view('about', 'frontpage.about')->name('about');
 Route::view('copy', 'frontpage.copy')->name('copy');
 Route::view('forex', 'frontpage.forex')->name('forex');

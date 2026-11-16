@@ -155,10 +155,18 @@ nav.top .wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:center
 .mtable td{padding:9px 10px;font-family:var(--mono)}
 .mtable tbody tr:nth-child(odd) td{background:rgba(170,190,255,.035)}
 .mtable .asset{display:flex;align-items:center;gap:10px;font-family:var(--body)}
-.mtable .coin{width:22px;height:22px;font-size:10px}
+.mtable .coin{width:26px;height:26px;font-size:11px}
+.mtable td{padding:12px 10px;border-bottom:1px solid var(--line)}
+.mtable tbody tr:last-child td{border-bottom:0}
+.mtable tbody tr:nth-child(odd) td{background:none}
+.mtable tbody tr:hover td{background:rgba(170,190,255,.04)}
+.mtable th:not(:first-child),.mtable td:not(:first-child){text-align:right}
+.mtable th{border-bottom:1px solid var(--line)}
+.mtable .nm2{display:block;font-size:12px;color:var(--text-3);font-weight:400}
+.mtable .asset{line-height:1.25;font-weight:600}
 .star{color:#f59e0b}
 .flash-up{animation:fu .8s}.flash-down{animation:fd .8s}
-@keyframes fu{from{background:rgba(45,212,167,.18)}}@keyframes fd{from{background:rgba(244,63,94,.18)}}
+@keyframes fu{from{color:var(--up)}}@keyframes fd{from{color:var(--down)}}
 .trader-hd{display:flex;gap:14px;align-items:center}
 .trader-hd .av{width:52px;height:52px;border-radius:10px;background:var(--accent);display:grid;place-items:center;font:800 16px var(--display)}
 .trader-hd b{display:block}
