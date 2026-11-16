@@ -13,7 +13,7 @@
         ['Total mining', $totalMinings, 'text-white'],
         ['Active mining', $activeMinings, 'text-white'],
         ['Total invested', money($totalInvested, 2), 'text-white font-mono'],
-        ['Total mined', number_format($totalMined, 8), 'text-emerald-400 font-mono'],
+        ['Total mined', money_from($totalMined), 'text-emerald-400 font-mono'],
     ];
 @endphp
 <div class="space-y-4 sm:space-y-6">
@@ -30,9 +30,9 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        @foreach($stats as [$label, $value, $cls])
-            <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
+    <div class="rounded-2xl border border-gray-700 bg-gray-800 grid grid-cols-2 lg:grid-cols-4 overflow-hidden">
+        @foreach($stats as $i => [$label, $value, $cls])
+            <div class="p-4 sm:p-5 min-w-0 border-gray-700 {{ $i % 2 ? 'border-l' : '' }} {{ $i >= 2 ? 'border-t lg:border-t-0 lg:border-l' : '' }}">
                 <div class="text-xs text-gray-400">{{ $label }}</div>
                 <div class="text-lg sm:text-2xl font-semibold mt-1 truncate {{ $cls }}">{{ $value }}</div>
             </div>
@@ -56,8 +56,8 @@
                             <span class="shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold {{ $badge($mining->status) }}">{{ ucfirst($mining->status) }}</span>
                         </div>
                         <dl class="grid grid-cols-2 gap-2 mt-3 text-sm">
-                            <div class="min-w-0"><dt class="text-xs text-gray-400">Invested</dt><dd class="text-white font-mono truncate">{{ $mining->formatted_amount_invested }}</dd></div>
-                            <div class="min-w-0"><dt class="text-xs text-gray-400">Mined</dt><dd class="text-emerald-400 font-mono truncate">{{ $mining->formatted_total_mined }}</dd></div>
+                            <div class="min-w-0"><dt class="text-xs text-gray-400">Invested</dt><dd class="text-white font-mono truncate">{{ money_from($mining->amount_invested, $mining->currency ?: 'USD') }}</dd></div>
+                            <div class="min-w-0"><dt class="text-xs text-gray-400">Mined</dt><dd class="text-emerald-400 font-mono truncate">{{ money_from($mining->total_mined, $mining->currency ?: 'USD') }}</dd></div>
                         </dl>
                     </a>
                 @empty

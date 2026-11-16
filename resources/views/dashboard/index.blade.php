@@ -140,32 +140,75 @@
         </div>
     </section>
 
-    {{-- ===== Markets & Trade Room ===== --}}
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <a href="{{ route('user.markets.stocks') }}" class="group rounded-2xl border border-gray-700 bg-gray-800 p-5 hover:border-gold-500 transition-colors flex gap-4">
-            <span class="w-11 h-11 shrink-0 rounded-xl bg-sky-500/15 text-sky-300 grid place-items-center">{!! $icon($ic['stocks']) !!}</span>
-            <span>
-                <span class="block text-base font-semibold text-white">Stock prices</span>
-                <span class="block text-sm text-gray-400 mt-1">Quotes, charts and a screener for US stocks and ETFs.</span>
-                <span class="inline-flex items-center gap-1 mt-3 text-sm font-semibold text-gold-400">View stocks {!! $icon($ic['arrow'], 'w-4 h-4 group-hover:translate-x-0.5 transition-transform') !!}</span>
-            </span>
-        </a>
-        <a href="{{ route('user.markets.crypto') }}" class="group rounded-2xl border border-gray-700 bg-gray-800 p-5 hover:border-gold-500 transition-colors flex gap-4">
-            <span class="w-11 h-11 shrink-0 rounded-xl bg-amber-500/15 text-amber-300 grid place-items-center">{!! $icon($ic['crypto']) !!}</span>
-            <span>
-                <span class="block text-base font-semibold text-white">Crypto prices</span>
-                <span class="block text-sm text-gray-400 mt-1">Bitcoin, Ethereum and the top coins with live charts.</span>
-                <span class="inline-flex items-center gap-1 mt-3 text-sm font-semibold text-gold-400">View crypto {!! $icon($ic['arrow'], 'w-4 h-4 group-hover:translate-x-0.5 transition-transform') !!}</span>
-            </span>
-        </a>
-        <a href="{{ route('user.liveTrading.index') }}" class="group rounded-2xl border border-blue-500/40 bg-blue-600/10 p-5 hover:border-blue-400 transition-colors flex gap-4">
-            <span class="w-11 h-11 shrink-0 rounded-xl bg-blue-600 text-white grid place-items-center">{!! $icon($ic['trade']) !!}</span>
-            <span>
-                <span class="block text-base font-semibold text-white">Trade Room</span>
-                <span class="block text-sm text-gray-400 mt-1">Place your own stock and crypto trades and manage positions.</span>
-                <span class="inline-flex items-center gap-1 mt-3 text-sm font-semibold text-gold-400">Start trading {!! $icon($ic['arrow'], 'w-4 h-4 group-hover:translate-x-0.5 transition-transform') !!}</span>
-            </span>
-        </a>
+    {{-- ===== Live markets & Trade Room (every row opens that market in the Trade Room) ===== --}}
+    @php
+        $tradeUrl = fn ($type, $sym) => route('user.liveTrading.index', ['asset_type' => $type, 'symbol' => $sym]);
+        $marketCards = [
+            ['key' => 'stock', 'title' => 'Stocks', 'sub' => 'US shares', 'icon' => 'stocks', 'tone' => 'text-sky-300 bg-sky-500/15',
+             'rows' => [['AAPL', 'Apple'], ['NVDA', 'Nvidia'], ['MSFT', 'Microsoft'], ['TSLA', 'Tesla']]],
+            ['key' => 'crypto', 'title' => 'Crypto', 'sub' => '24h change', 'icon' => 'crypto', 'tone' => 'text-amber-300 bg-amber-500/15',
+             'rows' => [['BTC', 'Bitcoin'], ['ETH', 'Ethereum'], ['SOL', 'Solana'], ['XRP', 'XRP']]],
+        ];
+    @endphp
+    <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="dashMarkets" data-fx="{{ to_user_currency(1) }}">
+        @foreach($marketCards as $mc)
+            <div class="pc-card rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5 flex flex-col">
+                <div class="flex items-center gap-3">
+                    <span class="w-10 h-10 shrink-0 rounded-xl {{ $mc['tone'] }} grid place-items-center">{!! $icon($ic[$mc['icon']]) !!}</span>
+                    <div class="min-w-0">
+                        <h2 class="text-base font-semibold text-white leading-tight">{{ $mc['title'] }}</h2>
+                        <p class="text-xs text-gray-400">{{ $mc['sub'] }}</p>
+                    </div>
+                    <span class="ml-auto inline-flex items-center gap-1.5 text-[11px] font-medium text-emerald-300 bg-emerald-500/10 rounded-full px-2 py-0.5" data-live-badge="{{ $mc['key'] }}">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pc-pulse"></span>Live
+                    </span>
+                </div>
+                <ul class="mt-4 -mx-2 flex-1">
+                    @foreach($mc['rows'] as [$sym, $name])
+                        <li>
+                            <a href="{{ $tradeUrl($mc['key'], $sym) }}" class="group flex items-center gap-3 rounded-xl px-2 py-2.5 hover:bg-white/[.04]" data-q="{{ $mc['key'] }}:{{ $sym }}">
+                                <span class="w-9 h-9 shrink-0 rounded-lg bg-gray-900 border border-gray-700 grid place-items-center text-[10px] font-bold text-gray-200 tracking-wide">{{ $sym }}</span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block text-sm font-semibold text-white truncate">{{ $name }}</span>
+                                    <span class="block text-xs text-gray-500">{{ $sym }}{{ $mc['key'] === 'crypto' ? ' / USDT' : '' }}</span>
+                                </span>
+                                <span class="text-right">
+                                    <span class="block text-sm font-semibold text-white font-mono" data-price>—</span>
+                                    <span class="inline-block mt-0.5 text-[11px] font-semibold rounded-md px-1.5 py-0.5 bg-gray-700/60 text-gray-300" data-chg>…</span>
+                                </span>
+                                <span class="hidden sm:inline-flex text-xs font-semibold text-gold-400 opacity-0 group-hover:opacity-100 transition-opacity">Trade</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+                <a href="{{ route('user.liveTrading.index', ['asset_type' => $mc['key']]) }}" class="mt-3 inline-flex items-center justify-center gap-1.5 rounded-xl border border-gray-700 bg-gray-900/60 hover:border-gold-500 px-4 py-2.5 text-sm font-semibold text-white">
+                    Trade {{ strtolower($mc['title']) }} {!! $icon($ic['arrow'], 'w-4 h-4') !!}
+                </a>
+            </div>
+        @endforeach
+
+        <div class="pc-card pc-card--accent rounded-2xl border border-blue-500/40 p-5 sm:p-6 flex flex-col md:col-span-2 xl:col-span-1 relative overflow-hidden">
+            <div class="flex items-center gap-3">
+                <span class="w-10 h-10 shrink-0 rounded-xl bg-blue-600 text-white grid place-items-center shadow-lg shadow-blue-600/30">{!! $icon($ic['trade']) !!}</span>
+                <div>
+                    <h2 class="text-base font-semibold text-white leading-tight">Trade Room</h2>
+                    <p class="text-xs text-blue-200/80">Long or short, up to 100× leverage</p>
+                </div>
+            </div>
+            <div class="mt-5">
+                <div class="text-xs text-blue-200/80">Trading balance</div>
+                <div class="text-3xl font-semibold text-white mt-1 font-mono tracking-tight">{{ $user->formatAmount($tradingBalance) }}</div>
+            </div>
+            <ul class="mt-4 space-y-2 text-sm text-gray-300">
+                <li class="flex items-center gap-2">{!! $icon($ic['check'], 'w-4 h-4 text-emerald-400') !!} Market and limit orders</li>
+                <li class="flex items-center gap-2">{!! $icon($ic['check'], 'w-4 h-4 text-emerald-400') !!} Take profit and stop loss</li>
+                <li class="flex items-center gap-2">{!! $icon($ic['check'], 'w-4 h-4 text-emerald-400') !!} Live profit and loss on every position</li>
+            </ul>
+            <div class="mt-auto pt-5 grid grid-cols-2 gap-2">
+                <a href="{{ route('user.liveTrading.index') }}" class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 px-4 py-3 text-sm font-semibold text-white">Open Trade Room</a>
+                <a href="{{ route('user.holding.buy-assets') }}" class="inline-flex items-center justify-center rounded-xl border border-blue-400/40 hover:border-blue-300 px-4 py-3 text-sm font-semibold text-white">Buy &amp; hold</a>
+            </div>
+        </div>
     </section>
 
     {{-- ===== Strength, performance, activity ===== --}}
@@ -367,6 +410,46 @@
 @endsection
 
 @push('scripts')
+<script>
+// Live prices for the dashboard market cards (USD feeds converted to the user's currency).
+(function () {
+    const root = document.getElementById('dashMarkets');
+    if (!root) return;
+    const fx = parseFloat(root.dataset.fx) || 1;
+    const sym = window.CURRENCY_SYMBOL || '';
+    const fmt = v => sym + (v * fx).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: v * fx < 1 ? 4 : 2 });
+    const paint = (key, price, pct) => {
+        const a = root.querySelector('[data-q="' + key + '"]');
+        if (!a || !(price > 0)) return;
+        a.querySelector('[data-price]').textContent = fmt(price);
+        const c = a.querySelector('[data-chg]');
+        const up = pct >= 0;
+        c.textContent = (up ? '+' : '') + pct.toFixed(2) + '%';
+        c.className = 'inline-block mt-0.5 text-[11px] font-semibold rounded-md px-1.5 py-0.5 ' + (up ? 'bg-emerald-500/15 text-emerald-300' : 'bg-rose-500/15 text-rose-300');
+    };
+    const offline = k => { const b = root.querySelector('[data-live-badge="' + k + '"]'); if (b) { b.className = 'ml-auto text-[11px] font-medium text-gray-400 bg-gray-700/60 rounded-full px-2 py-0.5'; b.textContent = 'Delayed'; } };
+
+    const stocks = () => fetch('/market/stocks.json').then(r => r.json())
+        .then(d => (d.quotes || []).forEach(q => paint('stock:' + q.symbol, q.price, q.change_pct || 0)))
+        .catch(() => offline('stock'));
+    const cryptoSyms = [...root.querySelectorAll('[data-q^="crypto:"]')].map(a => a.dataset.q.split(':')[1] + 'USDT');
+    const crypto = () => fetch('https://data-api.binance.vision/api/v3/ticker/24hr?symbols=' + encodeURIComponent(JSON.stringify(cryptoSyms)))
+        .then(r => r.json())
+        .then(rows => rows.forEach(t => paint('crypto:' + t.symbol.replace(/USDT$/, ''), +t.lastPrice, +t.priceChangePercent)))
+        .catch(gecko);
+    // Fallback when Binance is unreachable (blocked region / network): CoinGecko simple price.
+    const GECKO = { BTC: 'bitcoin', ETH: 'ethereum', SOL: 'solana', XRP: 'ripple', BNB: 'binancecoin', DOGE: 'dogecoin' };
+    function gecko() {
+        const ids = cryptoSyms.map(s => GECKO[s.replace(/USDT$/, '')]).filter(Boolean);
+        return fetch('https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&include_24hr_change=true&ids=' + ids.join(','))
+            .then(r => r.json())
+            .then(d => Object.entries(GECKO).forEach(([s, id]) => d[id] && paint('crypto:' + s, d[id].usd, d[id].usd_24h_change || 0)))
+            .catch(() => offline('crypto'));
+    }
+    stocks(); crypto();
+    setInterval(stocks, 60000); setInterval(crypto, 15000);
+})();
+</script>
 <script>
 (function () {
   var card = document.getElementById('strengthCard');

@@ -13,6 +13,8 @@
     $canWithdraw = $unpaidMined > 0;
     $canCancel = $mining->isActive() && $mining->canBeCancelled();
     $row = 'flex justify-between gap-4 py-2.5';
+    $cur = $mining->currency ?: 'USD';
+    $progress = round((float) $mining->mining_progress, 1);
 @endphp
 <div class="space-y-4 sm:space-y-6">
     <!-- Header -->
@@ -31,18 +33,18 @@
     </div>
 
     <!-- Key figures -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
-            <div class="text-xs text-gray-400">Amount invested</div>
-            <div class="text-lg sm:text-xl font-semibold text-white font-mono mt-1 break-words">{{ $mining->formatted_amount_invested }}</div>
+    <div class="rounded-2xl border border-gray-700 bg-gray-800 grid grid-cols-3 divide-x divide-gray-700">
+        <div class="p-3 sm:p-5 min-w-0">
+            <div class="text-[11px] sm:text-xs text-gray-400">Invested</div>
+            <div class="text-base sm:text-2xl font-semibold text-white font-mono mt-1 truncate">{{ money_from($mining->amount_invested, $cur) }}</div>
         </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
-            <div class="text-xs text-gray-400">Total mined</div>
-            <div class="text-lg sm:text-xl font-semibold text-emerald-400 font-mono mt-1 break-words">{{ $mining->formatted_total_mined }}</div>
+        <div class="p-3 sm:p-5 min-w-0">
+            <div class="text-[11px] sm:text-xs text-gray-400">Total mined</div>
+            <div class="text-base sm:text-2xl font-semibold text-emerald-400 font-mono mt-1 truncate">{{ money_from($mining->total_mined, $cur) }}</div>
         </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
-            <div class="text-xs text-gray-400">ROI</div>
-            <div class="text-lg sm:text-xl font-semibold text-white font-mono mt-1">{{ $mining->roi_percentage }}%</div>
+        <div class="p-3 sm:p-5 min-w-0">
+            <div class="text-[11px] sm:text-xs text-gray-400">ROI</div>
+            <div class="text-base sm:text-2xl font-semibold font-mono mt-1 truncate {{ $mining->roi_percentage >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ number_format($mining->roi_percentage, 2) }}%</div>
         </div>
     </div>
 
@@ -54,10 +56,10 @@
                 <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6">
                     <div class="flex items-center justify-between">
                         <h2 class="text-base font-semibold text-white">Progress</h2>
-                        <span class="text-sm font-mono text-white">{{ $mining->mining_progress }}%</span>
+                        <span class="text-sm font-mono text-white">{{ number_format($progress, 1) }}%</span>
                     </div>
                     <div class="w-full bg-gray-700 rounded-full h-2 mt-3 overflow-hidden">
-                        <div class="bg-blue-600 h-2 rounded-full" style="width: {{ $mining->mining_progress }}%"></div>
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: {{ $progress }}%"></div>
                     </div>
                     @if($mining->end_date)
                         <p class="text-sm text-gray-400 mt-2">Ends {{ $mining->end_date->diffForHumans() }}</p>
@@ -76,10 +78,10 @@
                         <div class="{{ $row }}"><dt class="text-gray-400">Equipment</dt><dd class="text-white text-right">{{ $mining->equipment }}</dd></div>
                     </div>
                     <div class="divide-y divide-gray-700 border-t border-gray-700 md:border-t-0">
-                        <div class="{{ $row }}"><dt class="text-gray-400">Amount invested</dt><dd class="text-white font-mono text-right">{{ $mining->formatted_amount_invested }}</dd></div>
-                        <div class="{{ $row }}"><dt class="text-gray-400">Total mined</dt><dd class="text-emerald-400 font-mono text-right">{{ $mining->formatted_total_mined }}</dd></div>
-                        <div class="{{ $row }}"><dt class="text-gray-400">Ready to withdraw</dt><dd class="text-white font-mono text-right">{{ money_from($unpaidMined, $mining->currency ?: 'USD') }}</dd></div>
-                        <div class="{{ $row }}"><dt class="text-gray-400">ROI</dt><dd class="text-white font-mono text-right">{{ $mining->roi_percentage }}%</dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">Amount invested</dt><dd class="text-white font-mono text-right">{{ money_from($mining->amount_invested, $cur) }}</dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">Total mined</dt><dd class="text-emerald-400 font-mono text-right">{{ money_from($mining->total_mined, $cur) }}</dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">Ready to withdraw</dt><dd class="text-white font-mono text-right">{{ money_from($unpaidMined, $cur) }}</dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">ROI</dt><dd class="text-white font-mono text-right">{{ number_format($mining->roi_percentage, 2) }}%</dd></div>
                         <div class="{{ $row }}"><dt class="text-gray-400">Started</dt><dd class="text-white text-right">{{ $mining->start_date->format('M d, Y') }}</dd></div>
                     </div>
                 </dl>

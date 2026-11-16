@@ -19,29 +19,36 @@
 
     <!-- Signal Plans Grid -->
     @if($signalPlans->count() > 0)
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        @php $popular = $signalPlans->count() >= 3 ? intdiv($signalPlans->count(), 2) : ($signalPlans->count() === 2 ? 1 : -1); @endphp
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
             @foreach($signalPlans as $plan)
-                <div class="flex flex-col rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6 hover:border-blue-500/60 transition-colors">
+                @php $featured = $loop->index === $popular; $tile = $featured ? 'bg-black/25' : 'bg-gray-900'; @endphp
+                <div class="flex flex-col rounded-2xl border p-5 sm:p-6 {{ $featured ? 'pc-card pc-card--accent border-blue-500/40' : 'border-gray-700 bg-gray-800' }}">
                     <!-- Plan Header -->
                     <div class="flex items-start justify-between gap-3">
                         <h3 class="text-base font-semibold text-white">{{ $plan->name }}</h3>
-                        <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">{{ ucfirst($plan->signal_market_type) }}</span>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            @if($featured)
+                                <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-500 text-white">Popular</span>
+                            @endif
+                            <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">{{ ucfirst($plan->signal_market_type) }}</span>
+                        </div>
                     </div>
-                    <div class="mt-3 flex items-baseline gap-2">
-                        <span class="text-2xl sm:text-3xl font-bold text-white font-mono">{{ money_from($plan->price, $plan->currency, 2) }}</span>
+                    <div class="mt-4 flex items-baseline gap-2 min-w-0">
+                        <span class="text-3xl sm:text-4xl font-bold text-white font-mono tracking-tight truncate">{{ money_from($plan->price, $plan->currency ?: 'USD', 2) }}</span>
                         @if($plan->has_discount)
-                            <span class="text-sm text-gray-500 line-through font-mono">{{ money_from($plan->original_price, $plan->currency, 2) }}</span>
+                            <span class="text-sm text-gray-500 line-through font-mono">{{ money_from($plan->original_price, $plan->currency ?: 'USD', 2) }}</span>
                         @endif
                     </div>
                     <p class="text-sm text-gray-400 mt-1">{{ $plan->signal_quantity }} signals · {{ $plan->signal_duration }} days</p>
 
                     <!-- Key terms -->
                     <div class="grid grid-cols-2 gap-2 mt-4">
-                        <div class="rounded-xl border border-gray-700 bg-gray-900/50 px-3 py-2.5">
+                        <div class="rounded-xl {{ $tile }} px-3 py-2.5">
                             <div class="text-xs text-gray-400">Success rate</div>
                             <div class="text-sm font-semibold text-white font-mono">{{ number_format($plan->success_rate, 1) }}%</div>
                         </div>
-                        <div class="rounded-xl border border-gray-700 bg-gray-900/50 px-3 py-2.5">
+                        <div class="rounded-xl {{ $tile }} px-3 py-2.5">
                             <div class="text-xs text-gray-400">Signal strength</div>
                             <div class="flex text-amber-400 mt-0.5" aria-label="{{ $plan->signal_strength }} of 5">
                                 @for($i = 1; $i <= 5; $i++)

@@ -14,8 +14,6 @@
     ]],
     ['Trade', true, [
       ['Trade Room', 'user.liveTrading.index', 'user.liveTrading.*', '<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>'],
-      ['Stock prices', 'user.markets.stocks', 'user.markets.stocks', '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'],
-      ['Crypto prices', 'user.markets.crypto', 'user.markets.crypto', '<path d="M9 8h4.5a2.5 2.5 0 010 5H9m0-5v10m0-5h5a2.5 2.5 0 010 5H9M11 5v3m0 10v1m2-14v3m0 10v1"/>'],
       ['Market overview', 'user.overview.index', 'user.overview.*', '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'],
       ['Signals', 'user.signals.index', 'user.signals.*', '<path d="M2 12h3l3-8 4 16 3-8h7"/>'],
     ]],

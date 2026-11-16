@@ -421,8 +421,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::post('ai-traders/plan/{plan}/subscribe', [\App\Http\Controllers\User\AiTraderController::class, 'subscribeToPlan'])->name('aiTraders.subscribe');
 
     // Live market prices
-    Route::view('markets/stocks', 'dashboard.markets.stocks')->name('markets.stocks');
-    Route::view('markets/crypto', 'dashboard.markets.crypto')->name('markets.crypto');
 
     // Live Trading Routes (Trade Room)
     Route::get("live-trading", [LiveTradingController::class, "index"])->name("liveTrading.index");

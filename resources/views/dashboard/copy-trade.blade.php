@@ -7,6 +7,7 @@
         if ($trade->status == 0) return ['Pending', 'bg-amber-500/15 text-amber-300'];
         return ['Active', 'bg-emerald-500/15 text-emerald-400'];
     };
+    $signedMoney = fn ($v) => ((float) $v < 0 ? '-' : '') . money(abs((float) $v), 2);
 @endphp
 <div class="space-y-4 sm:space-y-6">
 
@@ -73,52 +74,70 @@
             <div id="traderCount" class="text-sm text-gray-400 sm:text-right">{{ count($traders) }} traders available</div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             @forelse($traders as $trader)
-            @php $barPercent = min(100, max(0, (int)($trader->win_rate ?? 0))); @endphp
-            <div class="trader-card rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5 flex flex-col hover:border-gold-500 transition-colors">
+            @php
+                $barPercent = min(100, max(0, (int)($trader->win_rate ?? 0)));
+                $tradesTotal = (int)($trader->win ?? 0) + (int)($trader->loss ?? 0);
+                $isStopped = in_array($trader->id, $stoppedCopyTrades);
+            @endphp
+            <div class="trader-card pc-card rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5 flex flex-col">
                 <div class="flex items-center gap-3">
                     <div class="relative shrink-0">
                         <img src="{{ $trader->avatar_url }}" alt="{{ $trader->name }}"
-                             class="w-12 h-12 rounded-full object-cover border border-gray-600"
+                             class="w-12 h-12 rounded-full object-cover ring-2 ring-blue-500/30"
                              onerror="this.src='{{ asset('img/trader.jpg') }}'">
                         <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-gray-800"></span>
                     </div>
                     <div class="min-w-0 flex-1">
-                        <h3 class="text-base font-semibold text-white truncate">{{ $trader->name }}</h3>
-                        <p class="text-xs text-gray-400">Professional trader</p>
+                        <h3 class="text-base font-semibold text-white truncate leading-tight">{{ $trader->name }}</h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Professional trader</p>
                     </div>
-                    <span class="shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold bg-emerald-500/15 text-emerald-400">{{ $trader->win_rate }}% win</span>
+                    @if($isStopped)
+                        <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-gray-700 text-gray-300">Stopped</span>
+                    @else
+                        <span class="shrink-0 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pc-pulse"></span>Trading
+                        </span>
+                    @endif
                 </div>
 
-                <div class="mt-4 h-1.5 rounded-full bg-gray-700 overflow-hidden" role="img" aria-label="Win rate {{ $trader->win_rate }}%">
-                    <div class="h-full rounded-full bg-emerald-500" style="width: {{ $barPercent }}%"></div>
+                <div class="mt-5">
+                    <div class="flex items-end justify-between gap-3">
+                        <div>
+                            <div class="text-xs text-gray-400">Win rate</div>
+                            <div class="text-3xl font-bold text-white tracking-tight leading-none mt-1.5 tabular-nums">{{ $trader->win_rate }}<span class="text-lg text-gray-400 font-semibold">%</span></div>
+                        </div>
+                        <div class="text-right text-xs text-gray-400 pb-0.5 tabular-nums">
+                            <span class="text-emerald-400 font-semibold">{{ number_format($trader->win ?? 0) }}W</span>
+                            <span class="text-gray-600 mx-0.5">/</span>
+                            <span class="text-red-400 font-semibold">{{ number_format($trader->loss ?? 0) }}L</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 h-1.5 rounded-full bg-gray-700/70 overflow-hidden" role="img" aria-label="Win rate {{ $trader->win_rate }}%">
+                        <div class="h-full rounded-full bg-emerald-500" style="width: {{ $barPercent }}%"></div>
+                    </div>
                 </div>
 
-                <dl class="mt-4 grid grid-cols-3 gap-2 text-center">
-                    <div class="rounded-xl border border-gray-700 bg-gray-900/50 p-2.5">
-                        <dt class="text-xs text-gray-400">Wins</dt>
-                        <dd class="text-base font-semibold text-emerald-400 mt-0.5">{{ $trader->win }}</dd>
+                <dl class="mt-4 grid grid-cols-3 gap-2">
+                    <div class="rounded-xl bg-gray-900 px-2.5 py-2 min-w-0">
+                        <dt class="text-[11px] text-gray-400">Trades</dt>
+                        <dd class="text-sm font-semibold text-white mt-0.5 tabular-nums truncate">{{ number_format($tradesTotal) }}</dd>
                     </div>
-                    <div class="rounded-xl border border-gray-700 bg-gray-900/50 p-2.5">
-                        <dt class="text-xs text-gray-400">Losses</dt>
-                        <dd class="text-base font-semibold text-red-400 mt-0.5">{{ $trader->loss }}</dd>
+                    <div class="rounded-xl bg-gray-900 px-2.5 py-2 min-w-0">
+                        <dt class="text-[11px] text-gray-400">Profit share</dt>
+                        <dd class="text-sm font-semibold text-white mt-0.5 tabular-nums truncate">{{ number_format($trader->profit_share, 1) }}%</dd>
                     </div>
-                    <div class="rounded-xl border border-gray-700 bg-gray-900/50 p-2.5">
-                        <dt class="text-xs text-gray-400">Profit share</dt>
-                        <dd class="text-base font-semibold text-white mt-0.5">{{ number_format($trader->profit_share, 1) }}%</dd>
+                    <div class="rounded-xl bg-gray-900 px-2.5 py-2 min-w-0">
+                        <dt class="text-[11px] text-gray-400">Min. invest</dt>
+                        <dd class="text-sm font-semibold text-white mt-0.5 tabular-nums truncate">{{ money_from($trader->amount, 'USD', 2) }}</dd>
                     </div>
                 </dl>
 
-                <div class="mt-4 flex items-center justify-between text-sm">
-                    <span class="text-gray-400">Minimum investment</span>
-                    <span class="font-semibold text-white font-mono">{{ money_from($trader->amount, 'USD', 2) }}</span>
-                </div>
-
                 <div class="mt-auto pt-4">
-                    @if(in_array($trader->id, $stoppedCopyTrades))
+                    @if($isStopped)
                         <button disabled
-                                class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-700 text-gray-400 text-sm font-semibold cursor-not-allowed">
+                                class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gray-700 text-gray-400 text-sm font-semibold cursor-not-allowed">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"></path>
                             </svg>
@@ -132,7 +151,7 @@
                             <input type="hidden" name="amount" value="{{ $trader->amount }}">
 
                             <button type="submit"
-                                    class="copy-trade-btn w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                                    class="copy-trade-btn w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
                                 <svg class="copy-trade-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                 </svg>
@@ -149,8 +168,11 @@
             </div>
             @empty
             <div class="col-span-full rounded-2xl border border-gray-700 bg-gray-800 px-4 py-12 text-center">
-                <p class="text-white font-medium">No traders available yet</p>
-                <p class="text-sm text-gray-400 mt-1">New traders will be listed here soon.</p>
+                <div class="w-12 h-12 bg-gray-700 rounded-full grid place-items-center mx-auto text-gray-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0114 0M16 4.5a3.5 3.5 0 010 7M22 20a7 7 0 00-4-6.3"/></svg>
+                </div>
+                <p class="text-white font-medium mt-3">No traders available yet, new traders are listed here as they join.</p>
+                <a href="{{ route('user.liveTrading.index') }}" class="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">Trade yourself meanwhile</a>
             </div>
             @endforelse
         </div>
@@ -182,7 +204,7 @@
                         <dl class="mt-3 grid grid-cols-3 gap-2 text-sm">
                             <div><dt class="text-xs text-gray-400">Amount</dt><dd class="text-white font-medium">{{ money($trade->amount, 2) }}</dd></div>
                             <div><dt class="text-xs text-gray-400">W / L</dt><dd><span class="text-emerald-400">{{ $trade->win ?? 0 }}</span> / <span class="text-red-400">{{ $trade->loss ?? 0 }}</span></dd></div>
-                            <div class="text-right"><dt class="text-xs text-gray-400">PnL</dt><dd class="font-medium {{ ($trade->pnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ money($trade->pnl ?? 0, 2) }}</dd></div>
+                            <div class="text-right"><dt class="text-xs text-gray-400">PnL</dt><dd class="font-medium {{ ($trade->pnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ $signedMoney($trade->pnl ?? 0) }}</dd></div>
                         </dl>
                     </a>
                 </li>
@@ -221,7 +243,7 @@
                             <span class="text-emerald-400">{{ $trade->win ?? 0 }}</span> /
                             <span class="text-red-400">{{ $trade->loss ?? 0 }}</span>
                         </td>
-                        <td class="py-3 px-4 {{ ($trade->pnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ money($trade->pnl ?? 0, 2) }}</td>
+                        <td class="py-3 px-4 {{ ($trade->pnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ $signedMoney($trade->pnl ?? 0) }}</td>
                         <td class="py-3 px-4 text-gray-400 whitespace-nowrap">{{ date('M d, Y', strtotime($trade->created_at)) }}</td>
                         <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $stClass }}">{{ $stLabel }}</span></td>
                         <td class="py-3 px-4 text-gray-400 whitespace-nowrap">{{ $trade->stopped_at ? date('M d, Y H:i', strtotime($trade->stopped_at)) : '—' }}</td>

@@ -10,6 +10,8 @@
     };
     $card = 'rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6';
     $row = 'flex justify-between gap-4 py-2.5';
+    $cur = $staking->currency ?: 'USD';
+    $currentValue = $staking->current_value ?? $staking->calculateCurrentValue();
     $unpaidRewards = app(\App\Services\EarnService::class)->unpaidRewards($staking);
 @endphp
 <div class="space-y-4 sm:space-y-6">
@@ -39,18 +41,18 @@
     </div>
 
     <!-- Key figures -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
-            <div class="text-xs text-gray-400">Amount staked</div>
-            <div class="text-xl font-semibold text-white font-mono mt-1 break-words">{{ $staking->formatted_amount_staked }}</div>
+    <div class="rounded-2xl border border-gray-700 bg-gray-800 grid grid-cols-3 divide-x divide-gray-700">
+        <div class="p-3 sm:p-5 min-w-0">
+            <div class="text-[11px] sm:text-xs text-gray-400">Staked</div>
+            <div class="text-base sm:text-2xl font-semibold text-white font-mono mt-1 truncate">{{ money_from($staking->amount_staked, $cur) }}</div>
         </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
-            <div class="text-xs text-gray-400">Current value</div>
-            <div class="text-xl font-semibold text-white font-mono mt-1 break-words">{{ $staking->formatted_current_value }}</div>
+        <div class="p-3 sm:p-5 min-w-0">
+            <div class="text-[11px] sm:text-xs text-gray-400">Current value</div>
+            <div class="text-base sm:text-2xl font-semibold text-white font-mono mt-1 truncate">{{ money_from($currentValue, $cur) }}</div>
         </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
-            <div class="text-xs text-gray-400">Rewards paid out · {{ $staking->formatted_apy_rate }} APY</div>
-            <div class="text-xl font-semibold text-emerald-400 font-mono mt-1 break-words">{{ $staking->formatted_total_rewards }}</div>
+        <div class="p-3 sm:p-5 min-w-0">
+            <div class="text-[11px] sm:text-xs text-gray-400 truncate">Rewards paid <span class="hidden sm:inline">· {{ $staking->formatted_apy_rate }} APY</span></div>
+            <div class="text-base sm:text-2xl font-semibold text-emerald-400 font-mono mt-1 truncate">{{ money_from($staking->total_rewards, $cur) }}</div>
         </div>
     </div>
 
@@ -64,10 +66,10 @@
                     <div class="{{ $row }}"><dt class="text-gray-400">Currency</dt><dd class="text-white text-right">{{ $staking->currency }}</dd></div>
                     <div class="{{ $row }}"><dt class="text-gray-400">Status</dt><dd><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $statusCls }}">{{ ucfirst($staking->status) }}</span></dd></div>
                     <div class="{{ $row }}"><dt class="text-gray-400">APY</dt><dd class="text-emerald-400 font-semibold font-mono text-right">{{ $staking->formatted_apy_rate }}</dd></div>
-                    <div class="{{ $row }}"><dt class="text-gray-400">Amount staked</dt><dd class="text-white font-mono text-right">{{ $staking->formatted_amount_staked }}</dd></div>
-                    <div class="{{ $row }}"><dt class="text-gray-400">Current value</dt><dd class="text-white font-mono text-right">{{ $staking->formatted_current_value }}</dd></div>
-                    <div class="{{ $row }}"><dt class="text-gray-400">Ready to withdraw</dt><dd class="text-white font-mono text-right">{{ money_from($unpaidRewards, $staking->currency ?: 'USD') }}</dd></div>
-                    <div class="{{ $row }}"><dt class="text-gray-400">Rewards paid out</dt><dd class="text-emerald-400 font-mono text-right">{{ $staking->formatted_total_rewards }}</dd></div>
+                    <div class="{{ $row }}"><dt class="text-gray-400">Amount staked</dt><dd class="text-white font-mono text-right">{{ money_from($staking->amount_staked, $cur) }}</dd></div>
+                    <div class="{{ $row }}"><dt class="text-gray-400">Current value</dt><dd class="text-white font-mono text-right">{{ money_from($currentValue, $cur) }}</dd></div>
+                    <div class="{{ $row }}"><dt class="text-gray-400">Ready to withdraw</dt><dd class="text-white font-mono text-right">{{ money_from($unpaidRewards, $cur) }}</dd></div>
+                    <div class="{{ $row }}"><dt class="text-gray-400">Rewards paid out</dt><dd class="text-emerald-400 font-mono text-right">{{ money_from($staking->total_rewards, $cur) }}</dd></div>
                     @if($staking->last_reward_date)
                         <div class="{{ $row }}"><dt class="text-gray-400">Last reward</dt><dd class="text-white text-right">{{ $staking->last_reward_date->format('M d, Y H:i') }}</dd></div>
                     @endif
@@ -145,13 +147,13 @@
                 <h2 class="text-base font-semibold text-white">Plan details</h2>
                 <dl class="mt-3 divide-y divide-gray-700 text-sm">
                     @if($staking->plan->minimum_amount)
-                        <div class="{{ $row }}"><dt class="text-gray-400">Minimum</dt><dd class="text-white font-mono text-right">{{ number_format($staking->plan->minimum_amount, 8) }} {{ $staking->plan->staking_currency }}</dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">Minimum</dt><dd class="text-white font-mono text-right">{{ money_from($staking->plan->minimum_amount, $staking->plan->staking_currency ?: $cur) }}</dd></div>
                     @endif
                     @if($staking->plan->lock_period)
                         <div class="{{ $row }}"><dt class="text-gray-400">Lock period</dt><dd class="text-white text-right">{{ $staking->plan->lock_period }} days</dd></div>
                     @endif
                     @if($staking->plan->reward_frequency)
-                        <div class="{{ $row }}"><dt class="text-gray-400">Reward frequency</dt><dd class="text-white text-right">{{ $staking->plan->reward_frequency }}</dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">Reward frequency</dt><dd class="text-white text-right">{{ ucfirst($staking->plan->reward_frequency) }}</dd></div>
                     @endif
                     @if($staking->plan->staking_duration)
                         <div class="{{ $row }}"><dt class="text-gray-400">Duration</dt><dd class="text-white text-right">{{ $staking->plan->staking_duration }} days</dd></div>

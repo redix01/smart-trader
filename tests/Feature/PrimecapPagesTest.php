@@ -55,22 +55,24 @@ class PrimecapPagesTest extends TestCase
         $this->assertFileExists(public_path('prime/hero-bg.mp4'));
     }
 
-    public function test_dashboard_market_pages_and_trade_room_render(): void
+    public function test_dashboard_shows_live_markets_that_open_the_trade_room(): void
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user)->get(route('user.markets.stocks'))
-            ->assertOk()->assertSee('Stock Prices')->assertSee('embed-widget-market-quotes.js', false);
-
-        $this->actingAs($user)->get(route('user.markets.crypto'))
-            ->assertOk()->assertSee('Crypto Prices')->assertSee('crypto-rows', false);
-
         $this->actingAs($user)->get(route('user.dashboard'))
-            ->assertOk()->assertSee('Trade Room')->assertSee(route('user.markets.crypto'), false);
+            ->assertOk()
+            ->assertSee('id="dashMarkets"', false)
+            ->assertSee(e(route('user.liveTrading.index', ['asset_type' => 'stock', 'symbol' => 'AAPL'])), false)
+            ->assertSee(e(route('user.liveTrading.index', ['asset_type' => 'crypto', 'symbol' => 'BTC'])), false);
     }
 
-    public function test_market_pages_require_login(): void
+    public function test_read_only_price_pages_are_removed(): void
     {
-        $this->get(route('user.markets.stocks'))->assertRedirect(route('login'));
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->get('/user/markets/stocks')->assertNotFound();
+        $this->actingAs($user)->get('/user/markets/crypto')->assertNotFound();
+        $this->assertFalse(\Illuminate\Support\Facades\Route::has('user.markets.stocks'));
+        $this->assertFalse(\Illuminate\Support\Facades\Route::has('user.markets.crypto'));
     }
 }

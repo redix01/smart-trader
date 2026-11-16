@@ -39,81 +39,38 @@
 
     @if($activePlans->count() > 0)
         @foreach($activePlans as $planType => $plans)
-            <div class="rounded-2xl border border-gray-700 bg-gray-800 overflow-hidden">
-                <div class="px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-700 flex items-center justify-between">
-                    <h2 class="text-base font-semibold text-white">{{ ucfirst($planType) }} plans</h2>
+            <section>
+                <div class="flex items-center justify-between gap-3 mb-3">
+                    <h2 class="text-base sm:text-lg font-semibold text-white">{{ ucfirst($planType) }} plans</h2>
                     <span class="text-xs text-gray-400">{{ $plans->count() }} active</span>
                 </div>
-
-                <!-- Phones: cards -->
-                <ul class="md:hidden divide-y divide-gray-700">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
                     @foreach($plans as $userPlan)
-                        <li class="p-4">
+                        <div class="flex flex-col rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5">
                             <div class="flex items-start justify-between gap-3">
                                 <div class="min-w-0">
-                                    <div class="text-sm font-semibold text-white">{{ $userPlan->plan->name }}</div>
-                                    <div class="text-xs text-gray-400 mt-0.5 line-clamp-2">{{ $userPlan->plan->description }}</div>
+                                    <div class="text-white font-semibold truncate">{{ $userPlan->plan->name }}</div>
+                                    <div class="text-xs text-gray-400 mt-0.5 line-clamp-1">{{ $userPlan->plan->description ?: ucfirst($planType).' plan' }}</div>
                                 </div>
                                 <span class="shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold {{ $badge('active') }}">Active</span>
                             </div>
-                            <dl class="grid grid-cols-2 gap-x-3 gap-y-2 mt-3 text-sm">
-                                <div><dt class="text-xs text-gray-400">Amount paid</dt><dd class="text-white font-mono">{{ $userPlan->formatted_amount_paid }}</dd></div>
-                                <div><dt class="text-xs text-gray-400">Ends</dt><dd class="text-gray-300">{{ $userPlan->end_date ? $userPlan->end_date->format('M d, Y') : 'N/A' }}@if($userPlan->isExpiringSoon()) <span class="text-xs text-amber-300">· soon</span>@endif</dd></div>
-                                <div><dt class="text-xs text-gray-400">Started</dt><dd class="text-gray-300">{{ $userPlan->start_date ? $userPlan->start_date->format('M d, Y') : 'N/A' }}</dd></div>
+                            <dl class="grid grid-cols-2 gap-px mt-4 rounded-xl overflow-hidden bg-gray-700/60 text-sm">
+                                <div class="bg-gray-900 p-3 min-w-0"><dt class="text-[11px] text-gray-400">Amount paid</dt><dd class="text-white font-mono font-semibold truncate mt-0.5">{{ money_from($userPlan->amount_paid, $userPlan->currency ?: 'USD') }}</dd></div>
+                                <div class="bg-gray-900 p-3 min-w-0"><dt class="text-[11px] text-gray-400">Type</dt><dd class="text-white font-semibold truncate mt-0.5">{{ ucfirst($userPlan->plan->type) }}</dd></div>
+                                <div class="bg-gray-900 p-3 min-w-0"><dt class="text-[11px] text-gray-400">Started</dt><dd class="text-white font-semibold truncate mt-0.5">{{ $userPlan->start_date ? $userPlan->start_date->format('M d, Y') : 'N/A' }}</dd></div>
+                                <div class="bg-gray-900 p-3 min-w-0"><dt class="text-[11px] text-gray-400">Ends</dt><dd class="font-semibold truncate mt-0.5 {{ $userPlan->isExpiringSoon() ? 'text-amber-300' : 'text-white' }}">{{ $userPlan->end_date ? $userPlan->end_date->format('M d, Y') : 'N/A' }}{{ $userPlan->isExpiringSoon() ? ' · soon' : '' }}</dd></div>
                             </dl>
-                            <div class="flex flex-wrap gap-2 mt-3">
-                                <a href="{{ route('user.plans.show', $userPlan) }}" class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white">View</a>
-                                <form method="POST" action="{{ route('user.plans.cancel', $userPlan) }}" class="inline">
+                            <div class="grid grid-cols-2 gap-2 mt-4">
+                                <a href="{{ route('user.plans.show', $userPlan) }}" class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white">View</a>
+                                <form method="POST" action="{{ route('user.plans.cancel', $userPlan) }}">
                                     @csrf
-                                    <button type="submit" class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-sm font-semibold border border-red-500/40 text-red-400 hover:bg-red-500/10" data-confirm="Are you sure you want to cancel this plan?">Cancel</button>
+                                    <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-semibold border border-red-500/40 text-red-400 hover:bg-red-500/10" data-confirm="Are you sure you want to cancel this plan?">Cancel</button>
                                 </form>
                             </div>
-                        </li>
+                        </div>
                     @endforeach
-                </ul>
-
-                <!-- Desktop: table -->
-                <div class="hidden md:block overflow-x-auto">
-                    <table class="min-w-full text-sm">
-                        <thead class="bg-gray-900/50">
-                            <tr>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Plan</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Amount paid</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Start date</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">End date</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-700">
-                            @foreach($plans as $userPlan)
-                                <tr class="hover:bg-gray-700/40">
-                                    <td class="px-4 py-3">
-                                        <div class="font-medium text-white whitespace-nowrap">{{ $userPlan->plan->name }}</div>
-                                        <div class="text-xs text-gray-400 max-w-xs truncate">{{ $userPlan->plan->description }}</div>
-                                    </td>
-                                    <td class="px-4 py-3 whitespace-nowrap text-white font-mono">{{ $userPlan->formatted_amount_paid }}</td>
-                                    <td class="px-4 py-3 whitespace-nowrap text-gray-300">{{ $userPlan->start_date ? $userPlan->start_date->format('M d, Y') : 'N/A' }}</td>
-                                    <td class="px-4 py-3 whitespace-nowrap text-gray-300">
-                                        {{ $userPlan->end_date ? $userPlan->end_date->format('M d, Y') : 'N/A' }}
-                                        @if($userPlan->isExpiringSoon())
-                                            <span class="ml-1 text-xs text-amber-300">(expiring soon)</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-3 whitespace-nowrap">
-                                        <div class="flex items-center gap-3">
-                                            <a href="{{ route('user.plans.show', $userPlan) }}" class="text-gold-400 hover:text-gold-300 font-semibold">View</a>
-                                            <form method="POST" action="{{ route('user.plans.cancel', $userPlan) }}" class="inline">
-                                                @csrf
-                                                <button type="submit" class="text-red-400 hover:text-red-300 font-semibold" data-confirm="Are you sure you want to cancel this plan?">Cancel</button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
                 </div>
-            </div>
+            </section>
         @endforeach
     @else
         <div class="rounded-2xl border border-gray-700 bg-gray-800">

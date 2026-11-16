@@ -13,39 +13,56 @@
     </div>
 
     <!-- Plans -->
-    <section id="plans" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-        @forelse($plans as $plan)
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6 flex flex-col hover:border-gold-500 transition-colors">
-            <div class="flex items-start justify-between gap-3">
-                <h3 class="text-base font-semibold text-white">{{ $plan->name }}</h3>
-                <span class="shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">{{ $plan->number_of_traders }} AI trader{{ $plan->number_of_traders > 1 ? 's' : '' }}</span>
+    <section id="plans" class="space-y-3">
+        <div class="flex items-end justify-between gap-3">
+            <div>
+                <h2 class="text-base font-semibold text-white">AI trader plans</h2>
+                <p class="text-sm text-gray-400 mt-0.5">Monthly subscription, billed from your balance.</p>
             </div>
-            <div class="text-2xl sm:text-3xl font-bold text-white mt-3">{{ $plan->formatted_price }}</div>
+            @if($plans->count())<span class="text-xs text-gray-400 tabular-nums">{{ $plans->count() }} plans</span>@endif
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        @forelse($plans as $plan)
+        @php
+            $stocks = collect($plan->stocks_trading ?? []);
+            $features = collect($plan->features ?? []);
+        @endphp
+        <div class="pc-card rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5 flex flex-col">
+            <div class="flex items-center gap-3">
+                <span class="w-10 h-10 shrink-0 rounded-xl bg-blue-500/15 text-blue-300 grid place-items-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="12" rx="2"/><path d="M12 4v4M9 14h.01M15 14h.01"/></svg>
+                </span>
+                <div class="min-w-0 flex-1">
+                    <h3 class="text-base font-semibold text-white leading-tight truncate">{{ $plan->name }}</h3>
+                    <p class="text-xs text-gray-400 mt-0.5 truncate" title="{{ $stocks->implode(', ') }}">{{ $stocks->take(4)->implode(' · ') }}@if($stocks->count() > 4) +{{ $stocks->count() - 4 }}@endif</p>
+                </div>
+                <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-500/15 text-blue-200">{{ $plan->number_of_traders }} AI trader{{ $plan->number_of_traders > 1 ? 's' : '' }}</span>
+            </div>
+
+            <div class="mt-5 flex items-baseline gap-1.5">
+                <span class="text-3xl font-bold text-white tracking-tight tabular-nums">{{ $plan->formatted_price }}</span>
+                <span class="text-sm text-gray-400">/ month</span>
+            </div>
             @if($plan->description)
-                <p class="text-sm text-gray-400 mt-2">{{ $plan->description }}</p>
+                <p class="text-sm text-gray-400 mt-2 line-clamp-2">{{ $plan->description }}</p>
             @endif
 
-            <div class="mt-4 rounded-xl border border-gray-700 bg-gray-900/50 p-3 flex items-center justify-between gap-3">
-                <span class="text-xs text-gray-400">Minimum investment</span>
-                <span class="font-semibold text-white font-mono">{{ money_from($plan->investment_amount, 'USD', 0) }}</span>
-            </div>
-
-            <div class="mt-4">
-                <div class="text-xs text-gray-400 mb-2">Markets covered</div>
-                <div class="flex flex-wrap gap-1.5">
-                    @foreach($plan->stocks_trading as $stock)
-                    <span class="px-2 py-0.5 rounded-md text-xs font-semibold font-mono bg-gray-700 text-gray-300">{{ $stock }}</span>
-                    @endforeach
+            <dl class="mt-4 grid grid-cols-2 gap-2">
+                <div class="rounded-xl bg-gray-900 px-3 py-2.5 min-w-0">
+                    <dt class="text-[11px] text-gray-400">Minimum investment</dt>
+                    <dd class="text-sm font-semibold text-white mt-0.5 tabular-nums truncate">{{ money_from($plan->investment_amount, 'USD', 2) }}</dd>
                 </div>
-            </div>
+                <div class="rounded-xl bg-gray-900 px-3 py-2.5 min-w-0">
+                    <dt class="text-[11px] text-gray-400">Stocks covered</dt>
+                    <dd class="text-sm font-semibold text-white mt-0.5 tabular-nums">{{ $stocks->count() }}</dd>
+                </div>
+            </dl>
 
-            @if($plan->features)
-            <ul class="mt-4 space-y-1.5">
-                @foreach($plan->features as $feature)
+            @if($features->isNotEmpty())
+            <ul class="mt-4 space-y-2">
+                @foreach($features as $feature)
                 <li class="text-sm text-gray-300 flex items-start gap-2">
-                    <svg class="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                    </svg>
+                    <svg class="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>
                     {{ $feature }}
                 </li>
                 @endforeach
@@ -54,17 +71,22 @@
 
             <div class="mt-auto pt-5">
                 <a href="{{ route('user.aiTraders.plan', $plan) }}"
-                   class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                   class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
                     View AI traders
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                 </a>
             </div>
         </div>
         @empty
         <div class="col-span-full rounded-2xl border border-gray-700 bg-gray-800 px-4 py-12 text-center">
-            <p class="text-white font-medium">No AI trader plans available</p>
-            <p class="text-sm text-gray-400 mt-1">Plans will appear here once they are published.</p>
+            <div class="w-12 h-12 mx-auto rounded-full bg-gray-700 grid place-items-center text-gray-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="12" rx="2"/><path d="M12 4v4M9 14h.01M15 14h.01"/></svg>
+            </div>
+            <p class="text-white font-medium mt-3">No AI trader plans are published yet.</p>
+            <a href="{{ route('user.copyTrading.index') }}" class="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">Try copy trading</a>
         </div>
         @endforelse
+        </div>
     </section>
 
     <!-- How it works -->
@@ -77,7 +99,7 @@
                 ['Monitor results', 'Track each trader’s performance and see how your portfolio is doing.'],
             ] as $i => [$title, $text])
             <li class="rounded-xl border border-gray-700 bg-gray-900/50 p-4">
-                <span class="w-7 h-7 rounded-full bg-blue-600/20 text-gold-400 grid place-items-center text-xs font-bold font-mono">{{ $i + 1 }}</span>
+                <span class="w-7 h-7 rounded-full bg-blue-600/20 text-gold-400 grid place-items-center text-xs font-bold tabular-nums">{{ $i + 1 }}</span>
                 <h3 class="text-sm font-semibold text-white mt-3">{{ $title }}</h3>
                 <p class="text-sm text-gray-400 mt-1">{{ $text }}</p>
             </li>

@@ -21,20 +21,22 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
-            <div class="text-xs text-gray-400">Monthly subscription</div>
-            <div class="text-xl sm:text-2xl font-semibold text-white mt-1 truncate">{{ $plan->formatted_price }}</div>
-        </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
-            <div class="text-xs text-gray-400">AI traders</div>
-            <div class="text-xl sm:text-2xl font-semibold text-white mt-1">{{ $plan->number_of_traders }}</div>
-        </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 col-span-2 sm:col-span-1">
-            <div class="text-xs text-gray-400">Minimum investment</div>
-            <div class="text-xl sm:text-2xl font-semibold text-white mt-1 font-mono truncate">{{ money_from($plan->investment_amount, 'USD', 0) }}</div>
-        </div>
-    </div>
+    <section class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5">
+        <dl class="grid grid-cols-3 divide-x divide-gray-700">
+            <div class="pr-3 min-w-0">
+                <dt class="text-xs text-gray-400">Per month</dt>
+                <dd class="text-base sm:text-2xl font-semibold text-white mt-1 truncate tabular-nums">{{ $plan->formatted_price }}</dd>
+            </div>
+            <div class="px-3 min-w-0">
+                <dt class="text-xs text-gray-400">AI traders</dt>
+                <dd class="text-base sm:text-2xl font-semibold text-white mt-1 tabular-nums">{{ $plan->number_of_traders }}</dd>
+            </div>
+            <div class="pl-3 min-w-0">
+                <dt class="text-xs text-gray-400">Min. invest</dt>
+                <dd class="text-base sm:text-2xl font-semibold text-white mt-1 truncate tabular-nums">{{ money_from($plan->investment_amount, 'USD', 2) }}</dd>
+            </div>
+        </dl>
+    </section>
 
     <!-- Subscription -->
     @if($isSubscribed)
@@ -67,69 +69,89 @@
         </div>
 
         @if($traders->count() > 0)
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             @foreach($traders as $trader)
-            @php $activated = auth()->user()->hasActivatedAiTrader($trader->id); @endphp
-            <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5 flex flex-col hover:border-gold-500 transition-colors">
-                <div class="flex items-start justify-between gap-3">
-                    <div class="min-w-0">
-                        <h3 class="text-base font-semibold text-white truncate">{{ $trader->name }}</h3>
-                        <div class="mt-1 flex flex-wrap gap-1.5">
-                            <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">{{ ucfirst($trader->trading_strategy) }}</span>
-                            <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">{{ $trader->ai_model }}</span>
-                            <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">{{ $trader->ai_confidence }}</span>
+            @php
+                $activated = auth()->user()->hasActivatedAiTrader($trader->id);
+                $winPct = min(100, max(0, (float) $trader->win_rate));
+                $perfUp = $trader->current_performance >= 0;
+                $stocks = collect($trader->stocks_to_trade ?? []);
+            @endphp
+            <div class="pc-card rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5 flex flex-col">
+                <div class="flex items-center gap-3">
+                    <span class="w-10 h-10 shrink-0 rounded-xl bg-blue-500/15 text-blue-300 grid place-items-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="12" rx="2"/><path d="M12 4v4M9 14h.01M15 14h.01"/></svg>
+                    </span>
+                    <div class="min-w-0 flex-1">
+                        <h3 class="text-base font-semibold text-white leading-tight truncate">{{ $trader->name }}</h3>
+                        <p class="text-xs text-gray-400 mt-0.5 truncate">{{ ucfirst($trader->trading_strategy) }} · {{ $trader->ai_model }}</p>
+                    </div>
+                    @if($activated)
+                        <span class="shrink-0 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pc-pulse"></span>Active</span>
+                    @else
+                        <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-gray-700 text-gray-300">{{ ucfirst($trader->ai_confidence) }}</span>
+                    @endif
+                </div>
+
+                <div class="mt-5">
+                    <div class="flex items-end justify-between gap-3">
+                        <div>
+                            <div class="text-xs text-gray-400">Performance</div>
+                            <div class="text-3xl font-bold tracking-tight leading-none mt-1.5 tabular-nums {{ $perfUp ? 'text-emerald-400' : 'text-red-400' }}">{{ $trader->formatted_performance }}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-gray-400">Win rate</div>
+                            <div class="text-sm font-semibold text-white mt-1 tabular-nums">{{ $trader->formatted_win_rate }}</div>
                         </div>
                     </div>
-                    @if($activated)
-                        <span class="shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold bg-emerald-500/15 text-emerald-400">Active</span>
-                    @endif
-                </div>
-
-                <div class="mt-4 grid grid-cols-2 gap-2">
-                    <div class="rounded-xl border border-gray-700 bg-gray-900/50 p-3">
-                        <div class="text-xs text-gray-400">Performance</div>
-                        <div class="text-lg font-semibold mt-0.5 {{ $trader->current_performance >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ $trader->formatted_performance }}</div>
-                    </div>
-                    <div class="rounded-xl border border-gray-700 bg-gray-900/50 p-3">
-                        <div class="text-xs text-gray-400">Win rate</div>
-                        <div class="text-lg font-semibold text-white mt-0.5">{{ $trader->formatted_win_rate }}</div>
+                    <div class="mt-3 h-1.5 rounded-full bg-gray-700/70 overflow-hidden" role="img" aria-label="Win rate {{ $trader->formatted_win_rate }}">
+                        <div class="h-full rounded-full bg-emerald-500" style="width: {{ $winPct }}%"></div>
                     </div>
                 </div>
 
-                <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                    <div class="flex justify-between gap-2"><dt class="text-gray-400">Trades</dt><dd class="text-white font-medium">{{ $trader->total_trades }}</dd></div>
-                    <div class="flex justify-between gap-2"><dt class="text-gray-400">Wins</dt><dd class="text-white font-medium">{{ $trader->winning_trades }}</dd></div>
-                    <div class="flex justify-between gap-2"><dt class="text-gray-400">Max pos.</dt><dd class="text-white font-medium">{{ $trader->max_positions }}</dd></div>
-                    <div class="flex justify-between gap-2"><dt class="text-gray-400">Size</dt><dd class="text-white font-medium">{{ $trader->position_size_percentage }}%</dd></div>
-                    <div class="flex justify-between gap-2"><dt class="text-gray-400">Stop loss</dt><dd class="text-red-400 font-medium">{{ $trader->stop_loss_percentage }}%</dd></div>
-                    <div class="flex justify-between gap-2"><dt class="text-gray-400">Take profit</dt><dd class="text-emerald-400 font-medium">{{ $trader->take_profit_percentage }}%</dd></div>
+                <dl class="mt-4 grid grid-cols-3 gap-2">
+                    <div class="rounded-xl bg-gray-900 px-2.5 py-2 min-w-0">
+                        <dt class="text-[11px] text-gray-400">Trades</dt>
+                        <dd class="text-sm font-semibold text-white mt-0.5 tabular-nums truncate">{{ number_format($trader->total_trades) }}</dd>
+                    </div>
+                    <div class="rounded-xl bg-gray-900 px-2.5 py-2 min-w-0">
+                        <dt class="text-[11px] text-gray-400">Stop loss</dt>
+                        <dd class="text-sm font-semibold text-red-400 mt-0.5 tabular-nums truncate">{{ $trader->stop_loss_percentage }}%</dd>
+                    </div>
+                    <div class="rounded-xl bg-gray-900 px-2.5 py-2 min-w-0">
+                        <dt class="text-[11px] text-gray-400">Take profit</dt>
+                        <dd class="text-sm font-semibold text-emerald-400 mt-0.5 tabular-nums truncate">{{ $trader->take_profit_percentage }}%</dd>
+                    </div>
                 </dl>
 
-                <div class="mt-4 flex flex-wrap gap-1.5">
-                    @foreach($trader->stocks_to_trade as $stock)
-                    <span class="px-2 py-0.5 rounded-md text-xs font-semibold font-mono bg-gray-700 text-gray-300">{{ $stock }}</span>
-                    @endforeach
+                <div class="mt-3 space-y-1 text-xs">
+                    <p class="truncate text-gray-300 font-medium" title="{{ $stocks->implode(', ') }}">{{ $stocks->take(5)->implode(' · ') }}@if($stocks->count() > 5)<span class="text-gray-500"> +{{ $stocks->count() - 5 }}</span>@endif</p>
+                    <p class="text-gray-500">Up to {{ $trader->max_positions }} positions, {{ $trader->position_size_percentage }}% each</p>
                 </div>
 
-                <div class="mt-auto pt-5 grid grid-cols-2 gap-2">
+                <div class="mt-auto pt-4 space-y-2">
                     @if($activated)
-                        <span class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-500/15 text-emerald-400 text-sm font-semibold">
-                            <i class="fas fa-check-circle"></i>Activated
-                        </span>
+                        <a href="{{ route('user.aiTraders.trader', $trader) }}"
+                           class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/20 text-emerald-300 text-sm font-semibold">
+                            <i class="fas fa-check-circle"></i>Activated · view performance
+                        </a>
                     @elseif($isSubscribed)
                         <button onclick="showActivationModal({{ $trader->id }}, '{{ $trader->name }}', {{ $trader->aiTraderPlan ? $trader->aiTraderPlan->investment_amount : 0 }})"
-                                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
-                            <i class="fas fa-play"></i>Activate
+                                class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                            <i class="fas fa-play"></i>Activate trader
                         </button>
                     @else
-                        <span class="inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-gray-700/60 text-gray-400 text-sm font-semibold" title="Subscribe to this plan to activate">
-                            <i class="fas fa-lock"></i>Locked
+                        <span class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gray-700/60 text-gray-400 text-sm font-semibold" title="Subscribe to this plan to activate">
+                            <i class="fas fa-lock"></i>Subscribe to activate
                         </span>
                     @endif
+                    @unless($activated)
                     <a href="{{ route('user.aiTraders.trader', $trader) }}"
-                       class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
-                        Details
+                       class="w-full inline-flex items-center justify-center gap-1.5 py-1.5 text-sm font-semibold text-gold-400 hover:text-gold-300">
+                        View details
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                     </a>
+                    @endunless
                 </div>
             </div>
             @endforeach

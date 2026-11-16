@@ -1,6 +1,10 @@
 @extends('dashboard.layout.app')
 
 @section('content')
+@php
+    // Sign before the currency symbol: -$42.10, not $-42.10
+    $signedMoney = fn ($v) => ((float) $v < 0 ? '-' : '') . money(abs((float) $v), 2);
+@endphp
 <div class="space-y-4 sm:space-y-6">
     <div class="flex flex-wrap items-end justify-between gap-3">
         <div>
@@ -18,117 +22,143 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5">
-            <p class="text-xs text-gray-400">Total bots</p>
-            <p class="text-xl sm:text-2xl font-semibold text-white mt-1">{{ $totalBots }}</p>
-        </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5">
-            <p class="text-xs text-gray-400">Active bots</p>
-            <p class="text-xl sm:text-2xl font-semibold text-white mt-1">{{ $activeBots }}</p>
-        </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5">
-            <p class="text-xs text-gray-400">Total profit</p>
-            <p class="text-xl sm:text-2xl font-semibold font-mono mt-1 truncate {{ $totalProfit >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ money($totalProfit, 2) }}</p>
-        </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5">
-            <p class="text-xs text-gray-400">Total trades</p>
-            <p class="text-xl sm:text-2xl font-semibold text-white mt-1">{{ $totalTrades }}</p>
-        </div>
-    </div>
+    {{-- Summary --}}
+    <section class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5">
+        <dl class="grid grid-cols-2 lg:grid-cols-4 gap-y-4">
+            <div class="pr-3 min-w-0 lg:border-r lg:border-gray-700">
+                <dt class="text-xs text-gray-400">Total profit</dt>
+                <dd class="text-xl sm:text-2xl font-semibold mt-1 truncate tabular-nums {{ $totalProfit >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ $signedMoney($totalProfit) }}</dd>
+            </div>
+            <div class="pl-3 lg:px-4 min-w-0 border-l border-gray-700 lg:border-l-0 lg:border-r">
+                <dt class="text-xs text-gray-400">Total trades</dt>
+                <dd class="text-xl sm:text-2xl font-semibold text-white mt-1 tabular-nums">{{ number_format($totalTrades) }}</dd>
+            </div>
+            <div class="pr-3 lg:px-4 min-w-0 lg:border-r lg:border-gray-700">
+                <dt class="text-xs text-gray-400">Active bots</dt>
+                <dd class="text-xl sm:text-2xl font-semibold text-white mt-1 tabular-nums">{{ $activeBots }}</dd>
+            </div>
+            <div class="pl-3 lg:pl-4 min-w-0 border-l border-gray-700 lg:border-l-0">
+                <dt class="text-xs text-gray-400">Total bots</dt>
+                <dd class="text-xl sm:text-2xl font-semibold text-white mt-1 tabular-nums">{{ $totalBots }}</dd>
+            </div>
+        </dl>
+    </section>
 
     <!-- Bots List -->
-    <div class="rounded-2xl border border-gray-700 bg-gray-800">
-        <div class="px-4 sm:px-6 py-4 border-b border-gray-700">
-            <div class="flex items-center justify-between gap-3">
+    <section class="space-y-3">
+        <div class="flex items-center justify-between gap-3">
+            <div>
                 <h2 class="text-base font-semibold text-white">Your bots</h2>
-                <button onclick="refreshPage()" class="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
-                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                    Refresh
-                </button>
+                <p class="text-sm text-gray-400 mt-0.5">Tap a bot to see its trades and performance.</p>
             </div>
+            <button onclick="refreshPage()" class="shrink-0 inline-flex items-center justify-center gap-1 px-3 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
+                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Refresh
+            </button>
         </div>
-        
-        <div class="p-4 sm:p-6">
+
             @if($bots->count() > 0)
-                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                     @foreach($bots as $bot)
-                        <div class="rounded-xl border border-gray-700 bg-gray-900/50 p-4 hover:border-gold-500 transition-colors">
+                        @php
+                            $profitUp = $bot->total_profit >= 0;
+                            $roi = $bot->max_investment > 0 ? $bot->total_profit / $bot->max_investment * 100 : 0;
+                            $winRate = min(100, max(0, (float) $bot->success_rate));
+                        @endphp
+                        <div class="pc-card rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-5 flex flex-col">
                             <!-- Bot Header -->
-                            <div class="flex items-start justify-between gap-3 mb-3">
-                                <div class="min-w-0">
-                                    <h3 class="text-white font-semibold truncate">{{ $bot->name }}</h3>
-                                    <p class="text-gray-400 text-sm font-mono">{{ $bot->trading_pair }}</p>
+                            <div class="flex items-center gap-3">
+                                <span class="w-10 h-10 shrink-0 rounded-xl grid place-items-center {{ $bot->isActive() ? 'bg-blue-500/15 text-blue-300' : 'bg-gray-700 text-gray-400' }}">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="12" rx="2"/><path d="M12 4v4M9 14h.01M15 14h.01"/></svg>
+                                </span>
+                                <div class="min-w-0 flex-1">
+                                    <h3 class="text-base font-semibold text-white leading-tight truncate">{{ $bot->name }}</h3>
+                                    <p class="text-xs text-gray-400 mt-0.5 truncate">{{ $bot->trading_pair }} · {{ ucfirst(str_replace('_', ' ', $bot->strategy)) }}</p>
                                 </div>
                                 <div class="flex items-center gap-1.5 shrink-0">
-                                    @if($bot->started_at && $bot->isActive())
-                                        <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300 font-mono">
-                                            @php
-                                                $duration = $bot->started_at->diff(now());
-                                                if ($duration->days > 0) {
-                                                    echo $duration->days . 'd';
-                                                } elseif ($duration->h > 0) {
-                                                    echo $duration->h . 'h';
-                                                } else {
-                                                    echo $duration->i . 'm';
-                                                }
-                                            @endphp
-                                        </span>
-                                    @endif
                                     @if($bot->isActive())
-                                        <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-emerald-500/15 text-emerald-400">Active</span>
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pc-pulse"></span>Active
+                                            @if($bot->started_at)
+                                                <span class="text-emerald-300/70 tabular-nums">
+                                                @php
+                                                    $duration = $bot->started_at->diff(now());
+                                                    if ($duration->days > 0) {
+                                                        echo $duration->days . 'd';
+                                                    } elseif ($duration->h > 0) {
+                                                        echo $duration->h . 'h';
+                                                    } else {
+                                                        echo $duration->i . 'm';
+                                                    }
+                                                @endphp
+                                                </span>
+                                            @endif
+                                        </span>
                                     @elseif($bot->isPaused())
-                                        <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-amber-500/15 text-amber-300">Paused</span>
+                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/15 text-amber-300">Paused</span>
                                     @else
-                                        <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">Stopped</span>
+                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-gray-700 text-gray-300">Stopped</span>
                                     @endif
                                 </div>
+                            </div>
+
+                            <!-- Headline -->
+                            <div class="mt-5 flex items-end justify-between gap-3">
+                                <div class="min-w-0">
+                                    <div class="text-xs text-gray-400">Profit</div>
+                                    <div class="text-3xl font-bold tracking-tight leading-none mt-1.5 tabular-nums truncate {{ $profitUp ? 'text-emerald-400' : 'text-red-400' }}">{{ $signedMoney($bot->total_profit) }}</div>
+                                </div>
+                                <span class="shrink-0 mb-0.5 px-2 py-0.5 rounded-md text-xs font-semibold tabular-nums {{ $profitUp ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ $roi >= 0 ? '+' : '' }}{{ number_format($roi, 2) }}%</span>
+                            </div>
+                            <div class="mt-3">
+                                <div class="h-1.5 rounded-full bg-gray-700/70 overflow-hidden" role="img" aria-label="Win rate {{ number_format($winRate, 0) }}%">
+                                    <div class="h-full rounded-full bg-emerald-500" style="width: {{ $winRate }}%"></div>
+                                </div>
+                                <div class="mt-1.5 text-[11px] text-gray-500 tabular-nums">{{ number_format($winRate, 0) }}% winning trades</div>
                             </div>
 
                             <!-- Bot Stats -->
-                            <div class="space-y-2 mb-4">
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-400">Strategy:</span>
-                                    <span class="text-white">{{ ucfirst(str_replace('_', ' ', $bot->strategy)) }}</span>
+                            <dl class="mt-4 grid grid-cols-3 gap-2">
+                                <div class="rounded-xl bg-gray-900 px-2.5 py-2 min-w-0">
+                                    <dt class="text-[11px] text-gray-400">Investment</dt>
+                                    <dd class="text-sm font-semibold text-white mt-0.5 tabular-nums truncate">{{ money($bot->max_investment, 2) }}</dd>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-400">Investment:</span>
-                                    <span class="text-white">{{ money($bot->max_investment, 2) }}</span>
+                                <div class="rounded-xl bg-gray-900 px-2.5 py-2 min-w-0">
+                                    <dt class="text-[11px] text-gray-400">Trades</dt>
+                                    <dd class="text-sm font-semibold text-white mt-0.5 tabular-nums truncate">{{ number_format($bot->total_trades) }}</dd>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-400">Profit:</span>
-                                    <span class="{{ $bot->total_profit >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
-                                        {{ money($bot->total_profit, 2) }}
-                                    </span>
+                                <div class="rounded-xl bg-gray-900 px-2.5 py-2 min-w-0">
+                                    <dt class="text-[11px] text-gray-400">Leverage</dt>
+                                    <dd class="text-sm font-semibold text-white mt-0.5 tabular-nums truncate">{{ rtrim(rtrim(number_format((float) $bot->leverage, 2), '0'), '.') }}×</dd>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-400">Trades:</span>
-                                    <span class="text-white">{{ $bot->total_trades }}</span>
-                                </div>
-                            </div>
+                            </dl>
 
                             <!-- Bot Actions -->
-                            <div class="flex items-center gap-2">
-                                <a href="{{ route('user.botTrading.show', $bot) }}" class="flex-1 inline-flex items-center justify-center px-3 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">
-                                    Details
+                            <div class="mt-auto pt-4 space-y-2">
+                                <a href="{{ route('user.botTrading.show', $bot) }}" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                                    View bot
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                                 </a>
-                                
                                 @if($bot->isActive())
-                                    <button onclick="pauseBot({{ $bot->id }})" class="px-3 py-2.5 rounded-lg border border-amber-500/40 text-amber-300 hover:bg-amber-500/10 text-sm font-semibold">
-                                        Pause
-                                    </button>
-                                    <button onclick="stopBot({{ $bot->id }})" class="px-3 py-2.5 rounded-lg border border-red-500/40 text-red-400 hover:bg-red-500/10 text-sm font-semibold">
-                                        Stop
-                                    </button>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <button onclick="pauseBot({{ $bot->id }})" class="px-3 py-2 rounded-lg border border-amber-500/40 text-amber-300 hover:bg-amber-500/10 text-sm font-semibold">
+                                            Pause
+                                        </button>
+                                        <button onclick="stopBot({{ $bot->id }})" class="px-3 py-2 rounded-lg border border-red-500/40 text-red-400 hover:bg-red-500/10 text-sm font-semibold">
+                                            Stop
+                                        </button>
+                                    </div>
                                 @elseif($bot->isPaused())
-                                    <button onclick="startBot({{ $bot->id }})" class="px-3 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
-                                        Resume
-                                    </button>
-                                    <button onclick="stopBot({{ $bot->id }})" class="px-3 py-2.5 rounded-lg border border-red-500/40 text-red-400 hover:bg-red-500/10 text-sm font-semibold">
-                                        Stop
-                                    </button>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <button onclick="startBot({{ $bot->id }})" class="px-3 py-2 rounded-lg border border-blue-500/50 text-blue-300 hover:bg-blue-500/10 text-sm font-semibold">
+                                            Resume
+                                        </button>
+                                        <button onclick="stopBot({{ $bot->id }})" class="px-3 py-2 rounded-lg border border-red-500/40 text-red-400 hover:bg-red-500/10 text-sm font-semibold">
+                                            Stop
+                                        </button>
+                                    </div>
                                 @else
                                     <!-- Bot is stopped - no action buttons available -->
                                 @endif
@@ -137,21 +167,17 @@
                     @endforeach
                 </div>
             @else
-                <div class="text-center py-12">
-                    <div class="w-12 h-12 bg-gray-700 rounded-full grid place-items-center mx-auto mb-3">
-                        <svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                        </svg>
+                <div class="rounded-2xl border border-gray-700 bg-gray-800 px-4 py-12 text-center">
+                    <div class="w-12 h-12 bg-gray-700 rounded-full grid place-items-center mx-auto text-gray-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="12" rx="2"/><path d="M12 4v4M9 14h.01M15 14h.01"/></svg>
                     </div>
-                    <h3 class="text-white font-medium">No bots yet</h3>
-                    <p class="text-sm text-gray-400 mt-1 mb-5">Create a bot to start automating trades on a pair you choose.</p>
-                    <button id="createFirstBotBtn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                    <p class="text-white font-medium mt-3">No bots yet, create one to automate trades on a pair you choose.</p>
+                    <button id="createFirstBotBtn" class="mt-4 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
                         Create your first bot
                     </button>
                 </div>
             @endif
-        </div>
-    </div>
+    </section>
 </div>
 
 <!-- Create Bot Modal -->

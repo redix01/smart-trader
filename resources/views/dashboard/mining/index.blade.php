@@ -47,22 +47,32 @@
     <!-- Mining Tab Content -->
     <div id="miningContent" class="tab-content">
         @if($miningPlans->count() > 0)
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            @php $popular = $miningPlans->count() >= 3 ? intdiv($miningPlans->count(), 2) : ($miningPlans->count() === 2 ? 1 : -1); @endphp
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
                 @foreach($miningPlans as $plan)
-                    <div class="flex flex-col rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6 hover:border-blue-500/60 transition-colors">
+                    @php $featured = $loop->index === $popular; @endphp
+                    <div class="flex flex-col rounded-2xl border p-5 sm:p-6 {{ $featured ? 'pc-card pc-card--accent border-blue-500/40' : 'border-gray-700 bg-gray-800' }}">
                         <div class="flex items-start justify-between gap-3">
                             <h3 class="text-base font-semibold text-white">{{ $plan->name }}</h3>
-                            <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">{{ ucfirst($plan->type) }}</span>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                @if($featured)
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-500 text-white">Popular</span>
+                                @endif
+                                <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">{{ ucfirst($plan->type) }}</span>
+                            </div>
                         </div>
-                        <div class="mt-3">
-                            <span class="text-2xl sm:text-3xl font-bold text-white font-mono">{{ auth()->user()->formatAmount($plan->price) }}</span>
-                            <span class="text-sm text-gray-400">/ month</span>
+                        <div class="mt-4">
+                            <div class="text-xs text-gray-400">Monthly rental</div>
+                            <div class="flex items-baseline gap-1.5 mt-0.5 min-w-0">
+                                <span class="text-3xl sm:text-4xl font-bold text-white font-mono tracking-tight truncate">{{ auth()->user()->formatAmount($plan->price) }}</span>
+                                <span class="text-sm font-semibold {{ $featured ? 'text-blue-200' : 'text-gold-400' }}">/ mo</span>
+                            </div>
                         </div>
-                        <dl class="mt-4 mb-5 divide-y divide-gray-700 text-sm">
-                            <div class="flex justify-between gap-3 py-2"><dt class="text-gray-400">Hashrate</dt><dd class="text-white text-right">{{ $plan->hashrate ?? 'N/A' }}</dd></div>
-                            <div class="flex justify-between gap-3 py-2"><dt class="text-gray-400">Equipment</dt><dd class="text-white text-right">{{ $plan->equipment ?? 'N/A' }}</dd></div>
-                            <div class="flex justify-between gap-3 py-2"><dt class="text-gray-400">Uptime</dt><dd class="text-white text-right">{{ $plan->downtime ?? 'N/A' }}</dd></div>
-                            <div class="flex justify-between gap-3 py-2"><dt class="text-gray-400">Electricity</dt><dd class="text-white text-right">{{ $plan->electricity_costs ?? 'N/A' }}</dd></div>
+                        <dl class="grid grid-cols-2 gap-x-3 gap-y-3 mt-5 mb-5 rounded-xl p-3 text-sm {{ $featured ? 'bg-black/25' : 'bg-gray-900' }}">
+                            <div class="min-w-0"><dt class="text-[11px] text-gray-400">Hashrate</dt><dd class="text-white font-semibold truncate mt-0.5">{{ $plan->hashrate ?? 'N/A' }}</dd></div>
+                            <div class="min-w-0"><dt class="text-[11px] text-gray-400">Uptime</dt><dd class="text-white font-semibold truncate mt-0.5">{{ $plan->downtime ?? 'N/A' }}</dd></div>
+                            <div class="min-w-0 col-span-2"><dt class="text-[11px] text-gray-400">Equipment</dt><dd class="text-white font-semibold truncate mt-0.5">{{ $plan->equipment ?? 'N/A' }}</dd></div>
+                            <div class="min-w-0 col-span-2"><dt class="text-[11px] text-gray-400">Electricity</dt><dd class="text-white font-semibold truncate mt-0.5">{{ $plan->electricity_costs ?? 'N/A' }}</dd></div>
                         </dl>
                         <a href="{{ route('user.mining.create', ['plan' => $plan->id]) }}" class="mt-auto w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
                             Start mining
@@ -85,24 +95,24 @@
     <div id="statisticsContent" class="tab-content hidden">
         <div class="space-y-4 sm:space-y-6">
             <!-- Performance Overview -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
+            <div class="rounded-2xl border border-gray-700 bg-gray-800 grid grid-cols-2 lg:grid-cols-4 overflow-hidden">
+                <div class="p-4 sm:p-5 min-w-0">
                     <div class="text-xs text-gray-400">Total mining</div>
                     <div class="text-lg sm:text-2xl font-semibold text-white mt-1">{{ $allMinings->count() }}</div>
-                    <div class="text-xs text-gray-500 mt-0.5">{{ $activeMinings->count() }} active · {{ $completedMinings->count() }} completed</div>
+                    <div class="text-xs text-gray-500 mt-0.5 truncate">{{ $activeMinings->count() }} active · {{ $completedMinings->count() }} completed</div>
                 </div>
-                <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
+                <div class="p-4 sm:p-5 min-w-0 border-l border-gray-700">
                     <div class="text-xs text-gray-400">Total mined</div>
-                    <div class="text-lg sm:text-2xl font-semibold text-emerald-400 font-mono mt-1 truncate">{{ number_format($totalMined, 8) }}</div>
+                    <div class="text-lg sm:text-2xl font-semibold text-emerald-400 font-mono mt-1 truncate">{{ money_from($totalMined) }}</div>
                 </div>
-                <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
+                <div class="p-4 sm:p-5 min-w-0 border-t lg:border-t-0 lg:border-l border-gray-700">
                     <div class="text-xs text-gray-400">Total invested</div>
-                    <div class="text-lg sm:text-2xl font-semibold text-white font-mono mt-1 truncate">{{ money($totalInvested, 2) }}</div>
+                    <div class="text-lg sm:text-2xl font-semibold text-white font-mono mt-1 truncate">{{ money_from($totalInvested) }}</div>
                 </div>
-                <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
+                <div class="p-4 sm:p-5 min-w-0 border-t border-l lg:border-t-0 border-gray-700">
                     <div class="text-xs text-gray-400">Current value</div>
-                    <div class="text-lg sm:text-2xl font-semibold text-white font-mono mt-1 truncate">{{ money($totalValue, 2) }}</div>
-                    <div class="text-xs font-mono mt-0.5 {{ $totalPnL >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ ($totalPnL >= 0 ? '+' : '') . money($totalPnL, 2) }} P&amp;L</div>
+                    <div class="text-lg sm:text-2xl font-semibold text-white font-mono mt-1 truncate">{{ money_from($totalValue) }}</div>
+                    <div class="text-xs font-mono mt-0.5 truncate {{ $totalPnL >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ ($totalPnL >= 0 ? '+' : '') . money_from($totalPnL) }} P&amp;L</div>
                 </div>
             </div>
 
@@ -126,9 +136,9 @@
                                             <span class="shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold {{ $badge($mining->status) }}">{{ ucfirst($mining->status) }}</span>
                                         </div>
                                         <dl class="grid grid-cols-3 gap-2 mt-3 text-sm">
-                                            <div class="min-w-0"><dt class="text-xs text-gray-400">Invested</dt><dd class="text-white font-mono truncate">{{ money($mining->amount_invested, 2) }}</dd></div>
-                                            <div class="min-w-0"><dt class="text-xs text-gray-400">Mined</dt><dd class="text-white font-mono truncate">{{ number_format($mining->total_mined, 8) }}</dd></div>
-                                            <div class="min-w-0"><dt class="text-xs text-gray-400">Value</dt><dd class="text-white font-mono truncate">{{ money($mining->current_value, 2) }}</dd></div>
+                                            <div class="min-w-0"><dt class="text-xs text-gray-400">Invested</dt><dd class="text-white font-mono truncate">{{ money_from($mining->amount_invested, $mining->currency ?: 'USD') }}</dd></div>
+                                            <div class="min-w-0"><dt class="text-xs text-gray-400">Mined</dt><dd class="text-white font-mono truncate">{{ money_from($mining->total_mined, $mining->currency ?: 'USD') }}</dd></div>
+                                            <div class="min-w-0"><dt class="text-xs text-gray-400">Value</dt><dd class="text-white font-mono truncate">{{ money_from($mining->current_value, $mining->currency ?: 'USD') }}</dd></div>
                                         </dl>
                                     </a>
                                 </li>
@@ -150,9 +160,9 @@
                                         <tr class="hover:bg-gray-700/40">
                                             <td class="px-4 py-3 whitespace-nowrap font-medium"><a href="{{ route('user.mining.show', $mining) }}" class="text-white hover:text-gold-400">{{ $mining->plan->name }}</a></td>
                                             <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $badge($mining->status) }}">{{ ucfirst($mining->status) }}</span></td>
-                                            <td class="px-4 py-3 whitespace-nowrap text-white font-mono">{{ money($mining->amount_invested, 2) }}</td>
-                                            <td class="px-4 py-3 whitespace-nowrap text-white font-mono">{{ number_format($mining->total_mined, 8) }}</td>
-                                            <td class="px-4 py-3 whitespace-nowrap text-white font-mono">{{ money($mining->current_value, 2) }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-white font-mono">{{ money_from($mining->amount_invested, $mining->currency ?: 'USD') }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-white font-mono">{{ money_from($mining->total_mined, $mining->currency ?: 'USD') }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-white font-mono">{{ money_from($mining->current_value, $mining->currency ?: 'USD') }}</td>
                                             <td class="px-4 py-3 whitespace-nowrap text-gray-400">{{ $mining->start_date->format('M d, Y') }}</td>
                                         </tr>
                                     @endforeach

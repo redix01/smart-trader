@@ -46,20 +46,20 @@
     </div>
 
     <!-- Key figures -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
+    <div class="rounded-2xl border border-gray-700 bg-gray-800 grid grid-cols-2 lg:grid-cols-4 overflow-hidden">
+        <div class="p-4 sm:p-5 min-w-0">
             <div class="text-xs text-gray-400">Status</div>
             <div class="mt-1.5"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $planBadge[1] }}">{{ $planBadge[0] }}</span></div>
         </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
+        <div class="p-4 sm:p-5 min-w-0 border-l border-gray-700">
             <div class="text-xs text-gray-400">Amount paid</div>
-            <div class="text-base sm:text-xl font-semibold text-white font-mono mt-1 break-words">{{ $userPlan->formatted_amount_paid }}</div>
+            <div class="text-base sm:text-xl font-semibold text-white font-mono mt-1 break-words">{{ money_from($userPlan->amount_paid, $userPlan->currency ?: 'USD') }}</div>
         </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
+        <div class="p-4 sm:p-5 min-w-0 border-t lg:border-t-0 lg:border-l border-gray-700">
             <div class="text-xs text-gray-400">Ends</div>
             <div class="text-base sm:text-xl font-semibold text-white mt-1">{{ $userPlan->end_date ? $userPlan->end_date->format('M d, Y') : 'N/A' }}</div>
         </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
+        <div class="p-4 sm:p-5 min-w-0 border-t border-l lg:border-t-0 border-gray-700">
             <div class="text-xs text-gray-400">Remaining</div>
             <div class="text-base sm:text-xl font-semibold text-white mt-1">
                 @if($userPlan->isActive() && $userPlan->end_date)
@@ -104,7 +104,7 @@
         <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6">
             <h2 class="text-base font-semibold text-white">Subscription details</h2>
             <dl class="mt-4 divide-y divide-gray-700 text-sm">
-                <div class="flex justify-between gap-4 py-2.5"><dt class="text-gray-400">Amount paid</dt><dd class="text-white font-mono text-right">{{ $userPlan->formatted_amount_paid }}</dd></div>
+                <div class="flex justify-between gap-4 py-2.5"><dt class="text-gray-400">Amount paid</dt><dd class="text-white font-mono text-right">{{ money_from($userPlan->amount_paid, $userPlan->currency ?: 'USD') }}</dd></div>
                 <div class="flex justify-between gap-4 py-2.5"><dt class="text-gray-400">Currency</dt><dd class="text-white text-right">{{ $userPlan->currency }}</dd></div>
                 <div class="flex justify-between gap-4 py-2.5"><dt class="text-gray-400">Start date</dt><dd class="text-white text-right">{{ $userPlan->start_date ? $userPlan->start_date->format('M d, Y H:i') : 'N/A' }}</dd></div>
                 <div class="flex justify-between gap-4 py-2.5"><dt class="text-gray-400">End date</dt><dd class="text-white text-right">{{ $userPlan->end_date ? $userPlan->end_date->format('M d, Y H:i') : 'N/A' }}</dd></div>

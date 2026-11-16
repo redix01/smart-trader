@@ -8,6 +8,10 @@ use App\Helpers\AssetHelper;
 @php
     $holdingsList = $holdings ?? collect();
     $pnlClass = fn ($v) => $v >= 0 ? 'text-emerald-400' : 'text-red-400';
+    // Unit prices: 2 decimals, more only for sub-unit coins so they never read as 0.00
+    $unitDecimals = fn ($v) => abs((float) $v) >= 1 ? 2 : 6;
+    $pnlUp = ($total_pnl ?? 0) >= 0;
+    $signedMoney = fn ($v) => ((float) $v < 0 ? '-' : '') . money(abs((float) $v), 2);
 @endphp
 <div class="space-y-4 sm:space-y-6">
     <div class="flex flex-wrap items-end justify-between gap-3">
@@ -25,24 +29,29 @@ use App\Helpers\AssetHelper;
     @include('dashboard.portfolio.partials.footer-menu')
 
     <!-- Portfolio summary -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
-            <div class="text-xs text-gray-400">Current value</div>
-            <div class="mt-1 text-lg sm:text-2xl font-semibold text-white font-mono break-all">{{ money($total_value ?? 0, 2) }}</div>
+    <section class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+            <div class="min-w-0">
+                <div class="text-sm text-gray-400">Current value</div>
+                <div class="text-3xl sm:text-4xl font-bold text-white tracking-tight mt-1 tabular-nums truncate">{{ money($total_value ?? 0, 2) }}</div>
+            </div>
+            <span class="mb-1 px-2 py-0.5 rounded-md text-xs font-semibold tabular-nums {{ $pnlUp ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ ($total_pnl_percentage ?? 0) >= 0 ? '+' : '' }}{{ number_format($total_pnl_percentage ?? 0, 2) }}% all time</span>
         </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
-            <div class="text-xs text-gray-400">Total invested</div>
-            <div class="mt-1 text-lg sm:text-2xl font-semibold text-white font-mono break-all">{{ money($total_invested ?? 0, 2) }}</div>
-        </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
-            <div class="text-xs text-gray-400">Unrealised P&amp;L</div>
-            <div class="mt-1 text-lg sm:text-2xl font-semibold font-mono break-all {{ $pnlClass($total_pnl ?? 0) }}">{{ money($total_pnl ?? 0, 2) }}</div>
-        </div>
-        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4">
-            <div class="text-xs text-gray-400">Return</div>
-            <div class="mt-1 text-lg sm:text-2xl font-semibold font-mono {{ $pnlClass($total_pnl_percentage ?? 0) }}">{{ number_format($total_pnl_percentage ?? 0, 2) }}%</div>
-        </div>
-    </div>
+        <dl class="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
+            <div class="rounded-xl bg-gray-900 px-3 py-2.5 min-w-0">
+                <dt class="text-[11px] sm:text-xs text-gray-400">Invested</dt>
+                <dd class="text-sm sm:text-lg font-semibold text-white mt-0.5 tabular-nums truncate">{{ money($total_invested ?? 0, 2) }}</dd>
+            </div>
+            <div class="rounded-xl bg-gray-900 px-3 py-2.5 min-w-0">
+                <dt class="text-[11px] sm:text-xs text-gray-400">P&amp;L</dt>
+                <dd class="text-sm sm:text-lg font-semibold mt-0.5 tabular-nums truncate {{ $pnlClass($total_pnl ?? 0) }}">{{ $signedMoney($total_pnl ?? 0) }}</dd>
+            </div>
+            <div class="rounded-xl bg-gray-900 px-3 py-2.5 min-w-0">
+                <dt class="text-[11px] sm:text-xs text-gray-400">Assets</dt>
+                <dd class="text-sm sm:text-lg font-semibold text-white mt-0.5 tabular-nums">{{ count($holdingsList) }}</dd>
+            </div>
+        </dl>
+    </section>
 
     <!-- Holdings -->
     <div class="rounded-2xl border border-gray-700 bg-gray-800 overflow-hidden">
@@ -67,16 +76,16 @@ use App\Helpers\AssetHelper;
                             </div>
                             <div class="min-w-0 flex-1">
                                 <div class="text-sm font-semibold text-white truncate">{{ $holding->asset->name }}</div>
-                                <div class="text-xs text-gray-400 font-mono truncate">{{ number_format($holding->quantity, 8) }} {{ $holding->asset->symbol }}</div>
+                                <div class="text-xs text-gray-400 tabular-nums truncate">{{ rtrim(rtrim(number_format($holding->quantity, 8), '0'), '.') }} {{ $holding->asset->symbol }}</div>
                             </div>
                             <div class="text-right shrink-0">
-                                <div class="text-sm font-semibold text-white font-mono">{{ money($holding->current_value, 2) }}</div>
-                                <div class="text-xs font-mono {{ $pnlClass($holding->unrealized_pnl) }}">{{ money($holding->unrealized_pnl, 2) }} ({{ number_format($holding->unrealized_pnl_percentage, 2) }}%)</div>
+                                <div class="text-sm font-semibold text-white tabular-nums">{{ money($holding->current_value, 2) }}</div>
+                                <div class="text-xs tabular-nums {{ $pnlClass($holding->unrealized_pnl) }}">{{ $signedMoney($holding->unrealized_pnl) }} ({{ number_format($holding->unrealized_pnl_percentage, 2) }}%)</div>
                             </div>
                         </div>
                         <dl class="mt-3 grid grid-cols-2 gap-2 text-xs">
-                            <div class="rounded-lg bg-gray-900/50 px-3 py-2 min-w-0"><dt class="text-gray-400">Avg buy price</dt><dd class="mt-0.5 font-mono text-white break-all">{{ money($holding->average_buy_price, 8) }}</dd></div>
-                            <div class="rounded-lg bg-gray-900/50 px-3 py-2 min-w-0"><dt class="text-gray-400">Current price</dt><dd class="mt-0.5 font-mono text-white break-all">{{ money_from($holding->asset->current_price, 'USD', 8) }}</dd></div>
+                            <div class="rounded-lg bg-gray-900 px-3 py-2 min-w-0"><dt class="text-gray-400">Avg buy price</dt><dd class="mt-0.5 font-semibold tabular-nums text-white truncate">{{ money($holding->average_buy_price, $unitDecimals($holding->average_buy_price)) }}</dd></div>
+                            <div class="rounded-lg bg-gray-900 px-3 py-2 min-w-0"><dt class="text-gray-400">Current price</dt><dd class="mt-0.5 font-semibold tabular-nums text-white truncate">{{ money_from($holding->asset->current_price, 'USD', $unitDecimals($holding->asset->current_price)) }}</dd></div>
                         </dl>
                         <div class="mt-3 grid grid-cols-2 gap-2">
                             <a href="{{ route('user.holding.asset-chart', $holding->asset->symbol) }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">Chart</a>
@@ -114,12 +123,12 @@ use App\Helpers\AssetHelper;
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-white font-mono">{{ number_format($holding->quantity, 8) }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-white font-mono">{{ money($holding->average_buy_price, 8) }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-white font-mono">{{ money_from($holding->asset->current_price, 'USD', 8) }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-white font-mono">{{ money($holding->current_value, 2) }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap font-mono {{ $pnlClass($holding->unrealized_pnl) }}">
-                                {{ money($holding->unrealized_pnl, 2) }}
+                            <td class="px-6 py-4 whitespace-nowrap text-white tabular-nums">{{ rtrim(rtrim(number_format($holding->quantity, 8), '0'), '.') }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-white tabular-nums">{{ money($holding->average_buy_price, $unitDecimals($holding->average_buy_price)) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-white tabular-nums">{{ money_from($holding->asset->current_price, 'USD', $unitDecimals($holding->asset->current_price)) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-white font-semibold tabular-nums">{{ money($holding->current_value, 2) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap tabular-nums {{ $pnlClass($holding->unrealized_pnl) }}">
+                                {{ $signedMoney($holding->unrealized_pnl) }}
                                 <span class="text-xs">({{ number_format($holding->unrealized_pnl_percentage, 2) }}%)</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right">
@@ -136,8 +145,7 @@ use App\Helpers\AssetHelper;
                 <div class="mx-auto w-12 h-12 rounded-full bg-gray-700 grid place-items-center text-gray-300">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg>
                 </div>
-                <div class="mt-3 text-white font-medium">No holdings yet</div>
-                <p class="mt-1 text-sm text-gray-400">Buy your first crypto or stock and it will show up here.</p>
+                <p class="mt-3 text-white font-medium">No holdings yet, buy your first crypto or stock to see it here.</p>
                 <a href="{{ route('user.holding.buy-assets') }}" class="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">Buy an asset</a>
             </div>
         @endif
@@ -167,11 +175,11 @@ use App\Helpers\AssetHelper;
                         </div>
                         <div class="flex justify-between items-center gap-3">
                             <span class="text-gray-400">Available</span>
-                            <span class="text-white font-mono break-all text-right" id="sellQuantity"></span>
+                            <span class="text-white tabular-nums break-all text-right" id="sellQuantity"></span>
                         </div>
                         <div class="flex justify-between items-center gap-3">
                             <span class="text-gray-400">Current price</span>
-                            <span class="text-white font-mono break-all text-right" id="sellCurrentPrice"></span>
+                            <span class="text-white tabular-nums break-all text-right" id="sellCurrentPrice"></span>
                         </div>
                     </div>
 
@@ -201,7 +209,7 @@ use App\Helpers\AssetHelper;
                     <div class="rounded-xl border border-gray-700 bg-gray-900/50 p-4">
                         <div class="flex justify-between items-center gap-3">
                             <span class="text-sm text-gray-400">You receive</span>
-                            <span class="text-white font-semibold font-mono break-all text-right" id="sellTotalValue">{{ currency_symbol() }}0.00</span>
+                            <span class="text-white font-semibold tabular-nums break-all text-right" id="sellTotalValue">{{ currency_symbol() }}0.00</span>
                         </div>
                     </div>
                 </div>
@@ -275,7 +283,7 @@ function openSellModal(holdingId, symbol, quantity, currentPrice) {
     document.getElementById('sellHoldingId').value = holdingId;
     document.getElementById('sellSymbol').textContent = symbol;
     document.getElementById('sellQuantity').textContent = quantity;
-    document.getElementById('sellCurrentPrice').textContent = CURRENCY_SYMBOL + parseFloat(currentPrice).toFixed(8);
+    document.getElementById('sellCurrentPrice').textContent = CURRENCY_SYMBOL + parseFloat(currentPrice).toFixed(parseFloat(currentPrice) >= 1 ? 2 : 8);
     document.getElementById('sellQuantityInput').value = quantity;
     document.getElementById('sellPriceInput').value = currentPrice;
     document.getElementById('sellMaxQuantity').textContent = quantity;

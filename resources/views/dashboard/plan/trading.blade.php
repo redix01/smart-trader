@@ -23,28 +23,35 @@
 
     <!-- Trading Plans Grid -->
     @if($tradingPlans->count() > 0)
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        @php $popular = $tradingPlans->count() >= 3 ? intdiv($tradingPlans->count(), 2) : ($tradingPlans->count() === 2 ? 1 : -1); @endphp
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
             @foreach($tradingPlans as $plan)
-                <div class="flex flex-col rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6 hover:border-blue-500/60 transition-colors">
+                @php $featured = $loop->index === $popular; $planCur = $plan->currency ?: 'USD'; @endphp
+                <div class="flex flex-col rounded-2xl border p-5 sm:p-6 {{ $featured ? 'pc-card pc-card--accent border-blue-500/40' : 'border-gray-700 bg-gray-800' }}">
                     <div class="flex items-start justify-between gap-3">
                         <h3 class="text-base font-semibold text-white">{{ $plan->name }}</h3>
-                        @if($plan->duration)
-                            <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300 whitespace-nowrap">{{ $plan->duration }} days</span>
-                        @endif
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            @if($featured)
+                                <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-500 text-white">Popular</span>
+                            @endif
+                            @if($plan->duration)
+                                <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300 whitespace-nowrap">{{ $plan->duration }} days</span>
+                            @endif
+                        </div>
                     </div>
-                    <div class="mt-3">
+                    <div class="mt-4">
                         <div class="text-xs text-gray-400">Funding from</div>
-                        <div class="text-2xl sm:text-3xl font-bold text-white font-mono">{{ $plan->currency }} {{ number_format($plan->min_funding, 2) }}</div>
+                        <div class="text-3xl sm:text-4xl font-bold text-white font-mono tracking-tight mt-0.5 truncate">{{ money_from($plan->min_funding, $planCur) }}</div>
                         <div class="text-sm text-gray-400 mt-0.5">
                             @if($plan->hasUnlimitedFunding())
                                 Up to unlimited
                             @elseif($plan->max_funding && $plan->max_funding > $plan->min_funding)
-                                Up to {{ $plan->currency }} {{ number_format($plan->max_funding, 2) }}
+                                Up to {{ money_from($plan->max_funding, $planCur) }}
                             @endif
                         </div>
                     </div>
 
-                    <ul class="space-y-2 mt-4 mb-5 text-sm text-gray-300">
+                    <ul class="space-y-2 mt-5 mb-5 rounded-xl p-4 text-sm text-gray-200 {{ $featured ? 'bg-black/25' : 'bg-gray-900' }}">
                         @if($plan->pairs)
                             <li class="flex items-start gap-2">{!! $check !!}<span>{{ \Illuminate\Support\Str::contains(strtolower($plan->pairs), 'pair') ? $plan->pairs : $plan->pairs.' pairs' }}</span></li>
                         @endif
@@ -95,7 +102,7 @@
                 ['24/7 support', 'Round-the-clock help with any trading question.'],
                 ['Educational resources', 'Trading guides, webinars and market analysis to build your skills.'],
             ] as [$title, $text])
-                <div class="flex items-start gap-3 rounded-xl border border-gray-700 bg-gray-900/50 p-4">
+                <div class="flex items-start gap-3">
                     <div class="w-8 h-8 rounded-full bg-blue-600/15 text-gold-400 grid place-items-center shrink-0">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>
                     </div>

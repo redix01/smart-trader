@@ -11,8 +11,8 @@
     $stats = [
         ['Total stakes', $totalStakings, 'text-white'],
         ['Active stakes', $activeStakings, 'text-white'],
-        ['Total staked', number_format($totalStaked, 8), 'text-white font-mono'],
-        ['Total rewards', number_format($totalRewards, 8), 'text-emerald-400 font-mono'],
+        ['Total staked', money_from($totalStaked), 'text-white font-mono'],
+        ['Total rewards', money_from($totalRewards), 'text-emerald-400 font-mono'],
     ];
 @endphp
 <div class="space-y-4 sm:space-y-6">
@@ -29,9 +29,9 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        @foreach($stats as [$label, $value, $cls])
-            <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 min-w-0">
+    <div class="rounded-2xl border border-gray-700 bg-gray-800 grid grid-cols-2 lg:grid-cols-4 overflow-hidden">
+        @foreach($stats as $i => [$label, $value, $cls])
+            <div class="p-4 sm:p-5 min-w-0 border-gray-700 {{ $i % 2 ? 'border-l' : '' }} {{ $i >= 2 ? 'border-t lg:border-t-0 lg:border-l' : '' }}">
                 <div class="text-xs text-gray-400">{{ $label }}</div>
                 <div class="text-lg sm:text-2xl font-semibold mt-1 truncate {{ $cls }}">{{ $value }}</div>
             </div>
@@ -52,7 +52,7 @@
                             <span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $badge($staking->status) }}">{{ ucfirst($staking->status) }}</span>
                         </div>
                         <div class="text-sm text-gray-400 mt-1">
-                            <span class="font-mono text-gray-300">{{ $staking->formatted_amount_staked }}</span>
+                            <span class="font-mono text-gray-300">{{ money_from($staking->amount_staked, $staking->currency ?: 'USD') }}</span>
                             · {{ $staking->formatted_apy_rate }} APY · {{ $staking->start_date->format('M d, Y') }}
                         </div>
                     </div>

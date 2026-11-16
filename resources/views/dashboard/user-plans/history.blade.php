@@ -56,7 +56,7 @@
                             <span class="shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold {{ $badge($userPlan->status) }}">{{ ucfirst($userPlan->status) }}</span>
                         </div>
                         <dl class="grid grid-cols-2 gap-x-3 gap-y-2 mt-3 text-sm">
-                            <div><dt class="text-xs text-gray-400">Amount paid</dt><dd class="text-white font-mono">{{ $userPlan->formatted_amount_paid }}</dd></div>
+                            <div><dt class="text-xs text-gray-400">Amount paid</dt><dd class="text-white font-mono">{{ money_from($userPlan->amount_paid, $userPlan->currency ?: 'USD') }}</dd></div>
                             <div><dt class="text-xs text-gray-400">Ends</dt><dd class="text-gray-300">{{ $userPlan->end_date ? $userPlan->end_date->format('M d, Y') : 'N/A' }}@if($userPlan->isExpiringSoon()) <span class="text-xs text-amber-300">· soon</span>@endif</dd></div>
                             <div><dt class="text-xs text-gray-400">Started</dt><dd class="text-gray-300">{{ $userPlan->start_date ? $userPlan->start_date->format('M d, Y') : 'N/A' }}</dd></div>
                         </dl>
@@ -101,7 +101,7 @@
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">{{ ucfirst($userPlan->plan->type) }}</span></td>
                                 <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $badge($userPlan->status) }}">{{ ucfirst($userPlan->status) }}</span></td>
-                                <td class="px-4 py-3 whitespace-nowrap text-white font-mono">{{ $userPlan->formatted_amount_paid }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-white font-mono">{{ money_from($userPlan->amount_paid, $userPlan->currency ?: 'USD') }}</td>
                                 <td class="px-4 py-3 whitespace-nowrap text-gray-300">{{ $userPlan->start_date ? $userPlan->start_date->format('M d, Y') : 'N/A' }}</td>
                                 <td class="px-4 py-3 whitespace-nowrap text-gray-300">
                                     {{ $userPlan->end_date ? $userPlan->end_date->format('M d, Y') : 'N/A' }}
