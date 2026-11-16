@@ -24,7 +24,7 @@
 <div class="auth-shell">
 @include('auth.partials.panel')
 <main class="auth-main">
-    <div class="w-full max-w-md">
+    <div class="w-full max-w-md sm:max-w-2xl">
         <!-- Logo Section -->
         <div class="text-center mb-8 lg-hide">
             @if(\App\Helpers\WebsiteSettingsHelper::hasTextLogo())
@@ -50,6 +50,7 @@
                 <!-- Referral code (auto-filled from referral link) -->
                 <input type="hidden" name="ref" value="{{ old('ref', $referralCode ?? '') }}">
                 
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-x-4">
                 <!-- Name Field -->
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Full Name') }}</label>
@@ -100,7 +101,9 @@
                         <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                     @enderror
                 </div>
+                </div>
 
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-x-4">
                 <!-- Email Field -->
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Email') }}</label>
@@ -151,7 +154,9 @@
                         <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                     @enderror
                 </div>
+                </div>
 
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-x-4">
                 <!-- Country Field -->
                 <div>
                     <label for="country" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Country') }}</label>
@@ -222,7 +227,7 @@
                             class="block w-full pl-10 pr-3 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors @error('currency') border-red-500 focus:ring-red-500 @enderror"
                             required
                         >
-                            <option value="">{{ __('Select your preferred currency') }}</option>
+                            <option value="">{{ __('Select currency') }}</option>
                             <option value="USD" {{ old('currency') == 'USD' ? 'selected' : '' }}>USD</option>
                             <option value="EUR" {{ old('currency') == 'EUR' ? 'selected' : '' }}>EUR</option>
                             <option value="GBP" {{ old('currency') == 'GBP' ? 'selected' : '' }}>GBP</option>
@@ -239,7 +244,9 @@
                         <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                     @enderror
                 </div>
+                </div>
 
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-x-4">
                 <!-- Password Field -->
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Password') }}</label>
@@ -311,6 +318,7 @@
                             </svg>
                         </button>
                     </div>
+                </div>
                 </div>
 
                 <!-- Honeypot Fields (Hidden from users) -->

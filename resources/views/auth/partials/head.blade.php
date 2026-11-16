@@ -28,6 +28,7 @@
     .auth-shell{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)}
     .auth-panel{display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;isolation:isolate;padding:48px 56px;border-right:1px dashed rgba(170,190,255,.16)}
     .auth-main .lg-hide{display:none}
+    .auth-main{padding:48px 40px}
   }
   .auth-panel video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;mix-blend-mode:screen;opacity:.55;-webkit-mask-image:linear-gradient(to bottom,#000 40%,transparent);mask-image:linear-gradient(to bottom,#000 40%,transparent)}
   .auth-panel h2{font:700 clamp(32px,3.2vw,46px)/1.08 Manrope,sans-serif;letter-spacing:-.025em;max-width:480px}
