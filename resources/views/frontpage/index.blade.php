@@ -62,7 +62,7 @@
     <div class="mock reveal" aria-hidden="true">
       <div class="mk">
         <div class="mk-side">
-          <span class="logo"><span class="mark">PD</span></span>
+          <span class="logo">@include('partials.brand-mark', ['size' => 30])</span>
           <a>{!! $svgIcon('<path d="M3 11l9-8 9 8v10H3z"/>') !!}Dashboard</a>
           <a class="on">{!! $svgIcon('<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>') !!}Trade Room</a>
           <a>{!! $svgIcon('<path d="M4 20V10M10 20V4M16 20v-7"/>') !!}Stock prices</a>

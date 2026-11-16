@@ -18,12 +18,12 @@
 <meta name="theme-color" content="#050a1e">
 <link rel="icon" href="{{ asset('img/pdc-icon.svg') }}" type="image/svg+xml">
 <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="32x32">
-<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/pdc-icon-180.png') }}?v=5">
-<link rel="manifest" href="/manifest.webmanifest?v=5">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/pdc-icon-180.png') }}?v=6">
+<link rel="manifest" href="/manifest.webmanifest?v=6">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ asset('prime/styles.css') }}?v=5">
+<link rel="stylesheet" href="{{ asset('prime/styles.css') }}?v=6">
 @stack('head')
 </head>
 <body>
@@ -66,7 +66,7 @@
 
 <nav class="top" id="topnav">
   <div class="wrap">
-    <a href="{{ route('index') }}" class="logo" aria-label="Prime Digital Capital home"><span class="mark">PD</span><span class="name">Prime Digital Capital</span></a>
+    <a href="{{ route('index') }}" class="logo" aria-label="Prime Digital Capital home">@include('partials.brand-lockup')</a>
     <div class="nav-links">
       @foreach($menus as $label => $items)
         <div class="nav-item">
@@ -116,7 +116,7 @@
   <div class="wrap">
     <div class="foot">
       <div>
-        <a href="{{ route('index') }}" class="logo"><span class="mark">PD</span><span class="name">Prime Digital Capital</span></a>
+        <a href="{{ route('index') }}" class="logo" aria-label="Prime Digital Capital home">@include('partials.brand-lockup', ['size' => 38])</a>
         <p>Trade crypto, stocks and currencies from one secure account — with live prices, a personal trade room and 24/7 support.</p>
       </div>
       @foreach($menus as $label => $items)
