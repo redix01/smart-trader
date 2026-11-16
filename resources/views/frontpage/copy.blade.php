@@ -18,25 +18,21 @@
           <li>Stop copying at any time from your dashboard</li>
         </ul>
       </div>
-      <div class="panel reveal" style="margin-top:0">
-        <div class="trader-hd">
-          <div class="av">PD</div>
-          <div><b>Strategy provider</b><small>Example profile</small>
-            <div class="trader-meta"><span>360 watchers</span><span>69.6K followers</span></div>
-          </div>
-          <a href="{{ route('register') }}" class="btn btn-primary btn-sm" style="margin-left:auto">Copy</a>
+      <div class="reveal">
+        <div class="kpis" style="grid-template-columns:1fr 1fr">
+          <div><b>1 click</b><span>To start copying</span></div>
+          <div><b>Any time</b><span>To stop</span></div>
         </div>
-        <div class="tstats">
-          <div><small>Win rate</small><b class="up">54.81%</b></div>
-          <div><small>Profit share</small><b>43.3%</b></div>
-          <div><small>Trades</small><b>578</b></div>
-          <div><small>Wins</small><b>28</b></div>
-          <div><small>Losses</small><b>0</b></div>
-          <div><small>Min. startup</small><b>$5,000</b></div>
-        </div>
-        <p class="note">Illustrative profile. Past performance is not indicative of future results.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="pill">Traders</span><h2>Top traders right now</h2><p class="lead">Ranked by win rate. Open your dashboard to see every trader available to copy.</p></div>
+    @include('frontpage.prime.copy-traders')
+    <p class="note center" style="margin-top:22px">Past performance does not guarantee future results. Copying a trader copies their losses too.</p>
   </div>
 </section>
 

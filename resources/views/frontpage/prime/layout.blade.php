@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ asset('prime/styles.css') }}?v=3">
+<link rel="stylesheet" href="{{ asset('prime/styles.css') }}?v=4">
 @stack('head')
 </head>
 <body>
@@ -44,9 +44,10 @@
   $chev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
   $menus = [
     'Explore' => [
-      [route('index').'#markets', 'markets', 'Markets', 'Live crypto & stock prices'],
-      [route('index').'#features', 'features', 'Platform features', 'Everything in one account'],
-      [route('index').'#tools', 'tools', 'Trading tools', 'Signals, leverage, execution'],
+      [route('index').'#platform', 'features', 'Platform', 'Everything inside your account'],
+      [route('index').'#markets', 'markets', 'Live markets', 'Real-time stock & crypto prices'],
+      [route('ai-traders.index'), 'tools', 'AI traders', 'Strategy-driven stock trading'],
+      [route('index').'#earn', 'shield', 'Staking & mining', 'Put idle balance to work'],
     ],
     'Company' => [
       [route('about'), 'about', 'About us', 'Who we are and how we work'],

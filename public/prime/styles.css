@@ -133,9 +133,9 @@ nav.top .wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:center
 
 /* Feature grid with dashed rails */
 .fgrid{display:grid;grid-template-columns:repeat(3,1fr);border:1px dashed var(--dash);border-radius:4px}
-.fgrid>div{padding:30px 30px 34px;border-right:1px dashed var(--dash);border-bottom:1px dashed var(--dash)}
-.fgrid>div:nth-child(3n){border-right:0}
-.fgrid>div:nth-last-child(-n+3){border-bottom:0}
+.fgrid>*{padding:30px 30px 34px;border-right:1px dashed var(--dash);border-bottom:1px dashed var(--dash)}
+.fgrid>*:nth-child(3n){border-right:0}
+.fgrid>*:nth-last-child(-n+3){border-bottom:0}
 .ft{display:flex;align-items:center;gap:10px}
 .ft svg{width:18px;height:18px;color:var(--accent-hi);flex:none}
 .fgrid p{color:var(--text-2);font-size:15px;margin-top:8px;max-width:330px}
@@ -171,14 +171,6 @@ nav.top .wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:center
 .trio p{color:var(--text-2);font-size:15px;margin-top:8px}
 .note{font-size:12.5px;color:var(--text-3);margin-top:14px}
 
-/* Crypto card */
-.card-stage{display:grid;place-items:center;margin-bottom:56px}
-.pcard{width:380px;max-width:88%;aspect-ratio:1.586;border-radius:18px;padding:26px;display:flex;flex-direction:column;justify-content:space-between;background:#0d1838;border:1px solid var(--line-2);box-shadow:0 40px 80px -30px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.03) inset;transform:perspective(1000px) rotateX(14deg);transition:transform .6s}
-.pcard:hover{transform:perspective(1000px) rotateX(0)}
-.pcard .row{display:flex;justify-content:space-between;align-items:center}
-.pcard .chip{width:44px;height:33px;border-radius:7px;background:#c9a24d;opacity:.9}
-.pcard .num{font:500 17px var(--mono);letter-spacing:.14em;color:var(--text-2)}
-.pcard .net{font:800 italic 22px var(--display);color:var(--text-2)}
 .cols3{display:grid;grid-template-columns:repeat(3,1fr);border:1px dashed var(--dash)}
 .cols3>div{padding:30px;border-right:1px dashed var(--dash)}
 .cols3>div:last-child{border-right:0}
@@ -293,6 +285,43 @@ footer{border-top:1px dashed var(--dash);padding:72px 0 36px}
 .reveal.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.hero-video{display:none}}
 
+/* Linked feature cells */
+.fgrid>a{display:block;transition:background .2s}
+.fgrid>a:hover{background:rgba(59,130,246,.06)}
+.more{display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:var(--accent-hi)}
+.kp{margin-top:12px;font-size:14px;color:var(--text-2)}
+.kp b{color:var(--text);font-family:var(--mono)}
+
+/* Copy-trader + plan cards */
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.tcard,.pcard2{position:relative;display:flex;flex-direction:column;padding:26px;border-radius:var(--radius);background:var(--card);border:1px solid var(--line);transition:border-color .2s,transform .2s}
+.tcard:hover,.pcard2:hover{border-color:rgba(59,130,246,.5);transform:translateY(-3px)}
+.av-img{width:52px;height:52px;border-radius:10px;object-fit:cover}
+.wr{margin-top:22px}
+.wr .row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-2);margin-bottom:8px}
+.wr .row b{font-family:var(--mono)}
+.wr .track{height:6px;border-radius:99px;background:rgba(170,190,255,.1);overflow:hidden}
+.wr .track i{display:block;height:100%;background:var(--up);border-radius:99px}
+.tfoot{display:flex;justify-content:space-between;align-items:center;margin-top:22px;padding-top:18px;border-top:1px dashed var(--dash);font-size:13px;color:var(--text-2)}
+.tfoot b{color:var(--text);font-family:var(--mono)}
+.pcard2.feat{border-color:rgba(59,130,246,.6);background:var(--card-2)}
+.pcard2 .badge{position:absolute;top:-11px;left:26px;padding:3px 10px;border-radius:6px;background:var(--accent);color:#fff;font-size:12px;font-weight:600}
+.pcard2 .price{font:700 34px var(--display);margin-top:10px;letter-spacing:-.02em}
+.pcard2 .price small{font:400 14px var(--body);color:var(--text-3)}
+.pcard2 .desc{color:var(--text-2);font-size:14px;margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.chips span{padding:3px 8px;border-radius:6px;background:rgba(170,190,255,.07);border:1px solid var(--line);font:500 12px var(--mono);color:var(--text-2)}
+.pcard2 .checks{margin:18px 0 24px;font-size:14px}
+
+/* Signal rows */
+.sig-row{display:grid;grid-template-columns:auto auto 1fr;gap:12px;align-items:center;padding:12px 0;border-bottom:1px dashed var(--dash);font-size:14px}
+.sig-row:first-child{padding-top:0}
+.sig-row .tag{padding:3px 8px;border-radius:6px;font:700 11px var(--mono);letter-spacing:.06em}
+.sig-row .tag.up{background:rgba(45,212,167,.14)}
+.sig-row .tag.down{background:rgba(244,63,94,.14)}
+.sig-row .mono{color:var(--text-3);font-size:12.5px;text-align:right}
+.note.center{text-align:center}
+
 /* Responsive */
 @media (max-width:1080px){
   .mk{grid-template-columns:1fr}.mk-side{display:none}
@@ -308,9 +337,9 @@ footer{border-top:1px dashed var(--dash);padding:72px 0 36px}
   .mobile-menu.open{display:flex;flex-direction:column;gap:2px;padding:10px 20px 22px;border-top:1px solid var(--line);max-height:calc(100vh - 76px);overflow:auto}
   .mobile-menu a{padding:10px 4px;color:var(--text-2)}
   .mobile-menu b{font:600 12px var(--body);color:var(--text-3);margin-top:12px;text-transform:uppercase;letter-spacing:.08em}
-  .fgrid,.cols3,.steps,.trio{grid-template-columns:1fr}
-  .fgrid>div,.cols3>div{border-right:0!important;border-bottom:1px dashed var(--dash)!important}
-  .fgrid>div:last-child,.cols3>div:last-child{border-bottom:0!important}
+  .fgrid,.cols3,.steps,.trio,.cards3{grid-template-columns:1fr}
+  .fgrid>*,.cols3>div{border-right:0!important;border-bottom:1px dashed var(--dash)!important}
+  .fgrid>*:last-child,.cols3>div:last-child{border-bottom:0!important}
   .mk-grid{grid-template-columns:1fr}.mk-pane+.mk-pane{border-left:0}
   .trio{gap:28px}
 }
@@ -322,6 +351,7 @@ footer{border-top:1px dashed var(--dash);padding:72px 0 36px}
   .kpis{grid-template-columns:1fr}.kpis>div{border-right:0!important;border-bottom:1px dashed var(--dash)}.kpis>div:last-child{border-bottom:0}
   .toc{columns:1}
   .tstats{grid-template-columns:1fr 1fr}
+  .sig-row{grid-template-columns:auto 1fr}.sig-row .mono{grid-column:1/-1;text-align:left}
   .board .big{font-size:34px}
   .logo{font-size:15px}
 }
