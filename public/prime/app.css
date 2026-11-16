@@ -134,3 +134,17 @@ canvas{max-width:100%}
 .tr-summary dt{color:var(--muted)}
 .tr-summary dd{font-family:var(--mono);color:var(--ink)}
 .tr-room input[type=range]{accent-color:var(--accent)}
+
+/* Trade Room markets: slide-up sheet below 2xl, fixed column from 2xl */
+.tr-backdrop{position:fixed;inset:0;z-index:55;background:rgba(3,6,20,.6);backdrop-filter:blur(2px)}
+.tr-grab{display:block;width:40px;height:4px;border-radius:99px;background:rgba(170,190,255,.25);margin:10px auto 6px}
+@media (max-width:1535px){
+  .tr-markets{position:fixed;left:0;right:0;bottom:0;z-index:56;height:min(78vh,640px);border-radius:18px 18px 0 0;border-bottom:0;
+    transform:translateY(105%);transition:transform .28s ease;box-shadow:0 -20px 60px -10px rgba(0,0,0,.7)}
+  .tr-markets.is-open{transform:none}
+}
+@media (min-width:768px) and (max-width:1535px){
+  .tr-markets{left:auto;top:0;bottom:0;width:380px;height:auto;border-radius:0;border-left:1px solid var(--line);transform:translateX(105%)}
+  .tr-markets .tr-grab{display:none}
+}
+@media (prefers-reduced-motion:reduce){.tr-markets{transition:none}}

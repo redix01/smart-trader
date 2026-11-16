@@ -15,7 +15,7 @@
 
 <div class="tr-room space-y-4" id="tradeRoom"
      data-store="{{ route('user.liveTrading.store') }}"
-     data-cancel="{{ url('/user/live-trading') }}"
+     data-cancel-base="{{ url('/user/live-trading') }}"
      data-refresh="{{ route('user.liveTrading.refreshPrices') }}"
      data-rate="{{ $rate }}" data-balance="{{ $balance }}">
 
@@ -43,7 +43,15 @@
     <div class="grid gap-4 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[280px_minmax(0,1fr)_340px] 2xl:h-[680px]">
 
         {{-- Markets --}}
-        <aside id="marketsPanel" class="tr-panel order-3 lg:order-3 2xl:order-1 lg:col-span-2 2xl:col-span-1 flex flex-col min-h-0 overflow-hidden" aria-label="Markets">
+        <div id="marketsBackdrop" class="tr-backdrop" hidden></div>
+        <aside id="marketsPanel" class="tr-panel tr-markets 2xl:order-1 flex flex-col min-h-0 overflow-hidden" aria-label="Markets">
+            <div class="tr-sheet-head 2xl:hidden">
+                <span class="tr-grab" aria-hidden="true"></span>
+                <div class="flex items-center justify-between px-4 pt-1 pb-2">
+                    <h2 class="text-base font-semibold text-white">Choose a market</h2>
+                    <button type="button" id="closeMarkets" class="tr-btn tr-btn-sm" aria-label="Close markets">Close</button>
+                </div>
+            </div>
             <div class="p-3 border-b border-gray-700 space-y-2">
                 <div class="grid grid-cols-2 gap-1 p-1 rounded-lg bg-gray-900/70" role="tablist">
                     <button type="button" class="tr-tab is-on" data-filter="crypto" role="tab">Crypto <span>{{ $cryptoAssets->count() }}</span></button>
@@ -57,7 +65,7 @@
             <div class="grid grid-cols-[1fr_auto_auto] gap-x-3 px-3 py-2 text-[11px] uppercase tracking-wider text-gray-500 border-b border-gray-700">
                 <span>Market</span><span class="text-right">Price</span><span class="text-right w-14">24h</span>
             </div>
-            <ul id="marketList" class="overflow-y-auto max-h-[340px] 2xl:max-h-none 2xl:flex-1 2xl:min-h-0">
+            <ul id="marketList" class="overflow-y-auto flex-1 min-h-0">
                 @foreach($markets as $m)
                     <li>
                         <button type="button" class="tr-mkt {{ $sel && $sel['symbol'] === $m['symbol'] && $sel['type'] === $m['type'] ? 'is-on' : '' }}"
@@ -76,13 +84,14 @@
         {{-- Chart --}}
         <section class="tr-panel order-1 2xl:order-2 flex flex-col min-w-0 min-h-0 overflow-hidden">
             <div class="flex flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 border-b border-gray-700">
-                <div class="flex items-center gap-3 min-w-0">
+                <button type="button" id="symbolPicker" class="flex items-center gap-3 min-w-0 text-left 2xl:pointer-events-none" aria-controls="marketsPanel">
                     <span id="selBadge" class="w-9 h-9 rounded-lg bg-blue-600 text-white grid place-items-center text-xs font-bold">{{ $sel ? substr($sel['symbol'], 0, 3) : '' }}</span>
                     <div class="min-w-0">
                         <div class="text-white font-semibold leading-tight"><span id="selSymbol">{{ $sel['symbol'] ?? '' }}</span><span class="text-gray-500 font-normal" id="selQuote">{{ ($sel['type'] ?? '') === 'crypto' ? ' / USD' : '' }}</span></div>
                         <div class="text-xs text-gray-400 truncate" id="selName">{{ $sel['name'] ?? '' }}</div>
                     </div>
-                </div>
+                    <svg class="w-4 h-4 text-gray-400 2xl:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
                 <div>
                     <div class="text-[11px] uppercase tracking-wider text-gray-500">Last price</div>
                     <div class="font-mono text-lg text-white" id="selPrice">{{ $sel ? money_from($sel['usd'], 'USD', $sel['usd'] < 1 ? 4 : 2) : '—' }}</div>
@@ -92,7 +101,7 @@
                     <div class="font-mono text-sm {{ ($sel['chg'] ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400' }}" id="selChg">{{ $sel ? sprintf('%+.2f%%', $sel['chg']) : '—' }}</div>
                 </div>
                 <div class="ml-auto flex items-center gap-2">
-                    <a href="#marketsPanel" class="tr-btn tr-btn-sm 2xl:hidden">Markets</a>
+                    <button type="button" id="openMarkets" class="tr-btn tr-btn-sm 2xl:hidden" aria-controls="marketsPanel" aria-expanded="false"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Markets</button>
                     <span id="feedBadge" class="hidden items-center gap-1.5 text-xs text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Live</span>
                     <button type="button" id="refreshPrices" class="tr-btn tr-btn-sm" title="Refresh prices from the market feed">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 11a8 8 0 10-2.3 5.7M20 4v7h-7"/></svg><span class="hidden sm:inline">Refresh</span>
@@ -200,7 +209,7 @@
                                         <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $statusCls[$o->status] ?? 'bg-gray-700 text-gray-300' }}">{{ ucfirst($o->status) }}</span></td>
                                         <td class="px-4 py-3 text-right">
                                             @if($o->status === 'pending')
-                                                <button type="button" class="text-sm font-semibold text-red-400 hover:text-red-300" data-cancel="{{ $o->id }}">Cancel</button>
+                                                <button type="button" class="text-sm font-semibold text-red-400 hover:text-red-300" data-cancel-id="{{ $o->id }}">Cancel</button>
                                             @endif
                                         </td>
                                     </tr>
@@ -259,7 +268,26 @@
     });
   });
   $('marketSearch').addEventListener('input', applyFilter);
-  buttons.forEach(function (b) { b.addEventListener('click', function () { select(b); if (window.innerWidth < 1536) room.scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
+  buttons.forEach(function (b) { b.addEventListener('click', function () { select(b); closeMarkets(); }); });
+
+  // Markets panel: a slide-up sheet below 2xl, a fixed column on wide screens.
+  var panel = $('marketsPanel'), backdrop = $('marketsBackdrop'), opener = $('openMarkets');
+  function openMarkets() {
+    if (window.innerWidth >= 1536) return;
+    panel.classList.add('is-open'); backdrop.hidden = false; document.body.style.overflow = 'hidden';
+    if (opener) opener.setAttribute('aria-expanded', 'true');
+    setTimeout(function () { $('marketSearch').focus({ preventScroll: true }); }, 250);
+  }
+  function closeMarkets() {
+    if (!panel.classList.contains('is-open')) return;
+    panel.classList.remove('is-open'); backdrop.hidden = true; document.body.style.overflow = '';
+    if (opener) opener.setAttribute('aria-expanded', 'false');
+  }
+  if (opener) opener.addEventListener('click', openMarkets);
+  $('symbolPicker').addEventListener('click', openMarkets);
+  $('closeMarkets').addEventListener('click', closeMarkets);
+  backdrop.addEventListener('click', closeMarkets);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMarkets(); });
 
   function select(b) {
     buttons.forEach(function (x) { x.classList.toggle('is-on', x === b); });
@@ -413,11 +441,11 @@
       document.querySelectorAll('.tr-otab').forEach(function (x) { x.classList.toggle('is-on', x === t); $(x.dataset.pane).hidden = x !== t; });
     });
   });
-  document.querySelectorAll('[data-cancel]').forEach(function (b) {
+  document.querySelectorAll('button[data-cancel-id]').forEach(function (b) {
     b.addEventListener('click', function () {
       if (!confirm('Cancel this order? The amount returns to your trading balance.')) return;
       b.disabled = true;
-      fetch(room.dataset.cancel + '/' + b.dataset.cancel + '/cancel', { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' } })
+      fetch(room.dataset.cancelBase + '/' + b.dataset.cancelId + '/cancel', { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' } })
         .then(function (r) { return r.json(); })
         .then(function (d) { toast(d.message || (d.success ? 'Order cancelled.' : 'Could not cancel.'), d.success); if (d.success) setTimeout(function () { location.reload(); }, 700); else b.disabled = false; })
         .catch(function () { toast('Network error.', false); b.disabled = false; });
