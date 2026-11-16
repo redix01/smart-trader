@@ -120,7 +120,7 @@
                 @csrf
                 <button type="submit" 
                         class="w-full inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300"
-                        onclick="return confirm('Are you sure you want to approve this deposit? This will credit the user\'s account.')">
+                        data-confirm="Are you sure you want to approve this deposit? This will credit the user's account." data-confirm-tone="info">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
@@ -131,7 +131,7 @@
                 @csrf
                 <button type="submit" 
                         class="w-full inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-300"
-                        onclick="return confirm('Are you sure you want to decline this deposit? This action cannot be undone.')">
+                        data-confirm="Are you sure you want to decline this deposit? This action cannot be undone.">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>

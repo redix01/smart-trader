@@ -226,7 +226,7 @@ function editPlan(id) {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error loading plan data');
+            uiAlert('Error loading plan data', { tone: 'danger', title: 'Something went wrong' });
         });
 }
 
@@ -281,7 +281,7 @@ function viewPlan(id) {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error loading plan data');
+            uiAlert('Error loading plan data', { tone: 'danger', title: 'Something went wrong' });
         });
 }
 
@@ -293,8 +293,8 @@ function closeViewModal() {
     document.getElementById('viewModal').classList.add('hidden');
 }
 
-function toggleStatus(id) {
-    if (confirm('Are you sure you want to toggle the status of this plan?')) {
+async function toggleStatus(id) {
+    if (await uiConfirm('Are you sure you want to toggle the status of this plan?', { tone: 'info' })) {
         fetch(`/admin/ai-trader-plans/${id}/toggle-status`, {
             method: 'POST',
             headers: {
@@ -307,18 +307,18 @@ function toggleStatus(id) {
             if (data.success) {
                 location.reload();
             } else {
-                alert('Error updating plan status');
+                uiAlert('Error updating plan status', { tone: 'danger', title: 'Something went wrong' });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error updating plan status');
+            uiAlert('Error updating plan status', { tone: 'danger', title: 'Something went wrong' });
         });
     }
 }
 
-function deletePlan(id) {
-    if (confirm('Are you sure you want to delete this plan? This action cannot be undone.')) {
+async function deletePlan(id) {
+    if (await uiConfirm('Are you sure you want to delete this plan? This action cannot be undone.')) {
         fetch(`/admin/ai-trader-plans/${id}`, {
             method: 'DELETE',
             headers: {
@@ -331,12 +331,12 @@ function deletePlan(id) {
             if (data.success) {
                 location.reload();
             } else {
-                alert(data.message || 'Error deleting plan');
+                uiAlert(data.message || 'Error deleting plan', { tone: 'danger', title: 'Something went wrong' });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error deleting plan');
+            uiAlert('Error deleting plan', { tone: 'danger', title: 'Something went wrong' });
         });
     }
 }
@@ -375,12 +375,12 @@ document.getElementById('planForm').addEventListener('submit', function(e) {
             closeModal();
             location.reload();
         } else {
-            alert(data.message || 'Error saving plan');
+            uiAlert(data.message || 'Error saving plan', { tone: 'danger', title: 'Something went wrong' });
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error saving plan');
+        uiAlert('Error saving plan', { tone: 'danger', title: 'Something went wrong' });
     });
 });
 </script>

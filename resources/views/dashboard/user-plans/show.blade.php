@@ -15,7 +15,7 @@
                         Back to Plans
                     </a>
                     @if($userPlan->isActive())
-                        <form method="POST" action="{{ route('user.plans.cancel', $userPlan) }}" class="inline" onsubmit="return confirm('Are you sure you want to cancel this plan?')">
+                        <form method="POST" action="{{ route('user.plans.cancel', $userPlan) }}" class="inline" data-confirm="Are you sure you want to cancel this plan?">
                             @csrf
                             <button type="submit" class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
                                 Cancel Plan

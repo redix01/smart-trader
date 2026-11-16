@@ -527,7 +527,7 @@ document.getElementById('profileForm').addEventListener('submit', function(e) {
                     text: data.message
                 });
             } else {
-                alert(data.message);
+                uiAlert(data.message, { tone: 'success', title: 'Done' });
             }
         }
     })
@@ -540,7 +540,7 @@ document.getElementById('profileForm').addEventListener('submit', function(e) {
                 text: 'An error occurred while updating profile'
             });
         } else {
-            alert('Error updating profile');
+            uiAlert('Error updating profile', { tone: 'danger', title: 'Something went wrong' });
         }
     });
 });

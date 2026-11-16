@@ -407,8 +407,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         location.reload();
                     });
                 } else {
-                    alert('Performance updated successfully!');
-                    location.reload();
+                    uiAlert('Performance updated successfully!', { tone: 'success', title: 'Done' }).then(function () { location.reload(); });
                 }
             }
         })
@@ -421,7 +420,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     text: 'An error occurred while updating performance'
                 });
             } else {
-                alert('Error updating performance');
+                uiAlert('Error updating performance', { tone: 'danger', title: 'Something went wrong' });
             }
         });
     });
@@ -453,8 +452,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         location.reload();
                     });
                 } else {
-                    alert('Trade created successfully!');
-                    location.reload();
+                    uiAlert('Trade created successfully!', { tone: 'success', title: 'Done' }).then(function () { location.reload(); });
                 }
             }
         })
@@ -467,7 +465,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     text: 'An error occurred while creating trade'
                 });
             } else {
-                alert('Error creating trade');
+                uiAlert('Error creating trade', { tone: 'danger', title: 'Something went wrong' });
             }
         });
     });

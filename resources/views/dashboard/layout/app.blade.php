@@ -43,6 +43,7 @@
     <style>[x-cloak]{display:none!important}</style>
 
 
+    @include('partials.dialogs')
 </head>
 
 <body class="bg-gray-900 text-white min-h-screen">
@@ -672,8 +673,8 @@
             });
 
             // Clear all notifications
-            document.getElementById('clearAllBtn')?.addEventListener('click', function() {
-                if (confirm('Are you sure you want to clear all notifications?')) {
+            document.getElementById('clearAllBtn')?.addEventListener('click', async function() {
+                if (await uiConfirm('Are you sure you want to clear all notifications?')) {
                     fetch('/user/notifications/clear-all', {
                         method: 'DELETE',
                         headers: {

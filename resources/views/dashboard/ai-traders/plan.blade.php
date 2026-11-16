@@ -410,9 +410,9 @@ function confirmActivation() {
             }
         });
     } else {
-        if (confirm(`Are you sure you want to activate this AI Trader with ${CURRENCY_SYMBOL}${amount.toLocaleString()}?`)) {
-            activateTrader(currentTraderId, amount);
-        }
+        uiConfirm(`Are you sure you want to activate this AI Trader with ${CURRENCY_SYMBOL}${amount.toLocaleString()}?`, { title: 'Confirm Activation', confirmText: 'Yes, Activate!', tone: 'info' }).then(function (ok) {
+            if (ok) activateTrader(currentTraderId, amount);
+        });
     }
 }
 
@@ -447,7 +447,7 @@ function activateTrader(traderId, investmentAmount) {
                     confirmButtonColor: '#0b1020'
                 });
             } else {
-                alert('AI Trader Activated! ' + (data.message || 'Your AI Trader has been successfully activated and is now trading.'));
+                uiAlert('AI Trader Activated! ' + (data.message || 'Your AI Trader has been successfully activated and is now trading.'), { tone: 'success', title: 'Done' });
             }
             
             // Close modal and reload page
@@ -469,7 +469,7 @@ function activateTrader(traderId, investmentAmount) {
                 confirmButtonColor: '#0b1020'
             });
         } else {
-            alert('Activation Failed: ' + (error.message || 'There was an error activating the AI Trader. Please try again.'));
+            uiAlert('Activation Failed: ' + (error.message || 'There was an error activating the AI Trader. Please try again.'), { tone: 'danger', title: 'Something went wrong' });
         }
         
         // Restore original button state
@@ -479,8 +479,8 @@ function activateTrader(traderId, investmentAmount) {
 }
 
 // Subscribe to AI Trader Plan function
-function subscribeToPlan(planId) {
-    if (confirm('Are you sure you want to subscribe to this AI Trader Plan? This will enable you to activate AI Traders from this plan.')) {
+async function subscribeToPlan(planId) {
+    if (await uiConfirm('Are you sure you want to subscribe to this AI Trader Plan? This will enable you to activate AI Traders from this plan.', { tone: 'info' })) {
         // Show loading state
         const button = event.target.closest('button');
         const originalText = button.innerHTML;
@@ -507,7 +507,7 @@ function subscribeToPlan(planId) {
                         confirmButtonColor: '#0b1020'
                     });
                 } else {
-                    alert('Subscription Successful! ' + (data.message || 'You have successfully subscribed to this AI Trader Plan.'));
+                    uiAlert('Subscription Successful! ' + (data.message || 'You have successfully subscribed to this AI Trader Plan.'), { tone: 'success', title: 'Done' });
                 }
                 
                 // Reload the page to show activate buttons
@@ -528,7 +528,7 @@ function subscribeToPlan(planId) {
                     confirmButtonColor: '#0b1020'
                 });
             } else {
-                alert('Subscription Failed: ' + (error.message || 'There was an error subscribing to the AI Trader Plan. Please try again.'));
+                uiAlert('Subscription Failed: ' + (error.message || 'There was an error subscribing to the AI Trader Plan. Please try again.'), { tone: 'danger', title: 'Something went wrong' });
             }
             
             // Restore original button state

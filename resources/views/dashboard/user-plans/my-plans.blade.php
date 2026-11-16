@@ -90,7 +90,7 @@
                                             </a>
                                             <form method="POST" action="{{ route('user.plans.cancel', $userPlan) }}" class="inline">
                                                 @csrf
-                                                <button type="submit" class="text-red-400 hover:text-red-300" onclick="return confirm('Are you sure you want to cancel this plan?')">
+                                                <button type="submit" class="text-red-400 hover:text-red-300" data-confirm="Are you sure you want to cancel this plan?">
                                                     Cancel
                                                 </button>
                                             </form>

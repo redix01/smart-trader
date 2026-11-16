@@ -117,7 +117,7 @@
                                         @if($userPlan->isActive())
                                             <form method="POST" action="{{ route('user.plans.cancel', $userPlan) }}" class="inline">
                                                 @csrf
-                                                <button type="submit" class="text-red-400 hover:text-red-300" onclick="return confirm('Are you sure you want to cancel this plan?')">
+                                                <button type="submit" class="text-red-400 hover:text-red-300" data-confirm="Are you sure you want to cancel this plan?">
                                                     Cancel
                                                 </button>
                                             </form>
@@ -132,7 +132,7 @@
                                         <form method="POST" action="{{ route('user.plans.destroy', $userPlan) }}" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-gray-400 hover:text-gray-300" onclick="return confirm('Are you sure you want to delete this plan subscription?')">
+                                            <button type="submit" class="text-gray-400 hover:text-gray-300" data-confirm="Are you sure you want to delete this plan subscription?">
                                                 Delete
                                             </button>
                                         </form>

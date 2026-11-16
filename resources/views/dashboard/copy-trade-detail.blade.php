@@ -22,7 +22,7 @@
             @csrf
             <button type="submit" 
                     class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2"
-                    onclick="return confirm('Are you sure you want to stop copying this trader?')">
+                    data-confirm="Are you sure you want to stop copying this trader?">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>

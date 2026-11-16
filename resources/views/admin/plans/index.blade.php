@@ -209,7 +209,7 @@
                                                 </form>
 
                                                 <!-- Delete -->
-                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this plan?')">
+                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" data-confirm="Are you sure you want to delete this plan?">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-md bg-red-600 hover:bg-red-700 text-white">Delete</button>
@@ -425,7 +425,7 @@
                                                 </form>
 
                                                 <!-- Delete -->
-                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this plan?')">
+                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" data-confirm="Are you sure you want to delete this plan?">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-md bg-red-600 hover:bg-red-700 text-white">Delete</button>
@@ -522,7 +522,7 @@
                                                         {{ $plan->is_active ? 'Deactivate' : 'Activate' }}
                                                     </button>
                                                 </form>
-                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this plan?')">
+                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" data-confirm="Are you sure you want to delete this plan?">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="text-red-400 hover:text-red-300">Delete</button>
@@ -616,7 +616,7 @@
                                                         {{ $plan->is_active ? 'Deactivate' : 'Activate' }}
                                                     </button>
                                                 </form>
-                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this plan?')">
+                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" data-confirm="Are you sure you want to delete this plan?">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="text-red-400 hover:text-red-300">Delete</button>
@@ -1178,22 +1178,22 @@ function validateForm() {
     const minFunding = formData.get('min_funding');
     
     if (!planType) {
-        alert('Please select a plan type');
+        uiAlert('Please select a plan type', { title: 'Check your details' });
         return false;
     }
     
     if (!planName || planName.trim() === '') {
-        alert('Please enter a plan name');
+        uiAlert('Please enter a plan name', { title: 'Check your details' });
         return false;
     }
     
     if (!price || price <= 0) {
-        alert('Please enter a valid price');
+        uiAlert('Please enter a valid price', { title: 'Check your details' });
         return false;
     }
     
     if (!minFunding || minFunding <= 0) {
-        alert('Please enter a valid minimum funding amount');
+        uiAlert('Please enter a valid minimum funding amount', { title: 'Check your details' });
         return false;
     }
     
@@ -1201,7 +1201,7 @@ function validateForm() {
     if (planType === 'signal') {
         const signalAmount = formData.get('signal_amount');
         if (!signalAmount || signalAmount <= 0) {
-            alert('Please enter a valid signal amount');
+            uiAlert('Please enter a valid signal amount', { title: 'Check your details' });
             return false;
         }
     }

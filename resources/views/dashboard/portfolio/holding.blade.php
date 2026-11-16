@@ -336,12 +336,12 @@ function sellAsset() {
     const price = parseFloat(document.getElementById('sellPriceInput').value);
     
     if (!quantity || quantity <= 0) {
-        alert('Please enter a valid quantity');
+        uiAlert('Please enter a valid quantity', { title: 'Check your details' });
         return;
     }
     
     if (!price || price <= 0) {
-        alert('Please enter a valid price');
+        uiAlert('Please enter a valid price', { title: 'Check your details' });
         return;
     }
     

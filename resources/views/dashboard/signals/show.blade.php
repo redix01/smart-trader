@@ -75,12 +75,12 @@ document.getElementById('copySignalBtn').addEventListener('click', async () => {
         const data = await res.json();
         if (data.success) {
             await navigator.clipboard.writeText(data.signal_text);
-            alert('Signal copied to clipboard');
+            uiAlert('Signal copied to clipboard', { tone: 'success', title: 'Done' });
         } else {
-            alert(data.error || 'Failed to copy');
+            uiAlert(data.error || 'Failed to copy', { tone: 'danger', title: 'Something went wrong' });
         }
     } catch (e) {
-        alert('Failed to copy');
+        uiAlert('Failed to copy', { tone: 'danger', title: 'Something went wrong' });
     }
 });
 </script>

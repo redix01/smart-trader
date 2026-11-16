@@ -609,7 +609,7 @@
                 });
             } else {
                 console.log('No address to copy');
-                alert('No wallet address available to copy');
+                uiAlert('No wallet address available to copy', { title: 'Nothing to copy' });
             }
         });
         } else {
@@ -700,7 +700,7 @@
                     });
                 } else {
                     console.log('No address to copy');
-                    alert('No wallet address available to copy');
+                    uiAlert('No wallet address available to copy', { title: 'Nothing to copy' });
                 }
             }
         });
@@ -735,7 +735,7 @@
 
             if (!amount || !walletType || !paymentMethod || !proof) {
                 e.preventDefault();
-                alert('Please fill in all required fields');
+                uiAlert('Please fill in all required fields', { title: 'Check your details' });
                 return;
             }
 
@@ -754,8 +754,8 @@
         }
 
         // Cancel deposit function
-        function cancelDeposit(depositId) {
-            if (confirm('Are you sure you want to cancel this deposit?')) {
+        async function cancelDeposit(depositId) {
+            if (await uiConfirm('Are you sure you want to cancel this deposit?')) {
                 // Create a form to submit the cancel request
                 const form = document.createElement('form');
                 form.method = 'POST';

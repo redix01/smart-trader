@@ -552,9 +552,9 @@ function confirmActivation() {
             }
         });
     } else {
-        if (confirm(`Are you sure you want to activate this AI Trader with ${CURRENCY_SYMBOL}${amount.toLocaleString()}?`)) {
-            activateTrader(currentTraderId, amount);
-        }
+        uiConfirm(`Are you sure you want to activate this AI Trader with ${CURRENCY_SYMBOL}${amount.toLocaleString()}?`, { title: 'Confirm Activation', confirmText: 'Yes, Activate!', tone: 'info' }).then(function (ok) {
+            if (ok) activateTrader(currentTraderId, amount);
+        });
     }
 }
 
@@ -589,7 +589,7 @@ function activateTrader(traderId, investmentAmount) {
                     confirmButtonColor: '#0b1020'
                 });
             } else {
-                alert('AI Trader Activated! ' + (data.message || 'Your AI Trader has been successfully activated and is now trading.'));
+                uiAlert('AI Trader Activated! ' + (data.message || 'Your AI Trader has been successfully activated and is now trading.'), { tone: 'success', title: 'Done' });
             }
             
             // Close modal and reload page
@@ -611,7 +611,7 @@ function activateTrader(traderId, investmentAmount) {
                 confirmButtonColor: '#0b1020'
             });
         } else {
-            alert('Activation Failed: ' + (error.message || 'There was an error activating the AI Trader. Please try again.'));
+            uiAlert('Activation Failed: ' + (error.message || 'There was an error activating the AI Trader. Please try again.'), { tone: 'danger', title: 'Something went wrong' });
         }
         
         // Restore original button state

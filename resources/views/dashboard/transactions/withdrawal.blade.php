@@ -696,19 +696,19 @@ document.addEventListener('DOMContentLoaded', function() {
             const amount = this.querySelector('[name="amount"]').value;
             
             if (!fromAccount) {
-                alert('Please select an account to withdraw from');
+                uiAlert('Please select an account to withdraw from', { title: 'Check your details' });
                 e.preventDefault();
                 return;
             }
             
             if (!paymentMethod) {
-                alert('Please select a payment method');
+                uiAlert('Please select a payment method', { title: 'Check your details' });
                 e.preventDefault();
                 return;
             }
             
             if (!amount || amount <= 0) {
-                alert('Please enter a valid withdrawal amount');
+                uiAlert('Please enter a valid withdrawal amount', { title: 'Check your details' });
                 e.preventDefault();
                 return;
             }
@@ -718,7 +718,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const wallet = this.querySelector('[name="wallet"]').value;
                 const address = this.querySelector('[name="address"]').value;
                 if (!wallet || !address) {
-                    alert('Please fill in wallet type and address for crypto withdrawal');
+                    uiAlert('Please fill in wallet type and address for crypto withdrawal', { title: 'Check your details' });
                     e.preventDefault();
                     return;
                 }
@@ -727,14 +727,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const acctName = this.querySelector('[name="acct_name"]').value;
                 const acctNumber = this.querySelector('[name="acct_number"]').value;
                 if (!bankName || !acctName || !acctNumber) {
-                    alert('Please fill in all bank details');
+                    uiAlert('Please fill in all bank details', { title: 'Check your details' });
                     e.preventDefault();
                     return;
                 }
             } else if (paymentMethod === 'paypal') {
                 const paypal = this.querySelector('[name="paypal"]').value;
                 if (!paypal || !paypal.includes('@')) {
-                    alert('Please enter a valid PayPal email address');
+                    uiAlert('Please enter a valid PayPal email address', { title: 'Check your details' });
                     e.preventDefault();
                     return;
                 }

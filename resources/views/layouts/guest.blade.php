@@ -18,7 +18,8 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    </head>
+        @include('partials.dialogs')
+</head>
     <body  class="font-sans text-gray-900 antialiased">
         <div id="pwaPrompt" class="hidden fixed inset-0 z-50 items-end justify-center">
             <div class="fixed inset-0 bg-black/50"></div>

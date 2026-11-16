@@ -109,7 +109,7 @@
                                         </button>
                                     </form>
                                     
-                                    <form method="POST" action="{{ route('user.staking.cancel', $staking) }}" class="inline w-full" onsubmit="return confirm('Are you sure you want to cancel this staking? This action cannot be undone.')">
+                                    <form method="POST" action="{{ route('user.staking.cancel', $staking) }}" class="inline w-full" data-confirm="Are you sure you want to cancel this staking? This action cannot be undone.">
                                         @csrf
                                         <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
                                             Cancel Staking

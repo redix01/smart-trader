@@ -153,7 +153,7 @@
                                             <a href="{{ route('admin.signals.edit', $signal) }}" class="text-yellow-400 hover:text-yellow-300 transition-colors">
                                                 Edit
                                             </a>
-                                            <form action="{{ route('admin.signals.destroy', $signal) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this signal?')">
+                                            <form action="{{ route('admin.signals.destroy', $signal) }}" method="POST" class="inline" data-confirm="Are you sure you want to delete this signal?">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-red-400 hover:text-red-300 transition-colors">
@@ -356,12 +356,12 @@ function submitSignalForm() {
             window.location.reload();
         } else {
             // Show error message
-            alert(data.message || 'Failed to create signal');
+            uiAlert(data.message || 'Failed to create signal', { tone: 'danger', title: 'Something went wrong' });
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while creating the signal');
+        uiAlert('An error occurred while creating the signal', { tone: 'danger', title: 'Something went wrong' });
     })
     .finally(() => {
         // Reset button state

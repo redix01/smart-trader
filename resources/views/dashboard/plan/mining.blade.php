@@ -209,7 +209,7 @@
             if (button.textContent.trim() === 'START MINING') {
                 button.addEventListener('click', function() {
                     const planName = this.closest('.bg-gray-800').querySelector('h3').textContent;
-                    alert(`You selected the ${planName} Mining plan. Redirecting to setup page...`);
+                    uiAlert(`You selected the ${planName} Mining plan. Redirecting to setup page...`);
                 });
             }
         });

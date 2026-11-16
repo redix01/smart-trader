@@ -95,6 +95,7 @@
         transition: all 0.2s ease-in-out;
     }
   </style>
+    @include('partials.dialogs')
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
 

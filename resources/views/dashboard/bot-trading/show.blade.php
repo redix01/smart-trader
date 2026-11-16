@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Bot control functions
     window.pauseBot = async (botId) => {
-        if (!confirm('Are you sure you want to pause this bot? It can be resumed later.')) return;
+        if (!(await uiConfirm('Are you sure you want to pause this bot? It can be resumed later.', { tone: 'info' }))) return;
 
         try {
             const response = await fetch(`/user/bot-trading/${botId}/pause`, {
@@ -461,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     window.resumeBot = async (botId) => {
-        if (!confirm('Are you sure you want to resume this bot?')) return;
+        if (!(await uiConfirm('Are you sure you want to resume this bot?', { tone: 'info' }))) return;
 
         try {
             const response = await fetch(`/user/bot-trading/${botId}/resume`, {
@@ -486,7 +486,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     window.stopBot = async (botId) => {
-        if (!confirm('Are you sure you want to PERMANENTLY STOP this bot? This action cannot be undone and all profits will be transferred to your trading balance.')) return;
+        if (!(await uiConfirm('Are you sure you want to PERMANENTLY STOP this bot? This action cannot be undone and all profits will be transferred to your trading balance.'))) return;
 
         try {
             const response = await fetch(`/user/bot-trading/${botId}/stop`, {

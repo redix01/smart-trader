@@ -332,7 +332,7 @@ function editTrader(id) {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error loading trader data');
+            uiAlert('Error loading trader data', { tone: 'danger', title: 'Something went wrong' });
         });
 }
 
@@ -418,7 +418,7 @@ function viewTrader(id) {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error loading trader data');
+            uiAlert('Error loading trader data', { tone: 'danger', title: 'Something went wrong' });
         });
 }
 
@@ -430,8 +430,8 @@ function closeViewModal() {
     document.getElementById('viewModal').classList.add('hidden');
 }
 
-function toggleStatus(id) {
-    if (confirm('Are you sure you want to toggle the status of this AI trader?')) {
+async function toggleStatus(id) {
+    if (await uiConfirm('Are you sure you want to toggle the status of this AI trader?', { tone: 'info' })) {
         fetch(`/admin/ai-traders/${id}/toggle-status`, {
             method: 'POST',
             headers: {
@@ -444,18 +444,18 @@ function toggleStatus(id) {
             if (data.success) {
                 location.reload();
             } else {
-                alert('Error updating trader status');
+                uiAlert('Error updating trader status', { tone: 'danger', title: 'Something went wrong' });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error updating trader status');
+            uiAlert('Error updating trader status', { tone: 'danger', title: 'Something went wrong' });
         });
     }
 }
 
-function deleteTrader(id) {
-    if (confirm('Are you sure you want to delete this AI trader? This action cannot be undone.')) {
+async function deleteTrader(id) {
+    if (await uiConfirm('Are you sure you want to delete this AI trader? This action cannot be undone.')) {
         fetch(`/admin/ai-traders/${id}`, {
             method: 'DELETE',
             headers: {
@@ -468,12 +468,12 @@ function deleteTrader(id) {
             if (data.success) {
                 location.reload();
             } else {
-                alert(data.message || 'Error deleting trader');
+                uiAlert(data.message || 'Error deleting trader', { tone: 'danger', title: 'Something went wrong' });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error deleting trader');
+            uiAlert('Error deleting trader', { tone: 'danger', title: 'Something went wrong' });
         });
     }
 }
@@ -507,12 +507,12 @@ document.getElementById('traderForm').addEventListener('submit', function(e) {
             closeModal();
             location.reload();
         } else {
-            alert(data.message || 'Error saving trader');
+            uiAlert(data.message || 'Error saving trader', { tone: 'danger', title: 'Something went wrong' });
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error saving trader');
+        uiAlert('Error saving trader', { tone: 'danger', title: 'Something went wrong' });
     });
 });
 </script>

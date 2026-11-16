@@ -256,9 +256,9 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             e.stopPropagation();
             
-            if (confirm('Are you sure you want to clear all notifications? This action cannot be undone.')) {
-                clearAllNotifications();
-            }
+            uiConfirm('Are you sure you want to clear all notifications? This action cannot be undone.').then(function (ok) {
+                if (ok) clearAllNotifications();
+            });
         });
     }
 
@@ -280,12 +280,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 location.reload();
             } else {
-                alert('Failed to mark notification as read');
+                uiAlert('Failed to mark notification as read', { tone: 'danger', title: 'Something went wrong' });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while marking notification as read');
+            uiAlert('An error occurred while marking notification as read', { tone: 'danger', title: 'Something went wrong' });
         });
     }
 
@@ -317,14 +317,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 location.reload();
             } else {
                 console.log('Failed to mark all as read:', data);
-                alert('Failed to mark all notifications as read');
+                uiAlert('Failed to mark all notifications as read', { tone: 'danger', title: 'Something went wrong' });
                 button.disabled = false;
                 button.textContent = 'Mark All as Read';
             }
         })
         .catch(error => {
             console.error('Error marking all as read:', error);
-            alert('An error occurred while marking notifications as read: ' + error.message);
+            uiAlert('An error occurred while marking notifications as read: ' + error.message, { tone: 'danger', title: 'Something went wrong' });
             button.disabled = false;
             button.textContent = 'Mark All as Read';
         });
@@ -375,14 +375,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 location.reload();
             } else {
                 console.log('Failed to clear notifications:', data);
-                alert('Failed to clear all notifications');
+                uiAlert('Failed to clear all notifications', { tone: 'danger', title: 'Something went wrong' });
                 button.disabled = false;
                 button.textContent = 'Clear All';
             }
         })
         .catch(error => {
             console.error('Error clearing notifications:', error);
-            alert('An error occurred while clearing notifications: ' + error.message);
+            uiAlert('An error occurred while clearing notifications: ' + error.message, { tone: 'danger', title: 'Something went wrong' });
             button.disabled = false;
             button.textContent = 'Clear All';
         });

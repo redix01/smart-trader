@@ -184,3 +184,16 @@ canvas{max-width:100%}
 .tr-act.is-buy{background:#13805f}
 .tr-act.is-sell{background:#be123c}
 .tr-act:active{transform:scale(.98)}
+
+/* Trade Room: positions / orders rows and TP-SL box */
+.tr-row-btn{margin-top:12px;width:100%;padding:9px 0;border-radius:10px;border:1px solid rgba(96,165,250,.4);background:rgba(59,130,246,.08);color:#93c5fd;font-weight:600;font-size:14px}
+.tr-row-btn:hover{background:rgba(59,130,246,.16);color:#fff}
+.tr-row-btn.is-danger{border-color:rgba(244,63,94,.4);background:transparent;color:#fb7185}
+.tr-row-btn.is-danger:hover{background:rgba(244,63,94,.1)}
+.tr-row-btn:disabled{opacity:.5}
+@media (min-width:768px){.tr-row-btn{width:auto;padding:7px 16px}}
+.tr-targets{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.tr-targets summary{cursor:pointer;list-style:none;font-size:13px;font-weight:600;color:var(--soft)}
+.tr-targets summary::-webkit-details-marker{display:none}
+.tr-targets summary::before{content:"+";display:inline-block;width:14px;color:var(--accent-hi)}
+.tr-targets[open] summary::before{content:"−"}

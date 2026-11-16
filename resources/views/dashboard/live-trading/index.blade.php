@@ -19,6 +19,7 @@
      data-store="{{ route('user.liveTrading.store') }}"
      data-cancel-base="{{ url('/user/live-trading') }}"
      data-refresh="{{ route('user.liveTrading.refreshPrices') }}"
+     data-close-base="{{ url('/user/live-trading') }}"
      data-rate="{{ $rate }}" data-balance="{{ $balance }}">
 
     {{-- ===== Header + account strip ===== --}}
@@ -35,7 +36,7 @@
         </div>
         <div class="grid grid-cols-2 gap-2 lg:flex lg:items-stretch">
             <div class="tr-stat"><span>Trading balance</span><b id="balanceDisplay">{{ money($balance) }}</b></div>
-            <div class="tr-stat"><span>In open orders</span><b>{{ money($inOpenOrders) }}</b></div>
+            <div class="tr-stat"><span>In positions &amp; orders</span><b>{{ money($inOpenOrders) }}</b></div>
             <a href="{{ route('user.deposit') }}" class="tr-btn tr-btn-primary hidden lg:inline-flex">Add funds</a>
             <a href="{{ route('user.liveTrading.history') }}" class="tr-btn hidden lg:inline-flex">Order history</a>
         </div>
@@ -145,7 +146,7 @@
 
                 <div class="mt-4 space-y-3">
                     <div data-for="market">
-                        <label class="tr-label" for="amountInput">Amount</label>
+                        <label class="tr-label" for="amountInput">Margin <span class="text-gray-500">(from your balance)</span></label>
                         <div class="tr-input"><span>{{ currency_symbol() }}</span><input id="amountInput" type="number" inputmode="decimal" min="1" step="any" placeholder="0.00"></div>
                         <div class="grid grid-cols-4 gap-1.5 mt-2">
                             @foreach([25, 50, 75, 100] as $pct)<button type="button" class="tr-chip" data-pct="{{ $pct }}">{{ $pct === 100 ? 'Max' : $pct.'%' }}</button>@endforeach
@@ -156,7 +157,7 @@
                         <div class="tr-input"><span>{{ currency_symbol() }}</span><input id="limitPrice" type="number" inputmode="decimal" step="any" placeholder="0.00"></div>
                     </div>
                     <div data-for="limit" hidden>
-                        <label class="tr-label" for="limitQty">Quantity <span class="text-gray-500" id="qtyUnit"></span></label>
+                        <label class="tr-label" for="limitQty">Position size <span class="text-gray-500" id="qtyUnit"></span></label>
                         <div class="tr-input"><input id="limitQty" type="number" inputmode="decimal" step="any" placeholder="0"></div>
                     </div>
 
@@ -172,11 +173,20 @@
                     </div>
                 </div>
 
+                <details class="tr-targets mt-4" id="targetsBox">
+                    <summary>Take profit / Stop loss <span class="text-gray-500 font-normal">(optional)</span></summary>
+                    <div class="grid grid-cols-2 gap-2 mt-3">
+                        <div><label class="tr-label" for="tpInput">Take profit</label><div class="tr-input"><span>{{ currency_symbol() }}</span><input id="tpInput" type="number" inputmode="decimal" step="any" placeholder="—"></div></div>
+                        <div><label class="tr-label" for="slInput">Stop loss</label><div class="tr-input"><span>{{ currency_symbol() }}</span><input id="slInput" type="number" inputmode="decimal" step="any" placeholder="—"></div></div>
+                    </div>
+                </details>
+
                 <dl class="tr-summary mt-4">
                     <div><dt>Est. price</dt><dd id="sumPrice">—</dd></div>
                     <div><dt>Est. quantity</dt><dd id="sumQty">—</dd></div>
                     <div><dt>Position size</dt><dd id="sumSize">—</dd></div>
                     <div><dt>Margin used</dt><dd id="sumCost">—</dd></div>
+                    <div><dt>Est. liquidation</dt><dd id="sumLiq">—</dd></div>
                     <div><dt>Balance after</dt><dd id="sumAfter">{{ money($balance) }}</dd></div>
                 </dl>
 
@@ -185,82 +195,103 @@
                 <button type="submit" id="submitOrder" class="mt-4 w-full py-3.5 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed">
                     <span id="submitVerb">Buy</span> <span data-sym-label>{{ $sel['symbol'] ?? '' }}</span>
                 </button>
-                <p class="mt-3 text-[11px] leading-relaxed text-gray-500">Orders use your trading balance. Leverage magnifies gains and losses. <a href="{{ route('risk') }}" class="underline hover:text-gray-300">Risk disclosure</a></p>
+                <p class="mt-3 text-[11px] leading-relaxed text-gray-500">Market orders fill immediately at the live price; limit orders wait for your price. Leverage magnifies gains and losses, and a position is liquidated if losses reach its margin. <a href="{{ route('risk') }}" class="underline hover:text-gray-300">Risk disclosure</a></p>
             </form>
         </section>
     </div>
     @endif
 
-    {{-- ===== Orders ===== --}}
-    <section class="tr-panel overflow-hidden" aria-label="Orders">
+    {{-- ===== Positions / orders / history ===== --}}
+    @php
+        $reasonLabel = ['manual' => 'Closed', 'take_profit' => 'Take profit', 'stop_loss' => 'Stop loss', 'liquidation' => 'Liquidated'];
+        $tabs = [
+            'positionsPane' => ['Positions', $positions],
+            'ordersPane' => ['Orders', $openOrders],
+            'historyPane' => ['History', $orderHistory],
+        ];
+        $empty = [
+            'positionsPane' => ['No open positions', 'Market orders open a position immediately. It shows here with live profit and loss.'],
+            'ordersPane' => ['No waiting orders', 'Limit orders wait here until the market reaches your price.'],
+            'historyPane' => ['No history yet', 'Closed, liquidated and cancelled trades will be listed here.'],
+        ];
+        $pnlCls = fn ($v) => $v > 0 ? 'text-emerald-400' : ($v < 0 ? 'text-red-400' : 'text-gray-300');
+        $signed = fn ($v) => ($v > 0 ? '+' : ($v < 0 ? '−' : '')).money(abs($v));
+    @endphp
+    <section class="tr-panel overflow-hidden" aria-label="Positions and orders" id="ordersPanel">
         <div class="flex items-center justify-between gap-3 px-4 border-b border-gray-700">
-            <div class="flex gap-5" role="tablist">
-                <button type="button" class="tr-otab is-on" data-pane="openPane">Open <span>{{ $openOrders->count() }}</span></button>
-                <button type="button" class="tr-otab" data-pane="historyPane">History <span>{{ $orderHistory->count() }}</span></button>
+            <div class="flex gap-5 overflow-x-auto" role="tablist">
+                @foreach($tabs as $pane => [$label, $rows])
+                    <button type="button" class="tr-otab {{ $loop->first ? 'is-on' : '' }}" data-pane="{{ $pane }}">{{ $label }} <span>{{ $rows->count() }}</span></button>
+                @endforeach
             </div>
             <a href="{{ route('user.liveTrading.history') }}" class="text-sm font-semibold text-gold-400 hover:text-gold-300 whitespace-nowrap">See all</a>
         </div>
 
-        @foreach(['openPane' => $openOrders, 'historyPane' => $orderHistory] as $pane => $rows)
-            <div id="{{ $pane }}" @if($pane === 'historyPane') hidden @endif>
+        @foreach($tabs as $pane => [$label, $rows])
+            <div id="{{ $pane }}" @unless($loop->first) hidden @endunless>
                 @if($rows->isEmpty())
                     <div class="px-6 py-10 text-center">
-                        <span class="mx-auto w-11 h-11 rounded-full bg-gray-700 text-gray-300 grid place-items-center">{!! $ico($pane === 'openPane' ? '<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>' : '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', 'w-5 h-5') !!}</span>
-                        <p class="mt-3 text-white font-medium">{{ $pane === 'openPane' ? 'No open orders' : 'No order history yet' }}</p>
-                        <p class="text-sm text-gray-400 mt-1">{{ $pane === 'openPane' ? 'Orders you place will appear here until they are filled or cancelled.' : 'Filled and cancelled orders will be listed here.' }}</p>
+                        <p class="text-white font-medium">{{ $empty[$pane][0] }}</p>
+                        <p class="text-sm text-gray-400 mt-1">{{ $empty[$pane][1] }}</p>
                     </div>
                 @else
-                    {{-- Phones: cards --}}
-                    <ul class="md:hidden divide-y divide-gray-700">
+                    <ul class="divide-y divide-gray-700">
                         @foreach($rows as $o)
-                            <li class="p-4">
-                                <div class="flex items-center gap-3">
-                                    <span class="w-9 h-9 rounded-lg grid place-items-center text-[10px] font-bold {{ $o->side === 'buy' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ strtoupper($o->side) }}</span>
+                            @php
+                                $isPos = $pane === 'positionsPane';
+                                $size = (float) $o->quantity;
+                                $liq = $isPos ? $o->liquidationPrice() : null;
+                            @endphp
+                            <li class="tr-order p-4 md:px-5"
+                                @if($isPos) data-pos data-type="{{ $o->asset_type }}" data-symbol="{{ $o->symbol }}" data-side="{{ $o->side }}" data-entry="{{ (float) $o->entry_price }}" data-qty="{{ $size }}" data-margin="{{ (float) $o->amount }}" @endif>
+                                <div class="flex items-start gap-3">
+                                    <span class="w-10 h-10 shrink-0 rounded-lg grid place-items-center text-[10px] font-bold {{ $o->side === 'buy' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ $o->side === 'buy' ? 'LONG' : 'SHORT' }}</span>
                                     <div class="min-w-0 flex-1">
-                                        <div class="text-white font-semibold">{{ $o->symbol }} <span class="text-xs font-normal text-gray-500">{{ ucfirst($o->asset_type) }} · {{ ucfirst($o->order_type) }}</span></div>
-                                        <div class="text-xs text-gray-400">{{ $o->created_at->format('M d, H:i') }}</div>
+                                        <div class="text-white font-semibold">{{ $o->symbol }} <span class="text-xs font-normal text-gray-500">{{ ucfirst($o->asset_type) }} · {{ ucfirst($o->order_type) }} · {{ $qty($o->leverage) }}x</span></div>
+                                        <div class="text-xs text-gray-400">{{ ($o->closed_at ?? $o->filled_at ?? $o->created_at)->format('M d, H:i') }}</div>
                                     </div>
-                                    <span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $statusCls[$o->status] ?? 'bg-gray-700 text-gray-300' }}">{{ ucfirst($o->status) }}</span>
+                                    <div class="text-right">
+                                        @if($isPos)
+                                            <div class="font-mono font-semibold" data-pnl>—</div>
+                                            <div class="font-mono text-xs" data-pnl-pct></div>
+                                        @elseif($pane === 'ordersPane')
+                                            <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-amber-500/15 text-amber-300">Waiting</span>
+                                        @else
+                                            @if($o->status === 'cancelled')
+                                                <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">Cancelled</span>
+                                            @else
+                                                <div class="font-mono font-semibold {{ $pnlCls((float) $o->realized_pnl) }}">{{ $signed((float) $o->realized_pnl) }}</div>
+                                                <div class="text-xs {{ $o->status === 'liquidated' ? 'text-red-400' : 'text-gray-400' }}">{{ $reasonLabel[$o->close_reason] ?? ucfirst($o->status) }}</div>
+                                            @endif
+                                        @endif
+                                    </div>
                                 </div>
-                                <dl class="grid grid-cols-3 gap-2 mt-3 text-xs">
-                                    <div><dt class="text-gray-500">Amount</dt><dd class="font-mono text-white mt-0.5">{{ money($o->amount) }}</dd></div>
-                                    <div><dt class="text-gray-500">{{ $o->order_type === 'limit' ? 'Price × qty' : 'Price' }}</dt><dd class="font-mono text-gray-300 mt-0.5 break-words">{{ $o->order_type === 'limit' ? money($o->price, 2).' × '.$qty($o->quantity) : 'Market' }}</dd></div>
-                                    <div class="text-right"><dt class="text-gray-500">Leverage</dt><dd class="font-mono text-gray-300 mt-0.5">{{ $qty($o->leverage) }}x</dd></div>
+                                <dl class="grid grid-cols-3 md:grid-cols-6 gap-x-3 gap-y-2 mt-3 text-xs">
+                                    <div><dt class="text-gray-500">Size</dt><dd class="font-mono text-gray-200 mt-0.5">{{ $qty($size) }}</dd></div>
+                                    <div><dt class="text-gray-500">Margin</dt><dd class="font-mono text-gray-200 mt-0.5">{{ money($o->amount) }}</dd></div>
+                                    @if($pane === 'ordersPane')
+                                        <div><dt class="text-gray-500">Limit price</dt><dd class="font-mono text-gray-200 mt-0.5">{{ money($o->price) }}</dd></div>
+                                    @else
+                                        <div><dt class="text-gray-500">Entry</dt><dd class="font-mono text-gray-200 mt-0.5">{{ $o->entry_price ? money($o->entry_price) : '—' }}</dd></div>
+                                    @endif
+                                    @if($isPos)
+                                        <div><dt class="text-gray-500">Mark</dt><dd class="font-mono text-gray-200 mt-0.5" data-mark>—</dd></div>
+                                        <div><dt class="text-gray-500">Liq. price</dt><dd class="font-mono text-amber-300 mt-0.5">{{ $liq !== null ? money($liq) : '—' }}</dd></div>
+                                    @elseif($pane === 'historyPane' && $o->exit_price)
+                                        <div><dt class="text-gray-500">Exit</dt><dd class="font-mono text-gray-200 mt-0.5">{{ money($o->exit_price) }}</dd></div>
+                                    @endif
+                                    @if($o->take_profit || $o->stop_loss)
+                                        <div><dt class="text-gray-500">TP / SL</dt><dd class="font-mono text-gray-200 mt-0.5">{{ $o->take_profit ? money($o->take_profit) : '—' }} / {{ $o->stop_loss ? money($o->stop_loss) : '—' }}</dd></div>
+                                    @endif
                                 </dl>
-                                @if($o->status === 'pending')
-                                    <button type="button" class="mt-3 w-full py-2 rounded-lg border border-red-500/40 text-sm font-semibold text-red-400 hover:bg-red-500/10" data-cancel-id="{{ $o->id }}">Cancel order</button>
+                                @if($isPos)
+                                    <button type="button" class="tr-row-btn" data-close-id="{{ $o->id }}" data-label="{{ $o->symbol }} {{ $o->side === 'buy' ? 'long' : 'short' }}">Close position</button>
+                                @elseif($pane === 'ordersPane')
+                                    <button type="button" class="tr-row-btn is-danger" data-cancel-id="{{ $o->id }}">Cancel order</button>
                                 @endif
                             </li>
                         @endforeach
                     </ul>
-                    {{-- md and up: table --}}
-                    <div class="hidden md:block overflow-x-auto">
-                        <table class="min-w-full text-sm">
-                            <thead><tr class="text-left">
-                                <th class="px-4 py-2.5">Time</th><th class="px-4 py-2.5">Market</th><th class="px-4 py-2.5">Side</th><th class="px-4 py-2.5">Type</th>
-                                <th class="px-4 py-2.5 text-right">Amount</th><th class="px-4 py-2.5 text-right">Price / Qty</th><th class="px-4 py-2.5 text-right">Leverage</th><th class="px-4 py-2.5">Status</th><th class="px-4 py-2.5"></th>
-                            </tr></thead>
-                            <tbody class="divide-y divide-gray-700">
-                                @foreach($rows as $o)
-                                    <tr>
-                                        <td class="px-4 py-3 whitespace-nowrap text-gray-400">{{ $o->created_at->format('M d, H:i') }}</td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><span class="text-white font-medium">{{ $o->symbol }}</span> <span class="text-xs text-gray-500">{{ ucfirst($o->asset_type) }}</span></td>
-                                        <td class="px-4 py-3"><span class="font-semibold {{ $o->side === 'buy' ? 'text-emerald-400' : 'text-red-400' }}">{{ ucfirst($o->side) }}</span></td>
-                                        <td class="px-4 py-3 text-gray-300">{{ ucfirst($o->order_type) }}</td>
-                                        <td class="px-4 py-3 text-right font-mono text-white whitespace-nowrap">{{ money($o->amount) }}</td>
-                                        <td class="px-4 py-3 text-right font-mono text-gray-300 whitespace-nowrap">{{ $o->order_type === 'limit' ? money($o->price, 2).' × '.$qty($o->quantity) : 'Market' }}</td>
-                                        <td class="px-4 py-3 text-right font-mono text-gray-300">{{ $qty($o->leverage) }}x</td>
-                                        <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $statusCls[$o->status] ?? 'bg-gray-700 text-gray-300' }}">{{ ucfirst($o->status) }}</span></td>
-                                        <td class="px-4 py-3 text-right">
-                                            @if($o->status === 'pending')
-                                                <button type="button" class="text-sm font-semibold text-red-400 hover:text-red-300" data-cancel-id="{{ $o->id }}">Cancel</button>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
                 @endif
             </div>
         @endforeach
@@ -465,26 +496,32 @@
   }
   $('leverageInput').addEventListener('input', function () { setLev(this.value); });
   all('[data-lev]').forEach(function (b) { b.addEventListener('click', function () { setLev(b.dataset.lev); }); });
-  ['amountInput', 'limitPrice', 'limitQty'].forEach(function (id) { $(id).addEventListener('input', recalc); });
+  ['amountInput', 'limitPrice', 'limitQty', 'tpInput', 'slInput'].forEach(function (id) { $(id).addEventListener('input', recalc); });
 
+  // Same maths as the server (TradeEngine): margin comes from the balance, size = margin × leverage.
   function order() {
     if (state.otype === 'market') {
       var amt = parseFloat($('amountInput').value) || 0, p = price();
-      return { cost: amt, price: p, qty: p > 0 ? amt / p : NaN };
+      return { cost: amt, price: p, size: amt * state.lev, qty: p > 0 ? amt * state.lev / p : NaN };
     }
     var lp = parseFloat($('limitPrice').value) || 0, q = parseFloat($('limitQty').value) || 0;
-    return { cost: lp * q, price: lp, qty: q };
+    return { cost: lp * q / state.lev, price: lp, size: lp * q, qty: q };
   }
   function recalc() {
     var o = order(), err = '';
     $('sumPrice').textContent = o.price ? fmt(o.price) : '—';
     $('sumQty').textContent = o.qty ? qtyFmt(o.qty) + ' ' + (state.symbol || '') : '—';
-    $('sumSize').textContent = o.cost ? fmt(o.cost * state.lev, 2) : '—';
+    $('sumSize').textContent = o.size ? fmt(o.size, 2) : '—';
     $('sumCost').textContent = o.cost ? fmt(o.cost, 2) : '—';
+    var liq = o.price ? (state.side === 'buy' ? o.price * (1 - 1 / state.lev) : o.price * (1 + 1 / state.lev)) : NaN;
+    $('sumLiq').textContent = o.cost ? fmt(liq) : '—';
     $('sumAfter').textContent = fmt(balance - o.cost, 2);
     $('sumAfter').className = balance - o.cost < 0 ? 'text-red-400' : '';
     if (o.cost > balance) err = 'This order is larger than your trading balance.';
-    else if (state.otype === 'market' && o.cost > 0 && o.cost < 1) err = 'The minimum order is ' + fmt(1, 2) + '.';
+    else if (o.cost > 0 && o.cost < 1) err = 'The minimum margin is ' + fmt(1, 2) + '.';
+    var tp = parseFloat($('tpInput').value), sl = parseFloat($('slInput').value), ref = o.price, buy = state.side === 'buy';
+    if (!err && tp && ref && (buy ? tp <= ref : tp >= ref)) err = 'Take profit must be ' + (buy ? 'above' : 'below') + ' ' + fmt(ref) + '.';
+    if (!err && sl && ref && (buy ? sl >= ref : sl <= ref)) err = 'Stop loss must be ' + (buy ? 'below' : 'above') + ' ' + fmt(ref) + '.';
     var e = $('ticketError'); e.textContent = err; e.classList.toggle('hidden', !err);
     $('submitOrder').disabled = !!err || !(o.cost > 0) || !state.symbol;
   }
@@ -498,13 +535,15 @@
     fd.append('order_type', state.otype); fd.append('side', state.side); fd.append('leverage', state.lev);
     if (state.otype === 'market') fd.append('amount', o.cost.toFixed(2));
     else { fd.append('price', o.price); fd.append('quantity', o.qty); }
+    if ($('tpInput').value) fd.append('take_profit', $('tpInput').value);
+    if ($('slInput').value) fd.append('stop_loss', $('slInput').value);
     btn.disabled = true; var label = btn.innerHTML; btn.textContent = 'Placing order…';
     fetch(room.dataset.store, { method: 'POST', body: fd, headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' } })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) {
         if (res.ok && res.d.success) {
           ticket.close();
-          toast((state.side === 'buy' ? 'Buy' : 'Sell') + ' order for ' + state.symbol + ' placed.', true);
+          toast(res.d.message || 'Order placed.', true);
           setTimeout(function () { location.reload(); }, 900);
         } else {
           var msg = res.d.message || (res.d.errors ? Object.values(res.d.errors)[0][0] : 'Order could not be placed.');
@@ -520,16 +559,42 @@
       all('.tr-otab').forEach(function (x) { x.classList.toggle('is-on', x === t); $(x.dataset.pane).hidden = x !== t; });
     });
   });
+  function post(url, b, okDelay) {
+    b.disabled = true;
+    return fetch(url, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' } })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { toast(d.message || (d.success ? 'Done.' : 'Something went wrong.'), d.success); if (d.success) setTimeout(function () { location.reload(); }, okDelay || 900); else b.disabled = false; })
+      .catch(function () { toast('Network error. Please try again.', false); b.disabled = false; });
+  }
   all('button[data-cancel-id]').forEach(function (b) {
     b.addEventListener('click', function () {
-      if (!confirm('Cancel this order? The amount returns to your trading balance.')) return;
-      b.disabled = true;
-      fetch(room.dataset.cancelBase + '/' + b.dataset.cancelId + '/cancel', { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' } })
-        .then(function (r) { return r.json(); })
-        .then(function (d) { toast(d.message || (d.success ? 'Order cancelled.' : 'Could not cancel.'), d.success); if (d.success) setTimeout(function () { location.reload(); }, 700); else b.disabled = false; })
-        .catch(function () { toast('Network error.', false); b.disabled = false; });
+      uiConfirm('The margin for this order returns to your trading balance.', { title: 'Cancel this order?', confirmText: 'Cancel order', cancelText: 'Keep it' })
+        .then(function (ok) { if (ok) post(room.dataset.cancelBase + '/' + b.dataset.cancelId + '/cancel', b); });
     });
   });
+  all('button[data-close-id]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var row = b.closest('[data-pos]'), pnl = row ? row.querySelector('[data-pnl]').textContent : '';
+      uiConfirm('Close your ' + b.dataset.label + ' at the current market price.' + (pnl && pnl !== '—' ? '\nEstimated P&L: ' + pnl : ''), { title: 'Close position?', confirmText: 'Close position', cancelText: 'Keep open', tone: 'info' })
+        .then(function (ok) { if (ok) post(room.dataset.closeBase + '/' + b.dataset.closeId + '/close', b); });
+    });
+  });
+
+  // Live P&L for open positions, from the same prices the market list shows.
+  function paintPositions() {
+    all('[data-pos]').forEach(function (row) {
+      var m = list.querySelector('.tr-mkt[data-type="' + row.dataset.type + '"][data-symbol="' + row.dataset.symbol + '"]');
+      if (!m) return;
+      var mark = (parseFloat(m.dataset.usd) || 0) * rate, entry = +row.dataset.entry, qty = +row.dataset.qty, margin = +row.dataset.margin;
+      var pnl = (row.dataset.side === 'sell' ? -1 : 1) * (mark - entry) * qty, pct = margin ? pnl / margin * 100 : 0;
+      var cls = pnl > 0 ? 'text-emerald-400' : (pnl < 0 ? 'text-red-400' : 'text-gray-300');
+      row.querySelector('[data-mark]').textContent = fmt(mark);
+      var p = row.querySelector('[data-pnl]'); p.textContent = (pnl >= 0 ? '+' : '−') + fmt(Math.abs(pnl), 2); p.className = 'font-mono font-semibold ' + cls;
+      var q = row.querySelector('[data-pnl-pct]'); q.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%'; q.className = 'font-mono text-xs ' + cls;
+    });
+  }
+  paintPositions();
+  setInterval(paintPositions, 2000);
 
   var toastTimer;
   function toast(msg, ok) {

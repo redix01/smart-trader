@@ -903,7 +903,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     window.stopBot = async (botId) => {
-        if (!confirm('Are you sure you want to stop this bot?')) return;
+        if (!(await uiConfirm('Are you sure you want to stop this bot?'))) return;
 
         try {
             const response = await fetch(`/user/bot-trading/${botId}/stop`, {
@@ -928,7 +928,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     window.deleteBot = async (botId) => {
-        if (!confirm('Are you sure you want to delete this bot? This action cannot be undone.')) return;
+        if (!(await uiConfirm('Are you sure you want to delete this bot? This action cannot be undone.'))) return;
 
         try {
             const response = await fetch(`/user/bot-trading/${botId}`, {

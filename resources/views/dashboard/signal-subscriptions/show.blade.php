@@ -16,7 +16,7 @@
                             Back to Subscriptions
                         </a>
                         @if($subscription->status === 'active')
-                            <form action="{{ route('user.signal-subscriptions.cancel', $subscription) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to cancel this subscription?')">
+                            <form action="{{ route('user.signal-subscriptions.cancel', $subscription) }}" method="POST" class="inline" data-confirm="Are you sure you want to cancel this subscription?">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">

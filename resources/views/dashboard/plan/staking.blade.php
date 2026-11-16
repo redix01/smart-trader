@@ -209,7 +209,7 @@
             if (button.textContent.trim() === 'START STAKING') {
                 button.addEventListener('click', function() {
                     const planName = this.closest('.bg-gray-800').querySelector('h3').textContent;
-                    alert(`You selected the ${planName} Staking plan. Redirecting to staking setup page...`);
+                    uiAlert(`You selected the ${planName} Staking plan. Redirecting to staking setup page...`);
                 });
             }
         });

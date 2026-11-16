@@ -6,11 +6,19 @@ use App\Models\Asset;
 use App\Models\LiveTrade;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class TradeRoomTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Http::preventStrayRequests();
+        Http::fake(['data-api.binance.vision/*' => Http::response([['symbol' => 'BTCUSDT', 'price' => '60000']])]);
+    }
 
     private function assets(): void
     {
@@ -21,7 +29,7 @@ class TradeRoomTest extends TestCase
     private function trader(float $balance = 1000): User
     {
         $user = User::factory()->create();
-        $user->forceFill(['trading_balance' => $balance])->save();
+        $user->forceFill(['trading_balance' => $balance, 'currency' => 'USD'])->save();
 
         return $user;
     }
@@ -36,7 +44,8 @@ class TradeRoomTest extends TestCase
             ->assertSee('data-symbol="AAPL"', false)
             ->assertSee('id="tvChart"', false)
             ->assertSee('id="orderForm"', false)
-            ->assertSee('No open orders')
+            ->assertSee('No open positions')
+            ->assertSee('No waiting orders')
             ->assertSee('id="openMarkets"', false)
             ->assertSee('id="marketsBackdrop"', false)
             ->assertSee('id="ticketPanel"', false)
@@ -57,28 +66,38 @@ class TradeRoomTest extends TestCase
         $this->assertMatchesRegularExpression('/class="tr-mkt is-on"\s+data-type="stock" data-symbol="AAPL"/', $html);
     }
 
-    public function test_market_order_debits_and_cancel_refunds_the_trading_balance(): void
+    public function test_market_order_opens_a_position_and_limit_order_can_be_cancelled(): void
     {
         $this->assets();
         $user = $this->trader(1000);
 
+        // Market order: fills now, shows under Positions with a Close button.
         $this->actingAs($user)->postJson(route('user.liveTrading.store'), [
             'asset_type' => 'crypto', 'symbol' => 'BTC', 'order_type' => 'market', 'side' => 'buy', 'amount' => 250, 'leverage' => 10,
-        ])->assertOk()->assertJson(['success' => true]);
-
+        ])->assertOk()->assertJsonPath('trade.status', 'open');
         $this->assertEquals(750, (float) $user->fresh()->trading_balance);
-        $order = LiveTrade::firstOrFail();
-        $this->assertSame('pending', $order->status);
+        $position = LiveTrade::firstOrFail();
+
+        // Limit order below the market: waits, shows under Orders with Cancel.
+        $this->actingAs($user)->postJson(route('user.liveTrading.store'), [
+            'asset_type' => 'crypto', 'symbol' => 'BTC', 'order_type' => 'limit', 'side' => 'buy', 'price' => 50000, 'quantity' => 0.01, 'leverage' => 1,
+        ])->assertOk()->assertJsonPath('trade.status', 'pending');
+        $order = LiveTrade::where('status', 'pending')->firstOrFail();
+        $this->assertEquals(250, (float) $user->fresh()->trading_balance);   // 750 - 500 margin
 
         $html = $this->actingAs($user)->get(route('user.liveTrading.index'))->getContent();
+        $this->assertStringContainsString('data-close-id="'.$position->id.'"', $html);
         $this->assertStringContainsString('data-cancel-id="'.$order->id.'"', $html);
-        // Regression: only the Cancel buttons may carry the cancel hook, otherwise every click on the page asked "Cancel this order?".
-        $this->assertSame(2, substr_count($html, 'data-cancel-id="'.$order->id.'"')); // phone card + desktop table
+        // Regression: the cancel/close hooks live only on their buttons (a container-level hook made every click ask to cancel).
+        $this->assertSame(1, substr_count($html, 'data-cancel-id="'.$order->id.'"'));
         $this->assertStringNotContainsString('data-cancel=', $html);
         $this->assertStringContainsString("all('button[data-cancel-id]')", $html);
+        // No browser dialogs: confirmations use the modal helper.
+        $this->assertStringContainsString('uiConfirm(', $html);
+        $this->assertDoesNotMatchRegularExpression('/[^.\w]confirm\(/', $html);
 
         $this->actingAs($user)->postJson("/user/live-trading/{$order->id}/cancel")->assertOk()->assertJson(['success' => true]);
-        $this->assertEquals(1000, (float) $user->fresh()->trading_balance);
+        $this->assertEquals(750, (float) $user->fresh()->trading_balance);
     }
 
     public function test_order_larger_than_balance_is_rejected(): void
@@ -88,7 +107,7 @@ class TradeRoomTest extends TestCase
 
         $this->actingAs($user)->postJson(route('user.liveTrading.store'), [
             'asset_type' => 'crypto', 'symbol' => 'BTC', 'order_type' => 'market', 'side' => 'buy', 'amount' => 500,
-        ])->assertStatus(400)->assertJson(['success' => false]);
+        ])->assertStatus(422)->assertJson(['success' => false]);
 
         $this->assertEquals(100, (float) $user->fresh()->trading_balance);
     }

@@ -196,8 +196,8 @@
 </div>
 
 <script>
-function deleteBot(botId) {
-    if (confirm('Are you sure you want to delete this bot? This action cannot be undone.')) {
+async function deleteBot(botId) {
+    if (await uiConfirm('Are you sure you want to delete this bot? This action cannot be undone.')) {
         fetch(`/admin/bot-trading/${botId}`, {
             method: 'DELETE',
             headers: {
@@ -210,12 +210,12 @@ function deleteBot(botId) {
             if (data.success) {
                 location.reload();
             } else {
-                alert('Failed to delete bot: ' + data.message);
+                uiAlert('Failed to delete bot: ' + data.message, { tone: 'danger', title: 'Something went wrong' });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while deleting the bot');
+            uiAlert('An error occurred while deleting the bot', { tone: 'danger', title: 'Something went wrong' });
         });
     }
 }
