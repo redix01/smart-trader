@@ -45,13 +45,15 @@ class DashboardThemeTest extends TestCase
         $this->assertStringNotContainsString('nano-app-theme', file_get_contents(resource_path('views/admin/layouts/app.blade.php')));
     }
 
-    public function test_install_prompt_stays_dismissed_for_the_session(): void
+    public function test_install_prompt_maybe_later_survives_refreshes_for_a_week(): void
     {
         $html = $this->actingAs(User::factory()->create())->get('/user/dashboard')->assertOk()->getContent();
 
-        $this->assertStringContainsString("sessionStorage.setItem('pwaPromptDismissed'", $html);
+        // "Maybe later" is stored in localStorage (survives refreshes and new tabs) as a 7-day snooze.
+        $this->assertStringContainsString("localStorage.setItem('pwaPromptSnoozeUntil', String(Date.now() + 7 * 24 * 60 * 60 * 1000))", $html);
+        $this->assertStringContainsString("Date.now() < parseInt(localStorage.getItem('pwaPromptSnoozeUntil')", $html);
         $this->assertStringContainsString('if (!isDismissed()) setTimeout(showPrompt', $html);
-        $this->assertStringNotContainsString("localStorage.getItem('pwaPromptDismissed')", $html);
+        $this->assertStringNotContainsString("sessionStorage.setItem('pwaPromptDismissed'", $html);
     }
 
     public function test_livechat_widget_loads_on_the_support_page_only(): void

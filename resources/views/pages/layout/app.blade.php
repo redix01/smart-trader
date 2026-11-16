@@ -940,9 +940,9 @@ function updateTicker(data) {
 
             if (!promptEl) return;
 
-            function isDismissed() { try { return sessionStorage.getItem('pwaPromptDismissed') === '1'; } catch (e) { return false; } }
+            function isDismissed() { try { return Date.now() < parseInt(localStorage.getItem('pwaPromptSnoozeUntil') || '0', 10); } catch (e) { return false; } }
 
-            function rememberDismissed() { try { sessionStorage.setItem('pwaPromptDismissed', '1'); } catch (e) {} }
+            function rememberDismissed() { try { localStorage.setItem('pwaPromptSnoozeUntil', String(Date.now() + 7 * 24 * 60 * 60 * 1000)); } catch (e) {} } // "Maybe later" snoozes for 7 days
 
 
             function showPrompt() {
