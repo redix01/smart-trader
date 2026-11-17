@@ -7,7 +7,6 @@
             <ul class="list-disc pl-5">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
         </div>
     @endif
-    @if(session('error'))<div class="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">{{ session('error') }}</div>@endif
 
 
                     <!-- Plan Selection -->

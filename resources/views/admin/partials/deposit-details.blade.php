@@ -1,4 +1,4 @@
-<div class="max-h-96 overflow-y-auto space-y-6">
+<div class="max-h-[70vh] overflow-y-auto space-y-6">
     @php
         $user = $deposit->user;
         $userAvatar = $user?->avatar_url ?? asset('assets/img/avatar.svg');

@@ -18,12 +18,6 @@
     </div>
 
     @include('admin.partials.user-filter')
-    @if(session('success'))
-        <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">{{ session('error') }}</div>
-    @endif
     @if($errors->any())
         <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">{{ $errors->first() }}</div>
     @endif
@@ -35,9 +29,9 @@
                 {{ $label }}@if($key !== '') <span class="opacity-70">({{ $counts[$key] ?? 0 }})</span>@endif
             </a>
         @endforeach
-        <form method="GET" action="{{ route('admin.live-trades.index') }}" class="ml-auto flex gap-2">
+        <form method="GET" action="{{ route('admin.live-trades.index') }}" class="flex w-full gap-2 sm:ml-auto sm:w-auto">
             @if($status)<input type="hidden" name="status" value="{{ $status }}">@endif
-            <input type="text" name="q" value="{{ $search }}" placeholder="Symbol, name or email" class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <input type="text" name="q" value="{{ $search }}" placeholder="Symbol, name or email" class="min-w-0 flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             <button class="px-3 py-1.5 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700">Search</button>
         </form>
     </div>
@@ -56,8 +50,10 @@
                     @php $u = $t->user; @endphp
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                         <td class="p-3 text-sm text-gray-900 dark:text-white">
-                            {{ $u?->name ?? 'Deleted user' }}
-                            <div class="text-xs text-gray-500">{{ $u?->email }}</div>
+                            <div class="min-w-0">
+                                <div class="font-medium">{{ $u?->name ?? 'Deleted user' }}</div>
+                                <div class="text-xs text-gray-500 break-all">{{ $u?->email }}</div>
+                            </div>
                         </td>
                         <td class="p-3 text-sm font-medium text-gray-900 dark:text-white">{{ $t->symbol }} <span class="text-xs text-gray-500">{{ $t->asset_type }}</span></td>
                         <td class="p-3 text-sm"><span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $t->side === 'buy' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">{{ ucfirst($t->side) }}</span></td>

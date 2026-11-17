@@ -5,7 +5,7 @@
     <div class="max-w-7xl mx-auto">
         <!-- Page Header -->
         <div class="mb-8">
-            <div class="flex justify-between items-center">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 class="text-3xl font-bold text-white mb-2">Trading Signals</h1>
                     <p class="text-gray-400">Manage trading signals for signal plans</p>
@@ -22,17 +22,7 @@
         </div>
 
         <!-- Success/Error Messages -->
-        @if(session('success'))
-            <div class="mb-6 p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
-                <div class="text-green-400">{{ session('success') }}</div>
-            </div>
-        @endif
 
-        @if(session('error'))
-            <div class="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
-                <div class="text-red-400">{{ session('error') }}</div>
-            </div>
-        @endif
 
         <!-- Filters and Tabs -->
         <div class="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden shadow-lg mb-6">

@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-4xl mx-auto">
-        <div class="mb-8 flex justify-between items-center">
+        <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-3xl font-bold text-white mb-2">{{ $signal->title }}</h1>
                 <p class="text-gray-400">{{ $signal->plan?->name ?? 'No plan' }} · created by {{ $signal->creator?->name ?? 'unknown' }} · {{ $signal->created_at?->format('M d, Y H:i') }}</p>

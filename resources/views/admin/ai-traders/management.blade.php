@@ -6,7 +6,7 @@
 <div class="p-4">
     <div class="max-w-7xl mx-auto p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
         <!-- Page Header -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white">AI Trader Management</h1>
                 <p class="text-gray-600 dark:text-gray-400">Monitor and manage active AI traders</p>
