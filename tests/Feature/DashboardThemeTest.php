@@ -62,7 +62,7 @@ class DashboardThemeTest extends TestCase
 
         $this->actingAs($user)->get('/user/dashboard')->assertOk()->assertDontSee('jivosite', false)->assertDontSee('embed-widget', false);
         $this->actingAs($user)->get('/user/support')->assertOk()
-            ->assertSee('<script src="//code.jivosite.com/widget/opFqmnSygN" async></script>', false)
+            ->assertSee('<script src="//code.jivosite.com/widget/lS6DU72Mu5" async></script>', false)
             ->assertSee('id="openLivechat"', false)
             ->assertDontSee('Demo Live Chat');
     }

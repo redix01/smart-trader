@@ -119,7 +119,7 @@
 {!! $widgetScript !!}
 @else
 <!-- Default Jivo widget (used when no custom script is saved in admin settings) -->
-<script src="//code.jivosite.com/widget/opFqmnSygN" async></script>
+<script src="//code.jivosite.com/widget/lS6DU72Mu5" async></script>
 @endif
 
 <script>
