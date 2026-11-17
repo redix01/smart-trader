@@ -16,6 +16,7 @@
 
 
 
+    @include('admin.partials.user-filter')
     <div class="p-4 mt-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <!-- Card header -->
       <div class="items-center justify-between lg:flex">
@@ -76,7 +77,7 @@
                         {{ date('d M, Y', strtotime($item->created_at ?? '')) }}
                     </td>
                     <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">
-                        ${{ number_format($item->amount, 2) ?? '' }}
+                        {{ money($item->amount, 2, $item->user) }}
                     </td>
 
                     <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">
@@ -150,7 +151,11 @@
                                     </li>
                                     <li class="flex justify-between items-center py-4 px-6">
                                         <strong class="text-white-700">Amount:</strong>
-                                        <span>${{ number_format($item->amount, 2) ?? '' }}</span>
+                                        <span>{{ money($item->amount, 2, $item->user) }}</span>
+                                    </li>
+                                    <li class="flex justify-between items-center py-4 px-6">
+                                        <strong class="text-white-700">Taken from:</strong>
+                                        <span>{{ ucwords(str_replace('_', ' ', $item->from_account ?: 'balance')) }}</span>
                                     </li>
                                     <li class="flex justify-between items-center py-4 px-6">
                                         <strong class="text-white-700">Payment Method:</strong>

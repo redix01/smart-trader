@@ -16,6 +16,7 @@
         </a>
     </div>
 
+    @include('admin.partials.user-filter')
     @if(session('success'))
         <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg dark:bg-green-800 dark:border-green-600 dark:text-green-300">
             {{ session('success') }}
@@ -121,12 +122,12 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                ${{ number_format($trade->amount, 2) }}
+                                {{ money($trade->amount, 2, $trade->user) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($trade->profit_loss !== null)
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $trade->profit_loss >= 0 ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200' }}">
-                                        {{ $trade->profit_loss >= 0 ? '+' : '' }}${{ number_format($trade->profit_loss, 2) }}
+                                        {{ $trade->profit_loss >= 0 ? '+' : '-' }}{{ money(abs($trade->profit_loss), 2, $trade->user) }}
                                     </span>
                                 @else
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-600 border border-gray-200">
@@ -220,12 +221,12 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                ${{ number_format($trade->amount, 2) }}
+                                {{ money($trade->amount, 2, $trade->user) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($trade->profit_loss !== null)
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $trade->profit_loss >= 0 ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200' }}">
-                                        {{ $trade->profit_loss >= 0 ? '+' : '' }}${{ number_format($trade->profit_loss, 2) }}
+                                        {{ $trade->profit_loss >= 0 ? '+' : '-' }}{{ money(abs($trade->profit_loss), 2, $trade->user) }}
                                     </span>
                                 @else
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-600 border border-gray-200">

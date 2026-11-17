@@ -47,7 +47,7 @@
             
             <!-- Balance -->
             <div class="text-center sm:text-right">
-                <div class="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">${{ number_format($user->total_balance, 2) }}</div>
+                <div class="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">{{ money($user->total_balance ?? 0, 2, $user) }}</div>
                 <div class="text-sm text-gray-500 dark:text-gray-400">Total Balance</div>
             </div>
         </div>
@@ -268,19 +268,19 @@
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600 dark:text-gray-400">Main Balance</span>
-                        <span class="font-semibold text-gray-900 dark:text-white">${{ number_format($user->balance, 2) }}</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ money($user->balance ?? 0, 2, $user) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600 dark:text-gray-400">Trading Balance</span>
-                        <span class="font-semibold text-gray-900 dark:text-white">${{ number_format($user->trading_balance, 2) }}</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ money($user->trading_balance ?? 0, 2, $user) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600 dark:text-gray-400">Mining Balance</span>
-                        <span class="font-semibold text-gray-900 dark:text-white">${{ number_format($user->mining_balance, 2) }}</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ money($user->mining_balance ?? 0, 2, $user) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600 dark:text-gray-400">Referral Balance</span>
-                        <span class="font-semibold text-gray-900 dark:text-white">${{ number_format($user->referral_balance, 2) }}</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ money($user->referral_balance ?? 0, 2, $user) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600 dark:text-gray-400">Referral Code</span>
@@ -294,21 +294,21 @@
                     @endif
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600 dark:text-gray-400">Holding Balance</span>
-                        <span class="font-semibold text-gray-900 dark:text-white">${{ number_format($user->holding_balance, 2) }}</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ money($user->holding_balance ?? 0, 2, $user) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600 dark:text-gray-400">Staking Balance</span>
-                        <span class="font-semibold text-gray-900 dark:text-white">${{ number_format($user->staking_balance, 2) }}</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ money($user->staking_balance ?? 0, 2, $user) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600 dark:text-gray-400">Profit Balance</span>
                         <span class="font-semibold {{ $user->profit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
-                            {{ $user->profit >= 0 ? '+' : '' }}${{ number_format($user->profit, 2) }}
+                            {{ $user->profit >= 0 ? '+' : '' }}{{ money($user->profit ?? 0, 2, $user) }}
                         </span>
                     </div>
                     <div class="flex justify-between items-center border-t border-gray-200 dark:border-gray-700 pt-4">
                         <span class="text-sm font-medium text-gray-900 dark:text-white">Total Balance</span>
-                        <span class="text-lg font-bold text-green-600 dark:text-green-400">${{ number_format($user->total_balance, 2) }}</span>
+                        <span class="text-lg font-bold text-green-600 dark:text-green-400">{{ money($user->total_balance ?? 0, 2, $user) }}</span>
                     </div>
                 </div>
      </div>
@@ -359,7 +359,7 @@
                         <div class="flex justify-between items-center">
                             <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Current Balance:</span>
                             <span id="current-balance" class="text-lg font-bold text-gray-900 dark:text-white">
-                                ${{ number_format($user->balance, 2) }}
+                                {{ money($user->balance ?? 0, 2, $user) }}
                             </span>
                         </div>
                     </div>
@@ -429,10 +429,16 @@
                         class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
                         View Trade History
                     </a>
+                    <a href="{{ route('admin.live-trades.index') }}?user={{ $user->id }}"
+                        class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                        View Trade Room Orders
+                    </a>
+                    @if($user->role !== 'admin')
                     <button onclick="confirmDelete()" 
                         class="block w-full text-center bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
                         Delete User
                     </button>
+                    @endif
                 </div>
             </div>
         </div>

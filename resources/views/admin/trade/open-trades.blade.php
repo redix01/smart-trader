@@ -128,7 +128,7 @@
                                         <span>${{ number_format($item->profit_loss, 2) ?? '' }}</span>
                                     </li>
                                 </ul>
-                                    <form action="{{ route('admin.closeTrade', $item->id) }}" method="POST">
+                                    <form action="{{ route('admin.trade.close', $item->id) }}" method="POST">
                                         @csrf
                                         <div>
                                             <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Profit/Loss</label>

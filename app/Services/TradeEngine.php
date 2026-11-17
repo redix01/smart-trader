@@ -154,6 +154,41 @@ class TradeEngine
     }
 
     /**
+     * Admin settlement: close an open position with an explicit profit/loss (user's currency)
+     * instead of a market price. Pays margin + P&L into trading_balance (never below zero),
+     * exactly like a normal close, so the user's history and balance stay consistent.
+     * Returns null if the position was not open any more.
+     */
+    public function settle(LiveTrade $trade, float $pnl, string $reason = 'admin'): ?LiveTrade
+    {
+        return DB::transaction(function () use ($trade, $pnl, $reason) {
+            $t = LiveTrade::whereKey($trade->getKey())->lockForUpdate()->first();
+            if (! $t || $t->status !== LiveTrade::STATUS_OPEN) {
+                return null;
+            }
+            $user = User::whereKey($t->user_id)->lockForUpdate()->first();
+
+            $payout = max(0.0, (float) $t->amount + $pnl);
+            if ($payout > 0) {
+                $user->increment('trading_balance', round($payout, 8));
+            }
+            $direction = $t->side === 'sell' ? -1 : 1;
+            $exit = ($t->entry_price && (float) $t->quantity > 0)
+                ? max(0.0, (float) $t->entry_price + $pnl / ((float) $t->quantity * $direction))
+                : null;
+            $t->update([
+                'status' => LiveTrade::STATUS_CLOSED,
+                'exit_price' => $exit,
+                'realized_pnl' => round($payout - (float) $t->amount, 8),
+                'close_reason' => $reason,
+                'closed_at' => now(),
+            ]);
+
+            return $t;
+        });
+    }
+
+    /**
      * Fill pending limit orders that the market has reached and close positions that hit
      * take-profit, stop-loss or liquidation. Safe to run repeatedly and concurrently.
      *

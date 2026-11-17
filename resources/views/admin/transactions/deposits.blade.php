@@ -39,6 +39,7 @@
     </li>
 </ul>
 
+    @include('admin.partials.user-filter')
     <!-- Main Content -->
     <div class="p-4 mt-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
         <!-- Card Header -->
@@ -115,7 +116,7 @@
 	                        </div>
                     </td>
                                         <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">
-                                            ${{ number_format($deposit->amount, 2) }}
+                                            {{ money($deposit->amount, 2, $deposit->user) }}
                                         </td>
                                         <td class="p-4 whitespace-nowrap hidden md:table-cell">
                                             @if($deposit->wallet_type == 'balance')

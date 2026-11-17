@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
        $middleware->append(\App\Http\Middleware\DetectUserLocale::class);
+       $middleware->appendToGroup('web', \App\Http\Middleware\EnsureAccountIsActive::class);
        $middleware->alias([
             'admin' => \App\Http\Middleware\isAdmin::class,
             'honeypot' => \App\Http\Middleware\HoneypotMiddleware::class,

@@ -50,7 +50,7 @@
                     <option value="" disabled {{ old('user_id') ? '' : 'selected' }}>Select User</option>
                     @foreach($users as $item)
                         <option value="{{ $item->id }}" data-balance="{{ $item->balance }}" data-search="{{ strtolower($item->name . ' ' . $item->email) }}" {{ old('user_id') == $item->id ? 'selected' : '' }}>
-                            {{ $item->name }} ({{ $item->email }}) — Bal: ${{ number_format($item->balance, 2) }}
+                            {{ $item->name }} ({{ $item->email }}) — Bal: {{ money($item->balance, 2, $item) }}
                         </option>
                     @endforeach
                 </select>

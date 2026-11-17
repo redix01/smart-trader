@@ -12,7 +12,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Amount</label>
-                <p class="text-lg font-semibold text-green-600 dark:text-green-400">${{ number_format($deposit->amount, 2) }}</p>
+                <p class="text-lg font-semibold text-green-600 dark:text-green-400">{{ money($deposit->amount, 2, $deposit->user) }}</p>
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Wallet Type</label>

@@ -154,6 +154,40 @@ class EarnService
         });
     }
 
+    /**
+     * End a mining contract on the admin's side: pay the mined amount not yet withdrawn and
+     * return the principal to the main balance, once. Returns null if the contract was already
+     * ended. Amounts in the user's currency.
+     *
+     * @return array{principal: float, mined: float}|null
+     */
+    public function cancelMining(UserMining $mining, string $status = UserMining::STATUS_CANCELLED): ?array
+    {
+        return DB::transaction(function () use ($mining, $status) {
+            $m = UserMining::whereKey($mining->getKey())->lockForUpdate()->first();
+            if (! $m || ! in_array($m->status, [UserMining::STATUS_ACTIVE, UserMining::STATUS_SUSPENDED], true)) {
+                return null;
+            }
+
+            $user = User::whereKey($m->user_id)->lockForUpdate()->first();
+            $owed = $this->unpaidMined($m);
+            $mined = round($user->convertFrom($owed, $m->currency ?: 'USD'), 8);
+            $principal = round($user->convertFrom((float) $m->amount_invested, $m->currency ?: 'USD'), 8);
+            if ($mined + $principal > 0) {
+                $user->increment('balance', $mined + $principal);
+            }
+
+            $m->update([
+                'status' => $status,
+                'end_date' => now(),
+                'total_withdrawn' => round((float) $m->total_withdrawn + $owed, 8),
+                'last_mining_date' => now(),
+            ]);
+
+            return ['principal' => $principal, 'mined' => $mined];
+        });
+    }
+
     /** Caller holds the staking row lock. */
     private function payRewards(UserStaking $s): float
     {

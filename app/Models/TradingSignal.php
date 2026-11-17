@@ -21,6 +21,8 @@ class TradingSignal extends Model
         'stop_loss',
         'expires_at',
         'created_by', // admin user who created the signal
+        'analysis',
+        'chart_image',
         'is_active'
     ];
 

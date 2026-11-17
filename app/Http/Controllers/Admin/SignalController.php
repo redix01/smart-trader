@@ -235,40 +235,41 @@ class SignalController extends Controller
     }
 
     /**
-     * Validate signal data
+     * Validate signal data (field names match the create / edit forms)
      */
     private function validateSignal(Request $request, $signalId = null)
     {
         $rules = [
             'plan_id' => 'required|exists:plans,id',
-            'signal_direction' => 'required|in:buy,sell',
+            'name' => 'required|string|max:255',
+            'trade_pair' => 'required|string|max:50',
+            'signal_type' => 'required|in:buy,sell',
             'status' => 'required|in:active,completed,cancelled,expired',
             'entry_price' => 'required|numeric|min:0',
             'target_price' => 'required|numeric|min:0',
             'stop_loss' => 'required|numeric|min:0',
-            'expiry_time' => 'required|date|after:now',
+            'description' => 'nullable|string|max:5000',
+            'chart_image' => 'nullable|image|max:4096',
+            // A new signal must expire in the future; an existing one may keep a date that has passed.
+            'expiry_time' => $signalId ? 'required|date' : 'required|date|after:now',
         ];
 
         return Validator::make($request->all(), $rules);
     }
 
     /**
-     * Prepare signal data for storage
+     * Map form fields to trading_signals columns (what the user dashboard reads)
      */
     private function prepareSignalData(Request $request)
     {
-        $data = $request->only([
-            'plan_id', 'status', 'entry_price', 'stop_loss'
-        ]);
+        $data = $request->only(['plan_id', 'status', 'entry_price', 'stop_loss']);
 
-        // Map form fields to database fields
-        $data['title'] = $request->input('trade_pair') . ' ' . ucfirst($request->input('signal_direction')) . ' Signal';
-        $data['symbol'] = $request->input('trade_pair');
-        $data['type'] = $request->input('signal_direction');
+        $data['title'] = $request->input('name');
+        $data['symbol'] = strtoupper($request->input('trade_pair'));
+        $data['type'] = $request->input('signal_type');
         $data['take_profit'] = $request->input('target_price');
         $data['expires_at'] = $request->input('expiry_time');
-        
-        // Set is_active to true by default
+        $data['analysis'] = $request->input('description');
         $data['is_active'] = true;
 
         return $data;

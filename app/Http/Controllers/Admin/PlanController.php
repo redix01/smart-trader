@@ -124,6 +124,16 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
+        // Deleting a plan cascades to every user subscription, stake and mining contract on it, which would
+        // wipe records of money users have already put in. Deactivate such a plan instead.
+        $inUse = \App\Models\UserPlan::where('plan_id', $plan->id)->exists()
+            || \App\Models\UserStaking::where('plan_id', $plan->id)->exists()
+            || \App\Models\UserMining::where('plan_id', $plan->id)->exists();
+        if ($inUse) {
+            return redirect()->back()
+                ->with('error', 'This plan has user subscriptions, stakes or mining contracts. Deactivate it instead of deleting it.');
+        }
+
         try {
             $plan->delete();
             

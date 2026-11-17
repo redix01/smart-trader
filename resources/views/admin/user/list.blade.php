@@ -110,10 +110,10 @@
                     </td>
 
                     <td class="text-gray-500 dark:text-gray-400">
-                      <span>${{ number_format($item->balance ?? '', 2) }}</span>
+                      <span>{{ money($item->balance ?? 0, 2, $item) }}</span>
                     </td>
                     <td class="text-gray-500 dark:text-gray-400">
-                      <span>${{ number_format($item->profit ?? '', 2) }}</span>
+                      <span>{{ money($item->profit ?? 0, 2, $item) }}</span>
                     </td>
                    <td class="text-gray-500 dark:text-gray-400">
                                                       <span>{!! $item->status_badge ?? '' !!}</span>
