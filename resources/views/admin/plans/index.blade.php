@@ -22,37 +22,7 @@
         </div>
 
         <!-- Success/Error Messages -->
-        @if(session('success'))
-            <div id="success-message" class="bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center justify-between">
-                <div class="flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                    </svg>
-                    {{ session('success') }}
-                </div>
-                <button onclick="hideMessage('success-message')" class="ml-4 text-green-200 hover:text-white">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                    </svg>
-                </button>
-            </div>
-        @endif
 
-        @if(session('error'))
-            <div id="error-message" class="bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center justify-between">
-                <div class="flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-                    </svg>
-                    {{ session('error') }}
-                </div>
-                <button onclick="hideMessage('error-message')" class="ml-4 text-red-200 hover:text-white">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                    </svg>
-                </button>
-            </div>
-        @endif
 
         @if($errors->any())
             <div id="validation-errors" class="bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg">
@@ -209,7 +179,7 @@
                                                 </form>
 
                                                 <!-- Delete -->
-                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this plan?')">
+                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" data-confirm="Are you sure you want to delete this plan?">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-md bg-red-600 hover:bg-red-700 text-white">Delete</button>
@@ -425,7 +395,7 @@
                                                 </form>
 
                                                 <!-- Delete -->
-                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this plan?')">
+                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" data-confirm="Are you sure you want to delete this plan?">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-md bg-red-600 hover:bg-red-700 text-white">Delete</button>
@@ -522,7 +492,7 @@
                                                         {{ $plan->is_active ? 'Deactivate' : 'Activate' }}
                                                     </button>
                                                 </form>
-                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this plan?')">
+                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" data-confirm="Are you sure you want to delete this plan?">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="text-red-400 hover:text-red-300">Delete</button>
@@ -616,7 +586,7 @@
                                                         {{ $plan->is_active ? 'Deactivate' : 'Activate' }}
                                                     </button>
                                                 </form>
-                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this plan?')">
+                                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline" data-confirm="Are you sure you want to delete this plan?">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="text-red-400 hover:text-red-300">Delete</button>
@@ -1178,22 +1148,22 @@ function validateForm() {
     const minFunding = formData.get('min_funding');
     
     if (!planType) {
-        alert('Please select a plan type');
+        uiAlert('Please select a plan type', { title: 'Check your details' });
         return false;
     }
     
     if (!planName || planName.trim() === '') {
-        alert('Please enter a plan name');
+        uiAlert('Please enter a plan name', { title: 'Check your details' });
         return false;
     }
     
     if (!price || price <= 0) {
-        alert('Please enter a valid price');
+        uiAlert('Please enter a valid price', { title: 'Check your details' });
         return false;
     }
     
     if (!minFunding || minFunding <= 0) {
-        alert('Please enter a valid minimum funding amount');
+        uiAlert('Please enter a valid minimum funding amount', { title: 'Check your details' });
         return false;
     }
     
@@ -1201,7 +1171,7 @@ function validateForm() {
     if (planType === 'signal') {
         const signalAmount = formData.get('signal_amount');
         if (!signalAmount || signalAmount <= 0) {
-            alert('Please enter a valid signal amount');
+            uiAlert('Please enter a valid signal amount', { title: 'Check your details' });
             return false;
         }
     }

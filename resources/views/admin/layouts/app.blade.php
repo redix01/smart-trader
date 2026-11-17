@@ -11,6 +11,7 @@
     
   <!-- Tailwind CSS CDN for immediate styling -->
   <script src="https://cdn.tailwindcss.com"></script>
+    @include('partials.brand-theme')
 
   <!-- Pusher JS for real-time updates -->
   <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
@@ -89,11 +90,89 @@
         background-color: #2563eb;
     }
 
-    /* Smooth transitions */
-    * {
-        transition: all 0.2s ease-in-out;
+    /* Smooth transitions - only on interactive elements (animating every element makes tables and modals janky on phones) */
+    a, button, input, select, textarea, label, .transition-colors {
+        transition: background-color .2s ease-in-out, color .2s ease-in-out, border-color .2s ease-in-out, box-shadow .2s ease-in-out, opacity .2s ease-in-out;
+    }
+
+    /* Never let the page itself scroll sideways */
+    html, body { max-width: 100%; overflow-x: hidden; }
+    #main-content main { padding-bottom: 1rem; }
+    img, svg { max-width: 100%; }
+
+    /* ---- Mobile: every admin table becomes a stack of labelled cards ----
+       (the labels come from the <th> text via the script at the bottom of this layout) */
+    @media (max-width: 767px) {
+        #main-content table:not([data-keep-table]) { display: block; width: 100%; min-width: 0 !important; }
+        #main-content table:not([data-keep-table]) thead { display: none; }
+        #main-content table:not([data-keep-table]) tbody { display: block; }
+        #main-content table:not([data-keep-table]) tr {
+            display: block;
+            margin: 0 0 .75rem;
+            padding: .35rem .85rem;
+            border: 1px solid rgba(148, 163, 184, .25);
+            border-radius: .75rem;
+            background: rgba(148, 163, 184, .06);
+        }
+        #main-content table:not([data-keep-table]) td {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            width: auto;
+            max-width: 100%;
+            padding: .5rem 0 !important;
+            margin: 0 !important;
+            text-align: right;
+            white-space: normal !important;
+            border: 0;
+            border-bottom: 1px solid rgba(148, 163, 184, .12);
+            overflow-wrap: anywhere;
+        }
+        #main-content table:not([data-keep-table]) td:last-child { border-bottom: 0; }
+        #main-content table:not([data-keep-table]) td::before {
+            content: attr(data-label);
+            flex: 0 0 auto;
+            max-width: none;
+            overflow-wrap: normal;
+            word-break: keep-all;
+            font-size: .68rem;
+            font-weight: 600;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            text-align: left;
+            color: #94a3b8;
+        }
+        #main-content table:not([data-keep-table]) td[data-label=""]::before { display: none; }
+        #main-content table:not([data-keep-table]) td:empty { display: none; }
+        #main-content table:not([data-keep-table]) td[colspan] { display: block; text-align: center; }
+        #main-content table:not([data-keep-table]) td[colspan]::before { display: none; }
+        /* rows of buttons wrap instead of running off the card */
+        #main-content table:not([data-keep-table]) td > div.flex,
+        #main-content table:not([data-keep-table]) td > form.flex { flex-wrap: wrap; justify-content: flex-end; }
+        #main-content table:not([data-keep-table]) td .space-x-2 > * { margin: .125rem; }
+        #main-content table:not([data-keep-table]) td button,
+        #main-content table:not([data-keep-table]) td a.inline-flex { min-height: 2.25rem; }
+        /* icon-only action buttons get a visible, tappable shape */
+        #main-content table:not([data-keep-table]) td button:not([class*="bg-"]) { padding: .45rem .7rem; border: 1px solid rgba(148, 163, 184, .35); border-radius: .5rem; }
+        /* user cell: small avatar beside the name, no duplicate id chip */
+        #main-content table:not([data-keep-table]) td img.rounded-full { width: 2rem; height: 2rem; flex: 0 0 auto; }
+        #main-content table:not([data-keep-table]) td .sm\:hidden { display: none; }
+        #main-content table:not([data-keep-table]) td .ml-4 { margin-left: .5rem; text-align: left; min-width: 0; }
+        /* hide the table's own horizontal scrollbar wrappers' padding */
+        #main-content .overflow-x-auto { overflow-x: visible; }
+        /* cards, filters and headers breathe at 16px side gutters */
+        #main-content main > div, #main-content main > section { max-width: 100%; }
+        #main-content .container { padding-left: 1rem; padding-right: 1rem; }
+        /* modals keep a margin from the screen edge and can scroll */
+        #main-content [id$="Modal"] > div, #main-content [id^="default-modal"] > div { max-height: 100vh; overflow-y: auto; }
+        /* inputs at 16px stop iOS from zooming on focus */
+        #main-content input:not([type=checkbox]):not([type=radio]), #main-content select, #main-content textarea { font-size: 16px; }
+        /* flash messages use the full width */
+        #toast-success, #toast-danger { max-width: none !important; }
     }
   </style>
+    @include('partials.dialogs')
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
 
@@ -235,12 +314,25 @@
             </div>
           </li>
           <li>
-            <a href="{{ route('admin.trade.history') }}" class="{{ request()->routeIs('admin.trade.history') ? "active" : '' }} flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
+            <a href="{{ route('admin.trade.history') }}" class="{{ request()->routeIs('admin.trade.*') ? "active" : '' }} flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
                 <x-gmdi-analytics class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"/>
                 <span class="ml-3" sidebar-toggle-item>Trade History</span>
             </a>
           </li>
           
+          <li>
+            <a href="{{ route('admin.live-trades.index') }}" class="{{ request()->routeIs('admin.live-trades.*') ? "active" : '' }} flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
+                <x-gmdi-candlestick-chart class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"/>
+                <span class="ml-3" sidebar-toggle-item>Trade Room Orders</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('admin.trade-pair.index') }}" class="{{ request()->routeIs('admin.trade-pair.*') ? "active" : '' }} flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
+                <x-gmdi-currency-exchange class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"/>
+                <span class="ml-3" sidebar-toggle-item>Trade Pairs</span>
+            </a>
+          </li>
+
           <!-- Copy Trade Dropdown -->
           <li>
             <button id="copyTradeDropdownBtn" type="button" class="w-full flex items-center justify-between p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">
@@ -433,7 +525,7 @@
 
 
     <p class="my-10 text-sm text-center text-gray-500">
-        &copy; {{ Date('Y') }} <a href="https://flowbite.com/" class="hover:underline" target="_blank">{{ env('APP_NAME') }}</a>. All rights reserved.
+        &copy; {{ Date('Y') }} {{ env('APP_NAME') }}. All rights reserved.
     </p>
 
   </div>
@@ -444,6 +536,30 @@
 
 @livewireScripts
 <script src="{{ asset('src/app.bundle.js') }}"></script>
+<script>
+// Give every table cell the text of its column header so the mobile card layout can label it.
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('#main-content table').forEach(function (table) {
+        var headRow = table.querySelector('thead tr');
+        if (!headRow) { table.setAttribute('data-keep-table', ''); return; }
+        var labels = [];
+        headRow.querySelectorAll('th, td').forEach(function (th) {
+            var text = (th.textContent || '').replace(/\s+/g, ' ').trim();
+            for (var i = 0; i < (parseInt(th.getAttribute('colspan'), 10) || 1); i++) labels.push(text);
+        });
+        table.querySelectorAll('tbody > tr').forEach(function (tr) {
+            Array.prototype.forEach.call(tr.children, function (td, i) {
+                if (td.tagName === 'TD' && !td.hasAttribute('data-label')) td.setAttribute('data-label', labels[i] || '');
+            });
+        });
+    });
+    // Flash messages fade out on their own after a few seconds.
+    ['toast-success', 'toast-danger'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) setTimeout(function () { el.style.transition = 'opacity .4s'; el.style.opacity = '0'; setTimeout(function () { el.remove(); }, 450); }, 7000);
+    });
+});
+</script>
 @stack('scripts')
 </body>
 </html>

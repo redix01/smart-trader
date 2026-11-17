@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +8,14 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }} - Dashboard</title>
   <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/x-icon">
-  <link rel="manifest" href="/manifest.webmanifest?v=2">
-  <link rel="apple-touch-icon" sizes="180x180" href="/img/100x2.png?v=2">
+  <link rel="manifest" href="/manifest.webmanifest?v=3">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/pdc-icon-180.png?v=6">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#0b1020">
+  <meta name="theme-color" content="#050a1e">
     
     <!-- Tailwind CSS CDN for immediate styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    @include('partials.brand-theme')
 
     <!-- Pusher JS for real-time updates -->
     <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
@@ -33,218 +34,19 @@
     
     @livewireStyles
 
-    <style>
-        [x-cloak] { display: none !important; }
-        
-        /* Theme CSS Variables */
-        :root {
-            /* Light theme colors */
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8fafc;
-            --bg-tertiary: #f1f5f9;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --text-muted: #94a3b8;
-            --border-color: #e2e8f0;
-            --border-hover: #cbd5e1;
-            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-        }
-        
-        .dark {
-            /* Dark theme colors */
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-tertiary: #334155;
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
-            --border-color: #475569;
-            --border-hover: #64748b;
-            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
-        }
-        
-        /* Light theme classes - More specific selectors */
-        .light-theme {
-            background-color: var(--bg-primary) !important;
-            color: var(--text-primary) !important;
-        }
-        
-        .light-theme,
-        .light-theme * {
-            background-color: inherit;
-            color: inherit;
-        }
-        
-        /* Background overrides */
-        .light-theme .bg-gray-900,
-        .light-theme div.bg-gray-900,
-        .light-theme body.bg-gray-900 {
-            background-color: var(--bg-primary) !important;
-        }
-        
-        .light-theme .bg-gray-800,
-        .light-theme div.bg-gray-800,
-        .light-theme header.bg-gray-800,
-        .light-theme nav.bg-gray-800 {
-            background-color: var(--bg-secondary) !important;
-        }
-        
-        .light-theme .bg-gray-700,
-        .light-theme div.bg-gray-700,
-        .light-theme button.bg-gray-700 {
-            background-color: var(--bg-tertiary) !important;
-        }
-        
-        .light-theme .bg-gray-600 {
-            background-color: var(--border-hover) !important;
-        }
-        
-        /* Text color overrides */
-        .light-theme .text-white,
-        .light-theme h1.text-white,
-        .light-theme h2.text-white,
-        .light-theme h3.text-white,
-        .light-theme span.text-white {
-            color: var(--text-primary) !important;
-        }
-        
-        .light-theme .text-gray-300,
-        .light-theme span.text-gray-300,
-        .light-theme p.text-gray-300 {
-            color: var(--text-secondary) !important;
-        }
-        
-        .light-theme .text-gray-400,
-        .light-theme span.text-gray-400,
-        .light-theme button.text-gray-400 {
-            color: var(--text-muted) !important;
-        }
-        
-        .light-theme .text-gray-200 {
-            color: var(--text-secondary) !important;
-        }
-        
-        /* Border overrides */
-        .light-theme .border-gray-700,
-        .light-theme .border-r.border-gray-700,
-        .light-theme .border-b.border-gray-700,
-        .light-theme .border-t.border-gray-700 {
-            border-color: var(--border-color) !important;
-        }
-        
-        .light-theme .border-gray-600 {
-            border-color: var(--border-color) !important;
-        }
-        
-        /* Hover effects */
-        .light-theme .hover\\:bg-gray-700:hover,
-        .light-theme button:hover {
-            background-color: var(--border-hover) !important;
-        }
-        
-        .light-theme .hover\\:bg-gray-600:hover {
-            background-color: var(--border-hover) !important;
-        }
-        
-        .light-theme .hover\\:bg-gray-800:hover {
-            background-color: var(--bg-tertiary) !important;
-        }
-        
-        .light-theme .hover\\:text-white:hover,
-        .light-theme button:hover {
-            color: var(--text-primary) !important;
-        }
-        
-        .light-theme .hover\\:text-gray-300:hover {
-            color: var(--text-secondary) !important;
-        }
-        
-        /* Specific component overrides */
-        .light-theme #sidebar {
-            background-color: var(--bg-secondary) !important;
-            border-color: var(--border-color) !important;
-        }
-        
-        .light-theme header {
-            background-color: var(--bg-secondary) !important;
-            border-color: var(--border-color) !important;
-        }
-        
-        .light-theme main {
-            background-color: var(--bg-primary) !important;
-        }
-        
-        /* Dropdown menus */
-        .light-theme .bg-gray-800.border.border-gray-700 {
-            background-color: var(--bg-secondary) !important;
-            border-color: var(--border-color) !important;
-        }
-        
-        /* Buttons and interactive elements */
-        .light-theme button {
-            color: var(--text-muted) !important;
-        }
-        
-        .light-theme button:hover {
-            background-color: var(--border-hover) !important;
-            color: var(--text-primary) !important;
-        }
-        
-        /* Additional light theme overrides for better coverage */
-        .light-theme .min-h-screen {
-            background-color: var(--bg-primary) !important;
-        }
-        
-        .light-theme .h-screen {
-            background-color: var(--bg-primary) !important;
-        }
-        
-        .light-theme .flex {
-            color: inherit;
-        }
-        
-        .light-theme .flex-1 {
-            background-color: inherit;
-        }
-        
-        .light-theme .overflow-hidden {
-            background-color: inherit;
-        }
-        
-        .light-theme .overflow-x-hidden {
-            background-color: inherit;
-        }
-        
-        .light-theme .overflow-y-auto {
-            background-color: inherit;
-        }
-        
-        /* Force light theme on all elements */
-        .light-theme * {
-            color: inherit !important;
-        }
-        
-        .light-theme div,
-        .light-theme section,
-        .light-theme article,
-        .light-theme aside,
-        .light-theme nav,
-        .light-theme header,
-        .light-theme main,
-        .light-theme footer {
-            background-color: inherit !important;
-        }
-        
-        /* Theme transition */
-        * {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>window.CURRENCY_SYMBOL = @json(auth()->check() ? auth()->user()->currency_symbol : '$');</script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('prime/app.css') }}?v={{ filemtime(public_path('prime/app.css')) }}">
+    <style>[x-cloak]{display:none!important}</style>
 
 
+    @include('partials.dialogs')
 </head>
 
-<body class="bg-gray-900 text-white min-h-screen dark">
+<body class="bg-gray-900 text-white min-h-screen">
     <div class="h-screen bg-gray-900">
         <!-- Sidebar Backdrop -->
         <div id="sidebarBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
@@ -263,7 +65,7 @@
                     </button>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <div class="w-10 h-10 nm-avatar rounded-full flex items-center justify-center">
                         <span class="text-white font-semibold text-lg">{{ substr(auth()->user()->name, 0, 1) }}</span>
                     </div>
                     <div>
@@ -275,187 +77,7 @@
 
 
 
-            <!-- Navigation Menu -->
-            <nav class="flex-1 p-3 space-y-3 overflow-y-auto">
-                <!-- Main Section -->
-                <div>
-                    <div class="px-3 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                        Main
-                    </div>
-                    <div class="space-y-0.5">
-                        <a href="{{ route('user.dashboard') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.dashboard') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
-                            </svg>
-                            <span>Dashboard</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Finance & Wallet Section -->
-                <div>
-                    <div class="px-3 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                        Finance & Wallet
-                    </div>
-                    <div class="space-y-0.5">
-                        <a href="{{ route('user.deposit') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.deposit') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
-                                <path d="M17.12 9.88a2.997 2.997 0 1 0-4.24 4.24a2.997 2.997 0 1 0 4.24-4.24M7 6v12h16V6zm14 8c-.53 0-1.04.21-1.41.59c-.38.37-.59.88-.59 1.41h-8c0-.53-.21-1.04-.59-1.41c-.37-.38-.88-.59-1.41-.59v-4c.53 0 1.04-.21 1.41-.59c.38-.37.59-.88.59-1.41h8c0 .53.21 1.04.59 1.41c.37.38.88.59 1.41.59zM5 8H3c-.55 0-1-.45-1-1s.45-1 1-1h2zm0 5H2c-.55 0-1-.45-1-1s.45-1 1-1h3zm0 5H1c-.552 0-1-.45-1-1s.448-1 1-1h4z"/>
-                            </svg>
-                            <span>Deposit</span>
-                        </a>
-                        <a href="{{ route('user.withdrawal') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.withdrawal') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <g>
-                                    <path stroke-linecap="round" d="M12 10.999c-1.105 0-2 .67-2 1.499c0 .827.895 1.498 2 1.498s2 .671 2 1.499c0 .827-.895 1.498-2 1.498M12 11c.87 0 1.612.417 1.886.999m-1.886-1V10m0 6.993c-.87 0-1.612-.417-1.886-.999m1.886 1L12.003 18"/>
-                                    <path stroke-linecap="round" d="M21 11a1.5 1.5 0 0 0 .414-.305C22 10.089 22 9.11 22 7.152s0-2.936-.586-3.544S19.886 3 18 3H6c-1.886 0-2.828 0-3.414.608S2 5.195 2 7.152s0 2.936.586 3.543q.18.188.414.305"/>
-                                    <circle cx="12" cy="14" r="7"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 7h14"/>
-                                </g>
-                            </svg>
-                            <span>Withdraw</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Investments Section -->
-                <div>
-                    <div class="px-3 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                        Investments
-                    </div>
-                    <div class="space-y-0.5">
-                        <!-- Plans Dropdown -->
-                        <div class="relative">
-                            <button id="plansDropdown" class="flex items-center justify-between w-full px-3 py-1.5 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
-                                <div class="flex items-center space-x-3">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    <span>Available Plans</span>
-                                </div>
-                                <svg class="w-4 h-4 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                </svg>
-                            </button>
-
-                            <!-- Dropdown Menu -->
-                            <div id="plansDropdownMenu" class="absolute left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg opacity-0 invisible transition-all duration-200 transform -translate-y-2 z-50">
-                                <div class="py-1">
-                                    <a href="{{ route('user.plan.trading') }}" class="flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 transition-colors">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
-                                        </svg>
-                                        <span>Trading Plans</span>
-                                    </a>
-                                    <a href="{{ route('user.plan.signal') }}" class="flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 transition-colors">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        <span>Signal Plans</span>
-                                    </a>
-                                    <a href="{{ route('user.mining.index') }}" class="flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 transition-colors">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        <span>Mining Plans</span>
-                                    </a>
-                                    <a href="{{ route('user.staking.index') }}" class="flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 transition-colors">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"></path>
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        <span>Staking Plans</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <a href="{{ route('user.plans.index') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.plans.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span>My Plans</span>
-                        </a>
-                        <a href="{{ route('user.portfolio.index') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.portfolio.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"></path>
-                            </svg>
-                            <span>Portfolio</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Trading Section -->
-                <div>
-                    <div class="px-3 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                        Trading
-                    </div>
-                    <div class="space-y-0.5">
-                        <a href="{{ route("user.overview.index") }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs("user.overview.*") ? "bg-blue-600 text-white" : "text-gray-300 hover:bg-gray-700" }}">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-                                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
-                            </svg>
-                            <span>Overview</span>
-                        </a>
-                        <a href="{{ route('user.liveTrading.index') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.trade.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
-                            </svg>
-                            <span>Live Trading</span>
-                        </a>
-                        <a href="{{ route('user.copyTrading.index') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.copyTrading.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
-                                <path d="M11.5 4a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7M6 7.5a5.5 5.5 0 1 1 11 0a5.5 5.5 0 0 1-11 0m8.382 6h7.236l2.081 4.162L18 23.995l-5.7-6.333zm1.236 2l-.919 1.838L18 21.005l3.3-3.667l-.918-1.838zM8 16a4 4 0 0 0-4 4h7.05v2H2v-2a6 6 0 0 1 6-6h3v2z"/>
-                            </svg>
-                            <span>Copy Trading</span>
-                        </a>
-                        <a href="{{ route('user.botTrading.index') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.botTrading.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
-                                <path d="M21.928 11.607c-.202-.488-.635-.605-.928-.633V8c0-1.103-.897-2-2-2h-6V4.61c.305-.274.5-.668.5-1.11a1.5 1.5 0 0 0-3 0c0 .442.195.836.5 1.11V6H5c-1.103 0-2 .897-2 2v2.997l-.082.006A1 1 0 0 0 1.99 12v2a1 1 0 0 0 1 1H3v5c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2v-5a1 1 0 0 0 1-1v-1.938a1 1 0 0 0-.072-.455M5 20V8h14l.001 3.996L19 12v2l.001.005l.001 5.995z"/>
-                                <ellipse cx="8.5" cy="12" fill="currentColor" rx="1.5" ry="2"/>
-                                <ellipse cx="15.5" cy="12" fill="currentColor" rx="1.5" ry="2"/>
-                                <path fill="currentColor" d="M8 16h8v2H8z"/>
-                            </svg>
-                            <span>Bot Trading</span>
-                        </a>
-                        <a href="{{ route('user.aiTraders.index') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.aiTraders.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                            </svg>
-                            <span>AI Traders</span>
-                        </a>
-                        
-                        <!-- <a href="{{ route('user.liveTrading.index') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.liveTrading.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span>Live Trading</span>
-                        </a> -->
-                    </div>
-                </div>
-
-                <!-- Support Section -->
-                <div>
-                    <div class="px-3 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                        Support
-                    </div>
-                    <div class="space-y-0.5">
-                        <a href="{{ route('user.support.index') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.support.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.759 8.071 16 9.007 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a3.998 3.998 0 00-.027-1.789l-1.562 1.562C4.241 8.071 4 9.007 4 10c0 .993.241 1.929.668 2.754l1.524-1.525zm11.33-4.753l-1.562 1.562a4.006 4.006 0 00-1.789-.027l-1.58-1.58a5.98 5.98 0 012.516-.552 5.976 5.976 0 012.415.597zM4.668 7.246l1.525 1.525a3.997 3.997 0 00-.078 2.183l-1.562 1.562C4.241 11.929 4 10.993 4 10c0-.993.241-1.929.668-2.754z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span>Support Center</span>
-                        </a>
-                        <a href="{{ route('user.referrals') }}" class="flex items-center space-x-3 px-3 py-1.5 rounded-lg {{ request()->routeIs('user.referrals') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700' }}">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
-                            </svg>
-                            <span>Referrals</span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
+            @include('dashboard.layout.sidebar-nav')
             <!-- Bottom padding to ensure last items are visible -->
             <div class="pb-8"></div>
         </div>
@@ -485,32 +107,17 @@
                                      alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
                                      class="h-16 w-auto object-contain">
                             @else
-                                <!-- Brand Logo (default) -->
-                                <img src="{{ asset('img/brand-logo.svg') }}"
-                                     alt="{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}"
-                                     class="h-10 w-auto object-contain">
+                                <a href="{{ route('user.dashboard') }}" aria-label="Prime Digital Capital — dashboard"><x-brand-logo /></a>
                             @endif
                         </div>
                     </div>
                     
                     <!-- Right side - Install PWA, Notification and user profile -->
-                    <div class="flex items-center space-x-1 sm:space-x-2 ml-auto -mr-2 sm:-mr-4">
+                    <div class="flex items-center space-x-1 sm:space-x-2 ml-auto min-w-0 pr-2 sm:pr-4">
                         <!-- Install PWA Button (shown when installable) -->
-                        <button id="installPwaBtn" class="hidden px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-500 transition-colors">
-                            Install App
-                        </button>
-                        
-
-                        <!-- Theme Toggle -->
-                        <button id="themeToggle" class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
-                            <!-- Sun icon (visible in dark mode) -->
-                            <svg id="sunIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
-                            </svg>
-                            <!-- Moon icon (visible in light mode) -->
-                            <svg id="moonIcon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                            </svg>
+                        <button id="installPwaBtn" type="button" aria-label="Install app" class="hidden inline-flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap px-2.5 py-1.5 sm:px-3 sm:py-2 bg-blue-600 text-white rounded-full text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v10m0 0l-4-4m4 4l4-4M5 20h14"></path></svg>
+                            <span class="sm:hidden">Install</span><span class="hidden sm:inline">Install App</span>
                         </button>
 
                         <!-- Notifications -->
@@ -552,7 +159,7 @@
                         <!-- User Dropdown -->
                         <div class="relative group" id="userDropdown">
                             <button class="flex items-center space-x-1 sm:space-x-2 p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
-                                <div class="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <div class="w-7 h-7 nm-avatar rounded-full flex items-center justify-center">
                                     <span class="text-white font-semibold text-sm">{{ substr(auth()->user()->name, 0, 1) }}</span>
                                 </div>
                                 <svg class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="currentColor" viewBox="0 0 20 20">
@@ -628,6 +235,10 @@
                     @endif
 
                     @yield('content')
+                    <p class="mt-10 pt-6 border-t border-gray-700 text-xs text-gray-500 leading-relaxed">
+                        <span class="text-gray-300 font-semibold">Risk disclosure:</span> Trading forex, CFDs and crypto involves substantial risk and may result in the loss of your invested capital. Prime Digital Capital does not guarantee profits. Past performance is not indicative of future results.
+                        <a href="{{ route('risk') }}" class="text-gold-400 hover:underline">Read more</a>
+                    </p>
                 </div>
             </main>
         </div>
@@ -639,9 +250,9 @@
         <div class="fixed inset-0 bg-black/50"></div>
         <div class="relative m-4 w-full max-w-sm bg-white text-gray-900 rounded-xl shadow-xl p-4">
             <div class="flex items-start">
-                <img src="/img/100x2.png?v=2" alt="App Icon" class="w-10 h-10 mr-3 rounded">
+                <img src="/img/pdc-icon-180.png?v=6" alt="App Icon" class="w-10 h-10 mr-3 rounded">
                 <div class="flex-1">
-                    <div class="font-semibold">Add 100x to Home Screen</div>
+                    <div class="font-semibold">Add Prime Digital Capital to Home Screen</div>
                     <div id="pwaPromptText" class="text-sm text-gray-600 mt-1">Install the app for faster access and an app-like experience.</div>
                 </div>
             </div>
@@ -671,12 +282,18 @@
 
             if (!promptEl) return;
 
+            function isDismissed() { try { return Date.now() < parseInt(localStorage.getItem('pwaPromptSnoozeUntil') || '0', 10); } catch (e) { return false; } }
+
+            function rememberDismissed() { try { localStorage.setItem('pwaPromptSnoozeUntil', String(Date.now() + 7 * 24 * 60 * 60 * 1000)); } catch (e) {} } // "Maybe later" snoozes for 7 days
+
+
             function showPrompt() {
                 promptEl.classList.remove('hidden');
                 promptEl.classList.add('flex');
             }
 
             function hidePrompt() {
+                rememberDismissed();
                 promptEl.classList.add('hidden');
                 promptEl.classList.remove('flex');
             }
@@ -690,10 +307,10 @@
             window.addEventListener('beforeinstallprompt', function(e) {
                 e.preventDefault();
                 promptEvent = e;
-                setTimeout(showPrompt, 6000);
+                if (!isDismissed()) setTimeout(showPrompt, 6000);
             });
 
-            if (isIOS && !isStandalone && localStorage.getItem('pwaPromptDismissed') !== '1') {
+            if (isIOS && !isStandalone && !isDismissed()) {
                 if (promptText) {
                     promptText.textContent = "On iPhone/iPad: tap the Share button, then 'Add to Home Screen'.";
                 }
@@ -721,7 +338,6 @@
 
             dismissBtn && dismissBtn.addEventListener('click', function() {
                 hidePrompt();
-                localStorage.setItem('pwaPromptDismissed', '1');
             });
 
             window.addEventListener('appinstalled', function() {
@@ -776,72 +392,6 @@
     </script>
     
     <!-- User Dropdown Script -->
-    
-    <!-- Theme Toggle Script -->
-    <script>
-        // Theme management
-        class ThemeManager {
-            constructor() {
-                this.themeToggle = document.getElementById('themeToggle');
-                this.sunIcon = document.getElementById('sunIcon');
-                this.moonIcon = document.getElementById('moonIcon');
-                this.body = document.body;
-                
-                this.init();
-            }
-            
-            init() {
-                // Get saved theme or default to dark
-                const savedTheme = localStorage.getItem('theme') || 'dark';
-                this.setTheme(savedTheme);
-                
-                // Add click event listener
-                this.themeToggle.addEventListener('click', () => {
-                    this.toggleTheme();
-                });
-            }
-            
-            setTheme(theme) {
-                if (theme === 'light') {
-                    this.body.classList.remove('dark');
-                    this.body.classList.add('light-theme');
-                    this.sunIcon.classList.add('hidden');
-                    this.moonIcon.classList.remove('hidden');
-                    
-                    // Force update the document element
-                    document.documentElement.classList.remove('dark');
-                    document.documentElement.classList.add('light-theme');
-                } else {
-                    this.body.classList.remove('light-theme');
-                    this.body.classList.add('dark');
-                    this.sunIcon.classList.remove('hidden');
-                    this.moonIcon.classList.add('hidden');
-                    
-                    // Force update the document element
-                    document.documentElement.classList.remove('light-theme');
-                    document.documentElement.classList.add('dark');
-                }
-                
-                // Save theme preference
-                localStorage.setItem('theme', theme);
-                
-                // Debug log
-                console.log('Theme set to:', theme);
-                console.log('Body classes:', this.body.className);
-            }
-            
-            toggleTheme() {
-                const currentTheme = localStorage.getItem('theme') || 'dark';
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                this.setTheme(newTheme);
-            }
-        }
-        
-        // Initialize theme manager when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            new ThemeManager();
-        });
-    </script>
     
     @stack('scripts')
 
@@ -915,7 +465,7 @@
             // Plans dropdown functionality
             const plansDropdown = document.getElementById('plansDropdown');
             const plansDropdownMenu = document.getElementById('plansDropdownMenu');
-            const plansDropdownArrow = plansDropdown.querySelector('svg:last-child');
+            const plansDropdownArrow = plansDropdown ? plansDropdown.querySelector('svg:last-child') : null;
 
             if (plansDropdown && plansDropdownMenu) {
                 plansDropdown.addEventListener('click', function(e) {
@@ -1123,8 +673,8 @@
             });
 
             // Clear all notifications
-            document.getElementById('clearAllBtn')?.addEventListener('click', function() {
-                if (confirm('Are you sure you want to clear all notifications?')) {
+            document.getElementById('clearAllBtn')?.addEventListener('click', async function() {
+                if (await uiConfirm('Are you sure you want to clear all notifications?')) {
                     fetch('/user/notifications/clear-all', {
                         method: 'DELETE',
                         headers: {

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ env('APP_NAME') }} - {{ __('Sign Up') }}</title>
+    <title>Prime Digital Capital - {{ __('Sign Up') }}</title>
     <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/x-icon">
     
     <!-- Tailwind CSS CDN for immediate styling -->
@@ -17,12 +17,16 @@
     <style>
         [x-cloak] { display: none !important; }
     </style>
+    @include('auth.partials.head')
 </head>
 
-<body class="bg-black min-h-screen flex items-center justify-center">
-    <div class="w-full max-w-md">
+<body class="auth-body">
+<div class="auth-shell">
+@include('auth.partials.panel')
+<main class="auth-main">
+    <div class="w-full max-w-md sm:max-w-2xl">
         <!-- Logo Section -->
-        <div class="text-center mb-8">
+        <div class="text-center mb-8 lg-hide">
             @if(\App\Helpers\WebsiteSettingsHelper::hasTextLogo())
                 <h1 class="text-2xl font-bold text-white">{{ \App\Helpers\WebsiteSettingsHelper::getTextLogo() }}</h1>
             @elseif(\App\Helpers\WebsiteSettingsHelper::hasImageLogo())
@@ -38,12 +42,15 @@
 
         <!-- Register Form Card -->
         <div class="bg-gray-800 rounded-lg p-8 shadow-2xl border border-gray-700">
+            <h1 class="text-2xl font-bold text-white">Create your account</h1>
+            <p class="text-sm text-gray-400 mt-1 mb-6">It takes about two minutes. No deposit needed to sign up.</p>
             <form method="POST" action="{{ route('register') }}" class="space-y-6">
                 @csrf
                 
                 <!-- Referral code (auto-filled from referral link) -->
                 <input type="hidden" name="ref" value="{{ old('ref', $referralCode ?? '') }}">
                 
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-x-4">
                 <!-- Name Field -->
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Full Name') }}</label>
@@ -94,7 +101,9 @@
                         <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                     @enderror
                 </div>
+                </div>
 
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-x-4">
                 <!-- Email Field -->
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Email') }}</label>
@@ -145,7 +154,9 @@
                         <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                     @enderror
                 </div>
+                </div>
 
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-x-4">
                 <!-- Country Field -->
                 <div>
                     <label for="country" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Country') }}</label>
@@ -216,7 +227,7 @@
                             class="block w-full pl-10 pr-3 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors @error('currency') border-red-500 focus:ring-red-500 @enderror"
                             required
                         >
-                            <option value="">{{ __('Select your preferred currency') }}</option>
+                            <option value="">{{ __('Select currency') }}</option>
                             <option value="USD" {{ old('currency') == 'USD' ? 'selected' : '' }}>USD</option>
                             <option value="EUR" {{ old('currency') == 'EUR' ? 'selected' : '' }}>EUR</option>
                             <option value="GBP" {{ old('currency') == 'GBP' ? 'selected' : '' }}>GBP</option>
@@ -233,7 +244,9 @@
                         <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                     @enderror
                 </div>
+                </div>
 
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-x-4">
                 <!-- Password Field -->
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-300 mb-2">{{ __('Password') }}</label>
@@ -306,6 +319,7 @@
                         </button>
                     </div>
                 </div>
+                </div>
 
                 <!-- Honeypot Fields (Hidden from users) -->
                 <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;">
@@ -341,7 +355,7 @@
                 <button 
                     type="submit" 
                     id="registerSubmitBtn"
-                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 "
                 >
                     <span id="registerBtnText">{{ __('Create Account') }}</span>
                     <span id="registerBtnSpinner" class="hidden">
@@ -373,7 +387,9 @@
         </div>
     </div>
 
-    <script>
+    </main>
+</div>
+<script>
         function togglePassword(fieldId) {
             const passwordInput = document.getElementById(fieldId);
             const eyeIcon = document.getElementById(`eye-icon-${fieldId === 'password' ? 'password' : 'confirm'}`);

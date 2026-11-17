@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ env('APP_NAME') }} - {{ __('Reset Password') }}</title>
+    <title>Prime Digital Capital - {{ __('Reset Password') }}</title>
     <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/x-icon">
 
     <!-- Tailwind CSS CDN for immediate styling -->
@@ -14,12 +14,16 @@
     <style>
         [x-cloak] { display: none !important; }
     </style>
+    @include('auth.partials.head')
 </head>
 
-<body class="bg-black min-h-screen flex items-center justify-center">
+<body class="auth-body">
+<div class="auth-shell">
+@include('auth.partials.panel')
+<main class="auth-main">
     <div class="w-full max-w-md">
         <!-- Logo Section -->
-        <div class="text-center mb-8">
+        <div class="text-center mb-8 lg-hide">
             @if(\App\Helpers\WebsiteSettingsHelper::hasTextLogo())
                 <h1 class="text-2xl font-bold text-white">{{ \App\Helpers\WebsiteSettingsHelper::getTextLogo() }}</h1>
             @elseif(\App\Helpers\WebsiteSettingsHelper::hasImageLogo())
@@ -109,7 +113,7 @@
                 <!-- Submit Button -->
                 <button
                     type="submit"
-                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 "
                 >
                     {{ __('Reset Password') }}
                 </button>
@@ -132,5 +136,7 @@
             </a>
         </div>
     </div>
+</main>
+</div>
 </body>
 </html>

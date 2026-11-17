@@ -636,8 +636,8 @@
 </div>
 
 <script>
-function pauseBot(botId) {
-    if (confirm('Are you sure you want to pause this bot? It can be resumed later.')) {
+async function pauseBot(botId) {
+    if (await uiConfirm('Are you sure you want to pause this bot? It can be resumed later.', { tone: 'info' })) {
         fetch(`/admin/bot-trading/${botId}/pause`, {
             method: 'POST',
             headers: {
@@ -648,21 +648,20 @@ function pauseBot(botId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Bot paused successfully!');
-                location.reload();
+                uiAlert('Bot paused successfully!', { tone: 'success', title: 'Done' }).then(function () { location.reload(); });
             } else {
-                alert('Failed to pause bot: ' + data.message);
+                uiAlert('Failed to pause bot: ' + data.message, { tone: 'danger', title: 'Something went wrong' });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while pausing the bot');
+            uiAlert('An error occurred while pausing the bot', { tone: 'danger', title: 'Something went wrong' });
         });
     }
 }
 
-function resumeBot(botId) {
-    if (confirm('Are you sure you want to resume this bot?')) {
+async function resumeBot(botId) {
+    if (await uiConfirm('Are you sure you want to resume this bot?', { tone: 'info' })) {
         fetch(`/admin/bot-trading/${botId}/resume`, {
             method: 'POST',
             headers: {
@@ -673,21 +672,20 @@ function resumeBot(botId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Bot resumed successfully!');
-                location.reload();
+                uiAlert('Bot resumed successfully!', { tone: 'success', title: 'Done' }).then(function () { location.reload(); });
             } else {
-                alert('Failed to resume bot: ' + data.message);
+                uiAlert('Failed to resume bot: ' + data.message, { tone: 'danger', title: 'Something went wrong' });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while resuming the bot');
+            uiAlert('An error occurred while resuming the bot', { tone: 'danger', title: 'Something went wrong' });
         });
     }
 }
 
-function stopBot(botId) {
-    if (confirm('Are you sure you want to stop this bot? It will remain stopped until an admin resumes it.')) {
+async function stopBot(botId) {
+    if (await uiConfirm('Are you sure you want to stop this bot? It will remain stopped until an admin resumes it.', { tone: 'info' })) {
         fetch(`/admin/bot-trading/${botId}/stop`, {
             method: 'POST',
             headers: {
@@ -698,21 +696,20 @@ function stopBot(botId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Bot stopped successfully!');
-                location.reload();
+                uiAlert('Bot stopped successfully!', { tone: 'success', title: 'Done' }).then(function () { location.reload(); });
             } else {
-                alert('Failed to stop bot: ' + data.message);
+                uiAlert('Failed to stop bot: ' + data.message, { tone: 'danger', title: 'Something went wrong' });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while stopping the bot');
+            uiAlert('An error occurred while stopping the bot', { tone: 'danger', title: 'Something went wrong' });
         });
     }
 }
 
-function startBot(botId) {
-    if (confirm('Are you sure you want to resume this bot? It will become active again immediately.')) {
+async function startBot(botId) {
+    if (await uiConfirm('Are you sure you want to resume this bot? It will become active again immediately.', { tone: 'info' })) {
         fetch(`/admin/bot-trading/${botId}/start`, {
             method: 'POST',
             headers: {
@@ -723,21 +720,20 @@ function startBot(botId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Bot resumed successfully!');
-                location.reload();
+                uiAlert('Bot resumed successfully!', { tone: 'success', title: 'Done' }).then(function () { location.reload(); });
             } else {
-                alert('Failed to resume bot: ' + data.message);
+                uiAlert('Failed to resume bot: ' + data.message, { tone: 'danger', title: 'Something went wrong' });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while resuming the bot');
+            uiAlert('An error occurred while resuming the bot', { tone: 'danger', title: 'Something went wrong' });
         });
     }
 }
 
-function executeBot(botId) {
-    if (confirm('Are you sure you want to execute this bot manually?')) {
+async function executeBot(botId) {
+    if (await uiConfirm('Are you sure you want to execute this bot manually?', { tone: 'info' })) {
         fetch(`/admin/bot-trading/${botId}/execute`, {
             method: 'POST',
             headers: {
@@ -753,15 +749,14 @@ function executeBot(botId) {
         })
         .then(data => {
             if (data.success) {
-                alert('Bot executed successfully!');
-                location.reload();
+                uiAlert('Bot executed successfully!', { tone: 'success', title: 'Done' }).then(function () { location.reload(); });
             } else {
-                alert('Failed to execute bot: ' + data.message);
+                uiAlert('Failed to execute bot: ' + data.message, { tone: 'danger', title: 'Something went wrong' });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while executing the bot: ' + error.message);
+            uiAlert('An error occurred while executing the bot: ' + error.message, { tone: 'danger', title: 'Something went wrong' });
         });
     }
 }
@@ -821,15 +816,14 @@ document.getElementById('editBotPnlForm').addEventListener('submit', function(e)
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Bot PnL updated successfully!');
-            location.reload();
+            uiAlert('Bot PnL updated successfully!', { tone: 'success', title: 'Done' }).then(function () { location.reload(); });
         } else {
-            alert('Failed to update bot PnL: ' + data.message);
+            uiAlert('Failed to update bot PnL: ' + data.message, { tone: 'danger', title: 'Something went wrong' });
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while updating bot PnL');
+        uiAlert('An error occurred while updating bot PnL', { tone: 'danger', title: 'Something went wrong' });
     });
 });
 
@@ -853,15 +847,14 @@ document.getElementById('editTradePnlForm').addEventListener('submit', function(
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Trade PnL updated successfully!');
-            location.reload();
+            uiAlert('Trade PnL updated successfully!', { tone: 'success', title: 'Done' }).then(function () { location.reload(); });
         } else {
-            alert('Failed to update trade PnL: ' + data.message);
+            uiAlert('Failed to update trade PnL: ' + data.message, { tone: 'danger', title: 'Something went wrong' });
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while updating trade PnL');
+        uiAlert('An error occurred while updating trade PnL', { tone: 'danger', title: 'Something went wrong' });
     });
 });
 
@@ -932,16 +925,15 @@ document.getElementById('createTradeForm').addEventListener('submit', function(e
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Trade created successfully!');
             closeCreateTradeModal();
-            location.reload();
+            uiAlert('Trade created successfully!', { tone: 'success', title: 'Done' }).then(function () { location.reload(); });
         } else {
-            alert('Failed to create trade: ' + (data.message || 'Unknown error'));
+            uiAlert('Failed to create trade: ' + (data.message || 'Unknown error'), { tone: 'danger', title: 'Something went wrong' });
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while creating the trade');
+        uiAlert('An error occurred while creating the trade', { tone: 'danger', title: 'Something went wrong' });
     })
     .finally(() => {
         // Reset button state

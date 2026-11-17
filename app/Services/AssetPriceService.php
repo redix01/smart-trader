@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Asset;
 use App\Events\PriceUpdated;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -11,6 +12,7 @@ class AssetPriceService
 {
     private $coinmarketcapApiKey;
     private $finnhubApiKey;
+    private bool $finnhubRateLimited = false;
 
     public function __construct()
     {
@@ -51,9 +53,20 @@ class AssetPriceService
     public function updateStockPrices()
     {
         try {
+            // Finnhub's free plan allows 60 calls/min. Several schedulers call this, so only
+            // let one full pass run every two minutes (about 16 calls/min for ~31 stocks).
+            if (!Cache::add('finnhub:stock-update-window', 1, 110)) {
+                return true;
+            }
+
+            $this->finnhubRateLimited = false;
             $stocks = Asset::where('type', 'stock')->get();
             
             foreach ($stocks as $stock) {
+                if ($this->finnhubRateLimited) {
+                    Log::warning('Finnhub rate limit hit; remaining stocks will update on the next pass');
+                    break;
+                }
                 $price = $this->getStockPrice($stock->symbol);
                 if ($price) {
                     $oldPrice = $stock->current_price;
@@ -248,6 +261,9 @@ class AssetPriceService
                     'price_change_24h' => $priceChange,
                     'market_cap' => $marketCap
                 ];
+            } elseif ($response->status() === 429) {
+                $this->finnhubRateLimited = true;
+                return null;
             } else {
                 Log::error("Finnhub API request failed for {$symbol}:", [
                     'status' => $response->status(),

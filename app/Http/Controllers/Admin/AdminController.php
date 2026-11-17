@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Deposit;
+use App\Models\LiveTrade;
 use App\Models\Trade;
 use App\Models\User;
 use App\Models\Withdrawal;
@@ -34,11 +35,17 @@ class AdminController extends Controller
         $withdrawalsThisMonth = Withdrawal::where('status', 1)->whereMonth('created_at', now()->month)->sum('amount');
 
         // Trading Statistics
-        $totalTraded = Trade::where('status', 'closed')->sum('amount');
-        $activeTrades = Trade::where('status', 'open')->count();
-        $closedTrades = Trade::where('status', 'closed')->count();
-        $tradesToday = Trade::whereDate('created_at', today())->count();
-        $tradesThisMonth = Trade::whereMonth('created_at', now()->month)->count();
+        // Counts cover both the legacy admin-managed trades and the Trade Room orders users place themselves.
+        $totalTraded = Trade::where('status', 'closed')->sum('amount')
+            + LiveTrade::whereIn('status', ['closed', 'liquidated'])->sum('amount');
+        $activeTrades = Trade::where('status', 'open')->count()
+            + LiveTrade::whereIn('status', ['pending', 'open'])->count();
+        $closedTrades = Trade::where('status', 'closed')->count()
+            + LiveTrade::whereIn('status', ['closed', 'liquidated'])->count();
+        $tradesToday = Trade::whereDate('created_at', today())->count()
+            + LiveTrade::whereDate('created_at', today())->count();
+        $tradesThisMonth = Trade::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count()
+            + LiveTrade::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count();
 
         // Copy Trading Statistics
         $totalCopyTraders = \App\Models\CopyTrader::count();
@@ -47,7 +54,7 @@ class AdminController extends Controller
 
         // Bot Trading Statistics
         $totalBotTrades = \App\Models\BotTrade::count();
-        $activeBotTrades = \App\Models\BotTrade::where('status', 'open')->count();
+        $activeBotTrades = \App\Models\BotTrade::where('status', 'pending')->count();
 
         // Recent Activity
         $recentUsers = User::where('role', 'user')->latest()->take(5)->get();
@@ -62,7 +69,8 @@ class AdminController extends Controller
         $lastMonthDeposits = Deposit::where('status', 1)->whereMonth('created_at', now()->subMonth()->month)->sum('amount');
         $depositGrowthPercentage = $lastMonthDeposits > 0 ? (($depositsThisMonth - $lastMonthDeposits) / $lastMonthDeposits) * 100 : 0;
 
-        $lastMonthTrades = Trade::whereMonth('created_at', now()->subMonth()->month)->count();
+        $lastMonthTrades = Trade::whereMonth('created_at', now()->subMonth()->month)->count()
+            + LiveTrade::whereMonth('created_at', now()->subMonth()->month)->count();
         $tradeGrowthPercentage = $lastMonthTrades > 0 ? (($tradesThisMonth - $lastMonthTrades) / $lastMonthTrades) * 100 : 0;
 
         return view('admin.dashboard', compact(

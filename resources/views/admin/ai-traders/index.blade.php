@@ -5,12 +5,12 @@
 @section('content')
 <div class="p-4">
     <div class="max-w-7xl mx-auto p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-        <div class="flex items-center justify-between mb-6">
+        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white">AI Stock Traders</h1>
                 <p class="text-gray-600 dark:text-gray-400">Manage AI-powered stock trading bots with advanced machine learning</p>
             </div>
-            <button onclick="openCreateModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+            <button onclick="openCreateModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -332,7 +332,7 @@ function editTrader(id) {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error loading trader data');
+            uiAlert('Error loading trader data', { tone: 'danger', title: 'Something went wrong' });
         });
 }
 
@@ -418,7 +418,7 @@ function viewTrader(id) {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error loading trader data');
+            uiAlert('Error loading trader data', { tone: 'danger', title: 'Something went wrong' });
         });
 }
 
@@ -430,8 +430,8 @@ function closeViewModal() {
     document.getElementById('viewModal').classList.add('hidden');
 }
 
-function toggleStatus(id) {
-    if (confirm('Are you sure you want to toggle the status of this AI trader?')) {
+async function toggleStatus(id) {
+    if (await uiConfirm('Are you sure you want to toggle the status of this AI trader?', { tone: 'info' })) {
         fetch(`/admin/ai-traders/${id}/toggle-status`, {
             method: 'POST',
             headers: {
@@ -444,18 +444,18 @@ function toggleStatus(id) {
             if (data.success) {
                 location.reload();
             } else {
-                alert('Error updating trader status');
+                uiAlert('Error updating trader status', { tone: 'danger', title: 'Something went wrong' });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error updating trader status');
+            uiAlert('Error updating trader status', { tone: 'danger', title: 'Something went wrong' });
         });
     }
 }
 
-function deleteTrader(id) {
-    if (confirm('Are you sure you want to delete this AI trader? This action cannot be undone.')) {
+async function deleteTrader(id) {
+    if (await uiConfirm('Are you sure you want to delete this AI trader? This action cannot be undone.')) {
         fetch(`/admin/ai-traders/${id}`, {
             method: 'DELETE',
             headers: {
@@ -468,12 +468,12 @@ function deleteTrader(id) {
             if (data.success) {
                 location.reload();
             } else {
-                alert(data.message || 'Error deleting trader');
+                uiAlert(data.message || 'Error deleting trader', { tone: 'danger', title: 'Something went wrong' });
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error deleting trader');
+            uiAlert('Error deleting trader', { tone: 'danger', title: 'Something went wrong' });
         });
     }
 }
@@ -507,12 +507,12 @@ document.getElementById('traderForm').addEventListener('submit', function(e) {
             closeModal();
             location.reload();
         } else {
-            alert(data.message || 'Error saving trader');
+            uiAlert(data.message || 'Error saving trader', { tone: 'danger', title: 'Something went wrong' });
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error saving trader');
+        uiAlert('Error saving trader', { tone: 'danger', title: 'Something went wrong' });
     });
 });
 </script>

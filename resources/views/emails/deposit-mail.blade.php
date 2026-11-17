@@ -37,7 +37,7 @@
                 <h2 class="text-center">Deposit Confirmation</h2>
             </div>
             <div class="card-body">
-                <p>Dear <strong>{{ $deposit->user->fullname() }}</strong>,</p>
+                <p>Dear <strong>{{ $deposit->user?->fullname() ?? 'Customer' }}</strong>,</p>
                 <p>We have received your deposit request. Here are the details of your transaction:</p>
                 <table style="width:100%" class="table table-striped">
                   <tr>
@@ -46,7 +46,7 @@
                   </tr>
                   <tr>
                     <th>Amount:</th>
-                    <td>${{ number_format($deposit->amount, 2) ?? ''}}</td>
+                    <td>{{ money($deposit->amount, 2, $deposit->user) }}</td>
                   </tr>
                   <tr>
                     <th>Deposit Method:</th>

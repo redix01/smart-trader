@@ -32,7 +32,7 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
@@ -193,7 +193,7 @@
                                         @csrf
                                         <button type="submit" 
                                                 class="px-2 py-1 text-xs bg-yellow-600 hover:bg-yellow-700 text-white rounded transition-colors" 
-                                                onclick="return confirm('Suspend this mining activity?')">
+                                                data-confirm="Suspend this mining activity?">
                                             Suspend
                                         </button>
                                     </form>
@@ -202,7 +202,7 @@
                                         @csrf
                                         <button type="submit" 
                                                 class="px-2 py-1 text-xs bg-green-600 hover:bg-green-700 text-white rounded transition-colors" 
-                                                onclick="return confirm('Resume this mining activity?')">
+                                                data-confirm="Resume this mining activity?" data-confirm-tone="info">
                                             Resume
                                         </button>
                                     </form>
@@ -213,7 +213,7 @@
                                         @csrf
                                         <button type="submit" 
                                                 class="px-2 py-1 text-xs bg-orange-600 hover:bg-orange-700 text-white rounded transition-colors" 
-                                                onclick="return confirm('Cancel this mining activity? Current value will be transferred to user balance.')">
+                                                data-confirm="Cancel this mining activity? Current value will be transferred to user balance.">
                                             Cancel
                                         </button>
                                     </form>
@@ -224,7 +224,7 @@
                                     @method('DELETE')
                                     <button type="submit" 
                                             class="px-2 py-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded transition-colors" 
-                                            onclick="return confirm('Delete this mining activity? This action cannot be undone.')">
+                                            data-confirm="Delete this mining activity? This action cannot be undone.">
                                         Delete
                                     </button>
                                 </form>

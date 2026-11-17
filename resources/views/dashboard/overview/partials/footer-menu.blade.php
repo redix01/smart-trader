@@ -1,34 +1,24 @@
-<!-- Footer Menu -->
-<div class="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 z-50">
-    <div class="flex justify-around">
-        <a href="{{ route('user.overview.index') }}" class="flex flex-col items-center py-3 px-4 {{ request()->routeIs('user.overview.index') ? 'text-blue-400' : 'text-gray-400' }} hover:text-white">
-            <svg class="w-5 h-5 mb-1" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path>
-            </svg>
-            <span class="text-xs">Overview</span>
-        </a>
-        <a href="{{ route('user.liveTrading.index') }}" class="flex flex-col items-center py-3 px-4 {{ request()->routeIs('user.liveTrading.index') ? 'text-blue-400' : 'text-gray-400' }} hover:text-white">
-            <svg class="w-5 h-5 mb-1" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" clip-rule="evenodd"></path>
-            </svg>
-            <span class="text-xs">Live Trade</span>
-        </a>
-        <a href="{{ route('user.copyTrading.index') }}" class="flex flex-col items-center py-3 px-4 {{ request()->routeIs('user.copyTrading.index') ? 'text-blue-400' : 'text-gray-400' }} hover:text-white">
-            <svg class="w-5 h-5 mb-1" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
-            </svg>
-            <span class="text-xs">Copy Trade</span>
-        </a>
-        <a href="{{ route('user.botTrading.index') }}" class="flex flex-col items-center py-3 px-4 {{ request()->routeIs('user.botTrading.index') ? 'text-blue-400' : 'text-gray-400' }} hover:text-white">
-            <svg class="w-5 h-5 mb-1" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path>
-            </svg>
-            <span class="text-xs">Bot Trade</span>
-        </a>
-
-
+{{-- Trading section switcher: floating bottom bar (also included by dashboard/copy-trade). --}}
+@php
+    $tradingTabs = [
+        ['route' => 'user.overview.index', 'label' => 'Overview', 'icon' => '<path d="M4 6h16M4 12h16M4 18h10"/>'],
+        ['route' => 'user.liveTrading.index', 'label' => 'Live trade', 'icon' => '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'],
+        ['route' => 'user.copyTrading.index', 'label' => 'Copy trade', 'icon' => '<circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0114 0M16 4.5a3.5 3.5 0 010 7M22 20a7 7 0 00-4-6.3"/>'],
+        ['route' => 'user.botTrading.index', 'label' => 'Bot trade', 'icon' => '<rect x="5" y="8" width="14" height="12" rx="2"/><path d="M12 4v4M9 14h.01M15 14h.01"/>'],
+    ];
+@endphp
+<nav aria-label="Trading sections" class="fixed z-40 bottom-3 inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[30rem] rounded-2xl border border-gray-700 bg-gray-800/95 backdrop-blur shadow-lg shadow-black/40" style="margin-bottom: env(safe-area-inset-bottom);">
+    <div class="grid grid-cols-4 gap-1 p-1">
+        @foreach($tradingTabs as $tab)
+            @php $active = request()->routeIs($tab['route']); @endphp
+            <a href="{{ route($tab['route']) }}" @if($active) aria-current="page" @endif
+               class="flex flex-col items-center justify-center gap-1 min-h-[52px] rounded-xl text-[11px] font-semibold whitespace-nowrap transition-colors {{ $active ? 'bg-gray-950 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700/60' }}">
+                <svg class="w-5 h-5 {{ $active ? 'text-gold-400' : '' }}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">{!! $tab['icon'] !!}</svg>
+                <span>{{ $tab['label'] }}</span>
+            </a>
+        @endforeach
     </div>
-</div>
+</nav>
 
-<!-- Add bottom padding for footer -->
-<div class="pb-20"></div>
+<!-- Bottom padding so the bar never covers content -->
+<div class="h-20" aria-hidden="true"></div>

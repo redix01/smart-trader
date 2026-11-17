@@ -8,7 +8,7 @@
                     <a href="{{ route('dashboard') }}" class="flex items-center">
                         @if(\App\Helpers\WebsiteSettingsHelper::hasTextLogo())
                             <!-- Text Logo -->
-                            <div class="h-9 flex items-center justify-center px-3 py-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
+                            <div class="h-9 flex items-center justify-center px-3 py-1 bg-blue-600 rounded-lg">
                                 <span class="text-white font-bold text-sm">{{ \App\Helpers\WebsiteSettingsHelper::getTextLogo() }}</span>
                             </div>
                         @elseif(\App\Helpers\WebsiteSettingsHelper::hasImageLogo())
@@ -18,7 +18,7 @@
                                  class="h-9 w-auto object-contain">
                         @else
                             <!-- Site Name as Logo (fallback) -->
-                            <div class="h-9 flex items-center justify-center px-3 py-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
+                            <div class="h-9 flex items-center justify-center px-3 py-1 bg-blue-600 rounded-lg">
                                 <span class="text-white font-bold text-sm">{{ \App\Helpers\WebsiteSettingsHelper::getSiteName() }}</span>
                             </div>
                         @endif

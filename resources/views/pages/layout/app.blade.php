@@ -12,9 +12,9 @@
     <meta name="locale" content="en">
     <meta name="content-language" content="en">
     <title>{{ config('app.name') }} | Advanced Trading Platform</title>
-    <link rel="manifest" href="/manifest.webmanifest?v=2">
-    <link rel="apple-touch-icon" sizes="180x180" href="/img/100x2.png?v=2">
-    <meta name="theme-color" content="#0b1020">
+    <link rel="manifest" href="/manifest.webmanifest?v=5">
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/pdc-icon-180.png?v=5">
+    <meta name="theme-color" content="#0a0c14">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>{{ config('app.name')[0] }}</text></svg>" type="image/svg+xml" />
     <script src="https://cdn.tailwindcss.com/"></script>
@@ -236,6 +236,7 @@
         }
     </style>
         <!-- Livewire Styles --><style >[wire\:loading][wire\:loading], [wire\:loading\.delay][wire\:loading\.delay], [wire\:loading\.inline-block][wire\:loading\.inline-block], [wire\:loading\.inline][wire\:loading\.inline], [wire\:loading\.block][wire\:loading\.block], [wire\:loading\.flex][wire\:loading\.flex], [wire\:loading\.table][wire\:loading\.table], [wire\:loading\.grid][wire\:loading\.grid], [wire\:loading\.inline-flex][wire\:loading\.inline-flex] {display: none;}[wire\:loading\.delay\.none][wire\:loading\.delay\.none], [wire\:loading\.delay\.shortest][wire\:loading\.delay\.shortest], [wire\:loading\.delay\.shorter][wire\:loading\.delay\.shorter], [wire\:loading\.delay\.short][wire\:loading\.delay\.short], [wire\:loading\.delay\.default][wire\:loading\.delay\.default], [wire\:loading\.delay\.long][wire\:loading\.delay\.long], [wire\:loading\.delay\.longer][wire\:loading\.delay\.longer], [wire\:loading\.delay\.longest][wire\:loading\.delay\.longest] {display: none;}[wire\:offline][wire\:offline] {display: none;}[wire\:dirty]:not(textarea):not(input):not(select) {display: none;}:root {--livewire-progress-bar-color: #ffffff;}[x-cloak] {display: none !important;}</style>
+    @include('partials.dialogs')
 </head>
 
 <body>
@@ -243,9 +244,9 @@
         <div class="fixed inset-0 bg-black/50"></div>
         <div class="relative m-4 w-full max-w-sm bg-white text-gray-900 rounded-xl shadow-xl p-4">
             <div class="flex items-start">
-                <img src="/img/100x2.png?v=2" alt="App Icon" class="w-10 h-10 mr-3 rounded">
+                <img src="/img/pdc-icon-180.png?v=5" alt="App Icon" class="w-10 h-10 mr-3 rounded">
                 <div class="flex-1">
-                    <div class="font-semibold">Add 100x to Home Screen</div>
+                    <div class="font-semibold">Add Prime Digital Capital to Home Screen</div>
                     <div id="pwaPromptText" class="text-sm text-gray-600 mt-1">Install the app for faster access and an app-like experience.</div>
                 </div>
             </div>
@@ -940,12 +941,18 @@ function updateTicker(data) {
 
             if (!promptEl) return;
 
+            function isDismissed() { try { return Date.now() < parseInt(localStorage.getItem('pwaPromptSnoozeUntil') || '0', 10); } catch (e) { return false; } }
+
+            function rememberDismissed() { try { localStorage.setItem('pwaPromptSnoozeUntil', String(Date.now() + 7 * 24 * 60 * 60 * 1000)); } catch (e) {} } // "Maybe later" snoozes for 7 days
+
+
             function showPrompt() {
                 promptEl.classList.remove('hidden');
                 promptEl.classList.add('flex');
             }
 
             function hidePrompt() {
+                rememberDismissed();
                 promptEl.classList.add('hidden');
                 promptEl.classList.remove('flex');
             }
@@ -959,11 +966,11 @@ function updateTicker(data) {
             window.addEventListener('beforeinstallprompt', function(e) {
                 e.preventDefault();
                 promptEvent = e;
-                setTimeout(showPrompt, 6000);
+                if (!isDismissed()) setTimeout(showPrompt, 6000);
             });
 
             // iOS: show guidance even without beforeinstallprompt
-            if (isIOS && !isStandalone && localStorage.getItem('pwaPromptDismissed') !== '1') {
+            if (isIOS && !isStandalone && !isDismissed()) {
                 if (promptText) {
                     promptText.textContent = "On iPhone/iPad: tap the Share button, then 'Add to Home Screen'.";
                 }
@@ -992,7 +999,6 @@ function updateTicker(data) {
 
             dismissBtn && dismissBtn.addEventListener('click', function() {
                 hidePrompt();
-                localStorage.setItem('pwaPromptDismissed', '1');
             });
 
             window.addEventListener('appinstalled', function() {

@@ -1,309 +1,204 @@
 @extends('dashboard.layout.app')
 
 @section('content')
-<div class="min-h-screen bg-gray-900">
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Header -->
-            <div class="mb-8">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-                    <div>
-                        <h1 class="text-3xl font-bold text-white mb-2">Mining Dashboard</h1>
-                        <p class="text-gray-400">Manage your cryptocurrency mining subscriptions</p>
-                    </div>
-                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-                        <a href="{{ route('user.mining.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                            Start Mining
+<style>
+/* segmented tabs: showTab() toggles text-blue-400 on the active one */
+.tab-button.text-blue-400{background:#111b3e;color:#fff!important}
+</style>
+@php
+    $allMinings = $activeMinings->concat($completedMinings);
+    $totalMined = $activeMinings->sum('total_mined') + $completedMinings->sum('total_mined');
+    $totalInvested = $activeMinings->sum('amount_invested') + $completedMinings->sum('amount_invested');
+    $totalValue = $activeMinings->sum('current_value') + $completedMinings->sum('current_value');
+    $totalPnL = $totalValue - $totalInvested;
+    $badge = fn ($status) => match ($status) {
+        'active' => 'bg-emerald-500/15 text-emerald-400',
+        'completed' => 'bg-blue-500/15 text-blue-300',
+        'cancelled' => 'bg-red-500/15 text-red-400',
+        'suspended' => 'bg-amber-500/15 text-amber-300',
+        default => 'bg-gray-700 text-gray-300',
+    };
+    $check = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>';
+@endphp
+<div class="space-y-4 sm:space-y-6">
+    <!-- Header -->
+    <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Earn</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-white mt-1">Mining</h1>
+            <p class="text-sm text-gray-400 mt-0.5">Rent mining power by the month and track what it earns.</p>
+        </div>
+        <a href="{{ route('user.mining.create') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+            Start mining
+        </a>
+    </div>
+
+    <!-- Tabs -->
+    <nav class="grid grid-cols-2 gap-1 p-1 rounded-lg bg-gray-800 border border-gray-700 sm:w-72" role="tablist">
+        <button type="button" onclick="showTab('mining')" id="miningTab" class="tab-button border-blue-500 text-blue-400 rounded-md py-2 text-sm font-semibold">
+            Plans
+        </button>
+        <button type="button" onclick="showTab('statistics')" id="statisticsTab" class="tab-button border-transparent text-gray-400 hover:text-white rounded-md py-2 text-sm font-semibold">
+            My mining
+        </button>
+    </nav>
+
+    <!-- Mining Tab Content -->
+    <div id="miningContent" class="tab-content">
+        @if($miningPlans->count() > 0)
+            @php $popular = $miningPlans->count() >= 3 ? intdiv($miningPlans->count(), 2) : ($miningPlans->count() === 2 ? 1 : -1); @endphp
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+                @foreach($miningPlans as $plan)
+                    @php $featured = $loop->index === $popular; @endphp
+                    <div class="flex flex-col rounded-2xl border p-5 sm:p-6 {{ $featured ? 'pc-card pc-card--accent border-blue-500/40' : 'border-gray-700 bg-gray-800' }}">
+                        <div class="flex items-start justify-between gap-3">
+                            <h3 class="text-base font-semibold text-white">{{ $plan->name }}</h3>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                @if($featured)
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-500 text-white">Popular</span>
+                                @endif
+                                <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">{{ ucfirst($plan->type) }}</span>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="text-xs text-gray-400">Monthly rental</div>
+                            <div class="flex items-baseline gap-1.5 mt-0.5 min-w-0">
+                                <span class="text-3xl sm:text-4xl font-bold text-white font-mono tracking-tight truncate">{{ auth()->user()->formatAmount($plan->price) }}</span>
+                                <span class="text-sm font-semibold {{ $featured ? 'text-blue-200' : 'text-gold-400' }}">/ mo</span>
+                            </div>
+                        </div>
+                        <dl class="grid grid-cols-2 gap-x-3 gap-y-3 mt-5 mb-5 rounded-xl p-3 text-sm {{ $featured ? 'bg-black/25' : 'bg-gray-900' }}">
+                            <div class="min-w-0"><dt class="text-[11px] text-gray-400">Hashrate</dt><dd class="text-white font-semibold truncate mt-0.5">{{ $plan->hashrate ?? 'N/A' }}</dd></div>
+                            <div class="min-w-0"><dt class="text-[11px] text-gray-400">Uptime</dt><dd class="text-white font-semibold truncate mt-0.5">{{ $plan->downtime ?? 'N/A' }}</dd></div>
+                            <div class="min-w-0 col-span-2"><dt class="text-[11px] text-gray-400">Equipment</dt><dd class="text-white font-semibold truncate mt-0.5">{{ $plan->equipment ?? 'N/A' }}</dd></div>
+                            <div class="min-w-0 col-span-2"><dt class="text-[11px] text-gray-400">Electricity</dt><dd class="text-white font-semibold truncate mt-0.5">{{ $plan->electricity_costs ?? 'N/A' }}</dd></div>
+                        </dl>
+                        <a href="{{ route('user.mining.create', ['plan' => $plan->id]) }}" class="mt-auto w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                            Start mining
                         </a>
                     </div>
+                @endforeach
+            </div>
+        @else
+            <div class="rounded-2xl border border-gray-700 bg-gray-800 p-8 text-center">
+                <div class="w-12 h-12 rounded-full bg-gray-700 grid place-items-center mx-auto">
+                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+                </div>
+                <h3 class="text-white font-medium mt-3">No mining plans available</h3>
+                <p class="text-sm text-gray-400 mt-1">Check back later for new mining plans.</p>
+            </div>
+        @endif
+    </div>
+
+    <!-- Statistics Tab Content -->
+    <div id="statisticsContent" class="tab-content hidden">
+        <div class="space-y-4 sm:space-y-6">
+            <!-- Performance Overview -->
+            <div class="rounded-2xl border border-gray-700 bg-gray-800 grid grid-cols-2 lg:grid-cols-4 overflow-hidden">
+                <div class="p-4 sm:p-5 min-w-0">
+                    <div class="text-xs text-gray-400">Total mining</div>
+                    <div class="text-lg sm:text-2xl font-semibold text-white mt-1">{{ $allMinings->count() }}</div>
+                    <div class="text-xs text-gray-500 mt-0.5 truncate">{{ $activeMinings->count() }} active · {{ $completedMinings->count() }} completed</div>
+                </div>
+                <div class="p-4 sm:p-5 min-w-0 border-l border-gray-700">
+                    <div class="text-xs text-gray-400">Total mined</div>
+                    <div class="text-lg sm:text-2xl font-semibold text-emerald-400 font-mono mt-1 truncate">{{ money_from($totalMined) }}</div>
+                </div>
+                <div class="p-4 sm:p-5 min-w-0 border-t lg:border-t-0 lg:border-l border-gray-700">
+                    <div class="text-xs text-gray-400">Total invested</div>
+                    <div class="text-lg sm:text-2xl font-semibold text-white font-mono mt-1 truncate">{{ money_from($totalInvested) }}</div>
+                </div>
+                <div class="p-4 sm:p-5 min-w-0 border-t border-l lg:border-t-0 border-gray-700">
+                    <div class="text-xs text-gray-400">Current value</div>
+                    <div class="text-lg sm:text-2xl font-semibold text-white font-mono mt-1 truncate">{{ money_from($totalValue) }}</div>
+                    <div class="text-xs font-mono mt-0.5 truncate {{ $totalPnL >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ ($totalPnL >= 0 ? '+' : '') . money_from($totalPnL) }} P&amp;L</div>
                 </div>
             </div>
 
-            <!-- Success/Error Messages -->
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
-                    <div class="text-green-400">{{ session('success') }}</div>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
-                    <div class="text-red-400">{{ session('error') }}</div>
-                </div>
-            @endif
-
-            <!-- Tabs -->
-            <div class="mb-8">
-                <div class="border-b border-gray-700">
-                    <nav class="-mb-px flex space-x-8">
-                        <button onclick="showTab('mining')" id="miningTab" class="tab-button py-2 px-1 border-b-2 border-blue-500 text-blue-400 font-medium text-sm">
-                            Mining Plans
-                        </button>
-                        <button onclick="showTab('statistics')" id="statisticsTab" class="tab-button py-2 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300 font-medium text-sm">
-                            Statistics
-                        </button>
-                    </nav>
-                </div>
-            </div>
-
-            <!-- Mining Tab Content -->
-            <div id="miningContent" class="tab-content">
-                <div class="space-y-6">
-                        <!-- Available Mining Plans -->
-                        <div class="bg-gray-800 rounded-xl overflow-hidden shadow">
-                            <div class="px-6 py-4 border-b border-gray-700">
-                                <h2 class="text-lg font-semibold text-white">Available Mining Plans</h2>
-                            </div>
-                            <div class="p-6">
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    @foreach($miningPlans as $plan)
-                                        <div class="bg-gray-700 rounded-lg p-4 border border-gray-600">
-                                            <div class="flex items-center justify-between mb-3">
-                                                <h3 class="text-white font-semibold">{{ $plan->name }}</h3>
-                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                    {{ ucfirst($plan->type) }}
-                                                </span>
-                                            </div>
-                                            <div class="space-y-2 mb-4">
-                                                <div class="flex justify-between text-sm">
-                                                    <span class="text-gray-400">Hashrate:</span>
-                                                    <span class="text-white">{{ $plan->hashrate ?? 'N/A' }}</span>
-                                                </div>
-                                                <div class="flex justify-between text-sm">
-                                                    <span class="text-gray-400">Equipment:</span>
-                                                    <span class="text-white">{{ $plan->equipment ?? 'N/A' }}</span>
-                                                </div>
-                                                <div class="flex justify-between text-sm">
-                                                    <span class="text-gray-400">Uptime:</span>
-                                                    <span class="text-white">{{ $plan->downtime ?? 'N/A' }}</span>
-                                                </div>
-                                                <div class="flex justify-between text-sm">
-                                                    <span class="text-gray-400">Electricity:</span>
-                                                    <span class="text-white">{{ $plan->electricity_costs ?? 'N/A' }}</span>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center justify-between mb-4">
-                                                <div>
-                                                    <div class="text-2xl font-bold text-white">{{ auth()->user()->formatAmount($plan->price) }}</div>
-                                                    <div class="text-sm text-gray-400">per month</div>
-                                                </div>
-                                            </div>
-                                            <a href="{{ route('user.mining.create', ['plan' => $plan->id]) }}" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors text-center block">
-                                                Start Mining
-                                            </a>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Mining History -->
+                <div class="lg:col-span-2 min-w-0 rounded-2xl border border-gray-700 bg-gray-800 overflow-hidden">
+                    <div class="px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-700">
+                        <h2 class="text-base font-semibold text-white">Mining history</h2>
                     </div>
-                </div>
-            </div>
+                    @if($allMinings->count() > 0)
+                        <!-- Phones: cards -->
+                        <ul class="md:hidden divide-y divide-gray-700">
+                            @foreach($allMinings as $mining)
+                                <li>
+                                    <a href="{{ route('user.mining.show', $mining) }}" class="block p-4 hover:bg-gray-700/40">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <div class="text-sm font-semibold text-white truncate">{{ $mining->plan->name }}</div>
+                                                <div class="text-xs text-gray-400 mt-0.5">Started {{ $mining->start_date->format('M d, Y') }}</div>
+                                            </div>
+                                            <span class="shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold {{ $badge($mining->status) }}">{{ ucfirst($mining->status) }}</span>
+                                        </div>
+                                        <dl class="grid grid-cols-3 gap-2 mt-3 text-sm">
+                                            <div class="min-w-0"><dt class="text-xs text-gray-400">Invested</dt><dd class="text-white font-mono truncate">{{ money_from($mining->amount_invested, $mining->currency ?: 'USD') }}</dd></div>
+                                            <div class="min-w-0"><dt class="text-xs text-gray-400">Mined</dt><dd class="text-white font-mono truncate">{{ money_from($mining->total_mined, $mining->currency ?: 'USD') }}</dd></div>
+                                            <div class="min-w-0"><dt class="text-xs text-gray-400">Value</dt><dd class="text-white font-mono truncate">{{ money_from($mining->current_value, $mining->currency ?: 'USD') }}</dd></div>
+                                        </dl>
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
 
-            <!-- Statistics Tab Content -->
-            <div id="statisticsContent" class="tab-content hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Main Statistics Content -->
-                    <div class="lg:col-span-2 space-y-6">
-                        <!-- Performance Overview -->
-                        <div class="bg-gray-800 rounded-xl overflow-hidden shadow">
-                            <div class="px-6 py-4 border-b border-gray-700">
-                                <h2 class="text-lg font-semibold text-white">Performance Overview</h2>
-                            </div>
-                            <div class="p-6">
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                    <div class="text-center">
-                                        <div class="text-3xl font-bold text-white mb-2">{{ $activeMinings->count() + $completedMinings->count() }}</div>
-                                        <div class="text-gray-400 text-sm">Total Mining</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-3xl font-bold text-green-400 mb-2">
-                                            @php
-                                                $totalMined = $activeMinings->sum('total_mined') + $completedMinings->sum('total_mined');
-                                                echo number_format($totalMined, 8);
-                                            @endphp
-                                        </div>
-                                        <div class="text-gray-400 text-sm">Total Mined</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-3xl font-bold text-blue-400 mb-2">
-                                            @php
-                                                $totalInvested = $activeMinings->sum('amount_invested') + $completedMinings->sum('amount_invested');
-                                                echo '$' . number_format($totalInvested, 2);
-                                            @endphp
-                                        </div>
-                                        <div class="text-gray-400 text-sm">Total Invested</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-3xl font-bold text-yellow-400 mb-2">
-                                            @php
-                                                $totalValue = $activeMinings->sum('current_value') + $completedMinings->sum('current_value');
-                                                echo '$' . number_format($totalValue, 2);
-                                            @endphp
-                                        </div>
-                                        <div class="text-gray-400 text-sm">Current Value</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Mining History -->
-                        <div class="bg-gray-800 rounded-xl overflow-hidden shadow">
-                            <div class="px-6 py-4 border-b border-gray-700">
-                                <h2 class="text-lg font-semibold text-white">Mining History</h2>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-700">
-                                    <thead class="bg-gray-700">
-                                        <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Plan</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Invested</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Mined</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Value</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Start Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-gray-800 divide-y divide-gray-700">
-                                        @foreach($activeMinings->concat($completedMinings) as $mining)
-                                        <tr class="hover:bg-gray-700">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
-                                                {{ $mining->plan->name }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                @if($mining->status === 'active')
-                                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                        Active
-                                                    </span>
-                                                @elseif($mining->status === 'completed')
-                                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                                        Completed
-                                                    </span>
-                                                @else
-                                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                        {{ ucfirst($mining->status) }}
-                                                    </span>
-                                                @endif
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                                ${{ number_format($mining->amount_invested, 2) }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                                {{ number_format($mining->total_mined, 8) }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                                ${{ number_format($mining->current_value, 2) }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                                                {{ $mining->start_date->format('M d, Y') }}
-                                            </td>
-                                        </tr>
+                        <!-- Desktop: table -->
+                        <div class="hidden md:block overflow-x-auto">
+                            <table class="min-w-full text-sm">
+                                <thead class="bg-gray-900/50">
+                                    <tr>
+                                        @foreach(['Plan', 'Status', 'Invested', 'Mined', 'Value', 'Start date'] as $col)
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{{ $col }}</th>
                                         @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700">
+                                    @foreach($allMinings as $mining)
+                                        <tr class="hover:bg-gray-700/40">
+                                            <td class="px-4 py-3 whitespace-nowrap font-medium"><a href="{{ route('user.mining.show', $mining) }}" class="text-white hover:text-gold-400">{{ $mining->plan->name }}</a></td>
+                                            <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $badge($mining->status) }}">{{ ucfirst($mining->status) }}</span></td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-white font-mono">{{ money_from($mining->amount_invested, $mining->currency ?: 'USD') }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-white font-mono">{{ money_from($mining->total_mined, $mining->currency ?: 'USD') }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-white font-mono">{{ money_from($mining->current_value, $mining->currency ?: 'USD') }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-gray-400">{{ $mining->start_date->format('M d, Y') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
+                    @else
+                        <div class="px-4 py-10 text-center">
+                            <div class="w-12 h-12 rounded-full bg-gray-700 grid place-items-center mx-auto">
+                                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+                            </div>
+                            <h3 class="text-white font-medium mt-3">No mining yet</h3>
+                            <p class="text-sm text-gray-400 mt-1">Pick a plan to start mining. Your contracts will appear here.</p>
+                            <a href="{{ route('user.mining.create') }}" class="mt-4 inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">Start mining</a>
+                        </div>
+                    @endif
+                </div>
 
-                    <!-- Statistics Sidebar -->
-                    <div class="space-y-6">
-                        <!-- Quick Stats -->
-                        <div class="bg-gray-800 rounded-xl overflow-hidden shadow">
-                            <div class="px-6 py-4 border-b border-gray-700">
-                                <h2 class="text-lg font-semibold text-white">Quick Stats</h2>
-                            </div>
-                            <div class="p-6 space-y-4">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-400">Active Mining:</span>
-                                    <span class="text-white font-semibold">{{ $activeMinings->count() }}</span>
+                <!-- Performance Tips -->
+                <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6 h-fit">
+                    <h2 class="text-base font-semibold text-white">Performance tips</h2>
+                    <ul class="space-y-3 mt-4">
+                        @foreach([
+                            ['Track your ROI', 'Monitor your return on investment regularly.'],
+                            ['Optimize timing', 'Start mining during favorable market conditions.'],
+                            ['Diversify', 'Spread investments across different mining plans.'],
+                        ] as [$title, $text])
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-blue-600/15 text-gold-400 grid place-items-center shrink-0">{!! $check !!}</span>
+                                <div>
+                                    <h4 class="text-sm font-medium text-white">{{ $title }}</h4>
+                                    <p class="text-sm text-gray-400">{{ $text }}</p>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-400">Completed:</span>
-                                    <span class="text-white font-semibold">{{ $completedMinings->count() }}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-400">Total Invested:</span>
-                                    <span class="text-white font-semibold">
-                                        @php
-                                            $totalInvested = $activeMinings->sum('amount_invested') + $completedMinings->sum('amount_invested');
-                                            echo '$' . number_format($totalInvested, 2);
-                                        @endphp
-                                    </span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-400">Total Mined:</span>
-                                    <span class="text-green-400 font-semibold">
-                                        @php
-                                            $totalMined = $activeMinings->sum('total_mined') + $completedMinings->sum('total_mined');
-                                            echo number_format($totalMined, 8);
-                                        @endphp
-                                    </span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-400">Current Value:</span>
-                                    <span class="text-yellow-400 font-semibold">
-                                        @php
-                                            $totalValue = $activeMinings->sum('current_value') + $completedMinings->sum('current_value');
-                                            echo '$' . number_format($totalValue, 2);
-                                        @endphp
-                                    </span>
-                                </div>
-                                <hr class="border-gray-700">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-400">Total PnL:</span>
-                                    <span class="font-semibold {{ ($totalValue - $totalInvested) >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                                        @php
-                                            $totalPnL = $totalValue - $totalInvested;
-                                            echo ($totalPnL >= 0 ? '+' : '') . '$' . number_format($totalPnL, 2);
-                                        @endphp
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Performance Tips -->
-                        <div class="bg-gray-800 rounded-xl overflow-hidden shadow">
-                            <div class="px-6 py-4 border-b border-gray-700">
-                                <h2 class="text-lg font-semibold text-white">Performance Tips</h2>
-                            </div>
-                            <div class="p-6 space-y-3">
-                                <div class="flex items-start space-x-3">
-                                    <div class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                                        <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-white font-medium">Track Your ROI</h4>
-                                        <p class="text-gray-400 text-sm">Monitor your return on investment regularly</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <div class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                                        <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-white font-medium">Optimize Timing</h4>
-                                        <p class="text-gray-400 text-sm">Start mining during favorable market conditions</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <div class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                                        <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-white font-medium">Diversify Portfolio</h4>
-                                        <p class="text-gray-400 text-sm">Spread investments across different mining plans</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
             </div>
         </div>

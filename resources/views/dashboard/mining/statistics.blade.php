@@ -1,156 +1,89 @@
 @extends('dashboard.layout.app')
 
 @section('content')
-<div class="min-h-screen bg-gray-900">
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Header -->
-            <div class="mb-8">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h1 class="text-3xl font-bold text-white mb-2">Mining Statistics</h1>
-                        <p class="text-gray-400">Track your mining performance and earnings</p>
-                    </div>
-                    <a href="{{ route('user.mining.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
-                        Back to Mining
+@php
+    $badge = fn ($status) => match ($status) {
+        'active' => 'bg-emerald-500/15 text-emerald-400',
+        'completed' => 'bg-blue-500/15 text-blue-300',
+        'cancelled' => 'bg-red-500/15 text-red-400',
+        'suspended' => 'bg-amber-500/15 text-amber-300',
+        default => 'bg-gray-700 text-gray-300',
+    };
+    $stats = [
+        ['Total mining', $totalMinings, 'text-white'],
+        ['Active mining', $activeMinings, 'text-white'],
+        ['Total invested', money($totalInvested, 2), 'text-white font-mono'],
+        ['Total mined', money_from($totalMined), 'text-emerald-400 font-mono'],
+    ];
+@endphp
+<div class="space-y-4 sm:space-y-6">
+    <!-- Header -->
+    <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Mining</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-white mt-1">Mining statistics</h1>
+            <p class="text-sm text-gray-400 mt-0.5">Track your mining performance and earnings.</p>
+        </div>
+        <a href="{{ route('user.mining.index') }}" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg border border-gray-700 bg-gray-800 text-sm font-semibold text-gray-200 hover:text-white hover:border-blue-500">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>Mining
+        </a>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="rounded-2xl border border-gray-700 bg-gray-800 grid grid-cols-2 lg:grid-cols-4 overflow-hidden">
+        @foreach($stats as $i => [$label, $value, $cls])
+            <div class="p-4 sm:p-5 min-w-0 border-gray-700 {{ $i % 2 ? 'border-l' : '' }} {{ $i >= 2 ? 'border-t lg:border-t-0 lg:border-l' : '' }}">
+                <div class="text-xs text-gray-400">{{ $label }}</div>
+                <div class="text-lg sm:text-2xl font-semibold mt-1 truncate {{ $cls }}">{{ $value }}</div>
+            </div>
+        @endforeach
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <!-- Recent Mining Activity -->
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 overflow-hidden">
+            <div class="px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-700">
+                <h2 class="text-base font-semibold text-white">Recent activity</h2>
+            </div>
+            <div class="divide-y divide-gray-700">
+                @forelse($recentMinings as $mining)
+                    <a href="{{ route('user.mining.show', $mining) }}" class="block p-4 sm:px-6 hover:bg-gray-700/40">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="text-white font-medium truncate">{{ $mining->plan->name }}</div>
+                                <div class="text-xs text-gray-400 mt-0.5">Started {{ $mining->start_date->format('M d, Y') }}</div>
+                            </div>
+                            <span class="shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold {{ $badge($mining->status) }}">{{ ucfirst($mining->status) }}</span>
+                        </div>
+                        <dl class="grid grid-cols-2 gap-2 mt-3 text-sm">
+                            <div class="min-w-0"><dt class="text-xs text-gray-400">Invested</dt><dd class="text-white font-mono truncate">{{ money_from($mining->amount_invested, $mining->currency ?: 'USD') }}</dd></div>
+                            <div class="min-w-0"><dt class="text-xs text-gray-400">Mined</dt><dd class="text-emerald-400 font-mono truncate">{{ money_from($mining->total_mined, $mining->currency ?: 'USD') }}</dd></div>
+                        </dl>
                     </a>
-                </div>
+                @empty
+                    <div class="px-4 py-10 text-center">
+                        <div class="w-12 h-12 rounded-full bg-gray-700 grid place-items-center mx-auto">
+                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+                        </div>
+                        <h3 class="text-white font-medium mt-3">No mining activity yet</h3>
+                        <p class="text-sm text-gray-400 mt-1">Start a mining plan and its activity will show here.</p>
+                        <a href="{{ route('user.mining.create') }}" class="mt-4 inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                            Start mining
+                        </a>
+                    </div>
+                @endforelse
             </div>
+        </div>
 
-            <!-- Success/Error Messages -->
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
-                    <div class="text-green-400">{{ session('success') }}</div>
+        <!-- Performance Chart -->
+        <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6">
+            <h2 class="text-base font-semibold text-white">Mining performance</h2>
+            <div class="text-center py-10">
+                <div class="w-12 h-12 rounded-full bg-gray-700 grid place-items-center mx-auto">
+                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg>
                 </div>
-            @endif
-
-            @if(session('error'))
-                <div class="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
-                    <div class="text-red-400">{{ session('error') }}</div>
-                </div>
-            @endif
-
-            <!-- Statistics Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-gray-400 text-sm">Total Mining</p>
-                            <p class="text-white text-2xl font-semibold">{{ $totalMinings }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-gray-400 text-sm">Active Mining</p>
-                            <p class="text-white text-2xl font-semibold">{{ $activeMinings }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-gray-400 text-sm">Total Invested</p>
-                            <p class="text-white text-2xl font-semibold">${{ number_format($totalInvested, 2) }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-gray-400 text-sm">Total Mined</p>
-                            <p class="text-green-400 text-2xl font-semibold">{{ number_format($totalMined, 8) }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Recent Mining Activity -->
-                <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg">
-                    <div class="px-6 py-4 border-b border-gray-700">
-                        <h2 class="text-xl font-semibold text-white">Recent Mining Activity</h2>
-                    </div>
-                    <div class="divide-y divide-gray-700">
-                        @forelse($recentMinings as $mining)
-                            <div class="p-6">
-                                <div class="flex items-center justify-between mb-2">
-                                    <div class="text-white font-medium">{{ $mining->plan->name }}</div>
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $mining->status_badge_class }}">
-                                        {{ ucfirst($mining->status) }}
-                                    </span>
-                                </div>
-                                <div class="text-gray-400 text-sm space-y-1">
-                                    <div>Invested: {{ $mining->formatted_amount_invested }}</div>
-                                    <div>Mined: {{ $mining->formatted_total_mined }}</div>
-                                    <div>Started: {{ $mining->start_date->format('M d, Y') }}</div>
-                                </div>
-                                <div class="mt-3">
-                                    <a href="{{ route('user.mining.show', $mining) }}" class="text-blue-400 hover:text-blue-300 text-sm font-medium">
-                                        View Details →
-                                    </a>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="p-6 text-gray-400 text-center">
-                                <p>No mining activity yet.</p>
-                                <a href="{{ route('user.mining.create') }}" class="text-blue-400 hover:text-blue-300 mt-2 inline-block">
-                                    Start your first mining subscription
-                                </a>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-
-                <!-- Performance Chart -->
-                <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg">
-                    <div class="px-6 py-4 border-b border-gray-700">
-                        <h2 class="text-xl font-semibold text-white">Mining Performance</h2>
-                    </div>
-                    <div class="p-6">
-                        <div class="text-center py-12">
-                            <div class="text-gray-400 mb-4">
-                                <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                </svg>
-                            </div>
-                            <p class="text-gray-400">Performance chart coming soon</p>
-                            <p class="text-gray-500 text-sm mt-2">We're working on detailed analytics</p>
-                        </div>
-                    </div>
-                </div>
+                <h3 class="text-white font-medium mt-3">Performance chart coming soon</h3>
+                <p class="text-sm text-gray-400 mt-1">We're working on detailed analytics.</p>
             </div>
         </div>
     </div>

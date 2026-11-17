@@ -93,7 +93,7 @@ class BotTradingController extends Controller
             ]);
             return response()->json([
                 'success' => false,
-                'message' => 'Insufficient trading balance. You need at least $' . number_format($request->max_investment, 2) . ' in your trading balance to create this bot.'
+                'message' => 'Insufficient trading balance. You need at least ' . money($request->max_investment, 2) . ' in your trading balance to create this bot.'
             ], 400);
         }
 

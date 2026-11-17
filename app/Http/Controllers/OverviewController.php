@@ -18,8 +18,8 @@ class OverviewController extends Controller
         
         // Live Trading Stats
         $liveTrades = LiveTrade::where('user_id', $user->id);
-        $openLiveTrades = $liveTrades->where('status', 'pending')->count();
-        $closedLiveTrades = $liveTrades->whereIn('status', ['filled', 'cancelled'])->count();
+        $openLiveTrades = (clone $liveTrades)->whereIn('status', [LiveTrade::STATUS_PENDING, LiveTrade::STATUS_OPEN])->count();
+        $closedLiveTrades = (clone $liveTrades)->whereIn('status', [LiveTrade::STATUS_CLOSED, LiveTrade::STATUS_LIQUIDATED, LiveTrade::STATUS_CANCELLED])->count();
         $totalLiveTrades = $liveTrades->count();
         $liveTradingVolume = $liveTrades->sum('amount');
         

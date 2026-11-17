@@ -17,34 +17,42 @@ use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\AiTraderPlanController;
 use App\Http\Controllers\Admin\AiTraderController;
 use App\Http\Controllers\Admin\AdminSettingsController;
+use App\Http\Controllers\Admin\LiveTradeController;
 
 Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
-    Route::get('/open-trades', [AdminTradeController::class, 'openTrades'])->name('openTrades');
-    Route::get('/closed-trades', [AdminTradeController::class, 'closedTrades'])->name('closedTrades');
+    Route::redirect('/open-trades', '/admin/trade-history')->name('openTrades');
+    Route::redirect('/closed-trades', '/admin/trade-history')->name('closedTrades');
     Route::get('/trade-history', [AdminTradeController::class, 'tradeHistory'])->name('trade.history');
     Route::get('/trade-room', [AdminTradeController::class, 'index'])->name('trade.index');
+    Route::get('/trade/create', [AdminTradeController::class, 'create'])->name('trade.create');
+    Route::post('/trade', [AdminTradeController::class, 'store'])->name('trade.store');
     Route::post('/trade/{id}/edit-pnl', [AdminTradeController::class, 'editPnl'])->name('trade.edit-pnl');
     Route::post('/trade/{id}/close', [AdminTradeController::class, 'closeTrade'])->name('trade.close');
     Route::delete('/trade/{id}', [AdminTradeController::class, 'destroy'])->name('trade.destroy');
-    Route::resource('/copy-trader', CopyTraderController::class);
+    // Trade Room orders placed from the user dashboard
+    Route::get('/live-trades', [LiveTradeController::class, 'index'])->name('live-trades.index');
+    Route::post('/live-trades/{liveTrade}/close', [LiveTradeController::class, 'close'])->name('live-trades.close');
+    Route::post('/live-trades/{liveTrade}/cancel', [LiveTradeController::class, 'cancel'])->name('live-trades.cancel');
+    Route::delete('/live-trades/{liveTrade}', [LiveTradeController::class, 'destroy'])->name('live-trades.destroy');
+    Route::resource('/copy-trader', CopyTraderController::class)->only(['index', 'store', 'update', 'destroy']);
 
     // Admin users management
-    Route::resource('/user', AdminUserController::class)->names('user');
+    Route::resource('/user', AdminUserController::class)->only(['index', 'show'])->names('user');
     Route::delete('/user/{id}/delete', [AdminUserController::class, 'deleteUser'])->name('deleteUser');
     Route::post('/user/{id}/update-balance', [AdminUserController::class, 'updateBalance'])->name('updateBalance');
     Route::post('/user/{id}/update-status', [AdminUserController::class, 'updateStatus'])->name('updateStatus');
     Route::post('/user/{id}/verify-email', [AdminUserController::class, 'verifyEmail'])->name('user.verifyEmail');
     Route::post('/user/{id}/unverify-email', [AdminUserController::class, 'unverifyEmail'])->name('user.unverifyEmail');
 
-    Route::resource('/payment-method', AdminPaymentMethodController::class);
+    Route::resource('/payment-method', AdminPaymentMethodController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::get('/security', [AdminController::class, 'security'])->name('security');
     Route::post('/reset-password', [AdminController::class, 'resetPassword'])->name('resetPassword');
 
-    Route::resource('/plans', AdminPlanController::class)->names('plans');
+    Route::resource('/plans', AdminPlanController::class)->except(['show'])->names('plans');
     Route::post('/plans/{plan}/toggle-status', [AdminPlanController::class, 'toggleStatus'])->name('plans.toggle-status');
-    Route::resource('/trade-pair', AdminTradePairController::class);
+    Route::resource('/trade-pair', AdminTradePairController::class)->only(['index', 'store', 'update', 'destroy']);
 
     Route::get('/transactions/deposits', [AdminTransactionController::class, 'deposits'])->name('transactions.deposits');
     Route::get('/transactions/withdrawals', [AdminTransactionController::class, 'withdrawals'])->name('transactions.withdrawals');
@@ -62,7 +70,8 @@ Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin', 'as' => 'a
     Route::resource('/signals', AdminSignalController::class)->names('signals');
 
     // Bot Trading Management
-    Route::resource('/bot-trading', BotTradingController::class)->names('bot-trading')->parameters(['bot-trading' => 'bot']);
+    Route::get('/bot-trading/stats', [BotTradingController::class, 'stats'])->name('bot-trading.stats');
+    Route::resource('/bot-trading', BotTradingController::class)->except(['create'])->names('bot-trading')->parameters(['bot-trading' => 'bot']);
     Route::post('/bot-trading/{bot}/pause', [BotTradingController::class, 'pause'])->name('bot-trading.pause');
     Route::post('/bot-trading/{bot}/resume', [BotTradingController::class, 'resume'])->name('bot-trading.resume');
     Route::post('/bot-trading/{bot}/start', [BotTradingController::class, 'start'])->name('bot-trading.start');
@@ -71,7 +80,6 @@ Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin', 'as' => 'a
     Route::post('/bot-trading/{bot}/create-trade', [BotTradingController::class, 'storeTrade'])->name('bot-trading.create-trade');
     Route::post('/bot-trading/{bot}/edit-pnl', [BotTradingController::class, 'editPnl'])->name('bot-trading.edit-pnl');
     Route::post('/bot-trading/trade/{trade}/edit-pnl', [BotTradingController::class, 'editTradePnl'])->name('bot-trading.edit-trade-pnl');
-    Route::get('/bot-trading/stats', [BotTradingController::class, 'stats'])->name('bot-trading.stats');
 
     // Copied trades history
     Route::get('/copied-trades', [CopiedTradeController::class, 'index'])->name('copied-trades.index');
@@ -100,13 +108,12 @@ Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin', 'as' => 'a
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 
     // AI Trader Management
-    Route::resource('/ai-trader-plans', AiTraderPlanController::class)->names('ai-trader-plans');
+    Route::resource('/ai-trader-plans', AiTraderPlanController::class)->except(['create', 'edit'])->names('ai-trader-plans');
     Route::post('/ai-trader-plans/{aiTraderPlan}/toggle-status', [AiTraderPlanController::class, 'toggleStatus'])->name('ai-trader-plans.toggle-status');
     
-    Route::resource('/ai-traders', AiTraderController::class)->names('ai-traders');
-    Route::post('/ai-traders/{aiTrader}/toggle-status', [AiTraderController::class, 'toggleStatus'])->name('ai-traders.toggle-status');
     Route::get('/ai-traders/by-plan/{aiTraderPlan}', [AiTraderController::class, 'getByPlan'])->name('ai-traders.by-plan');
-    
+    Route::resource('/ai-traders', AiTraderController::class)->except(['create', 'edit'])->names('ai-traders');
+    Route::post('/ai-traders/{aiTrader}/toggle-status', [AiTraderController::class, 'toggleStatus'])->name('ai-traders.toggle-status');
     // AI Trader Management & History
     Route::get('/ai-traders-management', [AiTraderController::class, 'management'])->name('ai-traders.management');
     Route::get('/ai-traders-history/{userAiTrader}', [AiTraderController::class, 'traderHistory'])->name('ai-traders.history');

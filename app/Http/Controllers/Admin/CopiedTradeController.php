@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CopiedTrade;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CopiedTradeController extends Controller
 {
@@ -23,69 +25,95 @@ class CopiedTradeController extends Controller
             'pnl' => 'required|numeric',
         ]);
 
-        $copiedTrade = CopiedTrade::findOrFail($id);
-        
-        // Calculate the PnL difference to add to user's account
-        $oldPnL = $copiedTrade->pnl ?? 0;
-        $newPnL = $request->pnl;
-        $pnlDifference = $newPnL - $oldPnL;
-        
-        // Update the copied trade performance metrics
-        $copiedTrade->update([
-            'trade_count' => $request->trade_count,
-            'win' => $request->win,
-            'loss' => $request->loss,
-            'pnl' => $request->pnl,
-        ]);
-        
-        // Add PnL difference to user's trading account balance
-        if ($pnlDifference != 0) {
-            $user = $copiedTrade->user;
-            $user->balance += $pnlDifference;
-            $user->save();
-            
-            // Log the balance adjustment
-            \Log::info("User {$user->id} balance adjusted by \${$pnlDifference} for copied trade {$copiedTrade->id}. New balance: \${$user->balance}");
-        }
+        // The P&L difference is credited to the user's main balance, the same wallet the stake is returned to when they stop.
+        $pnlDifference = DB::transaction(function () use ($request, $id) {
+            $copiedTrade = CopiedTrade::whereKey($id)->lockForUpdate()->firstOrFail();
+            $difference = (float) $request->pnl - (float) ($copiedTrade->pnl ?? 0);
 
-        return redirect()->back()->with('success', 'Performance metrics updated successfully! ' . 
-            ($pnlDifference != 0 ? "User balance adjusted by $" . number_format($pnlDifference, 2) : ""));
+            $copiedTrade->update([
+                'trade_count' => $request->trade_count,
+                'win' => $request->win,
+                'loss' => $request->loss,
+                'pnl' => $request->pnl,
+            ]);
+
+            if ($difference != 0) {
+                User::whereKey($copiedTrade->user_id)->lockForUpdate()->first()?->increment('balance', $difference);
+            }
+
+            return $difference;
+        });
+
+        $user = CopiedTrade::find($id)?->user;
+
+        return redirect()->back()->with('success', 'Performance metrics updated successfully! ' .
+            ($pnlDifference != 0 ? "User balance adjusted by " . money($pnlDifference, 2, $user) : ""));
     }
 
+    /**
+     * Restart a stopped copy trade. Stopping returned the stake to the user's balance, so
+     * restarting takes it out again - otherwise stop/start would create money.
+     */
     public function activate($id)
     {
-        $copiedTrade = CopiedTrade::findOrFail($id);
-        $copiedTrade->update(['status' => 1]);
-        
-        // Send notification to user
-        $copiedTrade->user->createNotification(
+        $result = DB::transaction(function () use ($id) {
+            $copiedTrade = CopiedTrade::with('copy_trader')->whereKey($id)->lockForUpdate()->firstOrFail();
+            if ((int) $copiedTrade->status === 1) {
+                return 'This copied trade is already active.';
+            }
+
+            $user = User::whereKey($copiedTrade->user_id)->lockForUpdate()->firstOrFail();
+            if ((float) $user->balance < (float) $copiedTrade->amount) {
+                return 'The user\'s main balance ('.money($user->balance, 2, $user).') is lower than the copied amount ('.money($copiedTrade->amount, 2, $user).'), so it cannot be restarted.';
+            }
+
+            $user->decrement('balance', (float) $copiedTrade->amount);
+            $copiedTrade->update(['status' => 1, 'stopped_at' => null]);
+
+            return $copiedTrade;
+        });
+
+        if (is_string($result)) {
+            return redirect()->back()->with('error', $result);
+        }
+
+        $result->user->createNotification(
             'copy_trade_started',
             'Copy Trade Started',
-            "Your copy trade with {$copiedTrade->copy_trader->name} has been started by admin.",
+            "Your copy trade with {$result->copy_trader->name} has been started by admin.",
             [
-                'copied_trade_id' => $copiedTrade->id,
-                'trader_name' => $copiedTrade->copy_trader->name,
-                'amount' => $copiedTrade->amount
+                'copied_trade_id' => $result->id,
+                'trader_name' => $result->copy_trader->name,
+                'amount' => $result->amount
             ]
         );
-        
+
         return redirect()->back()->with('success', 'Copied trade activated successfully!');
     }
 
+    /** Stop a copy trade exactly like the user's own Stop button: the stake goes back to their main balance. */
     public function deactivate($id)
     {
-        $copiedTrade = CopiedTrade::findOrFail($id);
+        $copiedTrade = DB::transaction(function () use ($id) {
+            $copiedTrade = CopiedTrade::with('copy_trader')->whereKey($id)->lockForUpdate()->firstOrFail();
+            if ((int) $copiedTrade->status !== 1) {
+                return null;
+            }
 
-        $copiedTrade->update([
-            'status' => 0,
-            'stopped_at' => now()
-        ]);
+            $copiedTrade->update(['status' => 0, 'stopped_at' => now()]);
+            User::whereKey($copiedTrade->user_id)->lockForUpdate()->first()?->increment('balance', (float) $copiedTrade->amount);
 
-        // Send notification to user
+            return $copiedTrade;
+        });
+
+        if (! $copiedTrade) {
+            return redirect()->back()->with('error', 'This copied trade is already stopped.');
+        }
+
         $copiedTrade->user->createNotification(
             'copy_trade_stopped',
             'Copy Trade Stopped',
-            "Your copy trade with {$copiedTrade->copy_trader->name} has been stopped.",
+            "Your copy trade with {$copiedTrade->copy_trader->name} has been stopped and " . money($copiedTrade->amount, 2, $copiedTrade->user) . " was returned to your balance.",
             [
                 'copied_trade_id' => $copiedTrade->id,
                 'trader_name' => $copiedTrade->copy_trader->name,
@@ -93,24 +121,22 @@ class CopiedTradeController extends Controller
             ]
         );
 
-        \Log::info("Copied trade {$id} stopped.");
-
-        return redirect()->back()->with('success', 'Copied trade stopped successfully!');
+        return redirect()->back()->with('success', 'Copied trade stopped and the stake returned to the user\'s balance.');
     }
 
     public function destroy($id)
     {
-        $copiedTrade = CopiedTrade::findOrFail($id);
-        
-        // Return the amount to user's balance if the trade was active
-        if ($copiedTrade->status == 1) {
-            $user = $copiedTrade->user;
-            $user->balance += $copiedTrade->amount;
-            $user->save();
-        }
-        
-        $copiedTrade->delete();
-        
+        DB::transaction(function () use ($id) {
+            $copiedTrade = CopiedTrade::whereKey($id)->lockForUpdate()->firstOrFail();
+
+            // An active copy still holds the user's stake: return it before the record disappears.
+            if ((int) $copiedTrade->status === 1) {
+                User::whereKey($copiedTrade->user_id)->lockForUpdate()->first()?->increment('balance', (float) $copiedTrade->amount);
+            }
+
+            $copiedTrade->delete();
+        });
+
         return redirect()->back()->with('success', 'Copied trade deleted successfully!');
     }
 }

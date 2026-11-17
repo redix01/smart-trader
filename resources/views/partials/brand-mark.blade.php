@@ -1,0 +1,2 @@
+{{-- Prime Digital Capital mark: a P built from rising bars. --}}
+<svg width="{{ $size ?? 34 }}" height="{{ $size ?? 34 }}" viewBox="0 0 48 48" aria-hidden="true" focusable="false" class="{{ $class ?? '' }}"><rect x="7" y="18" width="8" height="24" rx="1.5" fill="#93c5fd"/><rect x="18" y="11" width="8" height="31" rx="1.5" fill="#60a5fa"/><path d="M29 4h4a11 11 0 0 1 0 22h-4z" fill="#3b82f6"/><rect x="29" y="4" width="8" height="38" rx="1.5" fill="#3b82f6"/></svg>

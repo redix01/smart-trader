@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
+    /** Live trading-strength payload for the dashboard card (polled every 30s). */
+    public function tradingStrength(\App\Services\TradingStrengthService $service)
+    {
+        return response()->json($service->forUser(Auth::user()))
+            ->header('Cache-Control', 'no-store');
+    }
+
     public function dashboard()
     {
         $user = Auth::user();

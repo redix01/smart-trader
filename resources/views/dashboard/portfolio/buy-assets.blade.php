@@ -2,6 +2,9 @@
 
 @section('content')
 <style>
+/* segmented Crypto/Stocks tabs: switchTab() toggles text-blue-400 on the active one */
+.tab-button.text-blue-400{background:#111b3e;color:#fff!important}
+
 /* Price change animations */
 .price-up {
     animation: priceUp 3s ease-in-out;
@@ -362,60 +365,42 @@
 
 <div class="space-y-6">
     <!-- Page Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-white">Buy Assets</h1>
-            <p class="text-gray-400 mt-1">Browse and purchase crypto and stock assets</p>
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Portfolio</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-white mt-1">Buy assets</h1>
+            <p class="text-sm text-gray-400 mt-0.5">Buy crypto and stocks at the live market price.</p>
         </div>
-        <a href="{{ route('user.holding.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center sm:justify-start space-x-2 w-full sm:w-auto mt-4 sm:mt-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            <span>Back to Portfolio</span>
-        </a>
-    </div>
-
-    <!-- Search Bar -->
-    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
-        <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
+        <div class="flex items-center gap-2">
+            <div class="px-3 py-2 rounded-lg border border-gray-700 bg-gray-800">
+                <div class="text-[10px] uppercase tracking-wider text-gray-400">Available</div>
+                <div class="font-mono text-sm font-semibold text-white">{{ money(auth()->user()->balance) }}</div>
             </div>
-            <input type="text" id="assetSearch" placeholder="Search assets by name or symbol..." 
-                   class="block w-full pl-10 pr-3 py-2 border border-gray-600 rounded-md leading-5 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:placeholder-gray-500 focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+            <a href="{{ route('user.holding.index') }}" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg border border-gray-700 bg-gray-800 text-sm font-semibold text-gray-200 hover:text-white hover:border-blue-500">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>Portfolio
+            </a>
         </div>
     </div>
 
-    <!-- Tabs -->
-    <div class="bg-gray-800 rounded-lg border border-gray-700">
-        <div class="border-b border-gray-700">
-            <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
-                <button id="cryptoTab" class="tab-button border-b-2 border-blue-500 py-4 px-1 text-sm font-medium text-blue-400">
-                    <div class="flex items-center space-x-2">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span>Crypto</span>
-                    </div>
-                </button>
-                <button id="stockTab" class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-400 hover:text-gray-300">
-                    <div class="flex items-center space-x-2">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span>Stocks</span>
-                    </div>
-                </button>
-            </nav>
+    <!-- Toolbar + list -->
+    <div class="bg-gray-800 rounded-2xl border border-gray-700">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 p-3 sm:p-4 border-b border-gray-700">
+            <div class="grid grid-cols-2 gap-1 p-1 rounded-lg bg-gray-900/70 sm:w-64" role="tablist">
+                <button id="cryptoTab" class="tab-button border-blue-500 text-blue-400 rounded-md py-2 text-sm font-semibold">Crypto</button>
+                <button id="stockTab" class="tab-button border-transparent text-gray-400 rounded-md py-2 text-sm font-semibold">Stocks</button>
+            </div>
+            <div class="relative flex-1">
+                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                <input type="search" id="assetSearch" placeholder="Search by name or symbol" autocomplete="off"
+                       class="block w-full pl-9 pr-3 py-2.5 border border-gray-700 rounded-lg bg-gray-900/70 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
         </div>
 
         <!-- Tab Content -->
-        <div class="p-6">
+        <div class="p-3 sm:p-4">
             <!-- Crypto Assets -->
             <div id="cryptoContent" class="tab-content">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="cryptoAssetsGrid">
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2.5 sm:gap-3" id="cryptoAssetsGrid">
                     <!-- Crypto assets will be loaded here -->
                 </div>
                 <div id="cryptoLoading" class="text-center py-8">
@@ -431,7 +416,7 @@
 
             <!-- Stock Assets -->
             <div id="stockContent" class="tab-content hidden">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="stockAssetsGrid">
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2.5 sm:gap-3" id="stockAssetsGrid">
                     <!-- Stock assets will be loaded here -->
                 </div>
                 <div id="stockLoading" class="text-center py-8">
@@ -449,13 +434,13 @@
 </div>
 
 <!-- Buy Asset Modal -->
-<div id="buyAssetModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full border border-gray-700 max-h-[90vh] overflow-hidden flex flex-col">
+<div id="buyAssetModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden">
+    <div class="flex items-end sm:items-center justify-center min-h-full sm:p-4">
+        <div class="bg-gray-800 shadow-2xl max-w-4xl w-full border border-gray-700 rounded-t-2xl sm:rounded-2xl max-h-[92vh] overflow-hidden flex flex-col">
             <!-- Modal Header -->
-            <div class="flex items-center justify-between p-6 border-b border-gray-700">
+            <div class="flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-700">
                 <div>
-                    <h3 class="text-xl font-semibold text-white" id="modalAssetName">Buy Asset</h3>
+                    <h3 class="text-lg sm:text-xl font-semibold text-white" id="modalAssetName">Buy Asset</h3>
                     <p class="text-gray-400 text-sm mt-1" id="modalAssetSymbol">Asset Symbol</p>
                 </div>
                 <button id="closeBuyModal" class="text-gray-400 hover:text-white transition-colors">
@@ -466,71 +451,76 @@
             </div>
 
             <!-- Modal Body -->
-            <div class="p-6 overflow-y-auto flex-1">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="p-4 sm:p-6 overflow-y-auto flex-1">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
                     <!-- Left Column - Chart -->
                     <div>
-                        <h4 class="text-lg font-medium text-white mb-4">Price Chart</h4>
-                        <div class="bg-gray-700 rounded-lg p-4 h-64">
+                        <h4 class="hidden lg:block text-lg font-medium text-white mb-4">Price chart</h4>
+                        <div class="bg-gray-900 rounded-xl overflow-hidden h-44 sm:h-64 lg:h-80">
                             <div id="tradingViewChart" class="w-full h-full"></div>
                         </div>
                     </div>
 
                     <!-- Right Column - Buy Form -->
                     <div>
-                        <h4 class="text-lg font-medium text-white mb-4">Purchase Details</h4>
+                        <h4 class="hidden lg:block text-lg font-medium text-white mb-4">Order</h4>
                         <form id="buyAssetForm" class="space-y-4">
                             @csrf
                             <input type="hidden" id="selectedAssetId">
                             
-                            <!-- Current Price Display -->
-                            <div class="bg-gray-700 rounded-lg p-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-300">Current Price:</span>
-                                    <span class="text-xl font-bold text-white" id="currentPrice">$0.00</span>
+                            <!-- Market price -->
+                            <div class="flex items-center justify-between rounded-xl bg-gray-900/60 border border-gray-700 px-4 py-3">
+                                <div>
+                                    <div class="text-xs text-gray-400">Market price</div>
+                                    <div class="text-xl font-bold text-white font-mono" id="currentPrice">{{ currency_symbol() }}0.00</div>
                                 </div>
-                                <div class="flex justify-between items-center mt-2">
-                                    <span class="text-gray-300">24h Change:</span>
-                                    <span class="text-sm" id="priceChange">0.00%</span>
+                                <span class="text-sm font-mono" id="priceChange">0.00%</span>
+                            </div>
+
+                            <!-- Amount to spend -->
+                            <div>
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <label for="buySpend" class="text-sm font-medium text-gray-300">Amount to spend</label>
+                                    <span class="text-xs text-gray-400">Available {{ currency_symbol() }}<span id="userHoldingBalance">{{ number_format(auth()->user()->balance, 2) }}</span></span>
+                                </div>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-mono">{{ currency_symbol() }}</span>
+                                    <input type="number" id="buySpend" inputmode="decimal" step="any" min="0" placeholder="0.00"
+                                           class="w-full pl-8 pr-3 py-3 bg-gray-900/60 border border-gray-600 rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="grid grid-cols-4 gap-1.5 mt-2">
+                                    @foreach([25, 50, 75, 100] as $pct)
+                                        <button type="button" data-spend-pct="{{ $pct }}" class="py-1.5 rounded-md border border-gray-600 bg-gray-700/60 text-xs font-semibold text-gray-200 hover:border-blue-500">{{ $pct === 100 ? 'Max' : $pct.'%' }}</button>
+                                    @endforeach
                                 </div>
                             </div>
 
-                            <!-- Quantity Input -->
+                            <!-- Quantity -->
                             <div>
-                                <label for="buyQuantity" class="block text-sm font-medium text-gray-300 mb-2">Quantity</label>
-                                <input type="number" id="buyQuantity" step="0.00000001" min="0.00000001"
-                                       class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                <label for="buyQuantity" class="block text-sm font-medium text-gray-300 mb-1.5">Quantity <span class="text-gray-500" id="buyQtyUnit"></span></label>
+                                <input type="number" id="buyQuantity" inputmode="decimal" step="0.00000001" min="0.00000001"
+                                       class="w-full px-3 py-3 bg-gray-900/60 border border-gray-600 rounded-lg text-white font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
                                        placeholder="0.00000000">
-                                <div class="mt-1 text-xs text-green-400">
-                                    Available Balance: $<span id="userHoldingBalance">{{ number_format(auth()->user()->balance, 2) }}</span>
-                                </div>
                             </div>
+                            <input type="hidden" id="buyPrice">
 
-                            <!-- Price per Unit -->
-                            <div>
-                                <label for="buyPrice" class="block text-sm font-medium text-gray-300 mb-2">Price per Unit</label>
-                                <input type="number" id="buyPrice" step="0.00000001" min="0.00000001"
-                                       class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                       placeholder="0.00">
+                            <!-- Total -->
+                            <div class="flex items-center justify-between rounded-xl bg-gray-900/60 border border-gray-700 px-4 py-3">
+                                <span class="text-sm text-gray-400">Total</span>
+                                <span class="text-xl font-bold text-white font-mono" id="totalAmount">{{ currency_symbol() }}0.00</span>
                             </div>
-
-                            <!-- Total Amount -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Total Amount</label>
-                                <div class="bg-gray-700 rounded-lg p-4">
-                                    <div class="text-2xl font-bold text-white" id="totalAmount">$0.00</div>
-                                </div>
-                            </div>
+                            <p id="buyError" class="hidden text-sm text-red-400" role="alert"></p>
+                            <p class="text-xs text-gray-500">Filled at the live market price when you confirm.</p>
 
                             <!-- Action Buttons -->
-                            <div class="flex space-x-3 pt-4">
-                                <button type="button" id="cancelBuyBtn" 
-                                        class="flex-1 px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
+                            <div class="flex gap-3 pt-1 sticky bottom-0 bg-gray-800 pb-1">
+                                <button type="button" id="cancelBuyBtn"
+                                        class="flex-1 px-4 py-3 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
                                     Cancel
                                 </button>
                                 <button type="submit" id="submitBuyBtn"
-                                        class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
-                                    Buy Asset
+                                        class="flex-[2] px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-colors">
+                                    Buy now
                                 </button>
                             </div>
                         </form>
@@ -686,50 +676,46 @@ function renderAssets(type, assets) {
 
 function createAssetCard(asset, type) {
     const card = document.createElement('div');
-    card.className = 'bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-gray-500 transition-colors cursor-pointer';
+    card.className = 'asset-card group rounded-xl border border-gray-700 bg-gray-900/40 hover:border-blue-500/60 hover:bg-gray-900/70 transition-colors cursor-pointer p-3 sm:p-4';
     card.setAttribute('data-asset-id', asset.id);
-    
-    const priceChange = asset.price_change_percentage_24h || 0;
-    const priceChangeClass = priceChange >= 0 ? 'text-green-400' : 'text-red-400';
-    const priceChangeIcon = priceChange >= 0 ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' : 'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6';
-    
-    // Get asset icon with color
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+
+    const priceChange = parseFloat(asset.price_change_percentage_24h) || 0;
+    const up = priceChange >= 0;
     const assetIcon = getAssetIcon(asset.symbol, asset.name);
-    
-    // Format price with appropriate decimals
-    const formattedPrice = formatAssetPrice(asset.current_price);
-    
+
     card.innerHTML = `
-        <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center ${assetIcon.bgClass}">
-                    <span class="text-sm font-bold text-white">${assetIcon.initial}</span>
-                </div>
-                <div>
-                    <h3 class="text-white font-medium">${asset.symbol}</h3>
-                    <p class="text-gray-400 text-sm">${asset.name}</p>
-                </div>
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 shrink-0 rounded-full flex items-center justify-center ${assetIcon.bgClass}">
+                <span class="text-sm font-bold text-white">${assetIcon.initial}</span>
             </div>
-            <div class="text-right">
-                <div class="text-white font-medium asset-price">$${formattedPrice}</div>
-                <div class="text-sm ${priceChangeClass} flex items-center asset-change">
-                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${priceChangeIcon}"></path>
-                    </svg>
-                    ${Math.abs(priceChange).toFixed(2)}%
-                </div>
+            <div class="min-w-0 flex-1">
+                <div class="text-white font-semibold leading-tight" data-f="symbol"></div>
+                <div class="text-gray-400 text-xs truncate" data-f="name"></div>
             </div>
+            <div class="text-right shrink-0">
+                <div class="text-white font-semibold font-mono text-sm asset-price">${CURRENCY_SYMBOL}${formatAssetPrice(asset.current_price)}</div>
+                <div class="text-xs font-mono asset-change ${up ? 'text-green-400' : 'text-red-400'}">${up ? '+' : '−'}${Math.abs(priceChange).toFixed(2)}%</div>
+            </div>
+            <svg class="w-4 h-4 text-gray-500 sm:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
         </div>
-        <div class="flex space-x-2">
-            <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1.5 rounded text-xs font-medium transition-colors" onclick="openBuyModal(${asset.id}, '${asset.symbol}', '${asset.name}', ${asset.current_price}, ${priceChange}, '${asset.type}')">
-                Buy
-            </button>
-            <button class="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1.5 rounded text-xs font-medium transition-colors" onclick="viewAssetChart('${asset.symbol}', '${asset.name}', '${asset.type}')">
-                Chart
-            </button>
+        <div class="hidden sm:flex gap-2 mt-3">
+            <button type="button" data-act="buy" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg text-sm font-semibold transition-colors">Buy</button>
+            <button type="button" data-act="chart" class="px-3 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg text-sm font-medium transition-colors" aria-label="Open chart">Chart</button>
         </div>
     `;
-    
+    // Text via textContent (names come from the database; never interpolate them into HTML or JS).
+    card.querySelector('[data-f="symbol"]').textContent = asset.symbol;
+    card.querySelector('[data-f="name"]').textContent = asset.name;
+
+    const open = () => openBuyModal(asset.id, asset.symbol, asset.name, parseFloat(asset.current_price), priceChange, asset.type);
+    card.addEventListener('click', (e) => {
+        if (e.target.closest('[data-act="chart"]')) { viewAssetChart(asset.symbol, asset.name, asset.type); return; }
+        open();
+    });
+    card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+
     return card;
 }
 
@@ -975,10 +961,12 @@ function openBuyModal(assetId, symbol, name, currentPrice, priceChange, assetTyp
     document.getElementById('modalAssetName').textContent = name;
     document.getElementById('modalAssetSymbol').textContent = symbol;
     const formattedPrice = formatAssetPrice(currentPrice);
-    document.getElementById('currentPrice').textContent = `$${formattedPrice}`;
+    document.getElementById('currentPrice').textContent = `${CURRENCY_SYMBOL}${formattedPrice}`;
     document.getElementById('priceChange').textContent = `${priceChange >= 0 ? '+' : ''}${priceChange.toFixed(2)}%`;
     document.getElementById('priceChange').className = priceChange >= 0 ? 'text-sm text-green-400' : 'text-sm text-red-400';
     document.getElementById('buyPrice').value = currentPrice;
+    document.getElementById('buyQtyUnit').textContent = '(' + symbol + ')';
+    calculateTotal();
     
     // Update user balance display
     updateUserBalanceDisplay();
@@ -1002,7 +990,7 @@ function updateUserBalanceDisplay() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            document.getElementById('userHoldingBalance').textContent = parseFloat(data.balance).toFixed(2);
+            document.getElementById('userHoldingBalance').textContent = parseFloat(data.balance).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
     })
     .catch(error => {
@@ -1288,22 +1276,51 @@ function closeBuyModal() {
 
 function resetBuyForm() {
     document.getElementById('buyAssetForm').reset();
-    document.getElementById('totalAmount').textContent = '$0.00';
+    document.getElementById('totalAmount').textContent = `${CURRENCY_SYMBOL}0.00`;
+    document.getElementById('buyError').classList.add('hidden');
 }
 
 // Calculate total amount
+function availableBalance() {
+    return parseFloat((document.getElementById('userHoldingBalance').textContent || '0').replace(/,/g, '')) || 0;
+}
+
 function calculateTotal() {
     const quantity = parseFloat(document.getElementById('buyQuantity').value) || 0;
     const price = parseFloat(document.getElementById('buyPrice').value) || 0;
     const total = quantity * price;
-    document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
+    document.getElementById('totalAmount').textContent = `${CURRENCY_SYMBOL}${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    const err = document.getElementById('buyError');
+    const tooMuch = total > availableBalance() + 1e-9;
+    err.textContent = tooMuch ? 'This is more than your available balance.' : '';
+    err.classList.toggle('hidden', !tooMuch);
+    document.getElementById('submitBuyBtn').disabled = tooMuch || !(total > 0);
+}
+
+// "Amount to spend" drives quantity; typing a quantity updates the amount.
+function syncFromSpend() {
+    const price = parseFloat(document.getElementById('buyPrice').value) || 0;
+    const spend = parseFloat(document.getElementById('buySpend').value) || 0;
+    document.getElementById('buyQuantity').value = price > 0 && spend > 0 ? (Math.floor(spend / price * 1e8) / 1e8) : '';
+    calculateTotal();
+}
+function syncFromQuantity() {
+    const price = parseFloat(document.getElementById('buyPrice').value) || 0;
+    const qty = parseFloat(document.getElementById('buyQuantity').value) || 0;
+    document.getElementById('buySpend').value = qty > 0 ? (qty * price).toFixed(2) : '';
+    calculateTotal();
 }
 
 // Event listeners
 document.getElementById('closeBuyModal').addEventListener('click', closeBuyModal);
 document.getElementById('cancelBuyBtn').addEventListener('click', closeBuyModal);
-document.getElementById('buyQuantity').addEventListener('input', calculateTotal);
-document.getElementById('buyPrice').addEventListener('input', calculateTotal);
+document.getElementById('buyQuantity').addEventListener('input', syncFromQuantity);
+document.getElementById('buySpend').addEventListener('input', syncFromSpend);
+document.querySelectorAll('[data-spend-pct]').forEach(b => b.addEventListener('click', () => {
+    document.getElementById('buySpend').value = (Math.floor(availableBalance() * b.dataset.spendPct) / 100).toFixed(2);
+    syncFromSpend();
+}));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !document.getElementById('buyAssetModal').classList.contains('hidden')) closeBuyModal(); });
 
 // Close modal when clicking outside
 document.getElementById('buyAssetModal').addEventListener('click', (e) => {
@@ -1353,7 +1370,7 @@ document.getElementById('buyAssetForm').addEventListener('submit', function(e) {
             showSuccessModal('Success!', 'Asset purchased successfully!');
             // Update balance display with new balance
             if (data.new_balance !== undefined) {
-                document.getElementById('userHoldingBalance').textContent = parseFloat(data.new_balance).toFixed(2);
+                document.getElementById('userHoldingBalance').textContent = parseFloat(data.new_balance).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
             }
             closeBuyModal();
             // Redirect back to portfolio after showing success message
@@ -1497,7 +1514,7 @@ function updateAssetPrice(data) {
     console.log('Found price elements:', priceElements.length);
     
     priceElements.forEach(element => {
-        const oldPrice = parseFloat(element.textContent.replace('$', '').replace(',', ''));
+        const oldPrice = parseFloat(element.textContent.replace(/[^0-9.\-]/g, ''));
         console.log('Old price from element:', oldPrice);
         const formattedPrice = formatAssetPrice(newPrice);
         
@@ -1506,8 +1523,8 @@ function updateAssetPrice(data) {
         
         // Update the price with a slight delay for better visibility
         setTimeout(() => {
-            element.textContent = `$${formattedPrice}`;
-            console.log('Updated element text to:', `$${formattedPrice}`);
+            element.textContent = `${CURRENCY_SYMBOL}${formattedPrice}`;
+            console.log('Updated element text to:', `${CURRENCY_SYMBOL}${formattedPrice}`);
             
             // Add visual feedback for price changes
             if (newPrice > oldPrice) {
@@ -1540,7 +1557,7 @@ function updateAssetPrice(data) {
     if (selectedAsset && selectedAsset.id == assetId) {
         console.log('Updating modal for selected asset');
         const formattedPrice = formatAssetPrice(newPrice);
-        document.getElementById('currentPrice').textContent = `$${formattedPrice}`;
+        document.getElementById('currentPrice').textContent = `${CURRENCY_SYMBOL}${formattedPrice}`;
         document.getElementById('priceChange').textContent = `${priceChange >= 0 ? '+' : ''}${parseFloat(priceChange).toFixed(2)}%`;
         document.getElementById('priceChange').className = priceChange >= 0 ? 'text-sm text-green-400' : 'text-sm text-red-400';
         document.getElementById('buyPrice').value = newPrice;

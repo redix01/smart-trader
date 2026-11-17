@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -72,51 +73,64 @@ class UserController extends Controller
             'action_type' => 'required|in:add,remove,reset',
         ]);
 
-        $user = User::findOrFail($id);
         $walletType = $request->wallet_type;
-        $amount = $request->amount;
+        $amount = (float) $request->amount;
         $actionType = $request->action_type;
 
-        // Get current balance
-        $currentBalance = $user->$walletType;
+        $result = DB::transaction(function () use ($id, $walletType, $amount, $actionType) {
+            $user = User::whereKey($id)->lockForUpdate()->firstOrFail();
+            $current = (float) $user->$walletType;
 
-        // Validate that we don't go below zero when removing funds
-        if ($actionType === 'remove' && $currentBalance < $amount) {
-            return redirect()->back()->with('error', 'Insufficient balance. Cannot remove more than the current balance.');
+            // Never let a removal push a wallet below zero
+            if ($actionType === 'remove' && $current < $amount) {
+                return ['error' => 'Insufficient balance. Cannot remove more than the current balance.'];
+            }
+
+            $label = ucwords(str_replace('_', ' ', $walletType));
+            $user->$walletType = match ($actionType) {
+                'add' => $current + $amount,
+                'remove' => $current - $amount,
+                default => $amount,
+            };
+            $user->save();
+
+            $message = match ($actionType) {
+                'add' => 'Successfully added '.money($amount, 2, $user).' to '.$label,
+                'remove' => 'Successfully removed '.money($amount, 2, $user).' from '.$label,
+                default => 'Successfully reset '.$label.' to '.money($amount, 2, $user),
+            };
+
+            \Log::info('Admin wallet adjustment', [
+                'user_id' => $user->id,
+                'wallet' => $walletType,
+                'action' => $actionType,
+                'amount' => $amount,
+                'before' => $current,
+                'after' => (float) $user->$walletType,
+                'by_admin' => auth()->id(),
+            ]);
+
+            return ['message' => $message];
+        });
+
+        if (isset($result['error'])) {
+            return redirect()->back()->with('error', $result['error']);
         }
 
-        // Update the balance
-        if ($actionType === 'add') {
-            $user->$walletType += $amount;
-            $message = "Successfully added $" . number_format($amount, 2) . " to " . ucwords(str_replace('_', ' ', $walletType));
-        } elseif ($actionType === 'remove') {
-            $user->$walletType -= $amount;
-            $message = "Successfully removed $" . number_format($amount, 2) . " from " . ucwords(str_replace('_', ' ', $walletType));
-        } elseif ($actionType === 'reset') {
-            $user->$walletType = $amount;
-            $message = "Successfully reset " . ucwords(str_replace('_', ' ', $walletType)) . " to $" . number_format($amount, 2);
-        }
-
-        $user->save();
-        
-        // Debug: Log the update
-        \Log::info('Admin Profit Balance Update', [
-            'user_id' => $user->id,
-            'wallet_type' => $walletType,
-            'action_type' => $actionType,
-            'amount' => $amount,
-            'new_profit_balance' => $user->fresh()->profit,
-            'updated_by' => auth()->id()
-        ]);
-
-        return redirect()->back()->with('success', $message);
+        return redirect()->back()->with('success', $result['message']);
     }
 
    public function deleteUser($id)
    {
        $user = User::findOrFail($id);
+
+       // Deleting an admin cascades to everything they created (signals, mail logs) and could lock everyone out
+       if ($user->role === 'admin' || $user->id === auth()->id()) {
+           return redirect()->back()->with('error', 'Admin accounts cannot be deleted here.');
+       }
+
        $user->delete();
-       return redirect()->back()->with('success', 'User has been deleted');
+       return redirect()->route('admin.user.index')->with('success', 'User has been deleted');
    }
 
    public function updateStatus(Request $request, $id)
@@ -126,6 +140,9 @@ class UserController extends Controller
        ]);
 
        $user = User::findOrFail($id);
+       if ($user->id === auth()->id()) {
+           return redirect()->back()->with('error', 'You cannot deactivate your own account.');
+       }
        $user->status = $request->status;
        $user->save();
 

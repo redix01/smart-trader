@@ -1,154 +1,130 @@
 @extends('dashboard.layout.app')
 
 @section('content')
-<div class="min-h-screen bg-gray-900">
-    <div class="py-6">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Header -->
-            <div class="mb-8">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h1 class="text-3xl font-bold text-white mb-2">Mining Details</h1>
-                        <p class="text-gray-400">{{ $mining->plan->name }} - {{ $mining->status }}</p>
-                    </div>
-                    <a href="{{ route('user.mining.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
-                        Back to Mining
-                    </a>
-                </div>
-            </div>
+@php
+    $statusCls = match ($mining->status) {
+        'active' => 'bg-emerald-500/15 text-emerald-400',
+        'completed' => 'bg-blue-500/15 text-blue-300',
+        'cancelled' => 'bg-red-500/15 text-red-400',
+        'suspended' => 'bg-amber-500/15 text-amber-300',
+        default => 'bg-gray-700 text-gray-300',
+    };
+    $unpaidMined = app(\App\Services\EarnService::class)->unpaidMined($mining);
+    $canWithdraw = $unpaidMined > 0;
+    $canCancel = $mining->isActive() && $mining->canBeCancelled();
+    $row = 'flex justify-between gap-4 py-2.5';
+    $cur = $mining->currency ?: 'USD';
+    $progress = round((float) $mining->mining_progress, 1);
+@endphp
+<div class="space-y-4 sm:space-y-6">
+    <!-- Header -->
+    <div class="flex flex-wrap items-end justify-between gap-3">
+        <div class="min-w-0">
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Mining</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-white mt-1 flex flex-wrap items-center gap-2">
+                {{ $mining->plan->name }}
+                <span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $statusCls }}">{{ ucfirst($mining->status) }}</span>
+            </h1>
+            <p class="text-sm text-gray-400 mt-0.5">Your mining contract, its output and progress.</p>
+        </div>
+        <a href="{{ route('user.mining.index') }}" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg border border-gray-700 bg-gray-800 text-sm font-semibold text-gray-200 hover:text-white hover:border-blue-500">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>Mining
+        </a>
+    </div>
 
-            <!-- Success/Error Messages -->
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
-                    <div class="text-green-400">{{ session('success') }}</div>
+    <!-- Key figures -->
+    <div class="rounded-2xl border border-gray-700 bg-gray-800 grid grid-cols-3 divide-x divide-gray-700">
+        <div class="p-3 sm:p-5 min-w-0">
+            <div class="text-[11px] sm:text-xs text-gray-400">Invested</div>
+            <div class="text-base sm:text-2xl font-semibold text-white font-mono mt-1 truncate">{{ money_from($mining->amount_invested, $cur) }}</div>
+        </div>
+        <div class="p-3 sm:p-5 min-w-0">
+            <div class="text-[11px] sm:text-xs text-gray-400">Total mined</div>
+            <div class="text-base sm:text-2xl font-semibold text-emerald-400 font-mono mt-1 truncate">{{ money_from($mining->total_mined, $cur) }}</div>
+        </div>
+        <div class="p-3 sm:p-5 min-w-0">
+            <div class="text-[11px] sm:text-xs text-gray-400">ROI</div>
+            <div class="text-base sm:text-2xl font-semibold font-mono mt-1 truncate {{ $mining->roi_percentage >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ number_format($mining->roi_percentage, 2) }}%</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-4 sm:space-y-6 min-w-0">
+            <!-- Mining Progress -->
+            @if($mining->isActive())
+                <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-base font-semibold text-white">Progress</h2>
+                        <span class="text-sm font-mono text-white">{{ number_format($progress, 1) }}%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2 mt-3 overflow-hidden">
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: {{ $progress }}%"></div>
+                    </div>
+                    @if($mining->end_date)
+                        <p class="text-sm text-gray-400 mt-2">Ends {{ $mining->end_date->diffForHumans() }}</p>
+                    @endif
                 </div>
             @endif
 
-            @if(session('error'))
-                <div class="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
-                    <div class="text-red-400">{{ session('error') }}</div>
-                </div>
-            @endif
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Main Content -->
-                <div class="lg:col-span-2 space-y-6">
-                    <!-- Mining Information -->
-                    <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg">
-                        <div class="px-6 py-4 border-b border-gray-700">
-                            <h2 class="text-xl font-semibold text-white">Mining Information</h2>
-                        </div>
-                        <div class="p-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="space-y-4">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">Plan Name:</span>
-                                        <span class="text-white font-medium">{{ $mining->plan->name }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">Status:</span>
-                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $mining->status_badge_class }}">
-                                            {{ ucfirst($mining->status) }}
-                                        </span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">Hashrate:</span>
-                                        <span class="text-blue-400 font-semibold">{{ $mining->hashrate }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">Equipment:</span>
-                                        <span class="text-white">{{ $mining->equipment }}</span>
-                                    </div>
-                                </div>
-                                <div class="space-y-4">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">Amount Invested:</span>
-                                        <span class="text-white font-semibold">{{ $mining->formatted_amount_invested }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">Total Mined:</span>
-                                        <span class="text-green-400 font-semibold">{{ $mining->formatted_total_mined }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">ROI:</span>
-                                        <span class="text-green-400 font-semibold">{{ $mining->roi_percentage }}%</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">Started:</span>
-                                        <span class="text-white">{{ $mining->start_date->format('M d, Y') }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Mining Information -->
+            <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6">
+                <h2 class="text-base font-semibold text-white">Mining information</h2>
+                <dl class="mt-3 grid grid-cols-1 md:grid-cols-2 md:gap-x-8 text-sm">
+                    <div class="divide-y divide-gray-700">
+                        <div class="{{ $row }}"><dt class="text-gray-400">Plan</dt><dd class="text-white font-medium text-right">{{ $mining->plan->name }}</dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">Status</dt><dd><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $statusCls }}">{{ ucfirst($mining->status) }}</span></dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">Hashrate</dt><dd class="text-white font-semibold text-right">{{ $mining->hashrate }}</dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">Equipment</dt><dd class="text-white text-right">{{ $mining->equipment }}</dd></div>
                     </div>
-
-                    <!-- Mining Progress -->
-                    @if($mining->isActive())
-                    <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg">
-                        <div class="px-6 py-4 border-b border-gray-700">
-                            <h2 class="text-xl font-semibold text-white">Mining Progress</h2>
-                        </div>
-                        <div class="p-6">
-                            <div class="space-y-4">
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-400">Progress</span>
-                                    <span class="text-white">{{ $mining->mining_progress }}%</span>
-                                </div>
-                                <div class="w-full bg-gray-700 rounded-full h-2">
-                                    <div class="bg-blue-600 h-2 rounded-full" style="width: {{ $mining->mining_progress }}%"></div>
-                                </div>
-                                @if($mining->end_date)
-                                    <div class="text-gray-400 text-sm">
-                                        <p>Time remaining: {{ $mining->end_date->diffForHumans() }}</p>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
+                    <div class="divide-y divide-gray-700 border-t border-gray-700 md:border-t-0">
+                        <div class="{{ $row }}"><dt class="text-gray-400">Amount invested</dt><dd class="text-white font-mono text-right">{{ money_from($mining->amount_invested, $cur) }}</dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">Total mined</dt><dd class="text-emerald-400 font-mono text-right">{{ money_from($mining->total_mined, $cur) }}</dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">Ready to withdraw</dt><dd class="text-white font-mono text-right">{{ money_from($unpaidMined, $cur) }}</dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">ROI</dt><dd class="text-white font-mono text-right">{{ number_format($mining->roi_percentage, 2) }}%</dd></div>
+                        <div class="{{ $row }}"><dt class="text-gray-400">Started</dt><dd class="text-white text-right">{{ $mining->start_date->format('M d, Y') }}</dd></div>
                     </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-4 sm:space-y-6">
+            <!-- Actions -->
+            <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6">
+                <h2 class="text-base font-semibold text-white">Actions</h2>
+                <div class="space-y-2 mt-4">
+                    @if($canWithdraw)
+                        <form method="POST" action="{{ route('user.mining.withdraw', $mining) }}">
+                            @csrf
+                            <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+                                Withdraw mined crypto
+                            </button>
+                        </form>
                     @endif
-                </div>
 
-                <!-- Sidebar -->
-                <div class="space-y-6">
-                    <!-- Actions -->
-                    <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg">
-                        <div class="px-6 py-4 border-b border-gray-700">
-                            <h2 class="text-lg font-semibold text-white">Actions</h2>
-                        </div>
-                        <div class="p-6 space-y-3">
-                            @if($mining->isActive() && $mining->total_mined > 0)
-                                <form method="POST" action="{{ route('user.mining.withdraw', $mining) }}">
-                                    @csrf
-                                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
-                                        Withdraw Mined Crypto
-                                    </button>
-                                </form>
-                            @endif
-
-                            @if($mining->isActive() && $mining->canBeCancelled())
-                                <form method="POST" action="{{ route('user.mining.cancel', $mining) }}">
-                                    @csrf
-                                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
-                                        Cancel Mining
-                                    </button>
-                                </form>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Notes -->
-                    @if($mining->notes)
-                    <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg">
-                        <div class="px-6 py-4 border-b border-gray-700">
-                            <h2 class="text-lg font-semibold text-white">Notes</h2>
-                        </div>
-                        <div class="p-6">
-                            <p class="text-gray-300">{{ $mining->notes }}</p>
-                        </div>
-                    </div>
+                    @if($canCancel)
+                        <form method="POST" action="{{ route('user.mining.cancel', $mining) }}">
+                            @csrf
+                            <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-red-500/40 text-red-400 hover:bg-red-500/10 text-sm font-semibold">
+                                Cancel mining
+                            </button>
+                        </form>
                     @endif
+
+                    @unless($canWithdraw || $canCancel)
+                        <p class="text-sm text-gray-400">No actions available for this contract right now.</p>
+                    @endunless
                 </div>
             </div>
+
+            <!-- Notes -->
+            @if($mining->notes)
+                <div class="rounded-2xl border border-gray-700 bg-gray-800 p-4 sm:p-6">
+                    <h2 class="text-base font-semibold text-white">Notes</h2>
+                    <p class="text-sm text-gray-300 mt-2">{{ $mining->notes }}</p>
+                </div>
+            @endif
         </div>
     </div>
 </div>

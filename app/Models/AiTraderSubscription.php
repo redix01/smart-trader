@@ -74,7 +74,7 @@ class AiTraderSubscription extends Model
      */
     public function getFormattedMonthlyFeeAttribute()
     {
-        return '$' . number_format($this->monthly_fee, 2);
+        return money($this->monthly_fee, 2, $this->user);
     }
 
     /**

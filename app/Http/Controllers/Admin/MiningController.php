@@ -46,8 +46,14 @@ class MiningController extends Controller
         ]);
 
         $mining = UserMining::findOrFail($id);
-        $oldValue = $mining->current_value;
-        
+
+        if ((float) $request->total_mined < (float) $mining->total_withdrawn) {
+            return redirect()->back()->with('error', 'Total mined cannot be lower than what the user has already withdrawn ('.number_format((float) $mining->total_withdrawn, 2).').');
+        }
+
+        // total_mined is what the user can withdraw from their Mining page (total_mined - total_withdrawn,
+        // paid to the main balance by EarnService). Money moves only when they withdraw, so nothing is
+        // credited here - crediting here as well would pay the same earnings twice.
         $mining->update([
             'total_mined' => $request->total_mined,
             'current_value' => $request->current_value,
@@ -56,21 +62,8 @@ class MiningController extends Controller
             'last_mining_date' => now(),
         ]);
 
-        // Calculate PnL difference
-        $pnlDifference = $request->current_value - $oldValue;
-        
-        // If there's a positive PnL difference, add it to user's balance
-        if ($pnlDifference > 0) {
-            $user = $mining->user;
-            $user->balance += $pnlDifference;
-            $user->save();
-            
-            \Log::info("Mining PnL updated for user {$user->id}. PnL difference: \${$pnlDifference}. New balance: \${$user->balance}");
-        }
-
         return redirect()->route('admin.mining.index')
-            ->with('success', 'Mining stats updated successfully! ' . 
-                ($pnlDifference != 0 ? "User balance adjusted by $" . number_format($pnlDifference, 2) : ""));
+            ->with('success', 'Mining stats updated. The user can withdraw '.number_format(max(0, (float) $request->total_mined - (float) $mining->total_withdrawn), 2).' of mined earnings from their Mining page.');
     }
 
     /**
@@ -124,38 +117,28 @@ class MiningController extends Controller
      */
     public function cancel($id)
     {
-        $mining = UserMining::findOrFail($id);
-        
-        // If mining was active and has current value, transfer to user balance
-        if ($mining->status === 'active' && $mining->current_value > 0) {
-            $user = $mining->user;
-            $user->balance += $mining->current_value;
-            $user->save();
-            
-            \Log::info("Mining cancelled for user {$user->id}. Value of \${$mining->current_value} transferred to balance. New balance: \${$user->balance}");
+        $mining = UserMining::with(['user', 'plan'])->findOrFail($id);
+
+        $paid = app(\App\Services\EarnService::class)->cancelMining($mining);
+        if ($paid === null) {
+            return redirect()->back()->with('error', 'Only active or suspended mining contracts can be cancelled.');
         }
 
-        $mining->update([
-            'status' => 'cancelled',
-            'end_date' => now(),
-            'current_value' => 0
-        ]);
-
-        // Send notification to user
-        $mining->user->createNotification(
+        $total = $paid['principal'] + $paid['mined'];
+        $mining->user?->createNotification(
             'mining_cancelled',
             'Mining Cancelled',
-            "Your mining activity with {$mining->plan->name} has been cancelled by admin." . 
-            ($mining->current_value > 0 ? " Value of $" . number_format($mining->current_value, 2) . " has been transferred to your balance." : ""),
+            "Your mining activity with " . ($mining->plan->name ?? 'your plan') . " has been cancelled by admin. " .
+            money($total, 2, $mining->user) . " (invested amount plus unpaid mined earnings) has been returned to your main balance.",
             [
                 'mining_id' => $mining->id,
-                'plan_name' => $mining->plan->name,
+                'plan_name' => $mining->plan->name ?? null,
                 'amount_invested' => $mining->amount_invested,
-                'value_transferred' => $mining->current_value
+                'value_transferred' => $total,
             ]
         );
 
-        return redirect()->back()->with('success', 'Mining activity cancelled successfully!');
+        return redirect()->back()->with('success', 'Mining activity cancelled. '.number_format($total, 2).' returned to the user\'s main balance.');
     }
 
     /**
@@ -164,15 +147,9 @@ class MiningController extends Controller
     public function destroy($id)
     {
         $mining = UserMining::findOrFail($id);
-        
-        // If mining was active, return the invested amount to user balance
-        if ($mining->status === 'active') {
-            $user = $mining->user;
-            $user->balance += $mining->amount_invested;
-            $user->save();
-            
-            \Log::info("Mining deleted for user {$user->id}. Invested amount of \${$mining->amount_invested} returned to balance. New balance: \${$user->balance}");
-        }
+
+        // A live contract still holds the user's money: pay it back (principal + unpaid earnings) before deleting.
+        app(\App\Services\EarnService::class)->cancelMining($mining);
 
         $mining->delete();
 

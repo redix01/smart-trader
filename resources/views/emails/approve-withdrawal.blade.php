@@ -37,7 +37,7 @@
                 <h2 class="text-center">Withdrawal Approval</h2>
             </div>
             <div class="card-body">
-                <p>Dear <strong>{{ $withdraw->user->fullname() }}</strong>,</p>
+                <p>Dear <strong>{{ $withdraw->user?->fullname() ?? 'Customer' }}</strong>,</p>
                     <p>We are pleased to inform you that your withdrawal has been successfully approved. your account will be credited shortly:</p>
                 <table style="width:100%" class="table table-striped">
                   <tr>
@@ -46,7 +46,7 @@
                   </tr>
                   <tr>
                     <th>Amount:</th>
-                    <td>${{ number_format($withdraw->amount, 2) ?? ''}}</td>
+                    <td>{{ money($withdraw->amount, 2, $withdraw->user) }}</td>
                   </tr>
                   <tr>
                     <th>Deposit Method:</th>

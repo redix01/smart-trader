@@ -61,8 +61,11 @@ class SignalSubscriptionController extends Controller
             return redirect()->back()->with('error', 'Invalid plan type selected.');
         }
 
+        // The price comes from the plan (in its currency), converted to the wallet currency.
+        $amount = round($user->convertFrom($plan->price, $plan->currency), 2);
+
         // Check if user has sufficient balance
-        if ($user->balance < $request->amount) {
+        if ($user->balance < $amount) {
             return redirect()->back()->with('error', 'Insufficient balance. Please fund your account first.');
         }
 
@@ -83,7 +86,7 @@ class SignalSubscriptionController extends Controller
             $subscription = UserPlan::create([
                 'user_id' => $user->id,
                 'plan_id' => $plan->id,
-                'amount_paid' => $request->amount,
+                'amount_paid' => $amount,
                 'status' => 'active',
                 'start_date' => now(),
                 'end_date' => now()->addDays($plan->signal_duration),
@@ -93,7 +96,7 @@ class SignalSubscriptionController extends Controller
             ]);
 
             // Deduct amount from user balance
-            $user->decrement('balance', $request->amount);
+            $user->decrement('balance', $amount);
 
             // Log the transaction
             Log::info('Signal subscription created', [
@@ -276,7 +279,7 @@ class SignalSubscriptionController extends Controller
             ]);
 
             // Deduct amount from user balance
-            $user->decrement('balance', $plan->price);
+            $user->decrement('balance', round($user->convertFrom($plan->price, $plan->currency), 2));
 
             DB::commit();
 

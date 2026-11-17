@@ -1,7 +1,31 @@
 @extends('dashboard.layout.app')
 @section('content')
+<style>
+    /* Phone/tablet layout fixes for the legacy terminal markup (scoped to this page). */
+    .terminal-page .terminal .market-trade .tab-content{height:auto!important}
+    .terminal-page .terminal .order-table tr{display:table-row}
+    @media (max-width:767px){
+        .terminal-page .terminal{padding:0}
+        .terminal-page .terminal .row.no-gutters{margin:0}
+        .terminal-page .terminal .row.no-gutters>[class*="col"]{padding:0}
+        .terminal-page .terminal .market-pairs,.terminal-page .terminal .main-chart,.terminal-page .terminal .market-trade,.terminal-page .terminal .order-book,.terminal-page .terminal .market-history{padding:12px}
+    }
+    @media (max-width:1023px){
+        .terminal-page .terminal .market-trade .d-flex{flex-direction:column;gap:8px}
+        .terminal-page .terminal .market-trade .d-flex>[class*="col"]{max-width:100%;flex:1 1 100%}
+    }
+</style>
+<div class="terminal-page space-y-4 sm:space-y-6">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+            <p class="text-xs font-mono uppercase tracking-[0.16em] text-gold-400">Trading</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-white mt-1">{{ $trade_pair->pair }} terminal</h1>
+            <p class="text-sm text-gray-400 mt-0.5">Open a leveraged buy or sell order and track it below.</p>
+        </div>
+        <a href="{{ route('user.liveTrading.index') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white text-sm font-semibold">Go to Trade Room</a>
+    </div>
 
-    <div class="container-fluid p-0">
+    <div class="container-fluid p-0 terminal">
         <div class="row no-gutters">
             <div class="col-md-3">
                 <div class="market-pairs">
@@ -385,7 +409,7 @@
                                         <div class="form-group">
                                             <label for="">Pairs</label>
                                             <select name="trade_pair_id" id="" class="form-control">
-                                                 <option value="{{ $trade_pair->pair }}">{{ $trade_pair->pair }}</option>
+                                                 <option value="{{ $trade_pair->id }}">{{ $trade_pair->pair }}</option>
                                                 @foreach($pairs as $item)
                                                     @if($item->type == 'crypto')
                                                         <option value="{{ $item->id }}">{{ $item->pair }}</option>
@@ -509,7 +533,7 @@
                                         <div class="form-group">
                                             <label for="">Pairs</label>
                                             <select name="trade_pair_id" id="" class="form-control">
-                                                <option value="{{ $trade_pair->pair }}">{{ $trade_pair->pair }}</option>
+                                                <option value="{{ $trade_pair->id }}">{{ $trade_pair->pair }}</option>
                                                 @foreach($pairs as $item)
                                                     @if($item->type == 'crypto')
                                                         <option value="{{ $item->id }}">{{ $item->pair }}</option>
@@ -848,9 +872,37 @@
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="open-orders" role="tabpanel">
-                            <div class="table-responsive ">
-                                <table class="table ">
-                                    <tr class="d-flex ">
+                            <ul class="md:hidden divide-y divide-gray-700">
+                                @php $shown = 0; @endphp
+                                @foreach($trades as $item)
+                                    @if($item->status == 'open')
+                                        @php $shown++; @endphp
+                                        <li class="py-3">
+                                            <div class="flex items-start justify-between gap-3">
+                                                <div class="min-w-0">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="text-sm font-semibold text-white">{{ $item->trade_pair->pair ?? '' }}</span>
+                                                        <span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $item->action_type == 'buy' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ $item->action_type == 'buy' ? 'Buy' : 'Sell' }}</span>
+                                                    </div>
+                                                    <div class="mt-0.5 text-xs text-gray-400">{{ $item->leverage ?? '' }}x &middot; {{ $item->duration ?? '' }} min &middot; {{ $item->created_at ?? '' }}</div>
+                                                    <div class="mt-0.5 text-xs text-gray-500">SL {{ $item->stop_loss ?? 'N/A' }} &middot; TP {{ $item->take_profit ?? 'N/A' }}</div>
+                                                </div>
+                                                <div class="text-right shrink-0">
+                                                    <div class="text-sm font-semibold text-white font-mono">{{ money($item->amount, 2) }}</div>
+                                                    
+                                                </div>
+                                            </div>
+                                            <a href="{{ route('user.closeTrade', $item->id) }}" class="mt-2 w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-red-500/40 text-red-400 hover:bg-red-500/10 text-sm font-semibold">Close trade</a>
+                                        </li>
+                                    @endif
+                                @endforeach
+                                @if($shown === 0)
+                                    <li class="py-8 text-center text-sm text-gray-400">No open orders.</li>
+                                @endif
+                            </ul>
+                                                        <div class="table-responsive hidden md:block">
+                                <table class="table order-table">
+                                    <tr>
                                         <th>Time</th>
                                         <th>Pairs</th>
                                         <th>Type</th>
@@ -865,7 +917,7 @@
                                     </tr>
                                     @foreach($trades as $item)
                                         @if($item->status == 'open')
-                                            <tr class="d-flex ">
+                                            <tr>
                                                 <td>{{ $item->created_at ?? ''}}</td>
                                                 <td>{{ $item->trade_pair->pair ?? '' }}</td>
                                                 <td>{{ $item->trade_pair->type ?? ''}}</td>
@@ -876,7 +928,7 @@
                                                         <span class="badge bg-danger text-white">sell</span>
                                                     @endif
                                                 </td>
-                                                <td>${{ number_format($item->amount, 2) ?? '' }}</td>
+                                                <td>{{ money($item->amount, 2) }}</td>
                                                 <td>{{ $item->leverage ?? ''}}x</td>
                                                 <td>{{ $item->duration ?? ''}} min</td>
                                                 <td>{{ $item->stop_loss ?? 'N/A'}}</td>
@@ -893,9 +945,37 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="stop-orders" role="tabpanel">
-                            <div class="table-responsive ">
-                                <table class="table ">
-                                    <tr class="d-flex ">
+                            <ul class="md:hidden divide-y divide-gray-700">
+                                @php $shown = 0; @endphp
+                                @foreach($closed_trades as $item)
+                                    @if($item->status == 'closed')
+                                        @php $shown++; @endphp
+                                        <li class="py-3">
+                                            <div class="flex items-start justify-between gap-3">
+                                                <div class="min-w-0">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="text-sm font-semibold text-white">{{ $item->trade_pair->pair ?? '' }}</span>
+                                                        <span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $item->action_type == 'buy' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ $item->action_type == 'buy' ? 'Buy' : 'Sell' }}</span>
+                                                    </div>
+                                                    <div class="mt-0.5 text-xs text-gray-400">{{ $item->leverage ?? '' }}x &middot; {{ $item->duration ?? '' }} min &middot; {{ $item->created_at ?? '' }}</div>
+                                                    <div class="mt-0.5 text-xs text-gray-500">SL {{ $item->stop_loss ?? 'N/A' }} &middot; TP {{ $item->take_profit ?? 'N/A' }}</div>
+                                                </div>
+                                                <div class="text-right shrink-0">
+                                                    <div class="text-sm font-semibold text-white font-mono">{{ money($item->amount, 2) }}</div>
+                                                    <div class="text-xs font-mono {{ ($item->profit_loss ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ money($item->profit_loss ?? 0, 2) }}</div>
+                                                </div>
+                                            </div>
+                                            
+                                        </li>
+                                    @endif
+                                @endforeach
+                                @if($shown === 0)
+                                    <li class="py-8 text-center text-sm text-gray-400">No closed orders.</li>
+                                @endif
+                            </ul>
+                                                        <div class="table-responsive hidden md:block">
+                                <table class="table order-table">
+                                    <tr>
                                         <th>Time</th>
                                         <th>Pairs</th>
                                         <th>Type</th>
@@ -910,7 +990,7 @@
                                     </tr>
                                     @foreach($closed_trades as $item)
                                         @if($item->status == 'closed')
-                                            <tr class="d-flex ">
+                                            <tr>
                                                 <td>{{ $item->created_at ?? ''}}</td>
                                                 <td>{{ $item->trade_pair->pair ?? '' }}</td>
                                                 <td>{{ $item->trade_pair->type ?? ''}}</td>
@@ -921,13 +1001,13 @@
                                                         <span class="badge bg-danger text-white">sell</span>
                                                     @endif
                                                 </td>
-                                                <td>${{ number_format($item->amount, 2) ?? '' }}</td>
+                                                <td>{{ money($item->amount, 2) }}</td>
                                                 <td>{{ $item->leverage ?? ''}}x</td>
                                                 <td>{{ $item->duration ?? ''}} min</td>
                                                 <td>{{ $item->stop_loss ?? 'N/A'}}</td>
                                                 <td>{{ $item->take_profit ?? 'N/A'}}</td>
                                                 <td>{!! $item->status_badge ?? '' !!}</td>
-                                                <td>${!! $item->profit_loss ?? '' !!}</td>
+                                                <td>{{ money($item->profit_loss ?? 0, 2) }}</td>
                                             </tr>
                                         @endif
                                     @endforeach
@@ -940,6 +1020,7 @@
 
         </div>
     </div>
+</div>
     <script>
         function randomizeBuySellOrders() {
             const rows = document.querySelectorAll('#order-book tbody tr:not(.ob-heading)');
@@ -948,6 +1029,7 @@
                 const priceCell = row.querySelector('td:nth-child(1)');
                 const amountCell = row.querySelector('td:nth-child(2)');
                 const totalCell = row.querySelector('td:nth-child(3)');
+                if (!priceCell || !amountCell || !totalCell) return;
 
                 // Parse the numeric values
                 let price = parseFloat(priceCell.textContent);
@@ -970,6 +1052,7 @@
             const lastPriceCell = document.querySelector('.last-price');
             const usdCell = document.querySelector('.usd-value');
             const changeCell = document.querySelector('.change-value');
+            if (!lastPriceCell || !usdCell || !changeCell) return; // elements not on this page
 
             // Extract the numeric parts
             let lastPrice = parseFloat(lastPriceCell.textContent); // Extract the numeric part from "Last Price"
@@ -1008,6 +1091,7 @@
                 const timeCell = row.querySelector('td:nth-child(1)');
                 const priceCell = row.querySelector('td:nth-child(2)');
                 const amountCell = row.querySelector('td:nth-child(3)');
+                if (!timeCell || !priceCell || !amountCell) return;
 
                 // Get the current time in HH:MM:SS format
                 const now = new Date();
@@ -1055,6 +1139,7 @@
             rows.forEach(row => {
                 const priceCell = row.querySelector('td:nth-child(2)');
                 const changeCell = row.querySelector('td:nth-child(3)');
+                if (!priceCell || !changeCell) return;
 
                 // Get the current last price
                 let lastPrice = parseFloat(priceCell.textContent);
@@ -1091,3 +1176,20 @@
     </script>
 
 @endsection
+
+@push('scripts')
+<script>
+// Minimal tab switching for the Bootstrap-style pills on this page (no Bootstrap JS is loaded).
+document.querySelectorAll('[data-toggle="pill"]').forEach(function (a) {
+  a.addEventListener('click', function (e) {
+    e.preventDefault();
+    var target = document.querySelector(a.getAttribute('href'));
+    if (!target) return;
+    a.closest('.nav').querySelectorAll('.nav-link').forEach(function (x) { x.classList.remove('active'); });
+    a.classList.add('active');
+    target.parentElement.querySelectorAll(':scope > .tab-pane').forEach(function (p) { p.classList.remove('active', 'show'); });
+    target.classList.add('active', 'show');
+  });
+});
+</script>
+@endpush

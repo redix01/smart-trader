@@ -1,4 +1,4 @@
-<div class="max-h-96 overflow-y-auto space-y-6">
+<div class="max-h-[70vh] overflow-y-auto space-y-6">
     @php
         $user = $deposit->user;
         $userAvatar = $user?->avatar_url ?? asset('assets/img/avatar.svg');
@@ -12,7 +12,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Amount</label>
-                <p class="text-lg font-semibold text-green-600 dark:text-green-400">${{ number_format($deposit->amount, 2) }}</p>
+                <p class="text-lg font-semibold text-green-600 dark:text-green-400">{{ money($deposit->amount, 2, $deposit->user) }}</p>
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Wallet Type</label>
@@ -120,7 +120,7 @@
                 @csrf
                 <button type="submit" 
                         class="w-full inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300"
-                        onclick="return confirm('Are you sure you want to approve this deposit? This will credit the user\'s account.')">
+                        data-confirm="Are you sure you want to approve this deposit? This will credit the user's account." data-confirm-tone="info">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
@@ -131,7 +131,7 @@
                 @csrf
                 <button type="submit" 
                         class="w-full inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-300"
-                        onclick="return confirm('Are you sure you want to decline this deposit? This action cannot be undone.')">
+                        data-confirm="Are you sure you want to decline this deposit? This action cannot be undone.">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>

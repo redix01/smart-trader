@@ -16,6 +16,7 @@
 
 
 
+    @include('admin.partials.user-filter')
     <div class="p-4 mt-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <!-- Card header -->
       <div class="items-center justify-between lg:flex">
@@ -76,7 +77,7 @@
                         {{ date('d M, Y', strtotime($item->created_at ?? '')) }}
                     </td>
                     <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">
-                        ${{ number_format($item->amount, 2) ?? '' }}
+                        {{ money($item->amount, 2, $item->user) }}
                     </td>
 
                     <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">
@@ -150,7 +151,11 @@
                                     </li>
                                     <li class="flex justify-between items-center py-4 px-6">
                                         <strong class="text-white-700">Amount:</strong>
-                                        <span>${{ number_format($item->amount, 2) ?? '' }}</span>
+                                        <span>{{ money($item->amount, 2, $item->user) }}</span>
+                                    </li>
+                                    <li class="flex justify-between items-center py-4 px-6">
+                                        <strong class="text-white-700">Taken from:</strong>
+                                        <span>{{ ucwords(str_replace('_', ' ', $item->from_account ?: 'balance')) }}</span>
                                     </li>
                                     <li class="flex justify-between items-center py-4 px-6">
                                         <strong class="text-white-700">Payment Method:</strong>
@@ -165,7 +170,7 @@
                                           </div>
                                       @elseif($item->payment_method == 'bank')
                                         @php
-                                            $bank = json_decode($item->bank, true)
+                                            $bank = is_array($item->bank) ? $item->bank : (json_decode((string) $item->bank, true) ?: []);
                                         @endphp
                                         <br><br>
                                           <div>
@@ -184,13 +189,13 @@
                                 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                                     <form method="POST" action="{{ route('admin.transactions.withdrawals.approve', $item->id) }}" class="inline">
                                         @csrf
-                                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onclick="return confirm('Are you sure you want to approve this withdrawal?')">
+                                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" data-confirm="Are you sure you want to approve this withdrawal?" data-confirm-tone="info">
                                             Approve
                                         </button>
                                     </form>
                                     <form method="POST" action="{{ route('admin.transactions.withdrawals.reject', $item->id) }}" class="inline ml-3">
                                         @csrf
-                                        <button type="submit" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" onclick="return confirm('Are you sure you want to reject this withdrawal? This will refund the amount to the user.')">
+                                        <button type="submit" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" data-confirm="Are you sure you want to reject this withdrawal? This will refund the amount to the user.">
                                             Decline
                                         </button>
                                     </form>

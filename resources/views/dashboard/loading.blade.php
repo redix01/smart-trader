@@ -3,52 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading...</title>
+    <meta name="robots" content="noindex">
+    <title>Loading… — Prime Digital Capital</title>
+    <link rel="icon" href="{{ asset('img/pdc-icon.svg') }}?v=6" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('prime/app.css') }}?v={{ filemtime(public_path('prime/app.css')) }}">
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-        }
-        .loading-container {
-            text-align: center;
-        }
-        .spinner {
-            border: 12px solid #f3f3f3; /* Light grey */
-            border-top: 12px solid #3498db; /* Blue */
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            animation: spin 2s linear infinite;
-            margin: 0 auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .loading-text {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #333;
-        }
+        body{min-height:100vh;display:grid;place-items:center;margin:0}
+        .wrap-load{text-align:center}
+        .spinner{width:44px;height:44px;margin:28px auto 0;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .loading-text{margin-top:18px;font-size:15px;color:var(--soft)}
     </style>
 </head>
 <body>
-
-<div class="loading-container">
-    <div class="spinner"></div>
-    <p class="loading-text">Please wait, we're redirecting you...</p>
+<div class="wrap-load">
+    <x-brand-logo :size="44" />
+    <div class="spinner" role="status" aria-label="Loading"></div>
+    <p class="loading-text">Please wait, we're redirecting you…</p>
 </div>
-
 <script>
-    setTimeout(function(){
-        window.location.href = '/user/dashboard'; // Change '/dashboard' to your actual dashboard route
-    }, 3000); // 3000ms = 3 seconds
+    setTimeout(function () { window.location.href = '/user/dashboard'; }, 3000);
 </script>
-
 </body>
 </html>
