@@ -118,4 +118,11 @@ class TradeRoomTest extends TestCase
             ->assertSee('<span>Trade Room</span>', false)
             ->assertSee(route('user.liveTrading.index'), false);
     }
+
+    public function test_history_and_overview_pages_render(): void
+    {
+        $user = $this->trader();
+        $this->actingAs($user)->get(route('user.liveTrading.history'))->assertOk();
+        $this->actingAs($user)->get(route('user.overview.index'))->assertOk();
+    }
 }
