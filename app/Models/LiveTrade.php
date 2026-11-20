@@ -12,6 +12,7 @@ class LiveTrade extends Model
 
     protected $fillable = [
         'user_id',
+        'placed_by',
         'asset_type',
         'symbol',
         'order_type',
@@ -82,6 +83,12 @@ class LiveTrade extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** Admin who placed this trade for the user, if any. */
+    public function placedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'placed_by');
     }
 
     // Helper Methods

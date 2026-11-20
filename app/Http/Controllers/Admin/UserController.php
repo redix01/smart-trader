@@ -68,7 +68,7 @@ class UserController extends Controller
     public function updateBalance(Request $request, $id)
     {
         $request->validate([
-            'wallet_type' => 'required|in:balance,trading_balance,mining_balance,referral_balance,holding_balance,staking_balance,profit',
+            'wallet_type' => 'required|in:balance,deposit_balance,trading_balance,mining_balance,referral_balance,holding_balance,staking_balance,profit',
             'amount' => 'required|numeric|min:0',
             'action_type' => 'required|in:add,remove,reset',
         ]);

@@ -332,6 +332,12 @@
                 <span class="ml-3" sidebar-toggle-item>Trade Pairs</span>
             </a>
           </li>
+          <li>
+            <a href="{{ route('admin.user-trades.index') }}" class="{{ request()->routeIs('admin.user-trades.*') ? "active" : '' }} flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
+                <x-gmdi-candlestick-chart-o class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"/>
+                <span class="ml-3" sidebar-toggle-item>Trade for User</span>
+            </a>
+          </li>
 
           <!-- Copy Trade Dropdown -->
           <li>
@@ -490,6 +496,12 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h6v-2H4v2zM4 15h6v-2H4v2zM4 11h6V9H4v2zM4 7h6V5H4v2zM4 3h6V1H4v2z"></path>
                 </svg>
                 <span class="ml-3" sidebar-toggle-item>Send Mail</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('admin.user-messages.index') }}" class="{{ request()->routeIs('admin.user-messages.*') ? "active" : '' }} flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
+                <x-gmdi-notifications-active-o class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"/>
+                <span class="ml-3" sidebar-toggle-item>User Messages</span>
             </a>
           </li>
           <li>

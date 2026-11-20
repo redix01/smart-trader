@@ -50,6 +50,7 @@ class User extends Authenticatable
         'role',
         'status',
         'balance', // Holding account
+        'deposit_balance',
         'trading_balance',
         'mining_balance',
         'referral_balance',
@@ -107,6 +108,7 @@ class User extends Authenticatable
             'last_login_at' => 'datetime',
             'password' => 'hashed',
             'balance' => 'decimal:2',
+            'deposit_balance' => 'decimal:2',
             'trading_balance' => 'decimal:2',
             'mining_balance' => 'decimal:2',
             'referral_balance' => 'decimal:2',
@@ -205,7 +207,7 @@ class User extends Authenticatable
      */
     public function getTotalBalanceAttribute()
     {
-        return $this->balance + $this->trading_balance + $this->mining_balance + $this->referral_balance + $this->holding_balance + $this->staking_balance + $this->profit;
+        return $this->balance + $this->deposit_balance + $this->trading_balance + $this->mining_balance + $this->referral_balance + $this->holding_balance + $this->staking_balance + $this->profit;
     }
 
     /**

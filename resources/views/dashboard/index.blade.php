@@ -10,10 +10,12 @@
     $holdingsBalance = $user->holding_balance ?? 0;
     $stakingBalance = $user->staking_balance ?? 0;
     $profitBalance = $user->profit ?? 0;
-    $totalPortfolio = $walletBalance + $tradingBalance + $holdingsBalance + $stakingBalance + $profitBalance;
+    $depositBalance = $user->deposit_balance ?? 0;
+    $totalPortfolio = $walletBalance + $depositBalance + $tradingBalance + $holdingsBalance + $stakingBalance + $profitBalance;
 
     $balances = [
         ['label' => 'Wallet', 'value' => $walletBalance, 'color' => '#3b82f6', 'href' => route('user.deposit'), 'hint' => 'Available to fund'],
+        ['label' => 'Deposits', 'value' => $depositBalance, 'color' => '#22c55e', 'href' => route('user.transactions.index'), 'hint' => 'Credited deposits'],
         ['label' => 'Trading', 'value' => $tradingBalance, 'color' => '#7dd3fc', 'href' => route('user.liveTrading.index'), 'hint' => 'Ready in the Trade Room'],
         ['label' => 'Holdings', 'value' => $holdingsBalance, 'color' => '#2dd4a7', 'href' => route('user.holding.index'), 'hint' => 'Assets you own'],
         ['label' => 'Staking', 'value' => $stakingBalance, 'color' => '#f59e0b', 'href' => route('user.staking.index'), 'hint' => 'Locked and earning'],
@@ -27,7 +29,7 @@
 
     // Getting-started checklist
     $steps = [
-        ['label' => 'Fund your wallet', 'done' => ($walletBalance + $tradingBalance) > 0, 'href' => route('user.deposit')],
+        ['label' => 'Fund your wallet', 'done' => ($walletBalance + $depositBalance + $tradingBalance) > 0, 'href' => route('user.deposit')],
         ['label' => 'Place your first trade', 'done' => $totalTrades > 0, 'href' => route('user.liveTrading.index')],
         ['label' => 'Copy an experienced trader', 'done' => $activeCopyTrades > 0, 'href' => route('user.copyTrading.index')],
         ['label' => 'Activate a plan', 'done' => $totalPlans > 0, 'href' => route('user.plans.index')],
@@ -54,6 +56,24 @@
 @endphp
 
 <div class="space-y-6 dash-home">
+
+    {{-- ===== Unread messages from the admin team ===== --}}
+    @php
+        $adminMessages = \App\Models\UserNotification::where('user_id', $user->id)
+            ->where('type', \App\Http\Controllers\Admin\UserToolsController::MESSAGE_TYPE)
+            ->whereNull('read_at')->latest()->take(3)->get();
+    @endphp
+    @foreach($adminMessages as $msg)
+        <section class="rounded-2xl border border-gold-500/40 bg-gray-800 p-4 sm:p-5 flex gap-3 items-start" data-admin-message="{{ $msg->id }}">
+            <span class="w-9 h-9 shrink-0 rounded-lg bg-gold-500/15 text-gold-400 grid place-items-center">{!! $icon('<path d="M4 5h16v11H8l-4 4z"/>', 'w-4 h-4') !!}</span>
+            <div class="min-w-0 flex-1">
+                <p class="text-xs text-gold-400 font-semibold">Message from support · {{ $msg->created_at->diffForHumans() }}</p>
+                <h2 class="text-sm font-semibold text-white mt-0.5">{{ $msg->title }}</h2>
+                <p class="text-sm text-gray-300 mt-1 whitespace-pre-line break-words">{{ $msg->message }}</p>
+            </div>
+            <button type="button" class="shrink-0 text-xs font-semibold text-gray-400 hover:text-white" onclick="fetch('{{ route('user.notifications.read', $msg->id) }}',{method:'POST',headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'}}).then(()=>this.closest('section').remove())">Dismiss</button>
+        </section>
+    @endforeach
 
     {{-- ===== Welcome ===== --}}
     <section class="dash-hero relative overflow-hidden rounded-2xl border border-gray-700 bg-gray-800 p-5 sm:p-8">
@@ -116,7 +136,7 @@
             <div>
                 <p class="text-sm text-gray-400 flex items-center gap-2">{!! $icon($ic['wallet'], 'w-4 h-4') !!} Total portfolio value</p>
                 <div class="text-3xl sm:text-4xl font-bold text-white mt-1 tracking-tight">{{ $user->formatAmount($totalPortfolio) }}</div>
-                <p class="text-xs text-gray-400 mt-1">Wallet, trading, holdings, staking and profit · updated {{ now()->format('H:i') }}</p>
+                <p class="text-xs text-gray-400 mt-1">Wallet, deposits, trading, holdings, staking and profit · updated {{ now()->format('H:i') }}</p>
             </div>
             <a href="{{ route('user.portfolio.index') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-gold-400 hover:text-gold-300">View portfolio {!! $icon($ic['arrow'], 'w-4 h-4') !!}</a>
         </div>
@@ -129,9 +149,9 @@
             </div>
         @endif
 
-        <div class="mt-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div class="mt-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             @foreach($balances as $b)
-                <a href="{{ $b['href'] }}" class="group rounded-xl border border-gray-700 bg-gray-900/50 p-4 hover:border-gold-500 transition-colors {{ $loop->last ? 'col-span-2 sm:col-span-1' : '' }}">
+                <a href="{{ $b['href'] }}" class="group rounded-xl border border-gray-700 bg-gray-900/50 p-4 hover:border-gold-500 transition-colors">
                     <div class="flex items-center gap-2 text-xs text-gray-400"><span class="w-2 h-2 rounded-full" style="background: {{ $b['color'] }}"></span>{{ $b['label'] }}</div>
                     <div class="text-lg font-semibold text-white mt-2 truncate">{{ $user->formatAmount($b['value']) }}</div>
                     <div class="text-xs text-gray-500 mt-0.5">{{ $b['hint'] }}</div>
@@ -298,15 +318,15 @@
             <div id="openTradesContent" class="tab-content active">
                 @forelse($openTrades as $trade)
                     @if($loop->first)<div class="overflow-x-auto"><table class="min-w-full text-sm"><thead><tr class="text-left">
-                        <th class="px-5 py-3">Pair</th><th class="px-5 py-3">Type</th><th class="px-5 py-3">Amount</th><th class="px-5 py-3">Leverage</th><th class="px-5 py-3">Entry</th><th class="px-5 py-3">P&amp;L</th>
+                        <th class="px-5 py-3">Market</th><th class="px-5 py-3">Type</th><th class="px-5 py-3">Margin</th><th class="px-5 py-3">Leverage</th><th class="px-5 py-3">Entry</th><th class="px-5 py-3">Status</th>
                     </tr></thead><tbody class="divide-y divide-gray-700">@endif
                     <tr>
-                        <td class="px-5 py-3 whitespace-nowrap text-white font-medium">{{ $trade->trade_pair->pair ?? 'N/A' }}</td>
-                        <td class="px-5 py-3"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $trade->action_type === 'buy' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ ucfirst($trade->action_type ?? 'N/A') }}</span></td>
+                        <td class="px-5 py-3 whitespace-nowrap text-white font-medium">{{ $trade->market }}@if($trade->by_manager)<span class="block text-[11px] font-normal text-gold-400">Placed by your account manager</span>@endif</td>
+                        <td class="px-5 py-3"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $trade->side === 'buy' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ ucfirst($trade->side ?? 'N/A') }}</span></td>
                         <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $user->formatAmount($trade->amount) }}</td>
-                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $trade->leverage ?? '—' }}x</td>
-                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $user->formatAmount($trade->entry_price ?? 0, 8) }}</td>
-                        <td class="px-5 py-3 whitespace-nowrap font-semibold {{ ($trade->profit_loss ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ ($trade->profit_loss ?? 0) >= 0 ? '+' : '' }}{{ $user->formatAmount($trade->profit_loss ?? 0) }}</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $trade->leverage ? $trade->leverage.'x' : '—' }}</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $trade->entry ? $user->formatAmount($trade->entry, 4) : '—' }}</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ ucfirst($trade->status) }}</td>
                     </tr>
                     @if($loop->last)</tbody></table></div>@endif
                 @empty
@@ -322,16 +342,16 @@
             <div id="closedTradesContent" class="tab-content hidden">
                 @forelse($closedTrades as $trade)
                     @if($loop->first)<div class="overflow-x-auto"><table class="min-w-full text-sm"><thead><tr class="text-left">
-                        <th class="px-5 py-3">Pair</th><th class="px-5 py-3">Type</th><th class="px-5 py-3">Amount</th><th class="px-5 py-3">Entry</th><th class="px-5 py-3">Exit</th><th class="px-5 py-3">P&amp;L</th><th class="px-5 py-3">Date</th>
+                        <th class="px-5 py-3">Market</th><th class="px-5 py-3">Type</th><th class="px-5 py-3">Margin</th><th class="px-5 py-3">Entry</th><th class="px-5 py-3">Exit</th><th class="px-5 py-3">P&amp;L</th><th class="px-5 py-3">Date</th>
                     </tr></thead><tbody class="divide-y divide-gray-700">@endif
                     <tr>
-                        <td class="px-5 py-3 whitespace-nowrap text-white font-medium">{{ $trade->trade_pair->pair ?? 'N/A' }}</td>
-                        <td class="px-5 py-3"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $trade->action_type === 'buy' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ ucfirst($trade->action_type ?? 'N/A') }}</span></td>
+                        <td class="px-5 py-3 whitespace-nowrap text-white font-medium">{{ $trade->market }}@if($trade->by_manager)<span class="block text-[11px] font-normal text-gold-400">Placed by your account manager</span>@endif</td>
+                        <td class="px-5 py-3"><span class="px-2 py-0.5 rounded-md text-xs font-semibold {{ $trade->side === 'buy' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ ucfirst($trade->side ?? 'N/A') }}</span></td>
                         <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $user->formatAmount($trade->amount) }}</td>
-                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $user->formatAmount($trade->entry_price ?? 0, 8) }}</td>
-                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $user->formatAmount($trade->exit_price ?? 0, 8) }}</td>
-                        <td class="px-5 py-3 whitespace-nowrap font-semibold {{ ($trade->profit_loss ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ ($trade->profit_loss ?? 0) >= 0 ? '+' : '' }}{{ $user->formatAmount($trade->profit_loss ?? 0) }}</td>
-                        <td class="px-5 py-3 whitespace-nowrap text-gray-400">{{ optional($trade->updated_at)->format('M d, Y') ?? '—' }}</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $trade->entry ? $user->formatAmount($trade->entry, 4) : '—' }}</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-gray-300">{{ $trade->exit ? $user->formatAmount($trade->exit, 4) : '—' }}</td>
+                        <td class="px-5 py-3 whitespace-nowrap font-semibold {{ ($trade->pnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ ($trade->pnl ?? 0) >= 0 ? '+' : '' }}{{ $user->formatAmount($trade->pnl ?? 0) }}</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-gray-400">{{ optional($trade->date)->format('M d, Y') ?? '—' }}</td>
                     </tr>
                     @if($loop->last)</tbody></table></div>@endif
                 @empty

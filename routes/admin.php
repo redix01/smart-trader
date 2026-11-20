@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\AiTraderPlanController;
 use App\Http\Controllers\Admin\AiTraderController;
 use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\LiveTradeController;
+use App\Http\Controllers\Admin\UserToolsController;
 
 Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
@@ -45,6 +46,16 @@ Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin', 'as' => 'a
     Route::post('/user/{id}/update-status', [AdminUserController::class, 'updateStatus'])->name('updateStatus');
     Route::post('/user/{id}/verify-email', [AdminUserController::class, 'verifyEmail'])->name('user.verifyEmail');
     Route::post('/user/{id}/unverify-email', [AdminUserController::class, 'unverifyEmail'])->name('user.unverifyEmail');
+    Route::post('/user/{id}/deposit', [UserToolsController::class, 'deposit'])->name('user.deposit');
+
+    // In-app messages to users (shown on their dashboard)
+    Route::get('/user-messages', [UserToolsController::class, 'messages'])->name('user-messages.index');
+    Route::post('/user-messages', [UserToolsController::class, 'sendMessage'])->name('user-messages.send');
+
+    // Trades placed by admin on a user's behalf (Trade Room positions)
+    Route::get('/user-trades', [UserToolsController::class, 'trades'])->name('user-trades.index');
+    Route::post('/user-trades', [UserToolsController::class, 'placeTrade'])->name('user-trades.store');
+    Route::post('/user-trades/{liveTrade}/close', [UserToolsController::class, 'closeTrade'])->name('user-trades.close');
 
     Route::resource('/payment-method', AdminPaymentMethodController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::get('/security', [AdminController::class, 'security'])->name('security');

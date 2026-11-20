@@ -271,6 +271,10 @@
                         <span class="font-semibold text-gray-900 dark:text-white">{{ money($user->balance ?? 0, 2, $user) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Deposits Balance</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">${{ number_format($user->deposit_balance, 2) }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600 dark:text-gray-400">Trading Balance</span>
                         <span class="font-semibold text-gray-900 dark:text-white">{{ money($user->trading_balance ?? 0, 2, $user) }}</span>
                     </div>
@@ -313,6 +317,46 @@
                 </div>
      </div>
 
+            <!-- Deposit to Deposits balance -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6" id="deposit">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Deposit to Deposits balance</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Credits the user's Deposits balance now, records an approved deposit and notifies them.</p>
+                <div class="mt-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-3 flex justify-between items-center">
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Deposits balance</span>
+                    <span class="text-lg font-bold text-gray-900 dark:text-white">{{ $user->formatAmount($user->deposit_balance) }}</span>
+                </div>
+                <form action="{{ route('admin.user.deposit', $user->id) }}" method="POST" class="mt-4 space-y-3">
+                    @csrf
+                    <div>
+                        <label for="deposit_amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Amount ({{ $user->currency ?? 'USD' }})</label>
+                        <input type="number" step="0.01" min="0.01" name="amount" id="deposit_amount" required
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" placeholder="e.g. 1000">
+                    </div>
+                    <div>
+                        <label for="deposit_note" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Note to user <span class="text-gray-400">(optional)</span></label>
+                        <input type="text" maxlength="255" name="note" id="deposit_note"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" placeholder="e.g. Bank transfer received">
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">Deposit</button>
+                </form>
+            </div>
+
+            <!-- Message & trade for this user -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Send message</h3>
+                <form action="{{ route('admin.user-messages.send') }}" method="POST" class="space-y-3">
+                    @csrf
+                    <input type="hidden" name="audience" value="selected">
+                    <input type="hidden" name="user_ids[]" value="{{ $user->id }}">
+                    <input type="text" name="title" maxlength="120" required placeholder="Title"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                    <textarea name="message" rows="3" maxlength="2000" required placeholder="Message shown on their dashboard"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"></textarea>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">Send message</button>
+                </form>
+                <a href="{{ route('admin.user-trades.index', ['user' => $user->id]) }}" class="mt-3 block w-full text-center border border-blue-600 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 font-medium py-2 px-4 rounded-lg transition-colors">Place a trade for this user</a>
+            </div>
+
             <!-- Balance Management -->
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Balance Management</h3>
@@ -345,6 +389,7 @@
                             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                             onchange="updateCurrentBalance()">
                             <option value="balance">Main Balance</option>
+                            <option value="deposit_balance">Deposits Balance</option>
                             <option value="trading_balance">Trading Balance</option>
                             <option value="mining_balance">Mining Balance</option>
                             <option value="referral_balance">Referral Balance</option>
@@ -473,6 +518,7 @@
 // User balance data for JavaScript
 const userBalances = {
     balance: {{ $user->balance }},
+    deposit_balance: {{ $user->deposit_balance }},
     trading_balance: {{ $user->trading_balance }},
     mining_balance: {{ $user->mining_balance }},
     referral_balance: {{ $user->referral_balance }},

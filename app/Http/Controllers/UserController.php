@@ -23,14 +23,6 @@ class UserController extends Controller
     {
         $user = Auth::user();
         
-        // Get user's trades
-        $trades = Trade::whereUserId($user->id)->latest()->get();
-        $openTrades = $trades->filter(function($trade) {
-            return $trade->status === 'open';
-        });
-        $closedTrades = $trades->filter(function($trade) {
-            return $trade->status === 'closed';
-        });
         
         // Get user's active subscriptions/plans
         $activePlans = $user->activeUserPlans()->with('plan')->get();
@@ -58,13 +50,6 @@ class UserController extends Controller
         })->count();
         $totalBotProfit = $botTradings->sum('total_profit');
         
-        // Calculate trading performance metrics
-        $totalTrades = $trades->count();
-        $winningTrades = $closedTrades->filter(function($trade) {
-            return $trade->profit_loss > 0;
-        })->count();
-        $winRate = $totalTrades > 0 ? ($winningTrades / $totalTrades) * 100 : 0;
-        $avgProfit = $closedTrades->count() > 0 ? $closedTrades->avg('profit_loss') : 0;
         
         // Get recent transactions
         $recentTransactions = $user->holdingTransactions()
@@ -81,13 +66,6 @@ class UserController extends Controller
         
         $dashboardData = [
             'user' => $user,
-            'trades' => $trades,
-            'openTrades' => $openTrades,
-            'closedTrades' => $closedTrades,
-            'totalTrades' => $totalTrades,
-            'winningTrades' => $winningTrades,
-            'winRate' => $winRate,
-            'avgProfit' => $avgProfit,
             'activePlans' => $activePlans,
             'tradingPlans' => $tradingPlans,
             'signalPlans' => $signalPlans,
@@ -102,8 +80,8 @@ class UserController extends Controller
             'recentTransactions' => $recentTransactions,
             'copyTrades' => $copyTrades,
             'activeCopyTrades' => $activeCopyTrades,
-        ];
-        
+        ] + \App\Services\DashboardTrades::forUser($user);
+
         return view('dashboard.index', $dashboardData);
     }
 
