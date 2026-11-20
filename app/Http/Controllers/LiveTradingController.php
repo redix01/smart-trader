@@ -12,6 +12,7 @@ class LiveTradingController extends Controller
     public function index()
     {
         $user = Auth::user();
+        app(\App\Services\TradeEngine::class)->match($user); // fill reached limits / TP / SL before showing state
         $liveTrades = $user->liveTrades()->latest()->get();
         $cryptoAssets = Asset::where('type', 'crypto')->get();
         $stockAssets = Asset::where('type', 'stock')->get();
@@ -71,149 +72,114 @@ class LiveTradingController extends Controller
             ['symbol' => 'GBP/CHF', 'name' => 'British Pound / Swiss Franc'],
         ]);
         
+        // Market to open on: ?asset_type=&symbol= (also used by the old /trade deep link), else the first crypto.
+        $requestedType = in_array(request('asset_type'), ['crypto', 'stock'], true) ? request('asset_type') : null;
+        $selected = $requestedType
+            ? Asset::where('type', $requestedType)->where('symbol', request('symbol'))->first()
+            : null;
+        $selected = $selected ?? $cryptoAssets->first() ?? $stockAssets->first();
+
+        $positions = $liveTrades->where('status', LiveTrade::STATUS_OPEN)->values();
+        $openOrders = $liveTrades->where('status', LiveTrade::STATUS_PENDING)->values();
+        $orderHistory = $liveTrades->whereIn('status', [LiveTrade::STATUS_CLOSED, LiveTrade::STATUS_LIQUIDATED, LiveTrade::STATUS_CANCELLED])->take(20)->values();
+        $inOpenOrders = $openOrders->sum('amount') + $positions->sum('amount');
+
         return view('dashboard.live-trading.index', compact(
             'liveTrades',
             'cryptoAssets',
             'stockAssets',
-            'forexAssets'
+            'forexAssets',
+            'selected',
+            'positions',
+            'openOrders',
+            'orderHistory',
+            'inOpenOrders'
         ));
     }
 
+    /** Old per-market page: open the Trade Room terminal on that market instead. */
     public function trade(Request $request)
     {
-        $assetType = $request->get('asset_type');
-        $symbol = $request->get('symbol');
-        
-        // Get asset details
-        if ($assetType === 'crypto' || $assetType === 'stock') {
-            $asset = Asset::where('symbol', $symbol)->first();
-            if (!$asset) {
-                abort(404, 'Asset not found');
-            }
-        } else {
-            // For forex, create a mock asset
-            $asset = [
-                'symbol' => $symbol,
-                'name' => $symbol,
-                'current_price' => rand(100, 200) / 100,
-                'price_change_24h' => rand(-50, 50) / 10
-            ];
-        }
-        
-        return view('dashboard.live-trading.trade', compact('asset', 'assetType'));
+        return redirect()->route('user.liveTrading.index', array_filter([
+            'asset_type' => $request->get('asset_type'),
+            'symbol' => $request->get('symbol'),
+        ]));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, \App\Services\TradeEngine $engine)
     {
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'asset_type' => 'required|string|in:crypto,stock,forex',
+            'asset_type' => 'required|string|in:crypto,stock',
             'symbol' => 'required|string|max:20',
             'order_type' => 'required|string|in:limit,market',
             'side' => 'required|string|in:buy,sell',
-            // For limit orders, price and quantity are required; for market orders, amount is required
-            'quantity' => 'required_if:order_type,limit|nullable|numeric|min:0.00000001',
-            'price' => 'required_if:order_type,limit|nullable|numeric|min:0.00000001',
+            // Market orders: margin amount. Limit orders: limit price + position quantity.
             'amount' => 'required_if:order_type,market|nullable|numeric|min:1',
+            'price' => 'required_if:order_type,limit|nullable|numeric|gt:0',
+            'quantity' => 'required_if:order_type,limit|nullable|numeric|gt:0',
             'leverage' => 'nullable|numeric|min:1|max:100',
+            'take_profit' => 'nullable|numeric|gt:0',
+            'stop_loss' => 'nullable|numeric|gt:0',
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
+            return response()->json(['success' => false, 'message' => $validator->errors()->first(), 'errors' => $validator->errors()], 422);
         }
 
-        $user = Auth::user();
-        
-        // Determine debit amount based on order type
-        $orderAmount = $request->order_type === 'limit'
-            ? (float) $request->quantity * (float) $request->price
-            : (float) $request->amount;
-
-        // Ensure order amount is valid
-        if ($orderAmount <= 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid order amount.'
-            ], 400);
-        }
-
-        // Check if user has sufficient trading balance
-        if ($orderAmount > (float) $user->trading_balance) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Insufficient trading balance. You need at least $' . number_format($orderAmount, 2) . ' in your trading balance.'
-            ], 400);
+        if (! Asset::where('type', $request->asset_type)->where('symbol', $request->symbol)->exists()) {
+            return response()->json(['success' => false, 'message' => 'This market is not available.'], 422);
         }
 
         try {
-            // Additional guard already handled by validator; keep for clarity
-
-            $liveTrade = LiveTrade::create([
-                'user_id' => $user->id,
-                'asset_type' => $request->asset_type,
-                'symbol' => $request->symbol,
-                'order_type' => $request->order_type,
-                'side' => $request->side,
-                'quantity' => $request->quantity,
-                'price' => $request->price,
-                'amount' => $orderAmount,
-                'leverage' => $request->leverage ?? 1.00,
-                'status' => 'pending'
-            ]);
-
-            // Deduct amount from trading balance
-            $user->decrement('trading_balance', $orderAmount);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Trade order placed successfully!',
-                'trade' => $liveTrade
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to place trade: ' . $e->getMessage()
-            ], 500);
+            $trade = $engine->place(Auth::user(), $validator->validated());
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['success' => false, 'message' => collect($e->errors())->flatten()->first(), 'errors' => $e->errors()], 422);
         }
+
+        $qty = rtrim(rtrim(number_format((float) $trade->quantity, 8), '0'), '.');
+        $message = $trade->isOpen()
+            ? ($trade->side === 'buy' ? 'Bought ' : 'Sold ').$qty.' '.$trade->symbol.' at '.money($trade->entry_price).'. Position is open.'
+            : 'Limit order placed: '.($trade->side === 'buy' ? 'buy ' : 'sell ').$qty.' '.$trade->symbol.' at '.money($trade->price).'.';
+
+        return response()->json(['success' => true, 'message' => $message, 'trade' => $trade]);
     }
 
-    public function cancel(LiveTrade $liveTrade)
+    public function cancel(LiveTrade $liveTrade, \App\Services\TradeEngine $engine)
     {
         if ($liveTrade->user_id !== Auth::id()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized access to this trade.'
-            ], 403);
+            return response()->json(['success' => false, 'message' => 'Unauthorized access to this trade.'], 403);
         }
 
-        if (!$liveTrade->isPending()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Only pending trades can be cancelled.'
-            ], 400);
+        if (! $engine->cancel($liveTrade)) {
+            return response()->json(['success' => false, 'message' => 'Only orders that are still waiting can be cancelled.'], 400);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Order cancelled. '.money($liveTrade->amount).' returned to your trading balance.']);
+    }
+
+    public function close(LiveTrade $liveTrade, \App\Services\TradeEngine $engine)
+    {
+        if ($liveTrade->user_id !== Auth::id()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized access to this trade.'], 403);
         }
 
         try {
-            $liveTrade->update(['status' => 'cancelled']);
-            
-            // Refund the amount to trading balance
-            $user = Auth::user();
-            $user->increment('trading_balance', $liveTrade->amount);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Trade cancelled successfully!'
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to cancel trade: ' . $e->getMessage()
-            ], 500);
+            $closed = $engine->close($liveTrade);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['success' => false, 'message' => collect($e->errors())->flatten()->first()], 422);
         }
+
+        if (! $closed) {
+            return response()->json(['success' => false, 'message' => 'This position is already closed.'], 400);
+        }
+
+        $pnl = (float) $closed->realized_pnl;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Position closed at '.money($closed->exit_price).'. '.($pnl >= 0 ? 'Profit ' : 'Loss ').money(abs($pnl)).'.',
+            'trade' => $closed,
+        ]);
     }
 
     public function getPrice(Request $request)
@@ -229,7 +195,7 @@ class LiveTradingController extends Controller
             if ($asset) {
                 return response()->json([
                     'success' => true,
-                    'price' => $asset->current_price,
+                    'price' => auth()->user()->convertFrom($asset->current_price),
                     'change_24h' => $asset->price_change_24h
                 ]);
             }
@@ -284,12 +250,12 @@ class LiveTradingController extends Controller
         $user = Auth::user();
         
         $openTrades = LiveTrade::where('user_id', $user->id)
-            ->where('status', 'pending')
+            ->whereIn('status', [LiveTrade::STATUS_PENDING, LiveTrade::STATUS_OPEN])
             ->orderBy('created_at', 'desc')
             ->get();
             
         $closedTrades = LiveTrade::where('user_id', $user->id)
-            ->whereIn('status', ['filled', 'cancelled'])
+            ->whereIn('status', [LiveTrade::STATUS_CLOSED, LiveTrade::STATUS_LIQUIDATED, LiveTrade::STATUS_CANCELLED])
             ->orderBy('created_at', 'desc')
             ->get();
             

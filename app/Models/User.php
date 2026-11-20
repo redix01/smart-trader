@@ -263,6 +263,12 @@ class User extends Authenticatable
     /**
      * Human-readable label for the current trading strength.
      */
+    /** Convert a USD (or other-currency) price into this user's wallet currency. */
+    public function convertFrom($amount, string $from = 'USD'): float
+    {
+        return to_user_currency($amount, $from, $this);
+    }
+
     public function getTradingStrengthLabelAttribute(): string
     {
         $strength = $this->trading_strength;

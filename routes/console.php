@@ -37,6 +37,13 @@ Schedule::command('prices:update-scheduled')->everyThirtySeconds();
 // Asset Price Updates (Crypto & Stocks)
 Schedule::command('assets:update-prices')->everyFiveMinutes();
 
+// Trade Room order matching: fill reached limit orders, apply take-profit / stop-loss / liquidation.
+// Single firing path (this scheduler); overlap-guarded; idempotent under row locks.
+Schedule::command('trades:match')->everyMinute()->withoutOverlapping(5);
+
+// Exchange rates (USD base) for valuing Trade Room prices in each user's currency
+Schedule::command('fx:refresh')->everySixHours()->withoutOverlapping();
+
 // Bot Trading Simulation
 Schedule::command('bot-trading:simulate')->everyMinute();
 
