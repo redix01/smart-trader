@@ -1,123 +1,88 @@
-@extends("dashboard.layout.app")
-
-@section("title", "Trading History")
-
-@section("content")
-<div class="min-h-screen bg-gray-900 text-white">
-    <div class="bg-gray-800 border-b border-gray-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <a href="{{ route("user.liveTrading.index") }}" class="text-gray-400 hover:text-white mr-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                        </svg>
-                    </a>
-                    <h1 class="text-xl font-semibold">Trading History</h1>
-                </div>
-            </div>
+@extends('dashboard.layout.app')
+@section('title', 'Trading History')
+@section('content')
+@php
+    $qty = fn ($q) => rtrim(rtrim(number_format((float) $q, 8), '0'), '.');
+    $reason = ['manual' => 'Closed', 'take_profit' => 'Take profit', 'stop_loss' => 'Stop loss', 'liquidation' => 'Liquidated'];
+    $realised = $closedTrades->whereIn('status', ['closed', 'liquidated'])->sum('realized_pnl');
+    $wins = $closedTrades->where('realized_pnl', '>', 0)->count();
+    $settled = $closedTrades->whereIn('status', ['closed', 'liquidated'])->count();
+@endphp
+<div class="space-y-4 tr-room">
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <a href="{{ route('user.liveTrading.index') }}" class="tr-icon-btn" aria-label="Back to Trade Room"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></a>
+            <h1 class="text-xl sm:text-2xl font-bold text-white">Trading history</h1>
         </div>
+        <a href="{{ route('user.liveTrading.index') }}" class="tr-btn tr-btn-primary">Trade Room</a>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="mb-6">
-            <nav class="flex space-x-8 border-b border-gray-700">
-                <button type="button" class="history-tab active border-b-2 border-blue-500 py-4 px-1 text-sm font-medium text-blue-400" data-tab="open">
-                    Open Trades
-                    <span class="ml-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full">{{ $openTrades->count() }}</span>
-                </button>
-                <button type="button" class="history-tab border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-400 hover:text-gray-300 hover:border-gray-300" data-tab="closed">
-                    Closed Trades
-                    <span class="ml-2 bg-gray-600 text-white text-xs px-2 py-1 rounded-full">{{ $closedTrades->count() }}</span>
-                </button>
-            </nav>
-        </div>
-
-        <div id="open-content" class="history-content active">
-            @if($openTrades->count() > 0)
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="border-b border-gray-700">
-                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-400">Asset</th>
-                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-400">Type</th>
-                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-400">Side</th>
-                                <th class="text-right py-3 px-4 text-sm font-medium text-gray-400">Amount</th>
-                                <th class="text-right py-3 px-4 text-sm font-medium text-gray-400">Leverage</th>
-                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-400">Date</th>
-                                <th class="text-center py-3 px-4 text-sm font-medium text-gray-400">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($openTrades as $trade)
-                            <tr class="border-b border-gray-700 hover:bg-gray-700/50 transition-colors">
-                                <td class="py-4 px-4">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                                            <span class="text-white text-xs font-bold">{{ substr($trade->symbol, 0, 2) }}</span>
-                                        </div>
-                                        <div>
-                                            <div class="text-white font-medium">{{ $trade->symbol }}</div>
-                                            <div class="text-gray-400 text-sm">{{ ucfirst($trade->asset_type) }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="py-4 px-4">{{ ucfirst($trade->order_type) }}</td>
-                                <td class="py-4 px-4">{{ ucfirst($trade->side) }}</td>
-                                <td class="text-right py-4 px-4">{{ money((float) $trade->amount, 2) }}</td>
-                                <td class="text-right py-4 px-4">{{ rtrim(rtrim(number_format((float) $trade->leverage, 2, '.', ''), '0'), '.') }}x</td>
-                                <td class="py-4 px-4">{{ $trade->created_at?->diffForHumans() }}</td>
-                                <td class="text-center py-4 px-4">
-                                    @if($trade->order_type === 'limit' && $trade->status === 'pending')
-                                        <form method="POST" action="{{ route('user.liveTrading.cancel', $trade) }}">
-                                            @csrf
-                                            <button type="submit" class="px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded">Cancel</button>
-                                        </form>
-                                    @else
-                                        <span class="text-gray-400 text-sm">—</span>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @else
-                <div class="text-center py-12">
-                    <h3 class="text-lg font-medium text-gray-300 mb-2">No Open Trades</h3>
-                    <p class="text-gray-400">You do not have any open trades at the moment.</p>
-                </div>
-            @endif
-        </div>
-
-        <div id="closed-content" class="history-content hidden">
-            <div class="text-center py-12">
-                <h3 class="text-lg font-medium text-gray-300 mb-2">Closed Trades</h3>
-                <p class="text-gray-400">Closed trades will appear here.</p>
-            </div>
-        </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div class="tr-stat"><span>Realised P&amp;L</span><b class="{{ $realised > 0 ? 'text-emerald-400' : ($realised < 0 ? 'text-red-400' : '') }}">{{ ($realised > 0 ? '+' : ($realised < 0 ? '−' : '')).money(abs($realised)) }}</b></div>
+        <div class="tr-stat"><span>Win rate</span><b>{{ $settled ? number_format($wins / $settled * 100, 1) : '0.0' }}%</b></div>
+        <div class="tr-stat col-span-2 sm:col-span-1"><span>Active</span><b>{{ $openTrades->count() }}</b></div>
     </div>
+
+    <section class="tr-panel overflow-hidden">
+        <div class="flex gap-5 px-4 border-b border-gray-700" role="tablist">
+            <button type="button" class="tr-otab is-on" data-pane="activePane">Active <span>{{ $openTrades->count() }}</span></button>
+            <button type="button" class="tr-otab" data-pane="closedPane">Closed <span>{{ $closedTrades->count() }}</span></button>
+        </div>
+        @foreach(['activePane' => $openTrades, 'closedPane' => $closedTrades] as $pane => $rows)
+            <div id="{{ $pane }}" @if($pane === 'closedPane') hidden @endif>
+                @forelse($rows as $t)
+                    @if($loop->first)<ul class="divide-y divide-gray-700">@endif
+                    <li class="p-4 md:px-5">
+                        <div class="flex items-start gap-3">
+                            <span class="w-10 h-10 shrink-0 rounded-lg grid place-items-center text-[10px] font-bold {{ $t->side === 'buy' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}">{{ $t->side === 'buy' ? 'LONG' : 'SHORT' }}</span>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-white font-semibold">{{ $t->symbol }} <span class="text-xs font-normal text-gray-500">{{ ucfirst($t->asset_type) }} · {{ ucfirst($t->order_type) }} · {{ $qty($t->leverage) }}x</span></div>
+                                <div class="text-xs text-gray-400">{{ ($t->closed_at ?? $t->filled_at ?? $t->created_at)->format('M d, Y H:i') }}</div>
+                            </div>
+                            <div class="text-right">
+                                @if($t->status === 'pending')
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-amber-500/15 text-amber-300">Waiting</span>
+                                @elseif($t->status === 'open')
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-500/15 text-blue-300">Open</span>
+                                @elseif($t->status === 'cancelled')
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-700 text-gray-300">Cancelled</span>
+                                @else
+                                    @php $p = (float) $t->realized_pnl; @endphp
+                                    <div class="font-mono font-semibold {{ $p > 0 ? 'text-emerald-400' : ($p < 0 ? 'text-red-400' : 'text-gray-300') }}">{{ ($p > 0 ? '+' : ($p < 0 ? '−' : '')).money(abs($p)) }}</div>
+                                    <div class="text-xs {{ $t->status === 'liquidated' ? 'text-red-400' : 'text-gray-400' }}">{{ $reason[$t->close_reason] ?? ucfirst($t->status) }}</div>
+                                @endif
+                            </div>
+                        </div>
+                        <dl class="grid grid-cols-3 md:grid-cols-6 gap-x-3 gap-y-2 mt-3 text-xs">
+                            <div><dt class="text-gray-500">Size</dt><dd class="font-mono text-gray-200 mt-0.5">{{ $qty($t->quantity) }}</dd></div>
+                            <div><dt class="text-gray-500">Margin</dt><dd class="font-mono text-gray-200 mt-0.5">{{ money($t->amount) }}</dd></div>
+                            <div><dt class="text-gray-500">{{ $t->status === 'pending' ? 'Limit' : 'Entry' }}</dt><dd class="font-mono text-gray-200 mt-0.5">{{ money($t->status === 'pending' ? $t->price : ($t->entry_price ?? 0)) }}</dd></div>
+                            @if($t->exit_price)<div><dt class="text-gray-500">Exit</dt><dd class="font-mono text-gray-200 mt-0.5">{{ money($t->exit_price) }}</dd></div>@endif
+                            @if($t->take_profit || $t->stop_loss)<div><dt class="text-gray-500">TP / SL</dt><dd class="font-mono text-gray-200 mt-0.5">{{ $t->take_profit ? money($t->take_profit) : '—' }} / {{ $t->stop_loss ? money($t->stop_loss) : '—' }}</dd></div>@endif
+                        </dl>
+                        @if(in_array($t->status, ['pending', 'open']))
+                            <a href="{{ route('user.liveTrading.index', ['asset_type' => $t->asset_type, 'symbol' => $t->symbol]) }}" class="tr-row-btn inline-block text-center">Manage in Trade Room</a>
+                        @endif
+                    </li>
+                    @if($loop->last)</ul>@endif
+                @empty
+                    <div class="px-6 py-12 text-center">
+                        <p class="text-white font-medium">{{ $pane === 'activePane' ? 'No active trades' : 'No closed trades yet' }}</p>
+                        <p class="text-sm text-gray-400 mt-1">{{ $pane === 'activePane' ? 'Open positions and waiting orders will appear here.' : 'Closed, liquidated and cancelled trades will be listed here.' }}</p>
+                    </div>
+                @endforelse
+            </div>
+        @endforeach
+    </section>
 </div>
+@endsection
 
+@push('scripts')
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const tabs = document.querySelectorAll(".history-tab");
-    const contents = document.querySelectorAll(".history-content");
-    
-    tabs.forEach(tab => {
-        tab.addEventListener("click", function() {
-            const targetTab = this.getAttribute("data-tab");
-            
-            tabs.forEach(t => t.classList.remove("active", "border-blue-500", "text-blue-400"));
-            this.classList.add("active", "border-blue-500", "text-blue-400");
-            
-            contents.forEach(content => content.classList.add("hidden"));
-            document.getElementById(targetTab + "-content").classList.remove("hidden");
-        });
-    });
+document.querySelectorAll('.tr-otab').forEach(function (t) {
+  t.addEventListener('click', function () {
+    document.querySelectorAll('.tr-otab').forEach(function (x) { x.classList.toggle('is-on', x === t); document.getElementById(x.dataset.pane).hidden = x !== t; });
+  });
 });
 </script>
-
-@include("components.trading-footer")
-
-@endsection
+@endpush
